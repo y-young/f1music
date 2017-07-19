@@ -1,3 +1,20 @@
-$(document).on('page:fetch',   function() { $.AMUI.progress.start(); });
-$(document).on('page:change',  function() { $.AMUI.progress.done(); });
-$(document).on('page:restore', function() { $.AMUI.progress.remove(); });
+/**
+ * Main Template
+ */
+const desktop = isDesktop();
+var main = {
+    data() {
+        return {
+            collapsed: desktop
+        }
+    },
+    methods: {
+        collapse: function(){
+            this.collapsed = !this.collapsed;
+        }
+    }
+};
+function isDesktop()
+{
+    return window.innerWidth > 993;
+}

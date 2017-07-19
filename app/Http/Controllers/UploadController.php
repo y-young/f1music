@@ -47,11 +47,15 @@ class UploadController extends Controller
 
     public static function Upload(Request $request)
     {
+      Log::info('Requests: '.var_export($request->all(),true));
+      if($request->file('file')->isValid())
+        return response()->json(['error' => 0]);
+      else
+        return response()->json(['error' => 1]);
       $uploadDir = storage_path('app/tmp/');
-      if($request->hasFile('files')) {
-        $files = $request->file('files');
+      if($request->hasFile('file')) {
+        $files = $request->file('file');
         $json = array( 'files' => array() );
-  //      foreach( $files as $file ) {
             $file = $files[0];
             $file->name = $file->getClientOriginalName();
             $file->time = $request->input('time');
@@ -66,10 +70,9 @@ class UploadController extends Controller
                 'url' => $file->url,
                 'deleteType' => 'DELETE',
                 'deleteUrl' => '/Delete/'.$file->name,
-            //    'error' => $file->error
              );
 
-             $upload = $file->move($uploadDir, $file->name );
+             $upload = $file->move($uploadDir, $file->name);
              $file->size = Storage::disk('tmp')->size($file->name);
              $file = self::validateFile($file);
              Log::info('Files: '.var_export($file,true));

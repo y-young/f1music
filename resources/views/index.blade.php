@@ -1,244 +1,30 @@
 @extends('layouts.app')
 @section('title','首页')
+@section('activeIndex',1)
 @section('contents')
-      <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">首页</strong> / <small>Index</small></div>
-      </div>
+    <el-breadcrumb separator="/">
+        <el-breadcrumb-item>首页</el-breadcrumb-item>
+        <el-breadcrumb-item>Index</el-breadcrumb-item>
+    </el-breadcrumb>
+    <h3>上传说明</h3>
 
-      <ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
-        <li><a href="#" class="am-text-success"><span class="am-icon-btn am-icon-file-cloudupload"></span><br/>关闭上传<br/>2300</a></li>
-        <li><a href="#" class="am-text-warning"><span class="am-icon-btn am-icon-briefcase"></span><br/>开启投票<br/>308</a></li>
-        <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-music"></span><br/>音乐总数<br/>80082</a></li>
-        <li><a href="#" class="am-text-secondary"><span class="am-icon-btn am-icon-user-md"></span><br/>投票人数<br/>3000</a></li>
-      </ul>
+    <p>上传需进入相应页面。<strong>上传前请确认您推荐的歌曲别人尚未推荐</strong>，尽量不要重复上传。只能上传 mp3格式的音频，并请保证有一定质量，歌曲时间控制在3-5分钟，大小介于1MB-15MB为宜，不能上传超过20MB的歌曲。此外，曲子<strong>最好不要带有非伴奏性人声</strong>，否则播出的时候可能很雷人……同时，请各位在挑选音乐的时候明确自己对全体师生的责任，在应用自身审美标准的同时适当考虑最广大人民群众的需求。</p>
+    <p>在提交新音乐时，需要点击选择一个推荐的播放时段，并填入曲名。“来源”一项表示此曲目的出处，可以填写该曲目来自的专辑、音乐家或节目、游戏等，<strong>不是表示上传者</strong>。如果不明来源的可以留空。上传文件时点击“文件”按钮并选择即可。</p>
+    <p><strong>提交音乐时请注意选择相应的时段！</strong></p>
+    <hr/>
 
-      <div class="am-g">
-        <div class="am-u-sm-12">
-          <table class="am-table am-table-bd am-table-striped admin-content-table">
-            <thead>
-            <tr>
-              <th>ID</th><th>用户名</th><th>最后成交任务</th><th>成交订单</th><th>管理</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr><td>1</td><td>John Clark</td><td><a href="#">Business management</a></td> <td><span class="am-badge am-badge-success">+20</span></td>
-              <td>
-                <div class="am-dropdown" data-am-dropdown>
-                  <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
-                  <ul class="am-dropdown-content">
-                    <li><a href="#">1. 编辑</a></li>
-                    <li><a href="#">2. 下载</a></li>
-                    <li><a href="#">3. 删除</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            <tr><td>2</td><td>风清扬</td><td><a href="#">公司LOGO设计</a> </td><td><span class="am-badge am-badge-danger">+2</span></td>
-              <td>
-                <div class="am-dropdown" data-am-dropdown>
-                  <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
-                  <ul class="am-dropdown-content">
-                    <li><a href="#">1. 编辑</a></li>
-                    <li><a href="#">2. 下载</a></li>
-                    <li><a href="#">3. 删除</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            <tr><td>3</td><td>詹姆斯</td><td><a href="#">开发一款业务数据软件</a></td><td><span class="am-badge am-badge-warning">+10</span></td>
-              <td>
-                <div class="am-dropdown" data-am-dropdown>
-                  <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
-                  <ul class="am-dropdown-content">
-                    <li><a href="#">1. 编辑</a></li>
-                    <li><a href="#">2. 下载</a></li>
-                    <li><a href="#">3. 删除</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            <tr><td>4</td><td>云适配</td><td><a href="#">适配所有网站</a></td><td><span class="am-badge am-badge-secondary">+50</span></td>
-              <td>
-                <div class="am-dropdown" data-am-dropdown>
-                  <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
-                  <ul class="am-dropdown-content">
-                    <li><a href="#">1. 编辑</a></li>
-                    <li><a href="#">2. 下载</a></li>
-                    <li><a href="#">3. 删除</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
+    <h3>各时段音乐要求</h3>
 
-            <tr>
-              <td>5</td><td>呵呵呵</td>
-              <td><a href="#">基兰会获得BUFF</a></td>
-              <td><span class="am-badge">+22</span></td>
-              <td>
-                <div class="am-dropdown" data-am-dropdown>
-                  <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
-                  <ul class="am-dropdown-content">
-                    <li><a href="#">1. 编辑</a></li>
-                    <li><a href="#">2. 下载</a></li>
-                    <li><a href="#">3. 删除</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="am-g">
-        <div class="am-u-md-6">
-          <div class="am-panel am-panel-default">
-            <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}">我上传的音乐<span class="am-icon-chevron-down am-fr" ></span></div>
-            <div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
-              <ul class="am-list admin-content-file">
-                <li>
-                  <strong><span class="am-icon-upload"></span> Kong-cetian.Mp3</strong>
-                  <p>3.3 of 5MB - 5 mins - 1MB/Sec</p>
-                  <div class="am-progress am-progress-striped am-progress-sm am-active">
-                    <div class="am-progress-bar am-progress-bar-success" style="width: 82%">82%</div>
-                  </div>
-                </li>
-                <li>
-                  <strong><span class="am-icon-check"></span> ***REMOVED***.Mp3</strong>
-                  <p>3.3 of 5MB - 5 mins - 3MB/Sec</p>
-                </li>
-                <li>
-                  <strong><span class="am-icon-check"></span> 未闻花名.Mp3</strong>
-                  <p>3.3 of 5MB - 5 mins - 3MB/Sec</p>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="am-panel am-panel-default">
-            <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-2'}">浏览器统计<span class="am-icon-chevron-down am-fr" ></span></div>
-            <div id="collapse-panel-2" class="am-in">
-              <table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">
-                <tbody>
-                <tr>
-                  <th class="am-text-center">#</th>
-                  <th>浏览器</th>
-                  <th>访问量</th>
-                </tr>
-                <tr>
-                  <td class="am-text-center"><img src="assets/i/examples/admin-chrome.png" alt=""></td>
-                  <td>Google Chrome</td>
-                  <td>3,005</td>
-                </tr>
-                <tr>
-                  <td class="am-text-center"><img src="assets/i/examples/admin-firefox.png" alt=""></td>
-                  <td>Mozilla Firefox</td>
-                  <td>2,505</td>
-                </tr>
-                <tr>
-                  <td class="am-text-center"><img src="assets/i/examples/admin-ie.png" alt=""></td>
-                  <td>Internet Explorer</td>
-                  <td>1,405</td>
-                </tr>
-                <tr>
-                  <td class="am-text-center"><img src="assets/i/examples/admin-opera.png" alt=""></td>
-                  <td>Opera</td>
-                  <td>4,005</td>
-                </tr>
-                <tr>
-                  <td class="am-text-center"><img src="assets/i/examples/admin-safari.png" alt=""></td>
-                  <td>Safari</td>
-                  <td>505</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="am-u-md-6">
-          <div class="am-panel am-panel-default">
-            <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-4'}">公告<span class="am-icon-chevron-down am-fr" ></span></div>
-            <div id="collapse-panel-4" class="am-panel-bd am-collapse am-in">
-              <ul class="am-list admin-content-task">
-                <li>
-                  <div class="admin-task-meta"> Posted on 25/1/2120 by John Clark</div>
-                  <div class="admin-task-bd">
-                    The starting place for exploring business management; helping new managers get started and experienced managers get better.
-                  </div>
-                  <div class="am-cf">
-                    <div class="am-btn-toolbar am-fl">
-                      <div class="am-btn-group am-btn-group-xs">
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-check"></span></button>
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-pencil"></span></button>
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-times"></span></button>
-                      </div>
-                    </div>
-                    <div class="am-fr">
-                      <button type="button" class="am-btn am-btn-default am-btn-xs">删除</button>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="admin-task-meta"> Posted on 25/1/2120 by 呵呵呵</div>
-                  <div class="admin-task-bd">
-                    基兰和狗熊出现在不同阵营时。基兰会获得BUFF，“装甲熊憎恨者”。狗熊会获得BUFF，“时光老人憎恨者”。
-                  </div>
-                  <div class="am-cf">
-                    <div class="am-btn-toolbar am-fl">
-                      <div class="am-btn-group am-btn-group-xs">
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-check"></span></button>
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-pencil"></span></button>
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-times"></span></button>
-                      </div>
-                    </div>
-                    <div class="am-fr">
-                      <button type="button" class="am-btn am-btn-default am-btn-xs">删除</button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="am-panel am-panel-default">
-            <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-3'}">最近留言<span class="am-icon-chevron-down am-fr" ></span></div>
-            <div class="am-panel-bd am-collapse am-in am-cf" id="collapse-panel-3">
-              <ul class="am-comments-list admin-content-comment">
-                <li class="am-comment">
-                  <a href="#"><img src="http://s.amazeui.org/media/i/demos/bw-2014-06-19.jpg?imageView/1/w/96/h/96" alt="" class="am-comment-avatar" width="48" height="48"></a>
-                  <div class="am-comment-main">
-                    <header class="am-comment-hd">
-                      <div class="am-comment-meta"><a href="#" class="am-comment-author">某人</a> 评论于 <time>2014-7-12 15:30</time></div>
-                    </header>
-                    <div class="am-comment-bd"><p>遵循 “移动优先（Mobile First）”、“渐进增强（Progressive enhancement）”的理念，可先从移动设备开始开发网站，逐步在扩展的更大屏幕的设备上，专注于最重要的内容和交互，很好。</p>
-                    </div>
-                  </div>
-                </li>
-
-                <li class="am-comment">
-                  <a href="#"><img src="http://s.amazeui.org/media/i/demos/bw-2014-06-19.jpg?imageView/1/w/96/h/96" alt="" class="am-comment-avatar" width="48" height="48"></a>
-                  <div class="am-comment-main">
-                    <header class="am-comment-hd">
-                      <div class="am-comment-meta"><a href="#" class="am-comment-author">某人</a> 评论于 <time>2014-7-12 15:30</time></div>
-                    </header>
-                    <div class="am-comment-bd"><p>有效减少为兼容旧浏览器的臃肿代码；基于 CSS3 的交互效果，平滑、高效。AMUI专注于现代浏览器（支持HTML5），不再为过时的浏览器耗费资源，为更有价值的用户提高更好的体验。</p>
-                    </div>
-                  </div>
-                </li>
-
-              </ul>
-              <ul class="am-pagination am-fr admin-content-pagination">
-                <li class="am-disabled"><a href="#">&laquo;</a></li>
-                <li class="am-active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&raquo;</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ol>
+        <li>起床音乐：能使人逐渐清醒，最重要的是最好不要有催眠效果。</li>
+        <li>早出门音乐：一定要能使同学们清醒！</li>
+        <li>午出门音乐：能提醒午睡的同学及时起床，同时不要给在班上的同学带来太大噪音。</li>
+        <li>晚出门音乐：暂没有额外要求。</li>
+        <li>自习结束音乐：暂没有额外要求。</li>
+        <li>熄灯音乐：能让想睡的人睡觉，让想继续夜读的人能夜读。</li>
+    </ol>
+    <p>出于公平性考虑，本次征集投票时将隐藏歌曲相关信息，因此将预先进行审核，对于严重恶搞、不符合要求、以及重复上传的内容，将直接删除。如果发现以上情况，请点击音乐旁的举报，我们会尽快处理。此外，出于同样目的，上传时曲目的标签信息将被删除。但此操作耗时较多，因此上传进度到达100%后可能出现几秒的停顿，请耐心等待。</p>
+@endsection
+@section('js')
+    <script src="{{url('/assets/js/index.js')}}"></script>
 @endsection

@@ -48,6 +48,6 @@ $app->group(['middleware' => 'musicauth'], function () use ($app) {
     $app->get('/Upload',function() {
         return view('upload');
     });
-    $app->post('/Up','UploadController@Upload');
+    $app->post('/Upload','UploadController@Upload');
     $app->get('/List/{type}','ListController@getList');
 });

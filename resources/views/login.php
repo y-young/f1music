@@ -29,7 +29,7 @@
                     <el-input type="password" v-model="ruleForm.password" placeholder="校园网密码"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" style="" :loading="loading" @click="login">{{ loading ? "登录中" : "登录"}}</el-button>
+                    <el-button type="primary" :loading="loading" @click="login">{{ loading ? "登录中" : "登录" }}</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
