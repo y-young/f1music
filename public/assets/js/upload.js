@@ -26,8 +26,13 @@ var component = Vue.extend({
         },
         methods: {
             onSuccess: function(response, file, fileList) {
-                this.$message.success('上传成功!');
-                alert(response);
+                if(response && response.length > 0) {
+                    if(response.error == 0)
+                        this.$message.success('上传成功!');
+                    else
+                        this.$message.error('上传失败');
+                }
+                console.log(response);
             },
             beforeUpload(file) {
                 const tooBig = file.size / 1024 / 1024 > 20;

@@ -26,7 +26,7 @@
                 <el-menu-item index="2"><i class="el-icon-upload"></i><a href="/Upload">上传</a></el-menu-item>
                 <el-menu-item index="3"><i class="el-icon-information"></i>使用说明</el-menu-item>
                 <el-menu-item-group title="投票">
-                    <el-menu-item index="4"> 6:30 起床铃</el-menu-item>
+                    <el-menu-item index="4"><a href="/Vote/1"> 6:30 起床铃</a></el-menu-item>
                     <el-menu-item index="5">18:40 晚出门</el-menu-item>
                     <el-menu-item index="6">21:40 晚自习结束</el-menu-item>
                     <el-menu-item index="7">22:30 熄灯铃</el-menu-item>
