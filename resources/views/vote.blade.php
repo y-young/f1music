@@ -20,6 +20,7 @@
     <el-collapse accordion @change="changeListener">
         <el-collapse-item title="No.1 未投票" name="1">
             <yplayer src="{{url('/***REMOVED***.mp3')}}" @progress="timeListener"></yplayer><br><hr>
+            <!-- <div id="player1" class="aplayer"></div> -->
             <transition name="el-fade-in-linear">
                 <el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;" v-show="canVote"></el-rate>
             </transition>
@@ -30,6 +31,7 @@
     </el-collapse>
 @endsection
 @section('js')
+<script src="https://cdn.bootcss.com/aplayer/1.6.0/APlayer.min.js"></script>
 <script src="{{url('/assets/js/yplayer.js')}}"></script>
 <script>
     var component = Vue.extend({
