@@ -3,24 +3,26 @@ Vue.component('yplayer', {
         src: {
             type: String,
             required: true
+        },
+        detail: {
+            type: Boolean,
+            default: true
         }
     },
     template: '<div class="yplayer">\
                     <audio id="audio" @loadedmetadata="init" @timeupdate="progress" :src="src" ref="player"></audio>\
-                    <div class="bar-wrap">\
-                        <div class="bar">\
-                            <div class="played" v-bind:style="{ width: percent+\'%\' }">\
-                                <span class="thumb"></span>\
-                            </div>\
-                        </div>\
+                    <div class="control" v-show="detail">\
+                        <el-slider v-model="currentTime" :min="0" :max="totalTime" :show-tooltip="false"></el-slider>\
+                        <div style="font-size: 12px; color: #777; display: inline; float: right;">{{ played }} / {{ duration }}</div>\
                     </div>\
-                    <div style="font-size: 12px; color: #777; display: inline; float: right;">{{ played }} / {{ duration }}</div>\
                     <el-button-group style="float: left; margin-right: 20px;">\
                         <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? \'fa-pause\' : \'fa-play\']"></i></el-button>\
-                        <el-button type="primary" @click="stop"><i class="fa fa-stop"></i></el-button>\
+                        <el-button type="primary" @click="stop" v-show="detail"><i class="fa fa-stop"></i></el-button>\
                     </el-button-group>\
-                    <i class="fa" v-bind:class="[volume ? \'fa-volume-up\' : \'fa-volume-off\']" style="float: left; vertical-align: middle; margin-right: 15px; padding-top: 10px;"></i>\
-                    <el-slider v-model="volume" :max="100" @change="changeVolume" style="width: 80px; float: left;"></el-slider>\
+                    <div class="control" v-show="detail">\
+                        <i class="fa" v-bind:class="[volume ? \'fa-volume-up\' : \'fa-volume-off\']" style="float: left; vertical-align: middle; margin-right: 15px; padding-top: 10px;"></i>\
+                        <el-slider v-model="volume" :max="100" @change="changeVolume" style="width: 80px; float: left;"></el-slider>\
+                    </div>\
                 </div>',
     data: function () {
         return {
@@ -30,8 +32,7 @@ Vue.component('yplayer', {
             duration: '00:00',
             played: '00:00',
             volume: 100,
-            audio: null,
-            percent: 0
+            audio: null
         }
     },
     methods: {
@@ -42,7 +43,6 @@ Vue.component('yplayer', {
         },
         progress: function() {
             this.currentTime = this.audio.currentTime
-            this.percent = this.currentTime / this.totalTime * 100
             this.played = formatTime(this.currentTime)
             this.$emit('progress', Number(this.currentTime))
         },

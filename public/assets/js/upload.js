@@ -4,7 +4,11 @@
 var component = Vue.extend({
         data() {
             return {
-                loading: false,
+                formLoading: false,
+                btnLoading: false,
+                keyword: null,
+                result: null,
+                mp3: null,
                 ruleForm: {
                     time: '',
                     name: '',
@@ -25,6 +29,44 @@ var component = Vue.extend({
             }
         },
         methods: {
+            search: function() {
+                this.formLoading = true
+                axios.post('/Music/Search',{
+                    keyword: this.keyword
+                })
+                .then((res)=>{
+                    this.formLoading = false
+                    if(res.data.length > 0) {
+                        this.result = res.data
+                    } else {
+                        this.$message.error('发生了错误，请重试');
+                    }
+                })
+                .catch((err)=>{
+                    this.formLoading = false
+                    console.log(err);
+                });
+            },
+            getMp3: function(row, expanded) {
+                this.mp3 = null
+                axios.post('/Music/Mp3',{
+                    id: row.id
+                })
+                .then((res)=>{
+                    console.log(res.data);
+                    if(res.data.length > 0) {
+                        this.mp3 = res.data
+                    } else {
+                        this.$message.error('暂时无法试听，请重试');
+                    }
+                })
+                .catch((err)=>{
+                    console.log(err);
+                });
+            },
+            cloudUpload: function() {
+
+            },
             onSuccess: function(response, file, fileList) {
                 if(response && response.length > 0) {
                     if(response.error == 0)

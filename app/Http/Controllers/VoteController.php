@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 
-class ListController extends Controller
+class VoteController extends Controller
 {
 
     public static $stuId;

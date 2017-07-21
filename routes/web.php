@@ -17,11 +17,13 @@ $app->get('/', function () use ($app) {
 });
 $app->get('/Check', 'AuthController@checkLogin');
 $app->get('/Logout', 'AuthController@Logout');
+
 $app->group(['middleware' => 'redirect'], function () use ($app) {
     $app->get('/Login', ['as' => 'login', function() {
         return view('login');
     }]);
 });
+
 $app->get('/Help', function() {
     return view('help');
 });
@@ -50,4 +52,9 @@ $app->group(['middleware' => 'musicauth'], function () use ($app) {
     });
     $app->post('/Upload','UploadController@Upload');
     $app->get('/List/{type}','ListController@getList');
+});
+
+$app->group(['prefix' => 'Music'], function () use ($app) {
+    $app->post('/Search', 'MusicController@Search');
+    $app->post('/Mp3', 'MusicController@Mp3');
 });
