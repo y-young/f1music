@@ -2,6 +2,37 @@
 @section('title','投票')
 @section('css')
 <style>
+.bar-wrap {
+    margin: 10px 0;
+    padding: 4px 0;
+    flex: 1;
+}
+.bar {
+    position: relative;
+    height: 4px;
+    width: 100%;
+    background: #cdcdcd;
+}
+.played {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 4px;
+    background: #20a0ff;
+}
+.thumb {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    margin-top: -4px;
+    margin-right: -10px;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    vertical-align: middle;
+    background: #20a0ff;
+}
     .fa {
         margin-right: 0;
     }
@@ -19,8 +50,8 @@
     <h3>投票@{{ songNo }}</h3>
     <el-collapse accordion @change="changeListener">
         <el-collapse-item title="No.1 未投票" name="1">
-            <yplayer src="{{url('/***REMOVED***.mp3')}}" @progress="timeListener"></yplayer><br><hr>
-            <!-- <div id="player1" class="aplayer"></div> -->
+            <yplayer src="{{url('/***REMOVED***.mp3')}}" @progress="timeListener"></yplayer>
+            <div id="player1" class="aplayer"></div><br><hr>
             <transition name="el-fade-in-linear">
                 <el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;" v-show="canVote"></el-rate>
             </transition>

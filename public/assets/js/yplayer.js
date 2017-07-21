@@ -7,7 +7,13 @@ Vue.component('yplayer', {
     },
     template: '<div class="yplayer">\
                     <audio id="audio" @loadedmetadata="init" @timeupdate="progress" :src="src" ref="player"></audio>\
-                    <el-progress :percentage="percent" :show-text="false" style="margin: 10px 0;"></el-progress>\
+                    <div class="bar-wrap">\
+                        <div class="bar">\
+                            <div class="played" v-bind:style="{ width: percent+\'%\' }">\
+                                <span class="thumb"></span>\
+                            </div>\
+                        </div>\
+                    </div>\
                     <div style="font-size: 12px; color: #777; display: inline; float: right;">{{ played }} / {{ duration }}</div>\
                     <el-button-group style="float: left; margin-right: 20px;">\
                         <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? \'fa-pause\' : \'fa-play\']"></i></el-button>\
