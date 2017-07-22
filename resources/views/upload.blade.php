@@ -9,7 +9,7 @@
     <h3>上传</h3>
     <el-tabs active-name="netease">
         <el-tab-pane label="网易云音乐" name="netease">
-            <el-input placeholder="搜索音乐" icon="search" v-model="keyword" :on-icon-click="search" style="margin-bottom: 10px;" required></el-input>
+            <el-input placeholder="搜索音乐" icon="search" v-model="keyword" :on-icon-click="search" @keyup.enter.native="search" style="margin-bottom: 10px;" required></el-input>
             <el-table :data="result" v-loading.body="formLoading" element-loading-text="加载中..." max-height="500" @expand="getMp3" style="width: 100%" stripe>
                 <el-table-column prop="name" label="曲名"></el-table-column>
                 <el-table-column prop="artist" label="歌手"></el-table-column>
@@ -37,7 +37,7 @@
                                 </el-select></span>
                             </el-form-item>
                             <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="mp3"></i><yplayer :src="mp3" :detail="false" v-if="mp3"></yplayer></span>
+                                <span><i class="el-icon-loading" v-if="!mp3"></i><yplayer :src="mp3" :detail="false" v-if="mp3"></yplayer></span>
                             </el-form-item>
                             <el-form-item label="上传">
                                 <span><el-button type="primary">上传</el-button></span>

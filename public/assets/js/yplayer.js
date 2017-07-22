@@ -10,9 +10,9 @@ Vue.component('yplayer', {
         }
     },
     template: '<div class="yplayer">\
-                    <audio id="audio" @loadedmetadata="init" @timeupdate="progress" :src="src" ref="player"></audio>\
+                    <audio id="audio" @loadedmetadata="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>\
                     <div class="control" v-show="detail">\
-                        <el-slider v-model="currentTime" :min="0" :max="totalTime" :show-tooltip="false"></el-slider>\
+                        <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>\
                         <div style="font-size: 12px; color: #777; display: inline; float: right;">{{ played }} / {{ duration }}</div>\
                     </div>\
                     <el-button-group style="float: left; margin-right: 20px;">\
@@ -32,7 +32,7 @@ Vue.component('yplayer', {
             duration: '00:00',
             played: '00:00',
             volume: 100,
-            audio: null
+            audio: ''
         }
     },
     methods: {
@@ -59,6 +59,9 @@ Vue.component('yplayer', {
             this.isPlaying = false;
             this.audio.currentTime = 0;
         },
+        end: function() {
+            this.isPlaying = false
+        },
         changeVolume: function(volume) {
             this.audio.volume = volume / 100
             return volume;
@@ -68,17 +71,15 @@ Vue.component('yplayer', {
         this.audio = this.$refs.player
     }
  })
+function add0(num) {
+        return num < 10 ? '0' + num : '' + num;
+};
 function formatTime(seconds) {
-    var min = Math.floor(seconds / 60),
-    second = Math.floor(seconds % 60),
-    hour, newMin, time;
-    if(min > 60) {
-        hour = Math.floor(min / 60);
-        newMin = min % 60;
-    }
-    if(second < 10)
-        second = '0' + second;
-    if(min < 10)
-        min = '0' + min;
-    return time = hour ? (hour + ':' + newMin + ':' + second) : (min + ':' + second);
+    if (isNaN(seconds))
+        return '00:00';
+    const min = parseInt(seconds / 60);
+    const sec = parseInt(seconds - min * 60);
+    const hours = parseInt(min / 60);
+    const newMin = parseInt((seconds / 60) - (60 * parseInt((seconds / 60) / 60)));
+    return seconds >= 3600 ? add0(hours) + ':' + add0(newMin) + ':' + add0(sec) : add0(min) + ':' + add0(sec);
 }

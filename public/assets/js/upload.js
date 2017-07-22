@@ -30,6 +30,11 @@ var component = Vue.extend({
         },
         methods: {
             search: function() {
+                console.log(this.keyword);
+                if(this.keyword == null) {
+                    this.$message.error('请输入搜索词');
+                    return;
+                }
                 this.formLoading = true
                 axios.post('/Music/Search',{
                     keyword: this.keyword
