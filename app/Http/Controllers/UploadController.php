@@ -47,13 +47,13 @@ class UploadController extends Controller
             $reqFile = $request->file('file');
             $file = new File();
             $file->name = $reqFile->getClientOriginalName();
-            $file->size = $reqFile->size;
+            $file->size = $reqFile->getClientSize();
             $file->time = $request->input('time');
             $file->songName = $request->input('name');
             $file->songOrigin = $request->input('origin');
             $file->url = $uploadDir.$file->name;
 
-            $upload = $file->move($uploadDir, $file->name);
+            $upload = $reqFile->move($uploadDir, $file->name);
             // $file->size = Storage::disk('tmp')->size($file->name);
             $file = self::validateFile($file);
             Log::info('Files: '.var_export($file,true));
@@ -145,10 +145,11 @@ class UploadController extends Controller
 
 class File
 {
-    public static $name = null;
-    public static $size = null;
-    public static $type = null;
-    public static $songName = null;
-    public static $songOrigin = null;
-    public static $url = null;
+    public $name = null;
+    public $size = 0;
+    public $type = null;
+    public $time = null;
+    public $songName = null;
+    public $songOrigin = null;
+    public $url = null;
 }
