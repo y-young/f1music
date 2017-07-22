@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use Log;
+use App\Song;
 use App\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -13,75 +14,54 @@ class UploadController extends Controller
 {
 
     public static $errorMsg = array(
-        1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-        2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-        3 => '文件只上传了一部分',
-        4 => '没有文件被上传',
-        6 => '缺失临时目录',
-        7 => '写入文件失败',
-        8 => 'PHP 扩展阻止了文件上传',
-        'post_max_size' => 'The uploaded file exceeds the post_max_size directive in php.ini',
         'max_file_size' => '不能上传超过20MB的文件',
         'min_file_size' => '为保证音乐质量,请上传一个至少1MB的文件',
         'accept_file_types' => '不允许上传此类型文件',
-        'max_number_of_files' => '文件个数超出限制',
-        'abort' => '文件上传被暂停',
         'stop_upload' => '文件上传已关闭',
         'time_too_long' => '您所上传的歌曲超过了6分钟，请选择短一些的曲目',
         'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
         'already_exists' => '您所上传的音乐已经存在，请确认您所上传的尚未有人推荐',
-        'type_too_old' => '您所上传的可能是mp1或mp2文件'
     );
 
     public static $options = array(
         'min_file_size' => 1048576,
         'max_file_size' => 20*1048576,
-        'accept_file_types' => '/\.(gif|ogg|mp3)$/i',
+        'accept_file_types' => '/\.(ogg|mp3)$/i',
     );
 
     public static $stuId;
 
     public function _construct() {
         self::$stuId = AuthController::getStuId();
-  }
+    }
 
     public static function Upload(Request $request)
     {
-      Log::info('Requests: '.var_export($request->all(),true));
-      if($request->file('file')->isValid())
-        return response()->json(['error' => 0]);
-      else
-        return response()->json(['error' => 1]);
-      $uploadDir = storage_path('app/tmp/');
-      if($request->hasFile('file')) {
-        $files = $request->file('file');
-        $json = array( 'files' => array() );
-            $file = $files[0];
-            $file->name = $file->getClientOriginalName();
+        Log::info('Requests: '.var_export($request->all(),true));
+        // if($request->file('file')->isValid())
+        //   return response()->json(['error' => 0]);
+        // else
+        //   return response()->json(['error' => 1]);
+        $uploadDir = storage_path('app/tmp/');
+        if($request->hasFile('file')) {
+            $reqFile = $request->file('file');
+            $file = new File();
+            $file->name = $reqFile->getClientOriginalName();
+            $file->size = $reqFile->size;
             $file->time = $request->input('time');
-            $file->title = $request->input('title');
-            $file->origin = $request->input('origin');
+            $file->songName = $request->input('name');
+            $file->songOrigin = $request->input('origin');
             $file->url = $uploadDir.$file->name;
 
-            $json['files'][0] = array(
-                'name' => $file->name,
-                'size' => $file->getSize(),
-                'type' => $file->getClientMimeType(),
-                'url' => $file->url,
-                'deleteType' => 'DELETE',
-                'deleteUrl' => '/Delete/'.$file->name,
-             );
-
-             $upload = $file->move($uploadDir, $file->name);
-             $file->size = Storage::disk('tmp')->size($file->name);
-             $file = self::validateFile($file);
-             Log::info('Files: '.var_export($file,true));
-             if(empty($file->error))
-                 self::store($file);
-             else
-                 $json['files'][0]['error'] = $file->error;
-        // }
-         return response()->json($json);
+            $upload = $file->move($uploadDir, $file->name);
+            // $file->size = Storage::disk('tmp')->size($file->name);
+            $file = self::validateFile($file);
+            Log::info('Files: '.var_export($file,true));
+            if(empty($file->error))
+                self::store($file);
+            else
+                return response()->json(['error' => 1, 'msg' => $file->error]);
+            return response()->json(['error' => 0]);
         }
     }
 
@@ -96,21 +76,19 @@ class UploadController extends Controller
         $getID3->option_md5_data = true;
         if(!Config::get('music.openUpload'))
             $file->error = self::$errorMsg['stop_upload'];
-        elseif(!preg_match(self::$options['accept_file_types'], $file->getClientOriginalName()))
+        elseif(!preg_match(self::$options['accept_file_types'], $file->name))
             $file->error = self::$errorMsg['accept_file_types'];
-        elseif(self::$options['max_file_size'] && 
-                $file->size > self::$options['max_file_size'])
+        elseif(self::$options['max_file_size'] && $file->size > self::$options['max_file_size'])
             $error = self::$errorMsg['max_file_size'];
-        elseif(self::$options['min_file_size'] && 
-                $file->size < self::$options['min_file_size'])
+        elseif(self::$options['min_file_size'] && $file->size < self::$options['min_file_size'])
             $file->error = self::$errorMsg['min_file_size'];
-        elseif(empty($file->title))
+        elseif(empty($file->songName))
             $file->error = "请输入歌曲名称";
-        // 文件分析
+        // MP3分析
         else{
             $file->md5 = md5_file($file->url);
             $mp3_info = $getID3->analyze($file->url);
-//Log::info('Analytics:'.var_export($mp3_info,true));
+            //Log::info('Analytics:'.var_export($mp3_info,true));
             $fileformat = $mp3_info['fileformat'];
             //$md5 = $mp3_info['md5_data'];
             $file->storageName = $file->md5.'.mp3';
@@ -134,25 +112,19 @@ class UploadController extends Controller
             );
             DB::update('UPDATE `files` SET `time`=NOW() WHERE id= ?',[ $file->md5 ]);
         }
-  //      DB::statement('UNLOCK TABLES');
         //生成ID
-    //    DB::statement('LOCK TABLES `music` WRITE');
         do {
-            $id = mt_rand();
-        } while (DB::table('music')->where('id', $id)->exists());
+            $id = rand(1, 100000);
+        } while (App\Song::where('id', $id)->exists());
 
         // 插入数据库
         if (!DB::table('music')->where([
                   [ 'file', '=', $file->md5 ],
                   [ 'type', '=', $file->time ]
-               ])->exists())
-        {
-        DB::table('music')->insert(
+               ])->exists()) {
+            DB::table('music')->insert(
             [ 'id' => $id, 'file' => $file->md5, 'title' => $file->title, 'source' => $file->origin, 'original' => $file->name, 'type' => $file->time ]
-        );
-        DB::table('student')->insert(
-            [ 'id' => self::$stuId, 'order' => $id ]
-        );
+            );
   //      DB::statement('UNLOCK TABLES');
         DB::table('files')->increment('ref', 1, ['id' => $file->md5]);
         }
@@ -169,4 +141,14 @@ class UploadController extends Controller
         self::dbInsert($file);
   }
 
+}
+
+class File
+{
+    public static $name = null;
+    public static $size = null;
+    public static $type = null;
+    public static $songName = null;
+    public static $songOrigin = null;
+    public static $url = null;
 }
