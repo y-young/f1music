@@ -12,7 +12,6 @@
 */
 
 $app->get('/', function () use ($app) {
-   // return $app->version();
     return view('index');
 });
 $app->get('/Check', 'AuthController@checkLogin');
@@ -24,12 +23,6 @@ $app->group(['middleware' => 'redirect'], function () use ($app) {
     }]);
 });
 
-$app->get('/Help', function() {
-    return view('help');
-});
-$app->get('/Vote/{type}', function($type) {
-    return view('vote', ['type' => $type]);
-});
 $app->get('/Log', 'ListController@Log');
 $app->post('/Login', 'AuthController@Login');
 $app->group(['middleware' => 'adminauth', 'prefix' => 'Manage'], function() use ($app) {
@@ -47,13 +40,9 @@ $app->group(['middleware' => 'adminauth', 'prefix' => 'Manage'], function() use 
 });
 
 $app->group(['middleware' => 'musicauth'], function () use ($app) {
-    $app->get('/Upload',function() {
-        return view('upload');
-    });
-    $app->post('/Upload','UploadController@Upload');
     $app->get('/List/{type}','ListController@getList');
 });
-
+$app->post('/Upload','UploadController@Upload'); //TODO
 $app->group(['prefix' => 'Music'], function () use ($app) {
     $app->post('/Search', 'MusicController@Search');
     $app->post('/Mp3', 'MusicController@Mp3');
