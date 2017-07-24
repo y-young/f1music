@@ -1,15 +1,15 @@
 <template>
     <div class="yplayer">
         <audio id="audio" @loadedmetadata="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>
-        <div class="control" v-show="detail">
+        <div class="control" v-if="detail">
             <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
             <div id="timeDetail" style="">{{ played }} / {{ duration }}</div>
         </div>
         <el-button-group id="controls">
-            <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? 'fa-pause' : 'fa-play']"></i></el-button>
-            <el-button type="primary" @click="stop" v-show="detail"><i class="fa fa-stop"></i></el-button>
+            <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? 'fa-pause' : 'fa-play']" style="margin-right: 0;"></i></el-button>
+            <el-button type="primary" @click="stop" v-if="detail"><i class="fa fa-stop" style="margin-right: 0;"></i></el-button>
         </el-button-group>
-        <div class="control" v-show="detail">
+        <div class="control" v-if="detail">
             <i class="fa" v-bind:class="[volume ? 'fa-volume-up' : 'fa-volume-off']" id="volume"></i>
             <el-slider v-model="volume" :max="100" @change="changeVolume" id="changeVolume"></el-slider>
         </div>

@@ -5,6 +5,14 @@
         <el-breadcrumb-item>Vote</el-breadcrumb-item>
     </el-breadcrumb>
     <h3>投票{{ songNo }}</h3>
+    <el-select v-model="time" placeholder="选择时段" style="margin-bottom: 10px;">
+        <el-option label="6:30" value="1"></el-option>
+        <el-option label="7:00" value="2"></el-option>
+        <el-option label="13:45" value="3"></el-option>
+        <el-option label="18:40" value="4"></el-option>
+        <el-option label="21:35" value="5"></el-option>
+        <el-option label="22:30" value="6"></el-option>
+    </el-select>
     <el-collapse accordion @change="changeListener">
         <el-collapse-item title="No.1 未投票" name="1">
             <YPlayer src="/***REMOVED***.mp3" @progress="timeListener"></YPlayer>
@@ -26,12 +34,18 @@
     export default {
         data() {
             return {
+                time: '1',
                 currentTime: 0,
                 rate: 0,
                 songNo: 0, 
                 canVote: false,
                 texts: ['非常不合适','不合适','合适','非常合适'],
                 songs: ['***REMOVED***.mp3', '***REMOVED***.mp3']
+            }
+        },
+        watch: {
+            '$route' (to, from) {
+                this.time = this.$route.params.time
             }
         },
         methods: {
@@ -55,9 +69,6 @@
 </script>
 
 <style>
-    .fa {
-        margin-right: 0;
-    }
     .yplayer {
         margin-bottom: 20px;
     }

@@ -12,7 +12,6 @@ require('./bootstrap');
  * the application, or feel free to tweak this setup for your needs.
  */
 import App from './App.vue';
-// import ElementUI from 'element-ui';
 import VueRouter from 'vue-router';
 import {
     Breadcrumb,
@@ -86,7 +85,7 @@ const router = new VueRouter({
             }
         },
         {
-            path: '/Vote',
+            path: '/Vote/:time',
             component: Vote,
             meta: {
                 title: "投票"
@@ -102,7 +101,7 @@ const router = new VueRouter({
     ]
 });
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
+  document.title = to.meta.title + ' - 福州一中 校园音乐征集'
   next()
 })
 const app = new Vue({

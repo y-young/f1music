@@ -14,8 +14,8 @@
                 <el-table-column prop="album" label="专辑"></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
-                        <el-form label-position="left" inline>
-                            <el-form-item label="时段">
+                        <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" inline>
+                            <el-form-item label="时段" prop="time">
                                 <span><el-select v-model="ruleForm.time" placeholder="请选择时段">
                                     <el-option label="6:30" value="1"></el-option>
                                     <el-option label="7:00" value="2"></el-option>
@@ -25,17 +25,17 @@
                                     <el-option label="22:30" value="6"></el-option>
                                 </el-select></span>
                             </el-form-item>
-                            <el-form-item label="曲名">
-                                <span><el-input v-model="props.row.name"></el-input></span>
+                            <el-form-item label="曲名" prop="name">
+                                <span><el-input v-model="ruleForm.name" placeholder="歌曲名称"></el-input></span>
                             </el-form-item>
-                            <el-form-item label="来源">
-                                <span><el-select v-model="ruleForm.source" placeholder="请选择来源" filterable allow-create>
+                            <el-form-item label="来源" prop="origin">
+                                <span><el-select v-model="ruleForm.source" placeholder="请选择或输入来源" filterable allow-create>
                                     <el-option :label="props.row.artist.toString()" :value="props.row.artist.toString()"></el-option>
                                     <el-option :label="props.row.album" :value="props.row.album"></el-option>
                                 </el-select></span>
                             </el-form-item>
                             <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="!mp3"></i><YPlayer :src="mp3" :detail="false" v-if="mp3"></YPlayer></span>
+                                <span><i class="el-icon-loading" v-if="!props.row.mp3"></i><YPlayer :src="props.row.mp3" :detail="false" v-if="props.row.mp3"></YPlayer></span>
                             </el-form-item>
                             <el-form-item label="上传">
                                 <span><el-button type="primary">上传</el-button></span>
@@ -48,7 +48,7 @@
         <el-tab-pane label="手动上传" name="manual">
             <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" label-width="80px" enctype="multipart/form-data">
                 <el-form-item label="时段" prop="time">
-                    <el-select v-model="ruleForm.time" placeholder="请选择时段">
+                    <el-select v-model="ruleForm.time" placeholder="选择时段">
                         <el-option label="6:30" value="1"></el-option>
                         <el-option label="7:00" value="2"></el-option>
                         <el-option label="13:45" value="3"></el-option>
@@ -71,7 +71,7 @@
                     </el-upload>
                 </el-form-item><br>
                 <el-form-item>
-                    <el-button type="primary" :loading="btnLoading" @click="submit">@{{ btnLoading ? "正在提交" : "提交" }}</el-button>
+                    <el-button type="primary" :loading="btnLoading" @click="submit">{{ btnLoading ? "正在提交" : "提交" }}</el-button>
                 </el-form-item>
             </el-form>
         </el-tab-pane>
@@ -80,7 +80,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import YPlayer from './YPlayer.vue';
 
     export default {
@@ -90,7 +89,7 @@
                 btnLoading: false,
                 keyword: null,
                 result: null,
-                mp3: null,
+                mp3: '',
                 ruleForm: {
                     time: '',
                     name: '',
@@ -112,7 +111,6 @@
         },
         methods: {
             search: function() {
-                console.log(this.keyword);
                 if(this.keyword == null) {
                     this.$message.error('请输入搜索词');
                     return;
@@ -135,14 +133,15 @@
                 });
             },
             getMp3: function(row, expanded) {
-                this.mp3 = null
+                this.ruleForm.name = row.name
+                console.log(row)
                 axios.post('/Music/Mp3',{
                     id: row.id
                 })
                 .then((res) => {
                     console.log(res.data);
                     if(res.data.length > 0) {
-                        this.mp3 = res.data
+                        this.$set(row, 'mp3', res.data) // !IMPORTANT
                     } else {
                         this.$message.error('暂时无法试听，请重试');
                     }
@@ -150,6 +149,7 @@
                 .catch((err) => {
                     console.log(err);
                 });
+                return row;
             },
             cloudUpload: function() {
 
