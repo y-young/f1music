@@ -2,11 +2,13 @@
 namespace App\Http\Controllers;
 use Log;
 use App\Song;
+use App\File;
 use App\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 require_once(Config::get('music.apppath').'/Http/Controllers/getid3/getid3.php');
 require_once(Config::get('music.apppath').'/Http/Controllers/getid3/write.php');
 
@@ -45,7 +47,7 @@ class UploadController extends Controller
         $uploadDir = storage_path('app/tmp/');
         if($request->hasFile('file')) {
             $reqFile = $request->file('file');
-            $file = new File();
+            $file = new UnvalidatedFile();
             $file->name = $reqFile->getClientOriginalName();
             $file->size = $reqFile->getClientSize();
             $file->time = $request->input('time');
@@ -143,7 +145,7 @@ class UploadController extends Controller
 
 }
 
-class File
+class UnvalidatedFile
 {
     public $name = null;
     public $size = 0;
