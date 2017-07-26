@@ -1,8 +1,9 @@
 <?php
 namespace App\Http\Controllers;
-use Log;
 use App\Song;
 use App\File;
+use Log;
+use Validator;
 use App\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -15,15 +16,25 @@ require_once(Config::get('music.apppath').'/Http/Controllers/getid3/write.php');
 class UploadController extends Controller
 {
 
-    public static $errorMsg = array(
-        'max_file_size' => '不能上传超过20MB的文件',
-        'min_file_size' => '为保证音乐质量,请上传一个至少1MB的文件',
-        'accept_file_types' => '不允许上传此类型文件',
+    public static $messages = [
+        'time.required' => '请选择时段',
+        'time.in' => '参数错误,请重新选择时段',
+        'name.required' => '请填写曲名',
+        'string' => ':attribute 应为文本格式',
+        'songUrl.url' => '云音乐地址应为URL格式',
+        'songUrl.required_without' => '参数错误,请重新搜索音乐',
+        'file.required_without' => '请上传一个文件',
+        'file.max' => '禁止上传超过20MB的文件',
+        'file.min' => '为保证音乐质量,请上传一个至少1MB的文件',
+        'file.mimes' => '不允许上传此类型文件'  
+    ];
+
+    public static $errorMsg = [
         'stop_upload' => '文件上传已关闭',
         'time_too_long' => '您所上传的歌曲超过了6分钟，请选择短一些的曲目',
         'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
-        'already_exists' => '您所上传的音乐已经存在，请确认您所上传的尚未有人推荐',
-    );
+        'already_exists' => '您所上传的音乐已经存在，请确认您所上传的尚未有人推荐'
+    ];
 
     public static $options = array(
         'min_file_size' => 1048576,
@@ -40,10 +51,19 @@ class UploadController extends Controller
     public static function Upload(Request $request)
     {
         Log::info('Requests: '.var_export($request->all(),true));
-        // if($request->file('file')->isValid())
-        //   return response()->json(['error' => 0]);
-        // else
-        //   return response()->json(['error' => 1]);
+        $validator = Validator::make($request->all(), [
+            'time' => [
+                'required',
+                Rule::in(['1', '2', '3', '4', '5', '6'])
+            ],
+            'name' => 'required | string',
+            'origin' => 'nullable | string',
+            'songUrl' => 'required_without: file | url',
+            'file' => 'required_without: songUrl | file | mimes: mp3, ogg | min: 1024 | max: 20480'
+        ], self::$messages);
+        if($validator->fails())
+            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
+
         $uploadDir = storage_path('app/tmp/');
         if($request->hasFile('file')) {
             $reqFile = $request->file('file');
