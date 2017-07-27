@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Song extends Model
+class File extends Model
 {
     protected $table = 'files';
+    protected $guarded = [];
+    public $timestamps = false;
 }

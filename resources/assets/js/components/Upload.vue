@@ -14,9 +14,9 @@
                 <el-table-column prop="album" label="专辑"></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
-                        <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" inline>
+                        <el-form :model="uploadForm" label-position="left" :rules="rules" ref="uploadForm" inline>
                             <el-form-item label="时段" prop="time">
-                                <span><el-select v-model="ruleForm.time" placeholder="请选择时段">
+                                <span><el-select v-model="uploadForm.time" placeholder="请选择时段">
                                     <el-option label="6:30" value="1"></el-option>
                                     <el-option label="7:00" value="2"></el-option>
                                     <el-option label="13:45" value="3"></el-option>
@@ -26,10 +26,10 @@
                                 </el-select></span>
                             </el-form-item>
                             <el-form-item label="曲名" prop="name">
-                                <span><el-input v-model="ruleForm.name" placeholder="歌曲名称"></el-input></span>
+                                <span><el-input v-model="uploadForm.name" placeholder="歌曲名称"></el-input></span>
                             </el-form-item>
                             <el-form-item label="来源" prop="origin">
-                                <span><el-select v-model="ruleForm.source" placeholder="请选择或输入来源" filterable allow-create>
+                                <span><el-select v-model="uploadForm.source" placeholder="请选择或输入来源" filterable allow-create>
                                     <el-option :label="props.row.artist.toString()" :value="props.row.artist.toString()"></el-option>
                                     <el-option :label="props.row.album" :value="props.row.album"></el-option>
                                 </el-select></span>
@@ -46,9 +46,15 @@
             </el-table>
         </el-tab-pane>
         <el-tab-pane label="手动上传" name="manual">
-            <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" label-width="80px" enctype="multipart/form-data">
+            <!-- <el-steps :space="100" :active="0" finish-status="success">
+                <el-step title="填写信息"></el-step>
+                <el-step title="上传文件"></el-step>
+                <el-step title="完成"></el-step>
+            </el-steps> -->
+
+            <el-form :model="uploadForm" label-position="left" :rules="rules" ref="uploadForm" label-width="80px" enctype="multipart/form-data">
                 <el-form-item label="时段" prop="time">
-                    <el-select v-model="ruleForm.time" placeholder="选择时段">
+                    <el-select v-model="uploadForm.time" placeholder="选择时段">
                         <el-option label="6:30" value="1"></el-option>
                         <el-option label="7:00" value="2"></el-option>
                         <el-option label="13:45" value="3"></el-option>
@@ -58,13 +64,13 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="曲名" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="歌曲名称"></el-input>
+                    <el-input v-model="uploadForm.name" placeholder="歌曲名称"></el-input>
                 </el-form-item>
-                <el-form-item label="来源" prop="source">
-                    <el-input v-model="ruleForm.source" placeholder="该曲目来自的专辑、音乐家或节目、游戏等，不是表示上传者，不明来源可以留空"></el-input>
+                <el-form-item label="来源" prop="origin">
+                    <el-input v-model="uploadForm.origin" placeholder="该曲目来自的专辑、音乐家或节目、游戏等，不是表示上传者，不明来源可以留空"></el-input>
                 </el-form-item>
                 <el-form-item label="上传文件" prop="file">
-                    <el-upload v-model="ruleForm.file" accept="audio/mpeg" :data="ruleForm" :before-upload="beforeUpload" :on-success="onSuccess" drag action="/Upload">
+                    <el-upload v-model="uploadForm.file" accept="audio/mpeg" :data="uploadForm" :before-upload="beforeUpload" :on-success="onSuccess" :on-error="onError" :file-list="fileList" drag action="/Upload">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <div class="el-upload__tip" slot="tip">只能上传mp3文件，且大小不超过20MB</div>
@@ -90,7 +96,8 @@
                 keyword: null,
                 result: null,
                 mp3: '',
-                ruleForm: {
+                fileList: [],
+                uploadForm: {
                     time: '',
                     name: '',
                     source: '',
@@ -102,10 +109,7 @@
                     ],
                     name: [
                         { required: true, message: '请输入曲名', trigger: 'blur'}
-                    ],
-                    file: [
-                        { required: true, message: '请上传文件', trigger: 'blur'}
-                    ],
+                    ]
                 }
             }
         },
@@ -133,7 +137,7 @@
                 });
             },
             getMp3: function(row, expanded) {
-                this.ruleForm.name = row.name
+                this.uploadForm.name = row.name
                 console.log(row)
                 axios.post('/Music/Mp3',{
                     id: row.id
@@ -155,15 +159,29 @@
 
             },
             onSuccess: function(response, file, fileList) {
-                if(response && response.length > 0) {
+                if(response) {
                     if(response.error == 0)
                         this.$message.success('上传成功!');
-                    else
-                        this.$message.error('上传失败');
+                    else {
+                        this.$message.error(response.msg);
+                        this.fileList = [];
+                    }
                 }
-                console.log(response);
+            },
+            onError: function(err) {
+                console.log('Error:'+err);
+                this.$message.error(err);
             },
             beforeUpload(file) {
+                var error = false;
+                this.$refs['uploadForm'].validate((valid) => {
+                    if (!valid) {
+                        this.$message.error("请修正所有错误后再上传");
+                        error = true;
+                    }
+                });
+                if(error)
+                    return false;
                 const tooBig = file.size / 1024 / 1024 > 20;
                 const tooSmall = file.size / 1024 / 1024 < 1;
 
@@ -176,7 +194,7 @@
                 return !tooBig && !tooSmall;
             },
             submit: function() {
-                alert("success");
+                console.log(this.fileList);
             }
         },
         components: {

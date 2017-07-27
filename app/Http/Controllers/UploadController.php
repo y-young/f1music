@@ -1,15 +1,15 @@
 <?php
 namespace App\Http\Controllers;
-use App\Song;
-use App\File;
 use Log;
 use Validator;
+use App\File;
+use App\Song;
 use App\Http\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 require_once(Config::get('music.apppath').'/Http/Controllers/getid3/getid3.php');
 require_once(Config::get('music.apppath').'/Http/Controllers/getid3/write.php');
 
@@ -26,14 +26,14 @@ class UploadController extends Controller
         'file.required_without' => '请上传一个文件',
         'file.max' => '禁止上传超过20MB的文件',
         'file.min' => '为保证音乐质量,请上传一个至少1MB的文件',
-        'file.mimes' => '不允许上传此类型文件'  
+        'file.mimetypes' => '不允许上传此类型文件'  
     ];
 
     public static $errorMsg = [
         'stop_upload' => '文件上传已关闭',
         'time_too_long' => '您所上传的歌曲超过了6分钟，请选择短一些的曲目',
         'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
-        'already_exists' => '您所上传的音乐已经存在，请确认您所上传的尚未有人推荐'
+        'already_exists' => '您所上传的音乐在该时段已经有人推荐'
     ];
 
     public static $options = array(
@@ -44,13 +44,12 @@ class UploadController extends Controller
 
     public static $stuId;
 
-    public function _construct() {
-        self::$stuId = AuthController::getStuId();
-    }
-
     public static function Upload(Request $request)
     {
+        self::$stuId = AuthController::checkLogin();
         Log::info('Requests: '.var_export($request->all(),true));
+        if(!Config::get('music.openUpload'))
+            return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
         $validator = Validator::make($request->all(), [
             'time' => [
                 'required',
@@ -58,66 +57,61 @@ class UploadController extends Controller
             ],
             'name' => 'required | string',
             'origin' => 'nullable | string',
-            'songUrl' => 'required_without: file | url',
-            'file' => 'required_without: songUrl | file | mimes: mp3, ogg | min: 1024 | max: 20480'
+            // 'songUrl' => 'required_without: file | url',
+            'file' => 'required_without:songUrl | file | min: 1024 | max: 20480'
         ], self::$messages);
         if($validator->fails())
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
 
-        $uploadDir = storage_path('app/tmp/');
-        if($request->hasFile('file')) {
+        $tmpDir = storage_path('app/tmp/');
+        if($request->hasFile('file')) { //Manual Upload
             $reqFile = $request->file('file');
-            $file = new UnvalidatedFile();
-            $file->name = $reqFile->getClientOriginalName();
-            $file->size = $reqFile->getClientSize();
-            $file->time = $request->input('time');
-            $file->songName = $request->input('name');
-            $file->songOrigin = $request->input('origin');
-            $file->url = $uploadDir.$file->name;
+            $uFile = new UnvalidatedFile();
+            $uFile->name = $reqFile->getClientOriginalName();
+            $uFile->size = $reqFile->getClientSize();
+            $uFile->time = $request->input('time');
+            $uFile->songName = $request->input('name');
+            $uFile->songOrigin = $request->input('origin');
+            $uFile->url = $tmpDir.$uFile->name;
 
-            $upload = $reqFile->move($uploadDir, $file->name);
-            // $file->size = Storage::disk('tmp')->size($file->name);
-            $file = self::validateFile($file);
-            Log::info('Files: '.var_export($file,true));
-            if(empty($file->error))
-                self::store($file);
+            $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
+            $vFile = self::validateFile($uFile);
+            Log::info('Files: '.var_export($vFile,true));
+            if(empty($vFile->error)) {
+                $vFile = self::store($vFile);
+                self::insert($vFile);
+            }
             else
-                return response()->json(['error' => 1, 'msg' => $file->error]);
+                return response()->json(['error' => 1, 'msg' => $vFile->error]);
             return response()->json(['error' => 0]);
         }
     }
 
     public static function validateFile($file) {
-        $error = null;
-        // 初始化文件处理
-        $getID3 = new \getID3;
-        $getID3->option_tag_id3v1 = false;
-        $getID3->option_tag_id3v2 = false;
-        $getID3->option_tag_lyrics3 = false;
-        $getID3->option_tag_apetag = false;
-        $getID3->option_md5_data = true;
-        if(!Config::get('music.openUpload'))
-            $file->error = self::$errorMsg['stop_upload'];
-        elseif(!preg_match(self::$options['accept_file_types'], $file->name))
-            $file->error = self::$errorMsg['accept_file_types'];
-        elseif(self::$options['max_file_size'] && $file->size > self::$options['max_file_size'])
-            $error = self::$errorMsg['max_file_size'];
-        elseif(self::$options['min_file_size'] && $file->size < self::$options['min_file_size'])
-            $file->error = self::$errorMsg['min_file_size'];
-        elseif(empty($file->songName))
-            $file->error = "请输入歌曲名称";
-        // MP3分析
-        else{
-            $file->md5 = md5_file($file->url);
+        $file->error = null;
+        $file->md5 = md5_file($file->url);
+        $file->storageName = $file->md5.'.mp3';
+
+        if(File::where('md5', $file->md5)->exists()) {
+            $file->id = File::where('md5', $file->md5)->first()->id; //文件已上传过,获取ID
+            if(Song::where([
+                    ['playtime', '=', $file->time],
+                    ['file', '=', $file->id]
+                ])->exists())
+                $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
+            //else 文件已经上传该时段但还未有人推荐,则直接使用,无需验证
+        } else { //文件未上传过,则进行验证
+            // 初始化文件处理
+            $getID3 = new \getID3;
+            $getID3->option_tag_id3v1 = false;
+            $getID3->option_tag_id3v2 = false;
+            $getID3->option_tag_lyrics3 = false;
+            $getID3->option_tag_apetag = false;
+            $getID3->option_md5_data = true;
             $mp3_info = $getID3->analyze($file->url);
-            //Log::info('Analytics:'.var_export($mp3_info,true));
-            $fileformat = $mp3_info['fileformat'];
-            //$md5 = $mp3_info['md5_data'];
-            $file->storageName = $file->md5.'.mp3';
+            // Log::info('Mp3:'.var_export($mp3_info,true));
             $file->playtime = intval(round($mp3_info['playtime_seconds']));
-            if (Storage::disk('public')->exists($file->storageName))
-                $file->error = self::$errorMsg['already_exists'];
-            elseif ($file->playtime < 2.5 * 60)
+            if($file->playtime < 2.5 * 60)
                 $file->error = self::$errorMsg['time_too_short'];
             elseif ($file->playtime > 6 * 60)
                 $file->error = self::$errorMsg['time_too_long'];
@@ -125,48 +119,41 @@ class UploadController extends Controller
         return $file;
     }
 
-    public static function dbInsert($file) {
-   //     DB::statement('LOCK TABLES `files` WRITE');
-        if (!DB::table('files')->where('id', $file->md5)->exists())
-        {
-            DB::table('files')->insert(
-                [ 'id' => $file->md5, 'playtime' => $file->playtime,  'filesize' => $file->size ]
-            );
-            DB::update('UPDATE `files` SET `time`=NOW() WHERE id= ?',[ $file->md5 ]);
-        }
-        //生成ID
-        do {
-            $id = rand(1, 100000);
-        } while (App\Song::where('id', $id)->exists());
+    public static function insert($file) {
+        $song = Song::create([
+                    'playtime' => $file->time,
+                    'name' => $file->songName,
+                    'origin' => $file->songOrigin,
+                    'uploader' => self::$stuId,
+                    'file' => $file->id
+                ]);
+        $song->save();
+    }
 
-        // 插入数据库
-        if (!DB::table('music')->where([
-                  [ 'file', '=', $file->md5 ],
-                  [ 'type', '=', $file->time ]
-               ])->exists()) {
-            DB::table('music')->insert(
-            [ 'id' => $id, 'file' => $file->md5, 'title' => $file->title, 'source' => $file->origin, 'original' => $file->name, 'type' => $file->time ]
-            );
-  //      DB::statement('UNLOCK TABLES');
-        DB::table('files')->increment('ref', 1, ['id' => $file->md5]);
+    public static function store($vFile) {
+        if(empty($vFile->id)) { //未上传过则存储
+            //消除标签信息
+            $writer = new \getid3_writetags;
+            $writer->filename = $vFile->url;
+            $writer->overwrite_tags = true;
+            $writer->remove_other_tags = true;
+            $writer->WriteTags();
+            Storage::move('tmp/'.$vFile->name, 'uploads/'.$vFile->storageName);
+            $file = File::create([
+                    'md5' => $vFile->md5,
+                    'uploader' => self::$stuId
+                    ]);
+            $file->save();
+            $vFile->id = $file->id;
         }
-  }
-
-    public static function store($file) {
-        // 消除标签信息
-        $writer = new \getid3_writetags;
-        $writer->filename = $file->url;
-        $writer->overwrite_tags = true;
-        $writer->remove_other_tags = true;
-        $writer->WriteTags();
-        Storage::move('tmp/'.$file->name, 'uploads/'.$file->storageName);
-        self::dbInsert($file);
-  }
+        return $vFile;
+    }
 
 }
 
 class UnvalidatedFile
 {
+    public $id = null;
     public $name = null;
     public $size = 0;
     public $type = null;

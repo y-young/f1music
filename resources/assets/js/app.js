@@ -38,7 +38,10 @@ import {
     Select,
     Option,
     Loading,
-    MessageBox
+    Message,
+    MessageBox,
+    // Steps,
+    // Step
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
@@ -69,10 +72,13 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
+// Vue.use(Steps);
+// Vue.use(Step);
 Vue.use(Loading.directive);
 Vue.use(VueRouter);
 
 Vue.prototype.$loading = Loading.service
+Vue.prototype.$message = Message
 Vue.prototype.$alert = MessageBox.alert
 
 const router = new VueRouter({
@@ -103,6 +109,16 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title + ' - 福州一中 校园音乐征集'
   next()
+})
+axios.interceptors.response.use(data => {
+    loadinginstace.close()
+    return data
+}, error => {
+    loadinginstace.close()
+    Message.error({
+        message: '加载失败'
+    })
+    return Promise.reject(error)
 })
 const app = new Vue({
     el: '#app',

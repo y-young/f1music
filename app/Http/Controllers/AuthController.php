@@ -74,7 +74,7 @@ class AuthController extends Controller
 		$stuId = Session::get('stuId');
         $authData = self::getCookie();
 		if(!empty($authData) && $stuId == $authData->stuId){
-			return true;
+			return $stuId;
 		} else {
             $authData = self::getCookie();
 			if($authData){
@@ -140,10 +140,6 @@ class AuthController extends Controller
         return in_array($authData->stuId,$admins);
     }
 
-    public static function getStuId() {
-        $authData = self::getCookie();
-        return $authData->stuId;
-    }
 }
 
 class AuthData
