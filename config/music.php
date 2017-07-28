@@ -1,7 +1,7 @@
 <?php
 return [
     'openUpload' => true,
-    'openRank' => true,
+    'openVote' => true,
     'admin' => [
         '***REMOVED***',
     ],

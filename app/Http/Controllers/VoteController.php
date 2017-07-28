@@ -1,42 +1,53 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Http\Response;
+
+use Validator;
+use App\Song;
+use App\Vote;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class VoteController extends Controller
 {
 
     public static $stuId;
 
-    public function _construct() {
-        self::$stuId = AuthController::getStuId();
-  }
+    public static $messages = [
+        'id.required' => '参数错误,请刷新页面',
+        'id.exists' => '参数错误,请刷新页面',
+        'vote.required' => '请选择您的评价',
+        'vote.in' => '参数错误,请重试'
+    ];
 
-    public static function getList($id = null) {
-        $files = ListController::List($type);
-        return response()->json(['error' => 0,'files' =>$musicList]);
-  }
+    public function __construct(Request $request) {
+        self::$stuId = AuthController::checkLogin($request);
+    }
 
-    public static function Vote(Request $request) {
-        if($request->has('id') && $request->has('vote')) {
-            $vote = intval($request->input('vote'));
-            if(!in_array($vote, array(-10, -5, 5, 10)))
-                return response()->json(['error' => 1, 'msg' => '参数错误']);
-            if(DB::table('rank')->where([
-                [ 'id', '=', $id ],
-                ['stu_id', '=', $stuid]
-            ])->exist()) {
-                DB::update('UPDATE `rank` SET `rank`= ? WHERE `id`= ? AND `stu_id`= ?',[ $vote, $request->input('id'), self::$stuId ]);
-             } else {
-                DB::table('rank')->insert(
-                    [ 'id' => $request->input('id'), 'stu_id' => self::$stuId, 'rank' => $vote ]
-                );
-            }
-      }
-  }
+    public function Vote(Request $request) {
+        if(!Config::get('music.openVote')) {
+            return response()->json(['error' => 1, 'msg' => '投票已关闭']);
+        }
+        $validator = Validator::make($request->all(), [
+            'id' => 'required | exists:songs',
+            'vote' => [
+                'required',
+                Rule::in([-10, -5, 5, 10])
+            ]
+        ], self::$messages);
+        if($validator->fails())
+            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
+
+        $vote = Vote::updateOrCreate(
+            ['song_id' => $request->input('id'), 'voter' => self::$stuId],
+            ['vote' => $request->input('vote')]
+        );
+        return response()->json(['error' => 0]);
+    }
 
 }

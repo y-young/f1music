@@ -18,7 +18,7 @@ class RedirectIfLogged
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (AuthController::checkLogin()) {
+        if (AuthController::checkLogin($request)) {
             return redirect('/');
         }
         return $next($request);

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Middleware;
+
 use Closure;
 use App\Http\Controllers\AuthController;
 
@@ -14,8 +16,8 @@ class AdminAuth
      */
     public function handle($request, Closure $next)
     {
-        if(!AuthController::isAdmin())
-        abort(404);
+        if(!AuthController::isAdmin($request))
+            abort(404);
         return $next($request);
     }
 }

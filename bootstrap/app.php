@@ -26,6 +26,9 @@ $app = new Laravel\Lumen\Application(
 $app->configure('filesystems');
 class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 
+$app->configure('session');
+$app->alias('session', 'Illuminate\Session\SessionManager');
+
  $app->withFacades();
 
  $app->withEloquent();
@@ -69,11 +72,8 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-// ]);
-
- $app->routeMiddleware([
+$app->middleware([Illuminate\Session\Middleware\StartSession::class]);
+$app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
      'musicauth' => App\Http\Middleware\MusicAuth::class,
      'adminauth' => App\Http\Middleware\AdminAuth::class,
@@ -95,6 +95,8 @@ $app->singleton(
  $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
+//Enable Session
+$app->register(Illuminate\Session\SessionServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

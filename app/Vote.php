@@ -4,8 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Song extends Model
+class Vote extends Model
 {
-    protected $table = 'vote';
+    protected $table = 'votes';
     public $timestamps = false;
+    protected $guarded = [];
 }
