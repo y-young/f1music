@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Log;
 use Validator;
 use App\File;
 use App\Song;
-use App\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -21,12 +22,13 @@ class UploadController extends Controller
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
         'string' => ':attribute 应为文本格式',
-        'songUrl.url' => '云音乐地址应为URL格式',
-        'songUrl.required_without' => '参数错误,请重新搜索音乐',
+        'url.required_without' => '参数错误,请重新搜索音乐',
+        'url.url' => '云音乐地址应为URL格式',
         'file.required_without' => '请上传一个文件',
+        'file.file' => '上传的文件无效,请重新上传',
         'file.max' => '禁止上传超过20MB的文件',
         'file.min' => '为保证音乐质量,请上传一个至少1MB的文件',
-        'file.mimetypes' => '不允许上传此类型文件'  
+        'file.mimes' => '不允许上传此类型文件'  
     ];
 
     public static $errorMsg = [
@@ -35,7 +37,6 @@ class UploadController extends Controller
         'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
         'already_exists' => '您所上传的音乐在该时段已经有人推荐'
     ];
-
     public static $options = array(
         'min_file_size' => 1048576,
         'max_file_size' => 20*1048576,
@@ -44,9 +45,11 @@ class UploadController extends Controller
 
     public static $stuId;
 
-    public static function Upload(Request $request)
-    {
-        self::$stuId = AuthController::checkLogin();
+    public function __construct(Request $request) {
+        self::$stuId = AuthController::checkLogin($request);
+    }
+
+    public static function Upload(Request $request) {
         Log::info('Requests: '.var_export($request->all(),true));
         if(!Config::get('music.openUpload'))
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
@@ -57,21 +60,22 @@ class UploadController extends Controller
             ],
             'name' => 'required | string',
             'origin' => 'nullable | string',
-            // 'songUrl' => 'required_without: file | url',
-            'file' => 'required_without:songUrl | file | min: 1024 | max: 20480'
+            'url' => ['required_without:file', 'url'],
+            'file' => ['required_without:url', 'file', 'mimes:mp3', 'min: 1024', 'max: 20480']
         ], self::$messages);
         if($validator->fails())
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
 
         $tmpDir = storage_path('app/tmp/');
+        $uFile = new UnvalidatedFile();
+        $uFile->time = $request->input('time');
+        $uFile->songName = $request->input('name');
+        $uFile->songOrigin = $request->input('origin');
+
         if($request->hasFile('file')) { //Manual Upload
             $reqFile = $request->file('file');
-            $uFile = new UnvalidatedFile();
             $uFile->name = $reqFile->getClientOriginalName();
             $uFile->size = $reqFile->getClientSize();
-            $uFile->time = $request->input('time');
-            $uFile->songName = $request->input('name');
-            $uFile->songOrigin = $request->input('origin');
             $uFile->url = $tmpDir.$uFile->name;
 
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
@@ -84,6 +88,8 @@ class UploadController extends Controller
             else
                 return response()->json(['error' => 1, 'msg' => $vFile->error]);
             return response()->json(['error' => 0]);
+        } else { //Cloud Music Upload
+            Storage::put('file.txt', self::curlGet($request->input('url')));
         }
     }
 
@@ -149,6 +155,18 @@ class UploadController extends Controller
         return $vFile;
     }
 
+    public static function curlGet($url) {
+        $ch = curl_init();
+			  curl_setopt($ch, CURLOPT_URL, $url);
+			  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        return $ch;
+			  $output = curl_exec($ch);
+        if(curl_errno($ch)) {
+            return false;
+        }
+        curl_close($ch);
+        return $output;
+    }
 }
 
 class UnvalidatedFile
