@@ -81,10 +81,10 @@ class UploadController extends Controller
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
         } else { //Cloud Music Upload
             //TODO: 检查Mp3文件是否可用
-            return response()->json(['error' => 0]);
+            //return response()->json(['error' => 0]);
             $uFile->name = explode('/', $request->input('url'))[9];
             Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
-            $uFile->url = Storage::disk('tmp')->url('tmp/'.$uFile->name);
+            $uFile->url = $tmpDir.$uFile->name;
         }
         $vFile = self::validateFile($uFile);
         Log::info('Files: '.var_export($vFile,true));
@@ -106,7 +106,7 @@ class UploadController extends Controller
             $file->id = File::where('md5', $file->md5)->first()->id; //文件已上传过,获取ID
             if(Song::where([
                     ['playtime', '=', $file->time],
-                    ['file', '=', $file->id]
+                    ['file_id', '=', $file->id]
                 ])->exists())
                 $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
             //else 文件已经上传该时段但还未有人推荐,则直接使用,无需验证
@@ -134,7 +134,7 @@ class UploadController extends Controller
                     'name' => $file->songName,
                     'origin' => $file->songOrigin,
                     'uploader' => self::$stuId,
-                    'file' => $file->id
+                    'file_id' => $file->id
                 ]);
         $song->save();
     }

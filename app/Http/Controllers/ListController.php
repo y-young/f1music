@@ -6,6 +6,7 @@ use Log;
 use Validator;
 use App\File;
 use App\Song;
+use App\Vote;
 use App\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -18,6 +19,8 @@ class ListController extends Controller
 {
 
     public static function getList(Request $request) {
+        if(!Config::get('music.openVote'))
+            return response()->json(['error' => 0, 'songs' => []]);
         $validator = Validator::make($request->all(), [
             'time' => [
                 'required',
@@ -34,12 +37,18 @@ class ListController extends Controller
             });*/
             $musicList = Song::select('id', 'file_id')->where('playtime', $request->input('time'))->inRandomOrder()->get();
             $songs = $musicList->mapWithKeys(function ($song) {
-                return [$song['id'] => $song->file->url()];
+                $vote = $song->votes->where('voter', '***REMOVED***')->first();
+                return [
+                    $song['id'] => [
+                        $song->file->url(),
+                        empty($vote) ? 0 : $vote->vote
+                    ]
+                ];
             });
-            return response()->json(['error' => 0, 'songs' =>$songs]);
+            return response()->json(['error' => 0, 'songs' =>$songs->all()]);
     }
 
-    public static function getListAdmin(Request $request) {
+    public static function adminList(Request $request) {
         if(Cache::has('musiclist'.$request->input('type')))
             $musicList = Cache::get('musiclist'.$request->input('type'));
         else
