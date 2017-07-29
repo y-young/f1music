@@ -29,16 +29,17 @@
                                 <span><el-input v-model="uploadForm.name" placeholder="歌曲名称"></el-input></span>
                             </el-form-item>
                             <el-form-item label="来源" prop="origin">
-                                <span><el-select v-model="uploadForm.source" placeholder="请选择或输入来源" filterable allow-create>
+                                <span><el-select v-model="uploadForm.origin" placeholder="请选择或输入来源" filterable allow-create>
                                     <el-option :label="props.row.artist.toString()" :value="props.row.artist.toString()"></el-option>
                                     <el-option :label="props.row.album" :value="props.row.album"></el-option>
                                 </el-select></span>
                             </el-form-item>
                             <el-form-item label="试听">
                                 <span><i class="el-icon-loading" v-if="!props.row.mp3"></i><YPlayer :src="props.row.mp3" :detail="false" v-if="props.row.mp3"></YPlayer></span>
+                                <input type="hidden" v-model="uploadForm.url" :value="props.row.mp3">
                             </el-form-item>
                             <el-form-item label="上传">
-                                <span><el-button type="primary">上传</el-button></span>
+                                <span><el-button type="primary" :loading="btnLoading" @click="cloudUpload(props.row.mp3)">上传</el-button></span>
                             </el-form-item>
                         </el-form>
                     </template>
@@ -93,6 +94,7 @@
             return {
                 formLoading: false,
                 btnLoading: false,
+                error: false,
                 keyword: null,
                 result: null,
                 mp3: '',
@@ -100,8 +102,9 @@
                 uploadForm: {
                     time: '',
                     name: '',
-                    source: '',
-                    file: ''
+                    origin: '',
+                    file: '',
+                    url: ''
                 },
                 rules: {
                     time: [
@@ -155,8 +158,33 @@
                 });
                 return row;
             },
-            cloudUpload: function() {
-
+            cloudUpload: function(url) {
+                this.$refs.uploadForm.validate((valid) => {
+                    if (!valid) {
+                        this.$message.error("请修正所有错误后再上传");
+                        this.error = true;
+                    } else
+                        this.error = false;
+                });
+                if(this.error) return;
+                axios.post('/Upload',{
+                    time: this.uploadForm.time,
+                    name: this.uploadForm.name,
+                    origin: this.uploadForm.origin,
+                    url: url
+                })
+                .then((res) => {
+                    this.btnLoading = false
+                    if(res.data.error == 0) {
+                        this.$message.success('上传成功!');
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                .catch((err) => {
+                    this.btnLoading = false
+                    console.log(err);
+                });
             },
             onSuccess: function(response, file, fileList) {
                 if(response) {
@@ -173,25 +201,28 @@
                 this.$message.error(err);
             },
             beforeUpload(file) {
-                var error = false;
-                this.$refs['uploadForm'].validate((valid) => {
+                this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
                         this.$message.error("请修正所有错误后再上传");
-                        error = true;
-                    }
+                        this.error = true;
+                    } else
+                        this.error = false;
                 });
-                if(error)
-                    return false;
+                if(this.error) return false;
+                const isMp3 = file.type === 'audio/mpeg';
                 const tooBig = file.size / 1024 / 1024 > 20;
                 const tooSmall = file.size / 1024 / 1024 < 1;
 
+                if(!isMp3) {
+                    this.$message.error('只能上传mp3文件');
+                }
                 if (tooBig) {
                     this.$message.error('上传歌曲大小不能超过 20MB!');
                 }
                 if (tooSmall) {
                     this.$message.error('为保证音乐质量，请上传一个至少 1MB的文件!');
                 }
-                return !tooBig && !tooSmall;
+                return !tooBig && !tooSmall && isMp3;
             },
             submit: function() {
                 console.log(this.fileList);

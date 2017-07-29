@@ -18,7 +18,10 @@
             <YPlayer src="/***REMOVED***.mp3" @progress="timeListener"></YPlayer>
             <div id="player1" class="aplayer"></div><br><hr>
             <transition name="el-fade-in-linear">
-                <el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;" v-show="canVote"></el-rate>
+                <div v-show="canVote">
+                    <el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;"></el-rate>
+                    <el-button type="primary" :loading="btnLoading" @click="vote" style="float: right;">投票</el-button>
+                </div>
             </transition>
         </el-collapse-item>
         <el-collapse-item title="Song 2" name="2">

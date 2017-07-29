@@ -111,10 +111,10 @@ router.beforeEach((to, from, next) => {
   next()
 })
 axios.interceptors.response.use(data => {
-    loadinginstace.close()
+    // loadinginstace.close()
     return data
 }, error => {
-    loadinginstace.close()
+    // loadinginstace.close()
     Message.error({
         message: '加载失败'
     })

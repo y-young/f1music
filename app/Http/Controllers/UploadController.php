@@ -24,6 +24,7 @@ class UploadController extends Controller
         'string' => ':attribute 应为文本格式',
         'url.required_without' => '参数错误,请重新搜索音乐',
         'url.url' => '云音乐地址应为URL格式',
+        'url.regex' => '不是合法的云音乐URL地址',
         'file.required_without' => '请上传一个文件',
         'file.file' => '上传的文件无效,请重新上传',
         'file.max' => '禁止上传超过20MB的文件',
@@ -44,6 +45,7 @@ class UploadController extends Controller
     );
 
     public static $stuId;
+    public static $pattern = '/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/';
 
     public function __construct(Request $request) {
         self::$stuId = AuthController::checkLogin($request);
@@ -60,7 +62,7 @@ class UploadController extends Controller
             ],
             'name' => 'required | string',
             'origin' => 'nullable | string',
-            'url' => ['required_without:file', 'url'],
+            'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
             'file' => ['required_without:url', 'file', 'mimes:mp3', 'min: 1024', 'max: 20480']
         ], self::$messages);
         if($validator->fails())
@@ -75,22 +77,24 @@ class UploadController extends Controller
         if($request->hasFile('file')) { //Manual Upload
             $reqFile = $request->file('file');
             $uFile->name = $reqFile->getClientOriginalName();
-            $uFile->size = $reqFile->getClientSize();
             $uFile->url = $tmpDir.$uFile->name;
-
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
-            $vFile = self::validateFile($uFile);
-            Log::info('Files: '.var_export($vFile,true));
-            if(empty($vFile->error)) {
-                $vFile = self::store($vFile);
-                self::insert($vFile);
-            }
-            else
-                return response()->json(['error' => 1, 'msg' => $vFile->error]);
-            return response()->json(['error' => 0]);
         } else { //Cloud Music Upload
-            Storage::put('file.txt', self::curlGet($request->input('url')));
+            //TODO: 检查Mp3文件是否可用
+            return response()->json(['error' => 0]);
+            $uFile->name = explode('/', $request->input('url'))[9];
+            Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
+            $uFile->url = Storage::disk('tmp')->url('tmp/'.$uFile->name);
         }
+        $vFile = self::validateFile($uFile);
+        Log::info('Files: '.var_export($vFile,true));
+        if(empty($vFile->error)) {
+            $vFile = self::store($vFile);
+            self::insert($vFile);
+        } else {
+            return response()->json(['error' => 1, 'msg' => $vFile->error]);
+        }
+        return response()->json(['error' => 0]);
     }
 
     public static function validateFile($file) {
@@ -115,7 +119,6 @@ class UploadController extends Controller
             $getID3->option_tag_apetag = false;
             $getID3->option_md5_data = true;
             $mp3_info = $getID3->analyze($file->url);
-            // Log::info('Mp3:'.var_export($mp3_info,true));
             $file->playtime = intval(round($mp3_info['playtime_seconds']));
             if($file->playtime < 2.5 * 60)
                 $file->error = self::$errorMsg['time_too_short'];
@@ -157,10 +160,10 @@ class UploadController extends Controller
 
     public static function curlGet($url) {
         $ch = curl_init();
-			  curl_setopt($ch, CURLOPT_URL, $url);
-			  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         return $ch;
-			  $output = curl_exec($ch);
+		$output = curl_exec($ch);
         if(curl_errno($ch)) {
             return false;
         }
@@ -173,7 +176,6 @@ class UnvalidatedFile
 {
     public $id = null;
     public $name = null;
-    public $size = 0;
     public $type = null;
     public $time = null;
     public $songName = null;
