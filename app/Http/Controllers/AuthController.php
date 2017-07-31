@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -9,8 +10,6 @@ use Illuminate\Support\Facades\Config;
 
 class AuthController extends Controller
 {
-
-    public static $url = 'http://fzyz.net/sys/login.shtml';
     public static $messages = [
         'stuId.required' => '请输入学号',
         'stuId.size' => '学号应为11位',
@@ -26,7 +25,7 @@ class AuthController extends Controller
 		    ];
         if(!Config::get('music.debugauth')) {
 	          $ch = curl_init();
-			      curl_setopt($ch, CURLOPT_URL, self::$url);
+			      curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
 			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			      curl_setopt($ch, CURLOPT_POST, 1);
 			      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -44,25 +43,17 @@ class AuthController extends Controller
     }
 
     public static function checkLogin(Request $request) {
-        $stuId = $request->session()->get('stuId');
-        $authData = Cookie::get();
-		    if(!empty($authData)) {
-            if($stuId = $authData->stuId)
-			          return $stuId;
-            elseif(self::campusAuth($authData) == 1) {
-                $request->session()->put('stuId', $authData->stuId);
-                return $authData->stuId;
-		        }
-            else
-                return false;
-        }
-        return false;
+        if(Auth::check())
+            var_export(Auth::user()->stuId);
+        else
+            return 0;
     }
 
     public static function Login(Request $request) {
-        if(self::checkLogin($request)) {
+        if(Auth::check()) {
             return response()->json(['error' => '0']);
         }
+        
         $validator = Validator::make($request->all(), [
             'stuId' => 'required | size: 11',
             'password' => 'required | not_in:123456'
@@ -108,11 +99,9 @@ class AuthController extends Controller
     }
 
     public static function isAdmin(Request $request) {
-        $authData = Cookie::get();
-        $admins = Config::get('music.admin');
-        if(!self::checkLogin($request))
+        if(!Auth::check())
             return false;
-        return in_array($authData->stuId,$admins);
+        return in_array(Auth::user()->stuId, Config::get('music.admin'));
     }
 
 }
@@ -121,7 +110,6 @@ class AuthData
 {
     public $stuId = null;
     public $password = null;
-    public $ip = null;
 }
 
 class Cookie
@@ -133,53 +121,7 @@ class Cookie
 	      $_COOKIE['MusicAuth'] = $cookieData;
     }
 
-    public static function get() {
-		    if((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))){
-			      return null;
-		    }
-		    $cookieData = $_COOKIE['MusicAuth'];
-	    	$data = json_decode(Crypt::decrypt($cookieData));
-		    $authData = new AuthData();
-		    $authData->stuId = $data[0];
-		    $authData->password = $data[1];
-		    return $authData;
-	  }
-
     public static function forget() {
 	 	    setcookie('MusicAuth','',time()-3600);
 	  }
-}
-
-class Session
-{
-    public static function get($key) {
-		if(isset($_SESSION) && isset($_SESSION[$key])) {
-			return $_SESSION[$key];
-		} else {
-			return null;
-		}
-	}
-
-    public static function start() {
-		if(!isset($_SESSION) && !headers_sent()) {
-			session_start();
-		}
-		return !headers_sent();
-	}
-
-    public static function set($key,$value) {
-        if(isset($_SESSION)) {
-            $_SESSION[$key] = $value;
-            return true;
-        }
-        return false;
-    }
-
-    public static function forget($key) {
-        if(isset($_SESSION[$key])) {
-            unset($_SESSION[$key]);
-            return true;
-        }
-        return false;
-    }
 }
