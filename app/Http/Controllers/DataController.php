@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 
-class ListController extends Controller
+class DataController extends Controller
 {
 
     public static function getList(Request $request) {

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
-use App\Http\Controllers\Controller;
 
 class VoteController extends Controller
 {
