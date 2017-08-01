@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2017-07-28 11:47:00
+-- Generation Time: 2017-08-01 10:17:56
 -- 服务器版本： 5.6.19
 -- PHP Version: 7.1.0
 
@@ -41,7 +41,8 @@ INSERT INTO `files` (`id`, `md5`, `uploader`, `time`) VALUES
 (1, '***REMOVED***', '0', '2017-07-27 12:40:49'),
 (2, 'dhdbjxidjshhsjaks', '***REMOVED***', '2017-07-27 15:24:03'),
 (3, 'sbcjjsbwkdbjbnok', '***REMOVED***', '2017-07-27 15:26:01'),
-(4, 'aldjkcnososnodixbsjaosjxbxjosoaowjnsi', '***REMOVED***', '2017-07-27 15:28:49');
+(4, 'aldjkcnososnodixbsjaosjxbxjosoaowjnsi', '***REMOVED***', '2017-07-27 15:28:49'),
+(5, '***REMOVED***', '0', '2017-07-29 12:54:56');
 
 -- --------------------------------------------------------
 
@@ -70,19 +71,19 @@ CREATE TABLE `songs` (
   `origin` tinytext COMMENT '来源',
   `uploader` varchar(11) NOT NULL COMMENT '上传者学号',
   `file_id` smallint(6) NOT NULL COMMENT '文件ID',
-  `time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间'
+  `time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  `deleted_at` timestamp NULL DEFAULT NULL COMMENT '软删除标志'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `songs`
 --
 
-INSERT INTO `songs` (`id`, `playtime`, `name`, `origin`, `uploader`, `file_id`, `time`) VALUES
-(1, 1, '***REMOVED***', '***REMOVED***', '0', 1, '2017-07-27 12:40:49'),
-(2, 2, '***REMOVED***', '***REMOVED***', '0', 1, '2017-07-27 13:00:58'),
-(3, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 2, '2017-07-27 15:25:23'),
-(4, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 3, '2017-07-27 15:28:19'),
-(5, 1, '***REMOVED***', NULL, '***REMOVED***', 4, '2017-07-27 15:29:27');
+INSERT INTO `songs` (`id`, `playtime`, `name`, `origin`, `uploader`, `file_id`, `time`, `deleted_at`) VALUES
+(1, 1, '***REMOVED***', '***REMOVED***', '0', 1, '2017-07-27 12:40:49', NULL),
+(4, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 3, '2017-07-27 15:28:19', NULL),
+(5, 1, '***REMOVED***', NULL, '***REMOVED***', 4, '2017-07-27 15:29:27', NULL),
+(6, 1, '***REMOVED***', '***REMOVED***', '0', 5, '2017-07-29 12:58:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -103,6 +104,7 @@ CREATE TABLE `votes` (
 --
 
 INSERT INTO `votes` (`id`, `song_id`, `vote`, `voter`, `time`) VALUES
+(8, 1, 5, '***REMOVED***', '2017-07-31 12:34:17'),
 (7, 3, 10, '***REMOVED***', '2017-07-28 09:03:38'),
 (6, 1, -10, '***REMOVED***', '2017-07-28 09:03:59'),
 (5, 2, 10, '***REMOVED***', '2017-07-28 09:02:37');
@@ -145,7 +147,7 @@ ALTER TABLE `votes`
 -- 使用表AUTO_INCREMENT `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` smallint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=5;
+  MODIFY `id` smallint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=6;
 --
 -- 使用表AUTO_INCREMENT `reports`
 --
@@ -155,12 +157,12 @@ ALTER TABLE `reports`
 -- 使用表AUTO_INCREMENT `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=6;
+  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=8;
 --
 -- 使用表AUTO_INCREMENT `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=8;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Auth;
 use Validator;
 use App\File;
 use App\Song;
@@ -37,7 +38,7 @@ class DataController extends Controller
             });*/
             $musicList = Song::select('id', 'file_id')->where('playtime', $request->input('time'))->inRandomOrder()->get();
             $songs = $musicList->mapWithKeys(function ($song) {
-                $vote = $song->votes->where('voter', '***REMOVED***')->first();
+                $vote = $song->votes->where('voter', Auth::user()->stuId)->first();
                 return [
                     $song['id'] => [
                         $song->file->url(),
@@ -45,20 +46,29 @@ class DataController extends Controller
                     ]
                 ];
             });
-            return response()->json(['error' => 0, 'songs' =>$songs->all()]);
+            return response()->json(['error' => 0, 'songs' =>$songs]);
     }
 
-    public static function adminList(Request $request) {
-        if(Cache::has('musiclist'.$request->input('type')))
-            $musicList = Cache::get('musiclist'.$request->input('type'));
-        else
-            $musicList = DB::table('music')->pluck('file');
-        return response()->json(['error' => 0,'files' =>$musicList]);
+    public static function Songs(Request $request) {
+        $songs = Song::all();
+        return response()->json(['error' => 0, 'songs' => $songs]);
     }
 
-    public static function Log() {
+    public function Log() {
         $contents = Storage::disk('log')->get('lumen.log');
     // Storage::disk('local')->put('file.txt', 'Contents');
         return $contents;
+    }
+
+    public function Rank(Request $request) {
+        $songs = Song::withCount('votes')->get();
+        $list = collection([]);
+        $songs = $songs->mapWithKeys(function($song) {
+            $score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
+var_export($score);
+            return [[$song->id => $score]];
+        });
+        var_export($songs);
+        //return response()->json(['error' => 0, 'songs' => ]);
     }
 }

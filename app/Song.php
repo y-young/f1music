@@ -14,6 +14,7 @@ class Song extends Model
     protected $guarded = [];
     public $timestamps = false;
     protected $dates = ['deleted_at'];
+    protected $hidden = ['deleted_at'];
     protected $events = [
         'deleted' => SongDeleted::class
     ];
@@ -24,5 +25,10 @@ class Song extends Model
 
     public function votes() {
         return $this->hasMany('App\Vote');
+    }
+
+    public function getVoteSumAttribute() {
+        $votes = $this->votes;
+        return $votes->sum->vote;
     }
 }

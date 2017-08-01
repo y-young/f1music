@@ -81,7 +81,6 @@ class UploadController extends Controller
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
         } else { //Cloud Music Upload
             //TODO: 检查Mp3文件是否可用
-            //return response()->json(['error' => 0]);
             $uFile->name = explode('/', $request->input('url'))[9];
             Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
             $uFile->url = $tmpDir.$uFile->name;
