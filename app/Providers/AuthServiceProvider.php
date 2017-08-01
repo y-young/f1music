@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\User;
 use App\Http\Controllers;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -38,6 +39,9 @@ class AuthServiceProvider extends ServiceProvider
                 return new User(['stuId' => $stuId]);
             }
             return null;
+        });
+        Gate::define('admin', function ($user) {
+            return in_array($user->stuId, Config::get('music.admin')); 
         });
     }
 

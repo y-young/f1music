@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Auth;
 use Validator;
 use App\File;
 use App\Song;
@@ -38,17 +39,10 @@ class UploadController extends Controller
         'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
         'already_exists' => '您所上传的音乐在该时段已经有人推荐'
     ];
-    public static $options = array(
-        'min_file_size' => 1048576,
-        'max_file_size' => 20*1048576,
-        'accept_file_types' => '/\.(ogg|mp3)$/i',
-    );
-
     public static $stuId;
-    public static $pattern = '/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/';
 
     public function __construct(Request $request) {
-        self::$stuId = AuthController::checkLogin($request);
+        self::$stuId = Auth::user()->stuId;
     }
 
     public static function Upload(Request $request) {
@@ -175,7 +169,6 @@ class UnvalidatedFile
 {
     public $id = null;
     public $name = null;
-    public $type = null;
     public $time = null;
     public $songName = null;
     public $songOrigin = null;

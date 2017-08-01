@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Gate;
 
 class AdminAuth
 {
@@ -16,7 +16,7 @@ class AdminAuth
      */
     public function handle($request, Closure $next)
     {
-        if(!AuthController::isAdmin($request))
+        if (Gate::denies('admin'))
             abort(404);
         return $next($request);
     }

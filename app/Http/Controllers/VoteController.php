@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Validator;
 use App\Song;
 use App\Vote;
@@ -25,7 +26,7 @@ class VoteController extends Controller
     ];
 
     public function __construct(Request $request) {
-        self::$stuId = AuthController::checkLogin($request);
+        self::$stuId = Auth::user()->stuId;
     }
 
     public function Vote(Request $request) {

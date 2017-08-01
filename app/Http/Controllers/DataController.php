@@ -76,9 +76,7 @@ class DataController extends Controller
     }
 
     public function Log() {
-        $contents = Storage::disk('log')->get('lumen.log');
-    // Storage::disk('local')->put('file.txt', 'Contents');
-        return $contents;
+        return Storage::disk('log')->get('lumen.log');
     }
 
     public function Rank(Request $request) {

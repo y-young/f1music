@@ -97,13 +97,6 @@ class AuthController extends Controller
         $request->session()->forget('stuId');
         return redirect()->route('login');
     }
-
-    public static function isAdmin(Request $request) {
-        if(!Auth::check())
-            return false;
-        return in_array(Auth::user()->stuId, Config::get('music.admin'));
-    }
-
 }
 
 class AuthData

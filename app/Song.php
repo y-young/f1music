@@ -27,6 +27,10 @@ class Song extends Model
         return $this->hasMany('App\Vote');
     }
 
+    public function reports() {
+        return $this->hasMany('App\Report');
+    }
+
     public function getVoteSumAttribute() {
         $votes = $this->votes;
         return $votes->sum->vote;

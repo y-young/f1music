@@ -75,8 +75,7 @@ $app->singleton(
 $app->middleware([Illuminate\Session\Middleware\StartSession::class]);
 $app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
-     'musicauth' => App\Http\Middleware\MusicAuth::class,
-     'adminauth' => App\Http\Middleware\AdminAuth::class,
+     'admin' => App\Http\Middleware\AdminAuth::class,
      'redirect' => App\Http\Middleware\RedirectIfLogged::class,
  ]);
 
