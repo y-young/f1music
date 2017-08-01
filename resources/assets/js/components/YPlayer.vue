@@ -43,7 +43,7 @@
             init: function() {
                 this.totalTime = this.audio.duration
                 this.volume = this.audio.volume * 100
-                this.duration = formatTime(this.totalTime)
+                this.$set(this, 'duration', formatTime(this.totalTime)) //this.duration = formatTime(this.totalTime)
             },
             progress: function() {
                 this.currentTime = this.audio.currentTime

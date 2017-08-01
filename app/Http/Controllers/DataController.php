@@ -37,12 +37,33 @@ class DataController extends Controller
                 return $songs;
             });*/
             $musicList = Song::select('id', 'file_id')->where('playtime', $request->input('time'))->inRandomOrder()->get();
-            $songs = $musicList->mapWithKeys(function ($song) {
+            $id = 0;
+            $songs = $musicList->mapWithKeys(function ($song, $id) {
                 $vote = $song->votes->where('voter', Auth::user()->stuId)->first();
+                if(empty($vote))
+                    $vote = '未投票';
+                else {
+                    switch ($vote->vote) {
+                        case '-10':
+                            $vote = '非常不合适';
+                            break;
+                        case '-5':
+                            $vote = '不合适';
+                            break;
+                        case '5':
+                            $vote = '合适';
+                            break;
+                        case '10':
+                            $vote = '非常合适';
+                            break;
+                    }
+                }
+                $id++;
                 return [
-                    $song['id'] => [
-                        $song->file->url(),
-                        empty($vote) ? 0 : $vote->vote
+                    $id => [
+                        'id' => $song->id,
+                        'url' => $song->file->url(),
+                        'vote' => $vote
                     ]
                 ];
             });
