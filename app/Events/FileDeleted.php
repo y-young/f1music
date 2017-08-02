@@ -14,8 +14,8 @@ class FileDeleted extends Event
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(File $file)
     {
-        //
+        $this->file = $file;
     }
 }

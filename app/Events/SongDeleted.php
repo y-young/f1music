@@ -14,8 +14,8 @@ class SongDeleted extends Event
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Song $song)
     {
-        //
+        $this->song = $song;
     }
 }

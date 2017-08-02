@@ -11,13 +11,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SyncFile
 {
-    public function onSongDeleted($event) {
-        Log::info('Song Deleted');
+    public function onSongDeleted($event)
+    {
+        //
     }
 
-    public function onFileDeleted($event) {}
+    public function onFileDeleted($event)
+    {
+        if (!File::withTrashed()->where('id', $event->file->id)->exists()) {
+            Log::info('ForceDeleted'.$event->file->id);
+        }
+    }
 
-    public function subscribe($events) {
+    public function subscribe($events)
+    {
         $events->listen(
             'App\Events\SongDeleted',
             'App\Listeners\SyncFile@onSongDeleted'

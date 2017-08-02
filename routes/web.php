@@ -17,33 +17,44 @@ $app->get('/', function () use ($app) {
 $app->get('/Check', 'AuthController@checkLogin');
 $app->get('/Logout', 'AuthController@Logout');
 
-$app->group(['middleware' => 'redirect'], function () use ($app) {
+/*$app->group(['middleware' => 'redirect'], function () use ($app) {
     $app->get('/Login', ['as' => 'login', function() {
         return view('login');
     }]);
+});*/
+$app->get('/Login', 'AuthController@Login');
+
+$app->group(['middleware' => 'auth'], function () use ($app) {
+    $app->post('/Upload', 'UploadController@Upload');
+    $app->get('/Vote', 'VoteController@Vote');
+    $app->post('/Report', 'ReportController@Report');
 });
 
-$app->get('/Log', 'ListController@Log');
-$app->post('/Login', 'AuthController@Login');
-$app->group(['middleware' => 'adminauth', 'prefix' => 'Manage'], function() use ($app) {
+$app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($app) {
     $app->get('/', function() {
-        return view('admin.index');
+        return view('admin');
     });
-    $app->get('/Music', function() {
-        return view('admin.music');
-    });
-    $app->get('/List', 'ListController@getList');
-    $app->get('/List/{type}', 'ListController@getList');
-    $app->get('/Log', function() {
-        return view('admin.log');
-    });
+
+    $app->get('/Songs', 'ManageController@getSongs');
+    $app->get('/Song/Trash', 'ManageController@trashSongs');
+    $app->get('/Song/Trashed', 'ManageController@getTrashedSongs');
+    $app->get('/Song/Delete', 'ManageController@deleteSongs');
+
+    $app->get('/Files', 'ManageController@getFiles');
+    $app->get('/File/Trash', 'ManageController@trashFiles');
+    $app->get('/File/Trashed', 'ManageController@getTrashedFiles');
+    $app->get('/File/Delete', 'ManageController@deleteFiles');
+
+    $app->get('/Reports', 'ManageController@getReports');
+    $app->get('/Report/Delete', 'ManageController@deleteReports');
+
+    $app->get('/Rank', 'ManageController@getRank');
+    $app->get('/Log', 'ManageController@Log');
 });
 
-$app->group(['middleware' => 'musicauth'], function () use ($app) {
-    $app->get('/List/{type}','ListController@getList');
-});
-$app->post('/Upload','UploadController@Upload'); //TODO
+$app->post('/List', 'VoteController@List');
 $app->group(['prefix' => 'Music'], function () use ($app) {
-    $app->post('/Search', 'MusicController@Search');
-    $app->post('/Mp3', 'MusicController@Mp3');
+    $app->get('/Search', 'MusicController@Search');
+    $app->get('/Mp3', 'MusicController@Mp3');
+    $app->get('/Playlist', 'MusicController@Playlist');
 });
