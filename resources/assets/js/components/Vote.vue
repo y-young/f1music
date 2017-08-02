@@ -13,13 +13,19 @@
         <el-option label="21:35" value="5"></el-option>
         <el-option label="22:30" value="6"></el-option>
     </el-select>
-    <el-collapse accordion @change="changeListener" v-loading.fullscreen.lock="pageLoading">
+    <el-collapse accordion @change="changeListener" v-loading.fullscreen.lock="pageLoading" element-loading-text="Loading...">
         <el-collapse-item v-for="(song, index) in songs" :title="'# ' + index + ' 您的投票: ' + song.vote" :name="index" :key="song.id">
-            <YPlayer :src="song.url" @progress="timeListener" ref="player"></YPlayer><br><hr>
+            <YPlayer :src="song.url" @progress="timeListener" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
             <transition name="el-fade-in-linear">
                 <div v-show="canVote">
-                    <el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;"></el-rate>
-                    <el-button type="primary" :loading="btnLoading" @click="vote(song.id)" style="float: right;">{{ btnLoading ? '正在提交' : '投票' }}</el-button>
+                    <hr><el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 10px 20px; float: left;"></el-rate>
+                    <el-button type="primary" :loading="voteLoading" @click="vote(song.id)" style="float: right;">{{ btnLoading ? '正在提交' : '投票' }}</el-button>
+                </div>
+            </transition>
+            <transition name="el-fade-in-linear">
+                <div v-show="showReport">
+                    <hr><el-input v-model="reason" placeholder="填写举报原因" style="width: 90%"></el-input>
+                    <el-button type="primary" :loading="btnLoading" @click="report(song.id)" style="float: right;">{{ btnLoading ? '正在提交' : '提交' }}</el-button>
                 </div>
             </transition>
         </el-collapse-item>
@@ -36,10 +42,13 @@
                 time: '1',
                 currentTime: 0,
                 rate: 0,
+                reason: '',
                 index: 0, 
                 canVote: false,
+                showReport: false,
                 pageLoading: false,
-                btnLoading: false,
+                voteLoading: false,
+                reportLoading: false,
                 texts: ['非常不合适','不合适','合适','非常合适'],
                 songs: []
             }
@@ -62,7 +71,9 @@
             changeListener: function(index) {
                 this.currentTime = 0
                 this.rate = 0
+                this.reason = ''
                 this.canVote = false
+                this.showReport = false
                 if(this.index != '')
                     this.$refs.player[this.index - 1].stop();
                 this.index = index
@@ -73,13 +84,13 @@
                     this.$message.error('请选择您的评价!');
                     return;
                 }
-                this.btnLoading = true
+                this.voteLoading = true
                 axios.post('/Vote',{
                     id: id,
                     vote: this.rate
                 })
                 .then((res) => {
-                    this.btnLoading = false
+                    this.voteLoading = false
                     if(res.data.error == 0) {
                         this.$message.success('投票成功!');
                     } else {
@@ -87,7 +98,30 @@
                     }
                 })
                 .catch((err) => {
-                    this.btnLoading = false
+                    this.voteLoading = false
+                    console.log(err);
+                });
+            },
+            report: function(id) {
+                if(this.reason == '') {
+                    this.$message.error('请填写举报原因!');
+                    return;
+                }
+                this.reportLoading = true
+                axios.post('/Report',{
+                    id: id,
+                    reason: this.reason
+                })
+                .then((res) => {
+                    this.reportLoading = false
+                    if(res.data.error == 0) {
+                        this.$message.success('举报成功!');
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                .catch((err) => {
+                    this.reportLoading = false
                     console.log(err);
                 });
             },
@@ -119,6 +153,6 @@
 
 <style>
     .yplayer {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 </style>

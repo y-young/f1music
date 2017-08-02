@@ -71,14 +71,11 @@
                     <el-input v-model="uploadForm.origin" placeholder="该曲目来自的专辑、音乐家或节目、游戏等，不是表示上传者，不明来源可以留空"></el-input>
                 </el-form-item>
                 <el-form-item label="上传文件" prop="file">
-                    <el-upload v-model="uploadForm.file" accept="audio/mpeg" :data="uploadForm" :before-upload="beforeUpload" :on-success="onSuccess" :on-error="onError" :file-list="fileList" drag action="/Upload">
+                    <el-upload accept="audio/mpeg" :data="uploadForm" :before-upload="beforeUpload" :on-success="onSuccess" :on-error="onError" :file-list="fileList" drag action="/Upload" :with-credentials="true">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <div class="el-upload__tip" slot="tip">只能上传mp3文件，且大小不超过20MB</div>
                     </el-upload>
-                </el-form-item><br>
-                <el-form-item>
-                    <el-button type="primary" :loading="btnLoading" @click="submit">{{ btnLoading ? "正在提交" : "提交" }}</el-button>
                 </el-form-item>
             </el-form>
         </el-tab-pane>
@@ -159,12 +156,13 @@
                 return row;
             },
             cloudUpload: function(url) {
+                this.btnLoading = true
                 this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
                         this.$message.error("请修正所有错误后再上传");
-                        this.error = true;
+                        this.error = true
                     } else
-                        this.error = false;
+                        this.error = false
                 });
                 if(this.error) return;
                 axios.post('/Upload',{
@@ -209,10 +207,10 @@
                         this.error = false;
                 });
                 if(this.error) return false;
-                const isMp3 = file.type === 'audio/mpeg';
+                const isMp3 = file.type === 'audio/mp3';
                 const tooBig = file.size / 1024 / 1024 > 20;
                 const tooSmall = file.size / 1024 / 1024 < 1;
-
+                
                 if(!isMp3) {
                     this.$message.error('只能上传mp3文件');
                 }
@@ -223,9 +221,6 @@
                     this.$message.error('为保证音乐质量，请上传一个至少 1MB的文件!');
                 }
                 return !tooBig && !tooSmall && isMp3;
-            },
-            submit: function() {
-                console.log(this.fileList);
             }
         },
         components: {
