@@ -26,7 +26,8 @@ $app->get('/Login', 'AuthController@Login');
 
 $app->group(['middleware' => 'auth'], function () use ($app) {
     $app->post('/Upload', 'UploadController@Upload');
-    $app->get('/Vote', 'VoteController@Vote');
+    $app->post('/List', 'VoteController@getSongs');
+    $app->post('/Vote', 'VoteController@Vote');
     $app->post('/Report', 'ReportController@Report');
 });
 
@@ -36,12 +37,13 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($ap
     });
 
     $app->get('/Songs', 'ManageController@getSongs');
-    $app->post('/Song/Trash', 'ManageController@trashSongs');
+    $app->post('/Song/View', 'ManageController@viewSong');
+    $app->get('/Song/Trash', 'ManageController@trashSongs');
     $app->get('/Song/Trashed', 'ManageController@getTrashedSongs');
     $app->get('/Song/Delete', 'ManageController@deleteSongs');
 
     $app->get('/Files', 'ManageController@getFiles');
-    $app->get('/File/Trash', 'ManageController@trashFiles');
+    $app->post('/File/Trash', 'ManageController@trashFiles');
     $app->get('/File/Trashed', 'ManageController@getTrashedFiles');
     $app->get('/File/Delete', 'ManageController@deleteFiles');
 
@@ -52,7 +54,6 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($ap
     $app->get('/Log', 'ManageController@Log');
 });
 
-$app->post('/List', 'VoteController@getSongs');
 $app->group(['prefix' => 'Music'], function () use ($app) {
     $app->post('/Search', 'MusicController@Search');
     $app->post('/Mp3', 'MusicController@Mp3');

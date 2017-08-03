@@ -13,8 +13,14 @@ class ManageController extends Controller
 {
     public function getSongs()
     {
-        $songs = Song::all();
+        $songs = Song::withCount('reports')->get();
         return response()->json(['error' => 0, 'songs' => $songs]);
+    }
+
+    public function viewSong(Request $request)
+    {
+        $song = Song::with('reports')->where('id', $request->input('id'))->get();
+        return response()->json(['error' => 0, 'song' => $song]);
     }
 
     public function editSong(Request $request)
@@ -112,17 +118,31 @@ class ManageController extends Controller
         return response()->json(['error' => 0]);
     }
 
+    public function getVotes()
+    {
+        $votes = Vote::all();
+        return response()->json(['error' => 0, 'votes' => $votes]);
+    }
+
     public function getRank(Request $request)
     {
         $songs = Song::withCount('votes')->get();
-        $list = collection([]);
-        $songs = $songs->mapWithKeys(function($song) {
-            $score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
-var_export($score);
-            return [[$song->id => $score]];
-        });
-        var_export($songs);
-        //return response()->json(['error' => 0, 'songs' => ]);
+        foreach ($songs as $song) {
+            $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
+        }
+        $songs = $songs->sortByDesc('score');
+        $songs = array_map(function ($song) {
+            //$score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
+            return [
+                'id' => $song->id,
+                'playtime' => $song->playtime,
+                'name' => $song->name,
+                'score' => $song->score,
+                'sum' => $song->vote_sum,
+                'counts' => $song->votes_count
+            ];
+        }, $songs->all());
+        return response()->json(['error' => 0, 'songs' => $songs]);
     }
 
     public function Log() {

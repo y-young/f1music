@@ -18,6 +18,7 @@ class VoteController extends Controller
 
     public static $stuId;
     public $texts = ['-10' => '非常不合适', '-5' => '不合适', '0' => '中立', '5' => '合适', '10' => '非常合适'];
+    public $points = [1 => -10, 2 => -5, 3 => 5, 4 => 10];
     public static $messages = [
         'id.required' => '参数错误,请刷新页面',
         'id.exists' => '参数错误,请刷新页面',
@@ -39,7 +40,7 @@ class VoteController extends Controller
             'id' => 'required | exists:songs',
             'vote' => [
                 'required',
-                Rule::in([-10, -5, 5, 10])
+                Rule::in([1, 2, 3, 4])
             ]
         ], self::$messages);
         if ($validator->fails()) {
@@ -48,7 +49,7 @@ class VoteController extends Controller
 
         $vote = Vote::updateOrCreate(
             ['song_id' => $request->input('id'), 'voter' => self::$stuId],
-            ['vote' => $request->input('vote')]
+            ['vote' => $this->points[$request->input('vote')]]
         );
         return response()->json(['error' => 0]);
     }

@@ -17,21 +17,22 @@ class AuthController extends Controller
         'password.not_in' => '为保证投票质量目前禁止使用校网初始密码登录,请更改密码'
     ];
 
-    public static function campusAuth(AuthData $authData) {
-		    $post_data = [
+    public static function campusAuth(AuthData $authData)
+    {
+		    $postData = [
 				    "staffCode" => $authData->stuId,
 				    "password" => $authData->password,
 				    "loginRole" => '2'
 		    ];
-        if(!Config::get('music.debugauth')) {
+        if (!Config::get('music.debugauth')) {
 	          $ch = curl_init();
 			      curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
 			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			      curl_setopt($ch, CURLOPT_POST, 1);
-			      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+			      curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
 			      $output = curl_exec($ch);
 			      $rinfo = curl_getinfo($ch);
-            if(curl_errno($ch)) {
+            if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
@@ -42,15 +43,18 @@ class AuthController extends Controller
         return $result;
     }
 
-    public static function checkLogin(Request $request) {
-        if(Auth::check())
+    public static function checkLogin(Request $request)
+    {
+        if (Auth::check()) {//TODO
             var_export(Auth::user()->stuId);
-        else
+        } else {
             return 0;
+        }
     }
 
-    public static function Login(Request $request) {
-        if(Auth::check()) {
+    public static function Login(Request $request)
+    {
+        if (Auth::check()) {
             return response()->json(['error' => '0']);
         }
         
@@ -58,14 +62,14 @@ class AuthController extends Controller
             'stuId' => 'required | size: 11',
             'password' => 'required | not_in:123456'
         ], self::$messages);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response ()->json(['error' => '1', 'msg' => $validator->errors()->first()]);
         }
 
         $authData = new AuthData();
         $authData->stuId = $request->input('stuId');
         $authData->password = $request->input('password');
-        switch(self::campusAuth($authData)) {
+        switch (self::campusAuth($authData)) {
             case 1:
                 Cookie::set($authData);
                 $request->session()->put('stuId', $authData->stuId);
@@ -92,7 +96,8 @@ class AuthController extends Controller
         }
     }
 
-    public static function Logout(Request $request) {
+    public static function Logout(Request $request)
+    {
         Cookie::forget();
         $request->session()->forget('stuId');
         return redirect()->route('login');
@@ -107,14 +112,20 @@ class AuthData
 
 class Cookie
 {
-    public static function set(AuthData $authData) {
+    public static function set(AuthData $authData)
+    {
 	      $cookieData = Crypt::encrypt(
-	      json_encode([$authData->stuId, $authData->password]));
-	     	setcookie('MusicAuth',$cookieData,time()+24*60*60);
+	          json_encode([
+                $authData->stuId,
+                $authData->password
+            ])
+        );
+	     	setcookie('MusicAuth', $cookieData, time()+24*60*60);
 	      $_COOKIE['MusicAuth'] = $cookieData;
     }
 
-    public static function forget() {
-	 	    setcookie('MusicAuth','',time()-3600);
+    public static function forget()
+    {
+	 	    setcookie('MusicAuth',' ', time() - 3600);
 	  }
 }
