@@ -64,7 +64,8 @@
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports) {
 
 /*
@@ -142,365 +143,6 @@ function toComment(sourceMap) {
 	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
 
 	return '/*# ' + data + ' */';
-}
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-
-var stylesInDom = {};
-
-var	memoize = function (fn) {
-	var memo;
-
-	return function () {
-		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-		return memo;
-	};
-};
-
-var isOldIE = memoize(function () {
-	// Test for IE <= 9 as proposed by Browserhacks
-	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
-	// Tests for existence of standard globals is to allow style-loader
-	// to operate correctly into non-standard environments
-	// @see https://github.com/webpack-contrib/style-loader/issues/177
-	return window && document && document.all && !window.atob;
-});
-
-var getElement = (function (fn) {
-	var memo = {};
-
-	return function(selector) {
-		if (typeof memo[selector] === "undefined") {
-			memo[selector] = fn.call(this, selector);
-		}
-
-		return memo[selector]
-	};
-})(function (target) {
-	return document.querySelector(target)
-});
-
-var singleton = null;
-var	singletonCounter = 0;
-var	stylesInsertedAtTop = [];
-
-var	fixUrls = __webpack_require__(40);
-
-module.exports = function(list, options) {
-	if (typeof DEBUG !== "undefined" && DEBUG) {
-		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-	}
-
-	options = options || {};
-
-	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
-
-	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-	// tags it will allow on a page
-	if (!options.singleton) options.singleton = isOldIE();
-
-	// By default, add <style> tags to the <head> element
-	if (!options.insertInto) options.insertInto = "head";
-
-	// By default, add <style> tags to the bottom of the target
-	if (!options.insertAt) options.insertAt = "bottom";
-
-	var styles = listToStyles(list, options);
-
-	addStylesToDom(styles, options);
-
-	return function update (newList) {
-		var mayRemove = [];
-
-		for (var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-
-			domStyle.refs--;
-			mayRemove.push(domStyle);
-		}
-
-		if(newList) {
-			var newStyles = listToStyles(newList, options);
-			addStylesToDom(newStyles, options);
-		}
-
-		for (var i = 0; i < mayRemove.length; i++) {
-			var domStyle = mayRemove[i];
-
-			if(domStyle.refs === 0) {
-				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
-
-				delete stylesInDom[domStyle.id];
-			}
-		}
-	};
-};
-
-function addStylesToDom (styles, options) {
-	for (var i = 0; i < styles.length; i++) {
-		var item = styles[i];
-		var domStyle = stylesInDom[item.id];
-
-		if(domStyle) {
-			domStyle.refs++;
-
-			for(var j = 0; j < domStyle.parts.length; j++) {
-				domStyle.parts[j](item.parts[j]);
-			}
-
-			for(; j < item.parts.length; j++) {
-				domStyle.parts.push(addStyle(item.parts[j], options));
-			}
-		} else {
-			var parts = [];
-
-			for(var j = 0; j < item.parts.length; j++) {
-				parts.push(addStyle(item.parts[j], options));
-			}
-
-			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-		}
-	}
-}
-
-function listToStyles (list, options) {
-	var styles = [];
-	var newStyles = {};
-
-	for (var i = 0; i < list.length; i++) {
-		var item = list[i];
-		var id = options.base ? item[0] + options.base : item[0];
-		var css = item[1];
-		var media = item[2];
-		var sourceMap = item[3];
-		var part = {css: css, media: media, sourceMap: sourceMap};
-
-		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
-		else newStyles[id].parts.push(part);
-	}
-
-	return styles;
-}
-
-function insertStyleElement (options, style) {
-	var target = getElement(options.insertInto)
-
-	if (!target) {
-		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
-	}
-
-	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
-
-	if (options.insertAt === "top") {
-		if (!lastStyleElementInsertedAtTop) {
-			target.insertBefore(style, target.firstChild);
-		} else if (lastStyleElementInsertedAtTop.nextSibling) {
-			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
-		} else {
-			target.appendChild(style);
-		}
-		stylesInsertedAtTop.push(style);
-	} else if (options.insertAt === "bottom") {
-		target.appendChild(style);
-	} else {
-		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-	}
-}
-
-function removeStyleElement (style) {
-	if (style.parentNode === null) return false;
-	style.parentNode.removeChild(style);
-
-	var idx = stylesInsertedAtTop.indexOf(style);
-	if(idx >= 0) {
-		stylesInsertedAtTop.splice(idx, 1);
-	}
-}
-
-function createStyleElement (options) {
-	var style = document.createElement("style");
-
-	options.attrs.type = "text/css";
-
-	addAttrs(style, options.attrs);
-	insertStyleElement(options, style);
-
-	return style;
-}
-
-function createLinkElement (options) {
-	var link = document.createElement("link");
-
-	options.attrs.type = "text/css";
-	options.attrs.rel = "stylesheet";
-
-	addAttrs(link, options.attrs);
-	insertStyleElement(options, link);
-
-	return link;
-}
-
-function addAttrs (el, attrs) {
-	Object.keys(attrs).forEach(function (key) {
-		el.setAttribute(key, attrs[key]);
-	});
-}
-
-function addStyle (obj, options) {
-	var style, update, remove, result;
-
-	// If a transform function was defined, run it on the css
-	if (options.transform && obj.css) {
-	    result = options.transform(obj.css);
-
-	    if (result) {
-	    	// If transform returns a value, use that instead of the original css.
-	    	// This allows running runtime transformations on the css.
-	    	obj.css = result;
-	    } else {
-	    	// If the transform function returns a falsy value, don't add this css.
-	    	// This allows conditional loading of css
-	    	return function() {
-	    		// noop
-	    	};
-	    }
-	}
-
-	if (options.singleton) {
-		var styleIndex = singletonCounter++;
-
-		style = singleton || (singleton = createStyleElement(options));
-
-		update = applyToSingletonTag.bind(null, style, styleIndex, false);
-		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
-
-	} else if (
-		obj.sourceMap &&
-		typeof URL === "function" &&
-		typeof URL.createObjectURL === "function" &&
-		typeof URL.revokeObjectURL === "function" &&
-		typeof Blob === "function" &&
-		typeof btoa === "function"
-	) {
-		style = createLinkElement(options);
-		update = updateLink.bind(null, style, options);
-		remove = function () {
-			removeStyleElement(style);
-
-			if(style.href) URL.revokeObjectURL(style.href);
-		};
-	} else {
-		style = createStyleElement(options);
-		update = applyToTag.bind(null, style);
-		remove = function () {
-			removeStyleElement(style);
-		};
-	}
-
-	update(obj);
-
-	return function updateStyle (newObj) {
-		if (newObj) {
-			if (
-				newObj.css === obj.css &&
-				newObj.media === obj.media &&
-				newObj.sourceMap === obj.sourceMap
-			) {
-				return;
-			}
-
-			update(obj = newObj);
-		} else {
-			remove();
-		}
-	};
-}
-
-var replaceText = (function () {
-	var textStore = [];
-
-	return function (index, replacement) {
-		textStore[index] = replacement;
-
-		return textStore.filter(Boolean).join('\n');
-	};
-})();
-
-function applyToSingletonTag (style, index, remove, obj) {
-	var css = remove ? "" : obj.css;
-
-	if (style.styleSheet) {
-		style.styleSheet.cssText = replaceText(index, css);
-	} else {
-		var cssNode = document.createTextNode(css);
-		var childNodes = style.childNodes;
-
-		if (childNodes[index]) style.removeChild(childNodes[index]);
-
-		if (childNodes.length) {
-			style.insertBefore(cssNode, childNodes[index]);
-		} else {
-			style.appendChild(cssNode);
-		}
-	}
-}
-
-function applyToTag (style, obj) {
-	var css = obj.css;
-	var media = obj.media;
-
-	if(media) {
-		style.setAttribute("media", media)
-	}
-
-	if(style.styleSheet) {
-		style.styleSheet.cssText = css;
-	} else {
-		while(style.firstChild) {
-			style.removeChild(style.firstChild);
-		}
-
-		style.appendChild(document.createTextNode(css));
-	}
-}
-
-function updateLink (link, options, obj) {
-	var css = obj.css;
-	var sourceMap = obj.sourceMap;
-
-	/*
-		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
-		and there is no publicPath defined then lets turn convertToAbsoluteUrls
-		on by default.  Otherwise default to the convertToAbsoluteUrls option
-		directly
-	*/
-	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
-
-	if (options.convertToAbsoluteUrls || autoFixUrls) {
-		css = fixUrls(css);
-	}
-
-	if (sourceMap) {
-		// http://stackoverflow.com/a/26603875
-		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-	}
-
-	var blob = new Blob([css], { type: "text/css" });
-
-	var oldSrc = link.href;
-
-	link.href = URL.createObjectURL(blob);
-
-	if(oldSrc) URL.revokeObjectURL(oldSrc);
 }
 
 
@@ -15145,7 +14787,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -15165,7 +14807,7 @@ if(false) {
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -16649,7 +16291,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -16669,7 +16311,7 @@ if(false) {
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -17173,7 +16815,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -17193,7 +16835,7 @@ if(false) {
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -17769,7 +17411,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -17789,7 +17431,7 @@ if(false) {
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -18226,7 +17868,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -18246,7 +17888,7 @@ if(false) {
 /* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -21587,7 +21229,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -21607,7 +21249,7 @@ if(false) {
 /* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -22206,7 +21848,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -22226,7 +21868,7 @@ if(false) {
 /* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -25738,7 +25380,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -25758,7 +25400,7 @@ if(false) {
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -25783,7 +25425,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -25803,7 +25445,7 @@ if(false) {
 /* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -26046,7 +25688,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -26066,7 +25708,7 @@ if(false) {
 /* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -26408,7 +26050,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -26428,7 +26070,7 @@ if(false) {
 /* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -28217,7 +27859,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -28237,7 +27879,7 @@ if(false) {
 /* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -28570,7 +28212,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -28590,7 +28232,7 @@ if(false) {
 /* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -28836,7 +28478,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -28856,7 +28498,7 @@ if(false) {
 /* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -28881,7 +28523,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -28901,7 +28543,7 @@ if(false) {
 /* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -30302,7 +29944,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -30322,7 +29964,7 @@ if(false) {
 /* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -30603,7 +30245,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -30623,7 +30265,7 @@ if(false) {
 /* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -31019,7 +30661,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -31039,7 +30681,7 @@ if(false) {
 /* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -31526,7 +31168,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -31546,7 +31188,7 @@ if(false) {
 /* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -31813,7 +31455,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -31833,7 +31475,7 @@ if(false) {
 /* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -31858,7 +31500,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -31878,7 +31520,7 @@ if(false) {
 /* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -33313,7 +32955,7 @@ if(false) {
 /* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -33453,7 +33095,7 @@ if(false) {
 /* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -33472,7 +33114,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('footer', [_c('hr'), _vm._v(" "), _c('div', {
     staticClass: "footer"
-  }, [_c('p', [_vm._v("Copyright © 2009-2017 FZYZ SCAN. All rights reserved."), _c('br'), _vm._v("\n            Thanks to: "), _c('a', {
+  }, [_c('p', [_vm._v("Copyright © 2007-2017 FZYZ SCAN. All rights reserved."), _c('br'), _vm._v("\n            Thanks to: "), _c('a', {
     attrs: {
       "href": "https://blog.robotshell.org"
     }
@@ -36021,7 +35663,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
+var update = __webpack_require__(228)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -36041,7 +35683,7 @@ if(false) {
 /* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -36081,7 +35723,7 @@ if(false) {
 /* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
@@ -36434,6 +36076,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_43_element_ui_lib_theme_default_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_43_element_ui_lib_theme_default_index_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__components_admin_Index_vue__ = __webpack_require__(224);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__components_admin_Index_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_44__components_admin_Index_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__components_admin_Files_vue__ = __webpack_require__(230);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__components_admin_Files_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_45__components_admin_Files_vue__);
 
 
 
@@ -36495,6 +36139,7 @@ __webpack_require__(130);
 
 
 
+
 Vue.use(__WEBPACK_IMPORTED_MODULE_40_element_ui_lib_breadcrumb___default.a);
 Vue.use(__WEBPACK_IMPORTED_MODULE_37_element_ui_lib_breadcrumb_item___default.a);
 Vue.use(__WEBPACK_IMPORTED_MODULE_35_element_ui_lib_menu___default.a);
@@ -36525,6 +36170,12 @@ var router = new __WEBPACK_IMPORTED_MODULE_42_vue_router__["a" /* default */]({
         component: __WEBPACK_IMPORTED_MODULE_44__components_admin_Index_vue___default.a,
         meta: {
             title: "首页"
+        }
+    }, {
+        path: '/Files',
+        component: __WEBPACK_IMPORTED_MODULE_45__components_admin_Files_vue___default.a,
+        meta: {
+            title: "文件"
         }
     }]
 });
@@ -36624,12 +36275,12 @@ if(false) {
 /* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "\n.app {\r\n    position: relative;\r\n    width: 100%;\r\n    height: 100%;\n}\n.app.without-animation {\r\n    -webkit-transition: none!important;\r\n    -moz-transition: none!important;\r\n    -o-transition: none!important;\r\n    transition: none!important\n}\n@media (min-width:600px) {\n.app.show-sidebar .container {\r\n        left: 300px;\n}\n}\n@media (max-width:600px) {\n.app.show-sidebar {\r\n        overflow: hidden;\n}\n.app.show-sidebar .container {\r\n        -webkit-transform: translate(calc(100% - 60px),0);\r\n        -moz-transform: translate(calc(100% - 60px),0);\r\n        -ms-transform: translate(calc(100% - 60px),0);\r\n        -o-transform: translate(calc(100% - 60px),0);\r\n        transform: translate(calc(100% - 60px),0)\n}\n}\n.container {\r\n    position: absolute;\r\n    top: 0;\r\n    right: 0;\r\n    left: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n.container.without-animation {\r\n    -webkit-transition: none!important;\r\n    -moz-transition: none!important;\r\n    -o-transition: none!important;\r\n    transition: none!important\n}\n.container-inner {\r\n    position: absolute;\r\n    top: 0;\r\n    right: 0;\r\n    left: 0;\r\n    bottom: 0;\r\n    overflow-y: auto\n}\n@media (max-width:1240px) {\n.container {\r\n        -webkit-transition: -webkit-transform 250ms ease;\r\n        -moz-transition: -moz-transform 250ms ease;\r\n        -o-transition: -o-transform 250ms ease;\r\n        transition: transform 250ms ease;\r\n        padding-bottom: 20px\n}\n.container-inner {\r\n        min-height: calc(100% - 50px)\n}\n}\n.page {\r\n    margin-top: 60px;\r\n    position: relative;\r\n    outline: 0;\n}\n.page-inner {\r\n    position: relative;\r\n    max-width: 800px;\r\n    margin: 0 auto;\r\n    padding: 20px 15px 40px 15px;\n}\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity .5s\n}\n.fade-enter, .fade-leave-to {\r\n  opacity: 0\n}\r\n", ""]);
+exports.push([module.i, "\n.app {\r\n    position: relative;\r\n    width: 100%;\r\n    height: 100%;\n}\n.app.without-animation {\r\n    -webkit-transition: none!important;\r\n    -moz-transition: none!important;\r\n    -o-transition: none!important;\r\n    transition: none!important\n}\n@media (min-width:600px) {\n.app.show-sidebar .container {\r\n        left: 300px;\n}\n}\n@media (max-width:600px) {\n.app.show-sidebar {\r\n        overflow: hidden;\n}\n.app.show-sidebar .container {\r\n        -webkit-transform: translate(calc(100% - 60px),0);\r\n        -moz-transform: translate(calc(100% - 60px),0);\r\n        -ms-transform: translate(calc(100% - 60px),0);\r\n        -o-transform: translate(calc(100% - 60px),0);\r\n        transform: translate(calc(100% - 60px),0)\n}\n}\n.container {\r\n    position: absolute;\r\n    top: 0;\r\n    right: 0;\r\n    left: 0;\r\n    bottom: 0;\r\n    overflow-y: auto;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n.container.without-animation {\r\n    -webkit-transition: none!important;\r\n    -moz-transition: none!important;\r\n    -o-transition: none!important;\r\n    transition: none!important\n}\n.container-inner {\r\n    position: absolute;\r\n    top: 0;\r\n    right: 0;\r\n    left: 0;\r\n    bottom: 0;\r\n    overflow-y: auto\n}\n@media (max-width:1240px) {\n.container {\r\n        -webkit-transition: -webkit-transform 250ms ease;\r\n        -moz-transition: -moz-transform 250ms ease;\r\n        -o-transition: -o-transform 250ms ease;\r\n        transition: transform 250ms ease;\r\n        padding-bottom: 20px\n}\n.container-inner {\r\n        min-height: calc(100% - 50px)\n}\n}\n.page {\r\n    margin-top: 60px;\r\n    position: relative;\r\n    outline: 0;\n}\n.page-inner {\r\n    position: relative;\r\n    max-width: 800px;\r\n    margin: 0 auto;\r\n    padding: 20px 15px 40px 15px;\n}\r\n", ""]);
 
 // exports
 
@@ -36770,12 +36421,12 @@ if(false) {
 /* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(0)(undefined);
+exports = module.exports = __webpack_require__(1)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "\n.sidebar{\r\n    position: absolute;\r\n    width: 300px;\r\n    top: 0;\r\n    left: -300px;\r\n    bottom: 0;\r\n    z-index: 1;\r\n    overflow-y: auto;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n@media (max-width:600px) {\n.sidebar {\r\n        width: calc(100% - 60px);\r\n        bottom: 0;\r\n        left: -100%\n}\n.logo {\r\n        width: calc(100% - 60px);\n}\n}\n.app.show-sidebar .sidebar {\r\n    left: 0;\n}\n.nav {\r\n    display: block;\r\n    position: absolute;\r\n    top: 60px;\r\n    bottom: 0;\r\n    margin: 0;\r\n    width: 100%;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n.nav a {\r\n    text-decoration: none;\n}\n.logo {\r\n    position: fixed;\r\n    top: 0;\r\n    width: calc(100% - 60px);\r\n    padding: 0 15px;\r\n    /*margin: auto;*/\r\n    transition: all 250ms ease;\r\n    font-size: 20px;\r\n    line-height: 60px;\r\n    z-index: 2;\r\n    color: #fff;\r\n    border-color: rgba(238,241,146,0.3);\r\n    border-right-width: 1px;\r\n    border-right-style: solid;\r\n    background: #20a0ff;\n}\r\n", ""]);
+exports.push([module.i, "\n.sidebar{\r\n    position: absolute;\r\n    width: 300px;\r\n    top: 0;\r\n    left: -300px;\r\n    bottom: 0;\r\n    z-index: 1;\r\n    overflow-y: auto;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n@media (max-width:600px) {\n.sidebar {\r\n        width: calc(100% - 60px);\r\n        bottom: 0;\r\n        left: -100%\n}\n.logo {\r\n        width: calc(100% - 60px);\n}\n}\n.app.show-sidebar .sidebar {\r\n    left: 0;\n}\n.nav {\r\n    display: block;\r\n    position: absolute;\r\n    top: 60px;\r\n    bottom: 0;\r\n    margin: 0;\r\n    width: 100%;\r\n    -webkit-transition: left 250ms ease;\r\n    -moz-transition: left 250ms ease;\r\n    -o-transition: left 250ms ease;\r\n    transition: left 250ms ease;\n}\n.nav a {\r\n    text-decoration: none;\n}\n.logo {\r\n    position: fixed;\r\n    top: 0;\r\n    width: calc(100% - 60px);\r\n    padding: 0 15px;\r\n    transition: all 250ms ease;\r\n    font-size: 20px;\r\n    line-height: 60px;\r\n    z-index: 2;\r\n    color: #fff;\r\n    border-color: rgba(238,241,146,0.3);\r\n    border-right-width: 1px;\r\n    border-right-style: solid;\r\n    background: #20a0ff;\n}\r\n", ""]);
 
 // exports
 
@@ -36786,6 +36437,10 @@ exports.push([module.i, "\n.sidebar{\r\n    position: absolute;\r\n    width: 30
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
 //
 //
 //
@@ -36826,16 +36481,44 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('i', {
     staticClass: "fa fa-home"
-  }), _vm._v("首页")]), _vm._v(" "), _c('el-menu-item', {
+  }), _vm._v("曲目")]), _vm._v(" "), _c('el-menu-item', {
     attrs: {
       "index": "2",
       "route": {
         path: '/'
       }
     }
+  }, [_vm._v("投票")]), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
+      "index": "3",
+      "route": {
+        path: '/Files'
+      }
+    }
+  }, [_vm._v("文件")]), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
+      "index": "4",
+      "route": {
+        path: '/'
+      }
+    }
+  }, [_vm._v("举报")]), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
+      "index": "5",
+      "route": {
+        path: '/'
+      }
+    }
   }, [_c('i', {
     staticClass: "fa fa-home"
-  }), _vm._v("投票结果")])], 1)], 1)
+  }), _vm._v("投票结果")]), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
+      "index": "6",
+      "route": {
+        path: '/'
+      }
+    }
+  }, [_vm._v("反馈")])], 1)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -36985,71 +36668,89 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            formLoading: false,
+            tableLoading: false,
             btnLoading: false,
             error: false,
             songs: null,
             mp3: '',
             fileList: [],
-            uploadForm: {
-                time: '',
-                name: '',
-                origin: '',
-                file: '',
-                url: ''
-            },
-            rules: {
-                time: [{ required: true, message: '请选择时段', trigger: 'blur' }],
-                name: [{ required: true, message: '请输入曲名', trigger: 'blur' }]
-            }
+            filters: [{ text: '6:30', value: 1 }, { text: '7:00', value: 2 }, { text: '13:45', value: 3 }, { text: '18:40', value: 4 }, { text: '21:35', value: 5 }, { text: '22:30', value: 6 }],
+            selected: []
         };
     },
 
     methods: {
-        getMp3: function getMp3(row, expanded) {
-            var _this = this;
-
-            this.uploadForm.name = row.name;
-            console.log(row);
-            axios.post('/Music/Mp3', {
-                id: row.id
-            }).then(function (res) {
-                console.log(res.data);
-                if (res.data.length > 0) {
-                    _this.$set(row, 'mp3', res.data); // !IMPORTANT
-                } else {
-                    _this.$message.error('暂时无法试听，请重试');
-                }
-            }).catch(function (err) {
-                console.log(err);
-            });
+        expand: function expand(row, expanded) {
             return row;
         },
         filterPlaytime: function filterPlaytime(value, row) {
             return row.playtime === value;
+        },
+        edit: function edit(id) {
+            this.$router.push('/Manage/Edit' + id);
+        },
+        trash: function trash(id, index) {
+            var _this = this;
+
+            axios.post('/Manage/Song/Trash', {
+                id: [id]
+            }).then(function (res) {
+                _this.btnLoading = false;
+                if (res.data.error == 0) {
+                    _this.$message.success('操作成功!');
+                    _this.songs.splice(index + 1, 1);
+                } else {
+                    _this.$message.error(res.data.msg);
+                }
+            }).catch(function (err) {
+                _this.btnLoading = false;
+                console.log(err);
+            });
+        },
+        batchTrash: function batchTrash() {
+            var _this2 = this;
+
+            axios.post('/Manage/Song/Trash', {
+                id: this.selected
+            }).then(function (res) {
+                _this2.btnLoading = false;
+                if (res.data.error == 0) {
+                    _this2.$message.success('操作成功!');
+                    setTimeout("location.reload()", 1000);
+                } else {
+                    _this2.$message.error(res.data.msg);
+                }
+            }).catch(function (err) {
+                _this2.btnLoading = false;
+                console.log(err);
+            });
+        },
+        handleSelectionChange: function handleSelectionChange(val) {
+            this.selected = val;
+            this.selected = this.selected.map(function (song) {
+                return song.id;
+            });
         }
     },
     created: function created() {
-        var _this2 = this;
+        var _this3 = this;
 
+        this.tableLoading = true;
         axios.get('/Manage/Songs').then(function (res) {
-            console.log(res.data);
+            _this3.tableLoading = false;
             if (res.data.error == 0) {
-                _this2.songs = res.data.songs;
+                _this3.songs = res.data.songs;
             } else {
-                _this2.$message.error('获取数据失败');
+                _this3.$message.error('获取数据失败');
             }
         }).catch(function (err) {
+            _this3.tableLoading = false;
             console.log(err);
         });
     },
@@ -37072,8 +36773,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     directives: [{
       name: "loading",
       rawName: "v-loading.body",
-      value: (_vm.formLoading),
-      expression: "formLoading",
+      value: (_vm.tableLoading),
+      expression: "tableLoading",
       modifiers: {
         "body": true
       }
@@ -37086,36 +36787,35 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "element-loading-text": "加载中...",
       "max-height": "500",
       "stripe": ""
+    },
+    on: {
+      "expand": _vm.expand,
+      "selection-change": _vm.handleSelectionChange
     }
   }, [_c('el-table-column', {
     attrs: {
+      "type": "selection",
+      "width": "45"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
       "prop": "id",
-      "label": "ID",
-      "width": "60px"
+      "label": "#",
+      "width": "40px"
     }
   }), _vm._v(" "), _c('el-table-column', {
     attrs: {
       "prop": "playtime",
       "label": "时段",
-      "filters": [{
-        text: '6:30',
-        value: 1
-      }, {
-        text: '7:00',
-        value: 2
-      }],
+      "filters": _vm.filters,
       "filter-method": _vm.filterPlaytime,
-      "filter-placement": _vm.bottom - _vm.end
+      "filter-placement": "bottom-end",
+      "width": "70px"
     }
   }), _vm._v(" "), _c('el-table-column', {
     attrs: {
       "prop": "name",
       "label": "曲名"
-    }
-  }), _vm._v(" "), _c('el-table-column', {
-    attrs: {
-      "prop": "origin",
-      "label": "来源"
     }
   }), _vm._v(" "), _c('el-table-column', {
     attrs: {
@@ -37142,129 +36842,748 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           }
         }, [_c('el-form-item', {
           attrs: {
-            "label": "时段",
-            "prop": "time"
+            "label": "时段"
           }
-        }, [_c('span', [_c('el-select', {
+        }, [_c('span', [_vm._v(_vm._s(props.row.playtime))])]), _vm._v(" "), _c('el-form-item', {
           attrs: {
-            "value": props.row.playtime.toString(),
-            "placeholder": "请选择时段"
+            "label": "曲名"
           }
-        }, [_c('el-option', {
+        }, [_c('span', [_vm._v(_vm._s(props.row.name))])]), _vm._v(" "), _c('el-form-item', {
           attrs: {
-            "label": "6:30",
-            "value": "1"
+            "label": "来源"
           }
-        }), _vm._v(" "), _c('el-option', {
+        }, [_c('span', [_vm._v(_vm._s(props.row.origin))])]), _vm._v(" "), _c('el-form-item', {
           attrs: {
-            "label": "7:00",
-            "value": "2"
-          }
-        }), _vm._v(" "), _c('el-option', {
-          attrs: {
-            "label": "13:45",
-            "value": "3"
-          }
-        }), _vm._v(" "), _c('el-option', {
-          attrs: {
-            "label": "18:40",
-            "value": "4"
-          }
-        }), _vm._v(" "), _c('el-option', {
-          attrs: {
-            "label": "21:35",
-            "value": "5"
-          }
-        }), _vm._v(" "), _c('el-option', {
-          attrs: {
-            "label": "22:30",
-            "value": "6"
-          }
-        })], 1)], 1)]), _vm._v(" "), _c('el-form-item', {
-          attrs: {
-            "label": "曲名",
-            "prop": "name"
-          }
-        }, [_c('span', [_c('el-input', {
-          attrs: {
-            "placeholder": "歌曲名称"
-          },
-          model: {
-            value: (props.row.name),
-            callback: function($$v) {
-              props.row.name = $$v
-            },
-            expression: "props.row.name"
-          }
-        })], 1)]), _vm._v(" "), _c('el-form-item', {
-          attrs: {
-            "label": "来源",
-            "prop": "origin"
-          }
-        }, [_c('span', [_c('el-input', {
-          attrs: {
-            "value": props.row.origin
-          }
-        })], 1)]), _vm._v(" "), _c('el-form-item', {
-          attrs: {
-            "label": "上传者",
-            "prop": "uploader"
+            "label": "上传者"
           }
         }, [_c('span', [_vm._v(_vm._s(props.row.uploader))])]), _vm._v(" "), _c('el-form-item', {
           attrs: {
-            "label": "时间",
-            "prop": "time"
+            "label": "时间"
           }
         }, [_c('span', [_vm._v(_vm._s(props.row.time))])]), _vm._v(" "), _c('el-form-item', {
           attrs: {
             "label": "试听"
           }
-        }, [_c('span', [(!props.row.mp3) ? _c('i', {
+        }, [_c('span', [(!props.row.url) ? _c('i', {
           staticClass: "el-icon-loading"
-        }) : _vm._e(), (props.row.mp3) ? _c('YPlayer', {
+        }) : _vm._e(), (props.row.url) ? _c('YPlayer', {
           attrs: {
-            "src": props.row.mp3,
+            "src": props.row.url,
             "detail": false
           }
-        }) : _vm._e()], 1), _vm._v(" "), _c('input', {
-          directives: [{
-            name: "model",
-            rawName: "v-model",
-            value: (_vm.uploadForm.url),
-            expression: "uploadForm.url"
-          }],
+        }) : _vm._e()], 1)]), _vm._v(" "), _c('el-form-item', {
           attrs: {
-            "type": "hidden"
-          },
-          domProps: {
-            "value": props.row.mp3,
-            "value": (_vm.uploadForm.url)
-          },
-          on: {
-            "input": function($event) {
-              if ($event.target.composing) { return; }
-              _vm.uploadForm.url = $event.target.value
-            }
-          }
-        })]), _vm._v(" "), _c('el-form-item', {
-          attrs: {
-            "label": "保存"
+            "label": "操作"
           }
         }, [_c('span', [_c('el-button', {
-          attrs: {
-            "type": "primary",
-            "loading": _vm.btnLoading
+          on: {
+            "click": _vm.edit
           }
-        }, [_vm._v("保存")])], 1)])], 1)]
+        }, [_vm._v("查看/编辑")]), _c('el-button', {
+          attrs: {
+            "type": "danger",
+            "loading": _vm.btnLoading
+          },
+          on: {
+            "click": function($event) {
+              _vm.trash(props.row.id, props.row.$index)
+            }
+          }
+        }, [_vm._v("删除")])], 1)])], 1)]
       }
     }])
-  })], 1)], 1)
+  })], 1), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "margin-top": "20px"
+    }
+  }, [_c('el-button', {
+    attrs: {
+      "type": "danger",
+      "loading": _vm.btnLoading
+    },
+    on: {
+      "click": _vm.batchTrash
+    }
+  }, [_vm._v("删除所选")])], 1)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-7af09dc0", module.exports)
+  }
+}
+
+/***/ }),
+/* 227 */,
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(selector) {
+		if (typeof memo[selector] === "undefined") {
+			memo[selector] = fn.call(this, selector);
+		}
+
+		return memo[selector]
+	};
+})(function (target) {
+	return document.querySelector(target)
+});
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(40);
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton) options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+	if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	options.attrs.type = "text/css";
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = options.transform(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 229 */,
+/* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(9)(
+  /* script */
+  __webpack_require__(231),
+  /* template */
+  __webpack_require__(232),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "E:\\F1Music\\resources\\assets\\js\\components\\admin\\Files.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] Files.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-b5802f76", Component.options)
+  } else {
+    hotAPI.reload("data-v-b5802f76", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 231 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__YPlayer_vue__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__YPlayer_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__YPlayer_vue__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            tableLoading: false,
+            btnLoading: false,
+            error: false,
+            files: '',
+            mp3: '',
+            fileList: [],
+            filters: [{ text: '6:30', value: 1 }, { text: '7:00', value: 2 }, { text: '13:45', value: 3 }, { text: '18:40', value: 4 }, { text: '21:35', value: 5 }, { text: '22:30', value: 6 }],
+            selected: []
+        };
+    },
+
+    methods: {
+        expand: function expand(row, expanded) {
+            return row;
+        },
+        filterPlaytime: function filterPlaytime(value, row) {
+            return row.playtime === value;
+        },
+        edit: function edit(id) {
+            this.$router.push('/Manage/Edit' + id);
+        },
+        trash: function trash(id, index) {
+            var _this = this;
+
+            axios.post('/Manage/File/Trash', {
+                id: [id]
+            }).then(function (res) {
+                _this.btnLoading = false;
+                if (res.data.error == 0) {
+                    _this.$message.success('操作成功!');
+                    _this.songs.splice(index + 1, 1);
+                } else {
+                    _this.$message.error(res.data.msg);
+                }
+            }).catch(function (err) {
+                _this.btnLoading = false;
+                console.log(err);
+            });
+        },
+        batchTrash: function batchTrash() {
+            var _this2 = this;
+
+            axios.post('/Manage/File/Trash', {
+                id: this.selected
+            }).then(function (res) {
+                _this2.btnLoading = false;
+                if (res.data.error == 0) {
+                    _this2.$message.success('操作成功!');
+                    setTimeout("location.reload()", 1000);
+                } else {
+                    _this2.$message.error(res.data.msg);
+                }
+            }).catch(function (err) {
+                _this2.btnLoading = false;
+                console.log(err);
+            });
+        },
+        handleSelectionChange: function handleSelectionChange(val) {
+            this.selected = val;
+            this.selected = this.selected.map(function (song) {
+                return song.id;
+            });
+        }
+    },
+    created: function created() {
+        var _this3 = this;
+
+        this.tableLoading = true;
+        axios.get('/Manage/Files').then(function (res) {
+            _this3.tableLoading = false;
+            if (res.data.error == 0) {
+                _this3.files = res.data.files;
+            } else {
+                _this3.$message.error('获取数据失败');
+            }
+        }).catch(function (err) {
+            _this3.tableLoading = false;
+            console.log(err);
+        });
+    },
+
+    components: {
+        YPlayer: __WEBPACK_IMPORTED_MODULE_0__YPlayer_vue___default.a
+    }
+});
+
+/***/ }),
+/* 232 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('el-breadcrumb', {
+    attrs: {
+      "separator": "/"
+    }
+  }, [_c('el-breadcrumb-item', [_vm._v("文件")]), _vm._v(" "), _c('el-breadcrumb-item', [_vm._v("Files")])], 1), _vm._v(" "), _c('h3', [_vm._v("文件")]), _vm._v(" "), _c('el-table', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading.body",
+      value: (_vm.tableLoading),
+      expression: "tableLoading",
+      modifiers: {
+        "body": true
+      }
+    }],
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "data": _vm.files,
+      "element-loading-text": "加载中...",
+      "max-height": "500",
+      "stripe": ""
+    },
+    on: {
+      "expand": _vm.expand,
+      "selection-change": _vm.handleSelectionChange
+    }
+  }, [_c('el-table-column', {
+    attrs: {
+      "type": "selection",
+      "width": "45"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
+      "prop": "id",
+      "label": "#",
+      "width": "40px"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
+      "prop": "md5",
+      "label": "MD5"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
+      "prop": "uploader",
+      "label": "上传者"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
+      "prop": "time",
+      "label": "时间",
+      "sortable": ""
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    attrs: {
+      "type": "expand"
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function(props) {
+        return [_c('el-form', {
+          attrs: {
+            "label-position": "left",
+            "inline": ""
+          }
+        }, [_c('el-form-item', {
+          attrs: {
+            "label": "上传者"
+          }
+        }, [_c('span', [_vm._v(_vm._s(props.row.uploader))])]), _vm._v(" "), _c('el-form-item', {
+          attrs: {
+            "label": "时间"
+          }
+        }, [_c('span', [_vm._v(_vm._s(props.row.time))])]), _vm._v(" "), _c('el-form-item', {
+          attrs: {
+            "label": "试听"
+          }
+        }, [_c('span', [(!props.row.url) ? _c('i', {
+          staticClass: "el-icon-loading"
+        }) : _vm._e(), (props.row.url) ? _c('YPlayer', {
+          attrs: {
+            "src": props.row.url,
+            "detail": false
+          }
+        }) : _vm._e()], 1)]), _vm._v(" "), _c('el-form-item', {
+          attrs: {
+            "label": "操作"
+          }
+        }, [_c('span', [_c('el-button', {
+          on: {
+            "click": _vm.edit
+          }
+        }, [_vm._v("查看/编辑")]), _c('el-button', {
+          attrs: {
+            "type": "danger",
+            "loading": _vm.btnLoading
+          },
+          on: {
+            "click": function($event) {
+              _vm.trash(props.row.id, props.row.$index)
+            }
+          }
+        }, [_vm._v("删除")])], 1)])], 1)]
+      }
+    }])
+  })], 1), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "margin-top": "20px"
+    }
+  }, [_c('el-button', {
+    attrs: {
+      "type": "danger",
+      "loading": _vm.btnLoading
+    },
+    on: {
+      "click": _vm.batchTrash
+    }
+  }, [_vm._v("删除所选")])], 1)], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-b5802f76", module.exports)
   }
 }
 

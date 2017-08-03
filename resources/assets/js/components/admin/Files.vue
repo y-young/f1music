@@ -1,29 +1,19 @@
 <template>
     <div>
     <el-breadcrumb separator="/">
-        <el-breadcrumb-item>曲目</el-breadcrumb-item>
-        <el-breadcrumb-item>Songs</el-breadcrumb-item>
+        <el-breadcrumb-item>文件</el-breadcrumb-item>
+        <el-breadcrumb-item>Files</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3>曲目</h3>
-            <el-table :data="songs" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+    <h3>文件</h3>
+            <el-table :data="files" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
-                <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
-                <el-table-column prop="name" label="曲名"></el-table-column>
+                <el-table-column prop="md5" label="MD5"></el-table-column>
                 <el-table-column prop="uploader" label="上传者"></el-table-column>
                 <el-table-column prop="time" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
                         <el-form label-position="left" inline>
-                            <el-form-item label="时段">
-                                <span>{{ props.row.playtime }}</span>
-                            </el-form-item>
-                            <el-form-item label="曲名">
-                                <span>{{ props.row.name }}</span>
-                            </el-form-item>
-                            <el-form-item label="来源">
-                                <span>{{ props.row.origin }}</span>
-                            </el-form-item>
                             <el-form-item label="上传者">
                                 <span>{{props.row.uploader}}</span>
                             </el-form-item>
@@ -56,7 +46,7 @@
                 tableLoading: false,
                 btnLoading: false,
                 error: false,
-                songs: null,
+                files: '',
                 mp3: '',
                 fileList: [],
                 filters: [
@@ -81,7 +71,7 @@
                 this.$router.push('/Manage/Edit' + id);
             },
             trash(id, index) {
-                axios.post('/Manage/Song/Trash',{
+                axios.post('/Manage/File/Trash',{
                     id: [id]
                 })
                 .then((res) => {
@@ -99,7 +89,7 @@
                 });
             },
             batchTrash() {
-                axios.post('/Manage/Song/Trash',{
+                axios.post('/Manage/File/Trash',{
                     id: this.selected
                 })
                 .then((res) => {
@@ -125,11 +115,11 @@
         },
         created() {
             this.tableLoading = true
-            axios.get('/Manage/Songs')
+            axios.get('/Manage/Files')
             .then((res) => {
                 this.tableLoading = false
                 if(res.data.error == 0) {
-                    this.songs = res.data.songs
+                    this.files = res.data.files
                 } else {
                     this.$message.error('获取数据失败');
                 }

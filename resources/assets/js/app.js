@@ -87,7 +87,8 @@ const router = new VueRouter({
             path: '/',
             component: Index,
             meta: {
-                title: "首页"
+                title: "首页",
+                nav: '1'
             }
         },
         {
@@ -101,7 +102,8 @@ const router = new VueRouter({
             path: '/Upload',
             component: UploadPage,
             meta: {
-                title: "上传"
+                title: "上传",
+                nav: '2'
             }
         }
     ]

@@ -53,7 +53,7 @@ class VoteController extends Controller
         return response()->json(['error' => 0]);
     }
 
-    public function List(Request $request)
+    public function getSongs(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'time' => [
@@ -83,7 +83,7 @@ class VoteController extends Controller
                 return [
                     $id => [
                         'id' => $song->id,
-                        'url' => $song->file->url(),
+                        'url' => $song->file->url,
                         'vote' => $vote
                     ]
                 ];

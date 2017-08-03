@@ -14,11 +14,12 @@ class File extends Model
     public $timestamps = false;
     protected $dates = ['deleted_at'];
     protected $hidden = ['deleted_at'];
+    protected $appends = ['url'];
     protected $events = [
         'deleted' => FileDeleted::class
     ];
 
-    public function url()
+    public function getUrlAttribute()
     {
        return '/uploads/'.$this->md5.'.mp3';
     }

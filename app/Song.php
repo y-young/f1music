@@ -15,6 +15,7 @@ class Song extends Model
     public $timestamps = false;
     protected $dates = ['deleted_at'];
     protected $hidden = ['deleted_at'];
+    protected $appends = ['url'];
     protected $events = [
         'deleted' => SongDeleted::class
     ];
@@ -34,6 +35,11 @@ class Song extends Model
         return $this->hasMany('App\Report');
     }
 
+    public function getUrlAttribute()
+    {
+        return $this->file->url;
+    }
+    
     public function getVoteSumAttribute()
     {
         $votes = $this->votes;

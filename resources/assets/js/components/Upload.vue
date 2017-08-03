@@ -26,7 +26,9 @@
                                 </el-select></span>
                             </el-form-item>
                             <el-form-item label="曲名" prop="name">
-                                <span><el-input v-model="uploadForm.name" placeholder="歌曲名称"></el-input></span>
+                                <span><el-select v-model="uploadForm.name" placeholder="请选择或输入曲名" filterable allow-create>
+                                    <el-option :label="props.row.name" :value="props.row.name"></el-option>
+                                </el-select></span>
                             </el-form-item>
                             <el-form-item label="来源" prop="origin">
                                 <span><el-select v-model="uploadForm.origin" placeholder="请选择或输入来源" filterable allow-create>
@@ -137,8 +139,6 @@
                 });
             },
             getMp3: function(row, expanded) {
-                this.uploadForm.name = row.name
-                console.log(row)
                 axios.post('/Music/Mp3',{
                     id: row.id
                 })
@@ -156,7 +156,6 @@
                 return row;
             },
             cloudUpload: function(url) {
-                this.btnLoading = true
                 this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
                         this.$message.error("请修正所有错误后再上传");
@@ -165,6 +164,7 @@
                         this.error = false
                 });
                 if(this.error) return;
+                this.btnLoading = true
                 axios.post('/Upload',{
                     time: this.uploadForm.time,
                     name: this.uploadForm.name,

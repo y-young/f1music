@@ -36,7 +36,7 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($ap
     });
 
     $app->get('/Songs', 'ManageController@getSongs');
-    $app->get('/Song/Trash', 'ManageController@trashSongs');
+    $app->post('/Song/Trash', 'ManageController@trashSongs');
     $app->get('/Song/Trashed', 'ManageController@getTrashedSongs');
     $app->get('/Song/Delete', 'ManageController@deleteSongs');
 
@@ -52,9 +52,9 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($ap
     $app->get('/Log', 'ManageController@Log');
 });
 
-$app->post('/List', 'VoteController@List');
+$app->post('/List', 'VoteController@getSongs');
 $app->group(['prefix' => 'Music'], function () use ($app) {
-    $app->get('/Search', 'MusicController@Search');
-    $app->get('/Mp3', 'MusicController@Mp3');
+    $app->post('/Search', 'MusicController@Search');
+    $app->post('/Mp3', 'MusicController@Mp3');
     $app->get('/Playlist', 'MusicController@Playlist');
 });

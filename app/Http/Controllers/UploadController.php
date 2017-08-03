@@ -41,14 +41,17 @@ class UploadController extends Controller
     ];
     public static $stuId;
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request)
+    {
         self::$stuId = Auth::user()->stuId;
     }
 
-    public static function Upload(Request $request) {
+    public static function Upload(Request $request)
+    {
         Log::info('Requests: '.var_export($request->all(),true));
-        if(!Config::get('music.openUpload'))
+        if (!Config::get('music.openUpload')) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
+        }
         $validator = Validator::make($request->all(), [
             'time' => [
                 'required',
@@ -59,8 +62,9 @@ class UploadController extends Controller
             'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
             'file' => ['required_without:url', 'file', 'mimes:mp3', 'min: 1024', 'max: 20480']
         ], self::$messages);
-        if($validator->fails())
+        if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
+        }
 
         $tmpDir = storage_path('app/tmp/');
         $uFile = new UnvalidatedFile();
@@ -68,40 +72,44 @@ class UploadController extends Controller
         $uFile->songName = $request->input('name');
         $uFile->songOrigin = $request->input('origin');
 
-        if($request->hasFile('file')) { //Manual Upload
+        if ($request->hasFile('file')) { //Manual Upload
             $reqFile = $request->file('file');
             $uFile->name = $reqFile->getClientOriginalName();
             $uFile->url = $tmpDir.$uFile->name;
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
+            $uFile->md5 = md5_file($uFile->url);
         } else { //Cloud Music Upload
             //TODO: 检查Mp3文件是否可用
             $uFile->name = explode('/', $request->input('url'))[9];
+            $uFile->md5 = substr($uFile->name, 0, -4);
             Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
             $uFile->url = $tmpDir.$uFile->name;
         }
         $vFile = self::validateFile($uFile);
         Log::info('Files: '.var_export($vFile,true));
-        if(empty($vFile->error)) {
+        if (empty($vFile->error)) {
             $vFile = self::store($vFile);
             self::insert($vFile);
         } else {
+            Storage::disk('tmp')->delete($vFile->name);
             return response()->json(['error' => 1, 'msg' => $vFile->error]);
         }
         return response()->json(['error' => 0]);
     }
 
-    public static function validateFile($file) {
+    public static function validateFile($file)
+    {
         $file->error = null;
-        $file->md5 = md5_file($file->url);
         $file->storageName = $file->md5.'.mp3';
 
-        if(File::where('md5', $file->md5)->exists()) {
+        if (File::where('md5', $file->md5)->exists()) {
             $file->id = File::where('md5', $file->md5)->first()->id; //文件已上传过,获取ID
-            if(Song::where([
+            if (Song::where([
                     ['playtime', '=', $file->time],
                     ['file_id', '=', $file->id]
-                ])->exists())
+                ])->exists()) {
                 $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
+            }
             //else 文件已经上传该时段但还未有人推荐,则直接使用,无需验证
         } else { //文件未上传过,则进行验证
             // 初始化文件处理
@@ -113,15 +121,17 @@ class UploadController extends Controller
             $getID3->option_md5_data = true;
             $mp3_info = $getID3->analyze($file->url);
             $file->playtime = intval(round($mp3_info['playtime_seconds']));
-            if($file->playtime < 2.5 * 60)
+            if ($file->playtime < 2.5 * 60) {
                 $file->error = self::$errorMsg['time_too_short'];
-            elseif ($file->playtime > 6 * 60)
+            } elseif ($file->playtime > 6 * 60) {
                 $file->error = self::$errorMsg['time_too_long'];
+            }
         }
         return $file;
     }
 
-    public static function insert($file) {
+    public static function insert($file)
+    {
         $song = Song::create([
                     'playtime' => $file->time,
                     'name' => $file->songName,
@@ -132,8 +142,9 @@ class UploadController extends Controller
         $song->save();
     }
 
-    public static function store($vFile) {
-        if(empty($vFile->id)) { //未上传过则存储
+    public static function store($vFile)
+    {
+        if (empty($vFile->id)) { //未上传过则存储
             //消除标签信息
             $writer = new \getid3_writetags;
             $writer->filename = $vFile->url;
@@ -151,13 +162,14 @@ class UploadController extends Controller
         return $vFile;
     }
 
-    public static function curlGet($url) {
+    public static function curlGet($url)
+    {
         $ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         return $ch;
 		$output = curl_exec($ch);
-        if(curl_errno($ch)) {
+        if (curl_errno($ch)) {
             return false;
         }
         curl_close($ch);

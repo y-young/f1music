@@ -28,11 +28,10 @@ class ReportController extends Controller
         if($validator->fails())
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
 
-        $report = Report::create([
-            'song_id' => $request->input('id'),
-            'reason' => $request->input('reason'),
-            'reporter' => self::$stuId
-        ]);
+        $report = Report::updateOrCreate(
+            ['song_id' => $request->input('id'), 'reporter' => self::$stuId],
+            ['reason' => $request->input('reason')]
+        );
         $report->save();
 
         return response()->json(['error' => 0]);

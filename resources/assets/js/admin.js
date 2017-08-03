@@ -38,6 +38,7 @@ import {
 import 'element-ui/lib/theme-default/index.css';
 
 import Index from './components/admin/Index.vue';
+import Files from './components/admin/Files.vue';
 
 Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
@@ -70,6 +71,13 @@ const router = new VueRouter({
             component: Index,
             meta: {
                 title: "首页"
+            }
+        },
+        {
+            path: '/Files',
+            component: Files,
+            meta: {
+                title: "文件"
             }
         }
     ]
