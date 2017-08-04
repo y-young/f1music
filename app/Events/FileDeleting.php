@@ -4,7 +4,7 @@ namespace App\Events;
 
 use App\File;
 
-class FileDeleted extends Event
+class FileDeleting extends Event
 {
 
     public $file;

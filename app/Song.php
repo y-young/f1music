@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\SongDeleted;
+use App\Events\SongDeleting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,7 +17,7 @@ class Song extends Model
     protected $hidden = ['deleted_at'];
     protected $appends = ['url'];
     protected $events = [
-        'deleted' => SongDeleted::class
+        'deleting' => SongDeleting::class
     ];
 
     public function file()

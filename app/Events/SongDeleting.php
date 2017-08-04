@@ -4,7 +4,7 @@ namespace App\Events;
 
 use App\Song;
 
-class SongDeleted extends Event
+class SongDeleting extends Event
 {
 
     public $song;
