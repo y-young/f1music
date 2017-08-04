@@ -17,15 +17,15 @@
         <el-collapse-item v-for="(song, index) in songs" :title="'# ' + index + ' 您的投票: ' + song.vote" :name="index" :key="song.id">
             <YPlayer :src="song.url" @progress="timeListener" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
             <transition name="el-fade-in-linear">
-                <div v-show="canVote" style="position: relative; margin-top: 10px;">
-                    <hr><el-rate v-model="rate" :max="4" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="3" show-text :texts="texts" style="margin: 15px 20px; width: 200px; float: left;"></el-rate>
+                <div v-show="true" style="position: relative; margin-top: 10px;">
+                    <hr><el-rate v-model="rate" :max="5" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="4" show-text :texts="texts" style="margin: 15px 20px; width: 200px; float: left;"></el-rate>
                     <el-button type="primary" :loading="voteLoading" @click="vote(song.id)" style="float: right;">{{ voteLoading ? '正在提交' : '投票' }}</el-button>
                 </div>
             </transition>
             <transition name="el-fade-in-linear">
                 <div v-show="showReport">
                     <br><el-input v-model="reason" placeholder="填写举报原因" style="width: 70%; float: left; margin-bottom: 10px;"></el-input>
-                    <el-button type="primary" :loading="reportLoading" @click="report(song.id)" style="float: right;">{{ reportLoading ? '正在提交' : '提交' }}</el-button>
+                    <el-button type="primary" :loading="reportLoading" @click="report(song.id)" style="float: right;">提交</el-button>
                 </div>
             </transition>
         </el-collapse-item>
@@ -49,7 +49,7 @@
                 pageLoading: false,
                 voteLoading: false,
                 reportLoading: false,
-                texts: ['非常不合适','不合适','合适','非常合适'],
+                texts: ['非常不合适', '不合适', '中立', '合适', '非常合适'],
                 songs: []
             }
         },
@@ -81,7 +81,10 @@
             },
             vote: function(id) {
                 if(this.rate == 0) {
-                    this.$message.error('请选择您的评价!');
+                    this.$message.error({
+                        showClose: true,
+                        message: '请选择您的评价!'
+                    });
                     return;
                 }
                 this.voteLoading = true
@@ -92,9 +95,15 @@
                 .then((res) => {
                     this.voteLoading = false
                     if(res.data.error == 0) {
-                        this.$message.success('投票成功!');
+                        this.$message.success({
+                            showClose: true,
+                            message: '投票成功!'
+                        });
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$message.error({
+                            showClose: true,
+                            message: res.data.msg
+                        });
                     }
                 })
                 .catch((err) => {
@@ -104,7 +113,10 @@
             },
             report: function(id) {
                 if(this.reason == '') {
-                    this.$message.error('请填写举报原因!');
+                    this.$message.error({
+                        showClose: true,
+                        message: '请填写举报原因!'
+                    });
                     return;
                 }
                 this.reportLoading = true
@@ -115,9 +127,15 @@
                 .then((res) => {
                     this.reportLoading = false
                     if(res.data.error == 0) {
-                        this.$message.success('举报成功!');
+                        this.$message.success({
+                            showClose: true,
+                            message: '举报成功!'
+                        });
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$message.error({
+                            showClose: true,
+                            message: res.data.msg
+                        });
                     }
                 })
                 .catch((err) => {
@@ -136,7 +154,10 @@
                     if(res.data.error == 0) {
                         this.songs = res.data.songs
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$message.error({
+                            showClose: true,
+                            message: res.data.msg
+                        });
                     }
                 })
                 .catch((err) => {

@@ -5,6 +5,7 @@
         <el-breadcrumb-item>Upload</el-breadcrumb-item>
     </el-breadcrumb>
     <h3>上传</h3>
+    <el-alert title="曲目要求" type="info" description="格式:MP3;时长:3-5分钟;大小:1MB-15MB为宜;不得出现非伴奏人声" show-icon></el-alert>
     <el-tabs active-name="netease">
         <el-tab-pane label="网易云音乐" name="netease">
             <el-input placeholder="搜索音乐" icon="search" v-model="keyword" :on-icon-click="search" @keyup.enter.native="search" style="margin-bottom: 10px;" required></el-input>
@@ -118,7 +119,10 @@
         methods: {
             search: function() {
                 if(this.keyword == null) {
-                    this.$message.error('请输入搜索词');
+                    this.$message.error({
+                        showClose: true,
+                        message: '请输入搜索词'
+                    });
                     return;
                 }
                 this.formLoading = true
@@ -130,7 +134,10 @@
                     if(res.data.length > 0) {
                         this.result = res.data
                     } else {
-                        this.$message.error('发生了错误，请重试');
+                        this.$message.error({
+                            showClose: true,
+                            message: '发生了错误，请重试'
+                        });
                     }
                 })
                 .catch((err) => {
@@ -147,7 +154,10 @@
                     if(res.data.length > 0) {
                         this.$set(row, 'mp3', res.data) // !IMPORTANT
                     } else {
-                        this.$message.error('暂时无法试听，请重试');
+                        this.$message.error({
+                            showClose: true,
+                            message: '暂时无法试听，请重试'
+                        });
                     }
                 })
                 .catch((err) => {
@@ -158,7 +168,10 @@
             cloudUpload: function(url) {
                 this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
-                        this.$message.error("请修正所有错误后再上传");
+                        this.$message.error({
+                            showClose: true,
+                            message: "请修正所有错误后再上传"
+                        });
                         this.error = true
                     } else
                         this.error = false
@@ -174,9 +187,15 @@
                 .then((res) => {
                     this.btnLoading = false
                     if(res.data.error == 0) {
-                        this.$message.success('上传成功!');
+                        this.$message.success({
+                            showClose: true,
+                            message: '上传成功!'
+                        });
                     } else {
-                        this.$message.error(res.data.msg);
+                        this.$message.error({
+                            showClose: true,
+                            message: res.data.msg
+                        });
                     }
                 })
                 .catch((err) => {
@@ -186,22 +205,35 @@
             },
             onSuccess: function(response, file, fileList) {
                 if(response) {
-                    if(response.error == 0)
-                        this.$message.success('上传成功!');
-                    else {
-                        this.$message.error(response.msg);
+                    if(response.error == 0) {
+                        this.$message.success({
+                            showClose: true,
+                            message: '上传成功!'
+                        });
+                        setTimeout("location.reload()", 2000);
+                    } else {
+                        this.$message.error({
+                            showClose: true,
+                            message: response.msg
+                        });
                         this.fileList = [];
                     }
                 }
             },
             onError: function(err) {
-                console.log('Error:'+err);
-                this.$message.error(err);
+                console.log('Error:' + err);
+                this.$message.error({
+                    showClose: true,
+                    message: err
+                });
             },
             beforeUpload(file) {
                 this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
-                        this.$message.error("请修正所有错误后再上传");
+                        this.$message.error({
+                            showClose: true,
+                            message: "请修正所有错误后再上传"
+                        });
                         this.error = true;
                     } else
                         this.error = false;
@@ -212,13 +244,22 @@
                 const tooSmall = file.size / 1024 / 1024 < 1;
                 
                 if(!isMp3) {
-                    this.$message.error('只能上传mp3文件');
+                    this.$message.error({
+                        showClose: true,
+                        message: '只能上传mp3文件'
+                    });
                 }
                 if (tooBig) {
-                    this.$message.error('上传歌曲大小不能超过 20MB!');
+                    this.$message.error({
+                        showClose: true,
+                        message: '上传歌曲大小不能超过 20MB!'
+                    });
                 }
                 if (tooSmall) {
-                    this.$message.error('为保证音乐质量，请上传一个至少 1MB的文件!');
+                    this.$message.error({
+                        showClose: true,
+                        message: '为保证音乐质量，请上传一个至少 1MB的文件!'
+                    });
                 }
                 return !tooBig && !tooSmall && isMp3;
             }
