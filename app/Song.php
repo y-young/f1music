@@ -12,12 +12,12 @@ class Song extends Model
 
     protected $table = 'songs';
     protected $guarded = [];
-    public $timestamps = false;
     protected $dates = ['deleted_at'];
     protected $hidden = ['deleted_at'];
     protected $appends = ['url'];
     protected $events = [
-        'deleting' => SongDeleting::class
+        'deleting' => SongDeleting::class,
+        'deleted' => SongDeleting::class
     ];
 
     public function file()

@@ -30,7 +30,7 @@ class UploadController extends Controller
         'file.file' => '上传的文件无效,请重新上传',
         'file.max' => '禁止上传超过20MB的文件',
         'file.min' => '为保证音乐质量,请上传一个至少1MB的文件',
-        'file.mimes' => '不允许上传此类型文件'  
+        'file.mimetypes' => '只能上传MP3格式的文件'  
     ];
 
     public static $errorMsg = [
@@ -59,8 +59,8 @@ class UploadController extends Controller
             ],
             'name' => 'required | string',
             'origin' => 'nullable | string',
-            'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
-            'file' => ['required_without:url', 'file', 'mimes:mp3', 'min: 1024', 'max: 20480']
+            'url' => ['required_without:file', 'active_url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
+            'file' => ['required_without:url', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480'] //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
         ], self::$messages);
         if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);

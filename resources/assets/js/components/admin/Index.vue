@@ -27,8 +27,11 @@
                             <el-form-item label="上传者">
                                 <span>{{props.row.uploader}}</span>
                             </el-form-item>
-                            <el-form-item label="时间">
-                                <span>{{props.row.time}}</span>
+                            <el-form-item label="创建时间">
+                                <span>{{props.row.created_at}}</span>
+                            </el-form-item>
+                            <el-form-item label="最后更改时间">
+                                <span>{{props.row.updated_at}}</span>
                             </el-form-item>
                             <el-form-item label="试听">
                                 <span><i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer></span>

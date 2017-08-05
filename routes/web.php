@@ -31,25 +31,29 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
     $app->post('/Report', 'ReportController@Report');
 });
 
-$app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function() use ($app) {
+$app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($app) {
     $app->get('/', function() {
         return view('admin');
     });
 
     $app->get('/Songs', 'ManageController@getSongs');
     $app->post('/Song/View', 'ManageController@viewSong');
-    $app->get('/Song/Trash', 'ManageController@trashSongs');
+    $app->post('/Song/Edit', 'ManageController@editSong');
+    $app->post('/Song/Trash', 'ManageController@trashSongs');
     $app->get('/Song/Trashed', 'ManageController@getTrashedSongs');
+    $app->post('/Song/Restore', 'ManageController@restoreSongs');
     $app->get('/Song/Delete', 'ManageController@deleteSongs');
 
     $app->get('/Files', 'ManageController@getFiles');
     $app->post('/File/Trash', 'ManageController@trashFiles');
     $app->get('/File/Trashed', 'ManageController@getTrashedFiles');
+    $app->post('/File/Restore', 'ManageController@restoreFiles');
     $app->get('/File/Delete', 'ManageController@deleteFiles');
 
     $app->get('/Reports', 'ManageController@getReports');
-    $app->get('/Report/Delete', 'ManageController@deleteReports');
+    $app->post('/Report/Delete', 'ManageController@deleteReports');
 
+    $app->get('/Votes', 'ManageController@getVotes');
     $app->get('/Rank', 'ManageController@getRank');
     $app->get('/Log', 'ManageController@Log');
 });
