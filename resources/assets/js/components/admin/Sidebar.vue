@@ -2,11 +2,19 @@
     <div class="sidebar">
         <div class="logo">FZYZ 校园音乐征集</div>
             <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
-                <el-menu-item index="1" :route="{path: '/'}"><i class="fa fa-home"></i>曲目</el-menu-item>
-                <el-menu-item index="2" :route="{path: '/'}">投票</el-menu-item>
-                <el-menu-item index="3" :route="{path: '/Files'}">文件</el-menu-item>
-                <el-menu-item index="4" :route="{path: '/'}">举报</el-menu-item>
-                <el-menu-item index="5" :route="{path: '/'}"><i class="fa fa-home"></i>投票结果</el-menu-item>
+                <el-submenu index="1">
+                    <template slot="title">曲目</template>
+                    <el-menu-item index="1-1" :route="{path: '/Songs'}">所有曲目</el-menu-item>
+                    <el-menu-item index="1-2" :route="{path: '/Songs/Trashed'}">回收站</el-menu-item>
+                </el-submenu>
+                <el-menu-item index="2" :route="{path: '/Votes'}">投票</el-menu-item>
+                <el-submenu index="3">
+                    <template slot="title">文件</template>
+                    <el-menu-item index="3-1" :route="{path: '/Files'}">所有文件</el-menu-item>
+                    <el-menu-item index="3-2" :route="{path: '/Files/Trashed'}">回收站</el-menu-item>
+                </el-submenu>
+                <el-menu-item index="4" :route="{path: '/Reports'}">举报</el-menu-item>
+                <el-menu-item index="5" :route="{path: '/Rank'}">投票结果</el-menu-item>
                 <el-menu-item index="6" :route="{path: '/'}">反馈</el-menu-item>
             </el-menu>
     </div>

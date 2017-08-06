@@ -18,7 +18,7 @@ import {
     BreadcrumbItem,
     Menu,
     MenuItem,
-    MenuItemGroup,
+    Submenu,
     Slider,
     Button,
     ButtonGroup,
@@ -37,14 +37,17 @@ import {
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
-import Index from './components/admin/Index.vue';
+import Songs from './components/admin/Songs.vue';
 import Files from './components/admin/Files.vue';
+import Reports from './components/admin/Reports.vue';
+import Votes from './components/admin/Votes.vue';
+import Rank from './components/admin/Rank.vue';
 
 Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
 Vue.use(Menu);
 Vue.use(MenuItem);
-Vue.use(MenuItemGroup);
+Vue.use(Submenu);
 Vue.use(Slider);
 Vue.use(Button);
 Vue.use(ButtonGroup);
@@ -67,10 +70,18 @@ Vue.prototype.$alert = MessageBox.alert
 const router = new VueRouter({
     routes: [
         {
-            path: '/',
-            component: Index,
+            path: '/Songs',
+            component: Songs,
             meta: {
-                title: "首页"
+                title: "曲目"
+            }
+        },
+        {
+            path: '/Songs/Trashed',
+            component: Songs,
+            meta: {
+                title: "曲目 - 回收站",
+                type: 'trashed'
             }
         },
         {
@@ -78,6 +89,35 @@ const router = new VueRouter({
             component: Files,
             meta: {
                 title: "文件"
+            }
+        },
+        {
+            path: '/Files/Trashed',
+            component: Files,
+            meta: {
+                title: "文件 - 回收站",
+                type: 'trashed'
+            }
+        },
+        {
+            path: '/Reports',
+            component: Reports,
+            meta: {
+                title: "举报"
+            }
+        },
+        {
+            path: '/Votes',
+            component: Votes,
+            meta: {
+                title: "投票"
+            }
+        },
+        {
+            path: '/Rank',
+            component: Rank,
+            meta: {
+                title: "投票结果"
             }
         }
     ]

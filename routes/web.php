@@ -17,12 +17,12 @@ $app->get('/', function () use ($app) {
 $app->get('/Check', 'AuthController@checkLogin');
 $app->get('/Logout', 'AuthController@Logout');
 
-/*$app->group(['middleware' => 'redirect'], function () use ($app) {
+$app->group(['middleware' => 'redirect'], function () use ($app) {
     $app->get('/Login', ['as' => 'login', function() {
         return view('login');
     }]);
-});*/
-$app->get('/Login', 'AuthController@Login');
+});
+$app->post('/Login', 'AuthController@Login');
 
 $app->group(['middleware' => 'auth'], function () use ($app) {
     $app->post('/Upload', 'UploadController@Upload');
@@ -40,13 +40,13 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($a
     $app->post('/Song/View', 'ManageController@viewSong');
     $app->post('/Song/Edit', 'ManageController@editSong');
     $app->post('/Song/Trash', 'ManageController@trashSongs');
-    $app->get('/Song/Trashed', 'ManageController@getTrashedSongs');
+    $app->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
     $app->post('/Song/Restore', 'ManageController@restoreSongs');
     $app->get('/Song/Delete', 'ManageController@deleteSongs');
 
     $app->get('/Files', 'ManageController@getFiles');
     $app->post('/File/Trash', 'ManageController@trashFiles');
-    $app->get('/File/Trashed', 'ManageController@getTrashedFiles');
+    $app->get('/Files/Trashed', 'ManageController@getTrashedFiles');
     $app->post('/File/Restore', 'ManageController@restoreFiles');
     $app->get('/File/Delete', 'ManageController@deleteFiles');
 

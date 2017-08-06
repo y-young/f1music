@@ -4,14 +4,15 @@
         <el-breadcrumb-item>曲目</el-breadcrumb-item>
         <el-breadcrumb-item>Songs</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3>曲目</h3>
+    <div class="main">
             <el-table :data="songs" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
-                <el-table-column prop="id" label="#" width="40px"></el-table-column>
+                <el-table-column prop="id" label="#" width="55"></el-table-column>
                 <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
                 <el-table-column prop="name" label="曲名"></el-table-column>
+                <el-table-column prop="reports_count" label="举报数" sortable></el-table-column>
                 <el-table-column prop="uploader" label="上传者"></el-table-column>
-                <el-table-column prop="time" label="时间" sortable></el-table-column>
+                <el-table-column prop="created_at" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
                         <el-form label-position="left" inline>
@@ -24,11 +25,14 @@
                             <el-form-item label="来源">
                                 <span>{{ props.row.origin }}</span>
                             </el-form-item>
+                            <el-form-item label="举报数">
+                                <span>{{ props.row.reports_count }}</span>
+                            </el-form-item>
                             <el-form-item label="上传者">
-                                <span>{{props.row.uploader}}</span>
+                                <span>{{ props.row.uploader }}</span>
                             </el-form-item>
                             <el-form-item label="创建时间">
-                                <span>{{props.row.created_at}}</span>
+                                <span>{{ props.row.created_at }}</span>
                             </el-form-item>
                             <el-form-item label="最后更改时间">
                                 <span>{{props.row.updated_at}}</span>
@@ -37,7 +41,15 @@
                                 <span><i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer></span>
                             </el-form-item>
                             <el-form-item label="操作">
-                                <span><el-button @click="edit">查看/编辑</el-button><el-button type="danger" @click="trash(props.row.id, props.row.$index)" :loading="btnLoading">删除</el-button></span>
+                                <span>
+                                    <el-button @click="edit">查看/编辑</el-button>
+                                    <span v-if="type == 'trashed'">
+                                        <el-button type="danger" @click="del(props.row.id, props.row.$index)" :loading="btnLoading">彻底删除</el-button>
+                                    </span>
+                                    <span v-else>
+                                        <el-button type="danger" @click="trash(props.row.id, props.row.$index)" :loading="btnLoading">删除</el-button>
+                                    </span>
+                                </span>
                             </el-form-item>
                         </el-form>
                     </template>
@@ -46,7 +58,7 @@
             <div style="margin-top: 20px">
                 <el-button type="danger" @click="batchTrash" :loading="btnLoading">删除所选</el-button>
             </div>
-  </div>
+        </div>
     </div>
 </template>
 
@@ -56,6 +68,8 @@
     export default {
         data() {
             return {
+                type: '',
+                url: '/Manage/Songs',
                 tableLoading: false,
                 btnLoading: false,
                 error: false,
@@ -73,6 +87,12 @@
                 selected: []
             }
         },
+        created() {
+            this.getSongs()
+        },
+        watch: {
+            '$route': 'getSongs'
+        },
         methods: {
             expand: function(row, expanded) {
                 return row;
@@ -81,10 +101,29 @@
                 return row.playtime === value;
             },
             edit(id) {
-                this.$router.push('/Manage/Edit' + id);
+                this.$router.push('/Manage/Song/Edit' + id);
             },
             trash(id, index) {
                 axios.post('/Manage/Song/Trash',{
+                    id: [id]
+                })
+                .then((res) => {
+                    this.btnLoading = false
+                    if(res.data.error == 0) {
+                        this.$message.success('操作成功!');
+                        console.log(index);
+                        this.songs.splice(index + 1, 1);
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                .catch((err) => {
+                    this.btnLoading = false
+                    console.log(err);
+                });
+            },
+            del(id, index) {
+                axios.post('/Manage/Song/Delete',{
                     id: [id]
                 })
                 .then((res) => {
@@ -124,23 +163,28 @@
                 this.selected = this.selected.map(function(song) {
                     return song.id;
                 })
+            },
+            getSongs() {
+                this.tableLoading = true
+                this.type = this.$route.meta.type
+                if(this.type == 'trashed')
+                    this.url = '/Manage/Songs/Trashed'
+                else
+                    this.url = '/Manage/Songs'
+                axios.get(this.url)
+                .then((res) => {
+                    this.tableLoading = false
+                    if(res.data.error == 0) {
+                        this.songs = res.data.songs
+                    } else {
+                        this.$message.error('获取数据失败');
+                    }
+                })
+                .catch((err) => {
+                    this.tableLoading = false
+                    console.log(err);
+                });
             }
-        },
-        created() {
-            this.tableLoading = true
-            axios.get('/Manage/Songs')
-            .then((res) => {
-                this.tableLoading = false
-                if(res.data.error == 0) {
-                    this.songs = res.data.songs
-                } else {
-                    this.$message.error('获取数据失败');
-                }
-            })
-            .catch((err) => {
-                this.tableLoading = false
-                console.log(err);
-            });
         },
         components: {
             YPlayer

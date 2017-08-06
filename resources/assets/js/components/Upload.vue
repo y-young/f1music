@@ -4,7 +4,8 @@
         <el-breadcrumb-item>上传</el-breadcrumb-item>
         <el-breadcrumb-item>Upload</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3>上传</h3>
+    <!-- <h3>上传</h3> -->
+    <div class="main">
     <el-alert title="曲目要求" type="info" description="格式:MP3;时长:3-5分钟;大小:1MB-15MB为宜;不得出现非伴奏人声" show-icon></el-alert>
     <el-tabs active-name="netease">
         <el-tab-pane label="网易云音乐" name="netease">
@@ -31,13 +32,13 @@
                                     <el-option :label="props.row.name" :value="props.row.name"></el-option>
                                 </el-select></span>
                             </el-form-item>
-                            <el-form-item label="来源" prop="origin">
+                            <el-form-item label="来源" prop="origin" style="margin-left: 8px;">
                                 <span><el-select v-model="uploadForm.origin" placeholder="请选择或输入来源" filterable allow-create>
                                     <el-option :label="props.row.artist.toString()" :value="props.row.artist.toString()"></el-option>
                                     <el-option :label="props.row.album" :value="props.row.album"></el-option>
                                 </el-select></span>
                             </el-form-item>
-                            <el-form-item label="试听">
+                            <el-form-item label="试听" style="margin-left: 10px;">
                                 <span><i class="el-icon-loading" v-if="!props.row.mp3"></i><YPlayer :src="props.row.mp3" :detail="false" v-if="props.row.mp3"></YPlayer></span>
                                 <input type="hidden" v-model="uploadForm.url" :value="props.row.mp3">
                             </el-form-item>
@@ -83,6 +84,7 @@
             </el-form>
         </el-tab-pane>
     </el-tabs>
+    </div>
     </div>
 </template>
 

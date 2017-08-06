@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <!-- 引入样式 -->
     <link href="https://cdn.bootcss.com/element-ui/1.3.7/theme-default/index.css" rel="stylesheet">
     <style type="text/css">
     #particles {
@@ -22,9 +21,9 @@
     <title>登录</title>
 </head>
 <body>
-    <div id="app" style="position: absolute; width: 100%;">
+    <div id="app" style="position: absolute; width: 100%; top: 200px;">
         <div style="width: 300px; margin: auto;">
-            <div style="line-height: 36px; font-size: 20px; text-align: center;"><b>登录</b></div>
+            <div style="line-height: 36px; font-size: 20px; text-align: center; margin-bottom: 20px;"><b>登录</b></div>
             <div v-show="loginSuccess"><el-alert title="登录成功，正在跳转..." type="success"></el-alert><br></div>
             <div v-show="errorMsg"><el-alert :title="errorMsg" type="error"></el-alert><br></div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">

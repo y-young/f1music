@@ -2,7 +2,7 @@
     <div class="yplayer">
         <audio id="audio" @loadedmetadata="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>
         <div class="control" v-if="detail">
-            <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
+            <el-slider v-model="audio.currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
             <div id="timeDetail" style="">{{ played }} / {{ duration }}</div>
         </div>
         <el-button-group id="controls">
@@ -33,21 +33,29 @@
                 currentTime: 0,
                 totalTime: 0,
                 isPlaying: false,
-                duration: '00:00',
-                played: '00:00',
+                // duration: '00:00',
+                // played: '00:00',
                 volume: 100,
                 audio: ''
+            }
+        },
+        computed: {
+            played: function() {
+                return formatTime(this.currentTime)
+            },
+            duration: function() {
+                return formatTime(this.totalTime)
             }
         },
         methods: {
             init: function() {
                 this.totalTime = this.audio.duration
                 this.volume = this.audio.volume * 100
-                this.$set(this, 'duration', formatTime(this.totalTime)) //this.duration = formatTime(this.totalTime)
+                //this.$set(this, 'duration', formatTime(this.totalTime)) //this.duration = formatTime(this.totalTime)
             },
             progress: function() {
                 this.currentTime = this.audio.currentTime
-                this.played = formatTime(this.currentTime)
+                //this.played = formatTime(this.currentTime)
                 this.$emit('progress', Number(this.currentTime))
             },
             play: function() {

@@ -106,21 +106,36 @@ class ManageController extends Controller
 
     public function getReports()
     {
-        $reports = Report::all();
+        $reports = Report::with('song')->get();
+        // $id = 0;
+        // $reports = $reports->mapWithKeys(function ($report, $id) {
+        //     $id++;
+        //     return [
+        //         $id => [
+        //             'id' => $report->id,
+        //             'song_id' => $report->song_id,
+        //             'song' => $report->song->name,
+        //             'url' => $report->song->url,
+        //             'reason' => $report->reason,
+        //             'reporter' => $report->reporter,
+        //             'time' => $report->time
+        //         ]
+        //     ];
+        // });
         return response()->json(['error' => 0, 'reports' => $reports]);
     }
 
     public function deleteReports(Request $request)
     {
         foreach ($request->input('id') as $id) {
-            Report::withTrashed()->where('id', $id)->forceDelete();
+            Report::destroy($id);
         }
         return response()->json(['error' => 0]);
     }
 
     public function getVotes()
     {
-        $votes = Vote::all();
+        $votes = Vote::with('song')->get();
         return response()->json(['error' => 0, 'votes' => $votes]);
     }
 
@@ -137,6 +152,7 @@ class ManageController extends Controller
                 'id' => $song->id,
                 'playtime' => $song->playtime,
                 'name' => $song->name,
+                'origin' => $song->origin,
                 'score' => $song->score,
                 'sum' => $song->vote_sum,
                 'counts' => $song->votes_count

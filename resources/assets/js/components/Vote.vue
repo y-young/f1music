@@ -4,7 +4,7 @@
         <el-breadcrumb-item>投票</el-breadcrumb-item>
         <el-breadcrumb-item>Vote</el-breadcrumb-item>
     </el-breadcrumb>
-    <h3>投票</h3>
+    <div class="main">
     <el-select v-model="time" @change="redirect" placeholder="选择时段" style="margin-bottom: 10px;">
         <el-option label="6:30" value="1"></el-option>
         <el-option label="7:00" value="2"></el-option>
@@ -17,8 +17,8 @@
         <el-collapse-item v-for="(song, index) in songs" :title="'# ' + index + ' 您的投票: ' + song.vote" :name="index" :key="song.id">
             <YPlayer :src="song.url" @progress="timeListener" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
             <transition name="el-fade-in-linear">
-                <div v-show="true" style="position: relative; margin-top: 10px;">
-                    <hr><el-rate v-model="rate" :max="5" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="4" show-text :texts="texts" style="margin: 15px 20px; width: 200px; float: left;"></el-rate>
+                <div v-show="canVote" style="position: relative; margin-top: 10px;">
+                    <hr><el-rate v-model="rate" :max="5" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="4" show-text :texts="texts" style="margin: 15px 20px; float: left;"></el-rate>
                     <el-button type="primary" :loading="voteLoading" @click="vote(song.id)" style="float: right;">{{ voteLoading ? '正在提交' : '投票' }}</el-button>
                 </div>
             </transition>
@@ -30,6 +30,7 @@
             </transition>
         </el-collapse-item>
     </el-collapse>
+    </div>
     </div>
 </template>
 
