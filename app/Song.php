@@ -16,8 +16,7 @@ class Song extends Model
     protected $hidden = ['deleted_at'];
     protected $appends = ['url'];
     protected $events = [
-        'deleting' => SongDeleting::class,
-        'deleted' => SongDeleting::class
+        'deleting' => SongDeleting::class
     ];
 
     public function file()
