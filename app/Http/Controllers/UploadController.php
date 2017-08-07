@@ -59,7 +59,7 @@ class UploadController extends Controller
             ],
             'name' => 'required | string',
             'origin' => 'nullable | string',
-            'url' => ['required_without:file', 'active_url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
+            'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
             'file' => ['required_without:url', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480'] //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
         ], self::$messages);
         if ($validator->fails()) {
@@ -73,19 +73,27 @@ class UploadController extends Controller
         $uFile->songOrigin = $request->input('origin');
 
         if ($request->hasFile('file')) { //Manual Upload
+            $t1 = microtime(true);
             $reqFile = $request->file('file');
             $uFile->name = $reqFile->getClientOriginalName();
             $uFile->url = $tmpDir.$uFile->name;
             $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
             $uFile->md5 = md5_file($uFile->url);
+            $t2 = microtime(true);
+            Log::debug('Fetching:'.round($t2-$t1, 3));
         } else { //Cloud Music Upload
             //TODO: 检查Mp3文件是否可用
             $uFile->name = explode('/', $request->input('url'))[9];
             $uFile->md5 = substr($uFile->name, 0, -4);
+            $t1 = microtime(true);
             Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
+            $t2 = microtime(true);
+            Log::debug('Fetching:'.round($t2-$t1, 3));
             $uFile->url = $tmpDir.$uFile->name;
         }
         $vFile = self::validateFile($uFile);
+        $t3 = microtime(true);
+        Log::debug('Validation:'.round($t3-$t2, 3));
         Log::info('Files: '.var_export($vFile,true));
         if (empty($vFile->error)) {
             $vFile = self::store($vFile);
@@ -94,6 +102,9 @@ class UploadController extends Controller
             Storage::disk('tmp')->delete($vFile->name);
             return response()->json(['error' => 1, 'msg' => $vFile->error]);
         }
+        $t4 = microtime(true);
+        Log::debug('Storing:'.round($t4-$t3, 3));
+        Log::debug('Total:'.round($t4-$t1, 3));
         return response()->json(['error' => 0]);
     }
 
@@ -165,10 +176,9 @@ class UploadController extends Controller
     public static function curlGet($url)
     {
         $ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        return $ch;
-		$output = curl_exec($ch);
+		    curl_setopt($ch, CURLOPT_URL, $url);
+		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		    $output = curl_exec($ch);
         if (curl_errno($ch)) {
             return false;
         }
