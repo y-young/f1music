@@ -120,8 +120,10 @@ class UploadController extends Controller
                     ['file_id', '=', $file->id]
                 ])->exists()) {
                 $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
+            } else {
+                //文件已经上传该时段但还未有人推荐,则直接使用,无需验证
+                Storage::disk('tmp')->delete($file->name);
             }
-            //else 文件已经上传该时段但还未有人推荐,则直接使用,无需验证
         } else { //文件未上传过,则进行验证
             // 初始化文件处理
             $getID3 = new \getID3;
