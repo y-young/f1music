@@ -63,7 +63,7 @@ class AuthController extends Controller
             'password' => 'required | not_in:123456'
         ], self::$messages);
         if ($validator->fails()) {
-            return response ()->json(['error' => '1', 'msg' => $validator->errors()->first()]);
+            return response ()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
         }
 
         $authData = new AuthData();
