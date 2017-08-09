@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
@@ -27,6 +29,40 @@ class ExampleTest extends TestCase
 	     ->seeJson([
 		 'error' => 1
 	     ]);
+        $this->json('POST', '/Login', ['stuId' => '***REMOVED***'])
+	     ->seeJson(['error' => 1]);
+	$this->json('POST', '/Login', [
+	    'stuId' => '***REMOVED***',
+	    'password' => '123456'
+            ])
+	     ->seeJson(['error' => 1]);
+	$user = factory('App\User')->make();
+	$response = $this->actingAs($user)
+	    ->call('GET', '/Login');
+	$this->assertEquals(302, $response->status());
+        /*    $res = $this->actingAs($user)
+	    ->call('GET', '/Logout');
+	$this->assertEquals(302, $res->status());*/
+    }
+
+    public function testPermission()
+    {
+	$user = factory('App\User')->make();
+    	$res = [
+	    $this->call('POST', '/Upload'),
+            $this->call('POST', '/List'),
+	    $this->call('POST', '/Vote'),
+	    $this->call('POST', '/Report')
+	];
+	foreach ($res as $r) {
+	    $this->assertEquals(401, $r->status());
+	}
+    }
+
+    public function testMusic()
+    {
+	$this->json('POST', '/Music/Search', ['keyword' => '***REMOVED***'])
+	     ->seeJson(['artist' => ['***REMOVED***']]);
     }
 
     public function testAdmin()
@@ -60,5 +96,11 @@ class ExampleTest extends TestCase
 	     ->seeJson([
 		 'error' => 0
 	     ]);
+    }
+
+    public function testUpload()
+    {
+//	Storage::fake('avatars');
+//	UploadedFile::fake()->create('doc.txt', 100);
     }
 }
