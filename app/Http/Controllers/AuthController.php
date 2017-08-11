@@ -19,24 +19,24 @@ class AuthController extends Controller
 
     public static function campusAuth(AuthData $authData)
     {
-		    $postData = [
-				    "staffCode" => $authData->stuId,
-				    "password" => $authData->password,
-				    "loginRole" => '2'
-		    ];
+        $postData = [
+            "staffCode" => $authData->stuId,
+            "password" => $authData->password,
+            "loginRole" => '2'
+        ];
         if (!Config::get('music.debugauth')) {
-	          $ch = curl_init();
-			      curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
-			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			      curl_setopt($ch, CURLOPT_POST, 1);
-			      curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-			      $output = curl_exec($ch);
-			      $rinfo = curl_getinfo($ch);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+            $output = curl_exec($ch);
+            $rinfo = curl_getinfo($ch);
             if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
-	          $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
+            $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
         } else {
             $result = 1;
         }
