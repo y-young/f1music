@@ -95,7 +95,8 @@ const router = new VueRouter({
             path: '/Vote/:time',
             component: Vote,
             meta: {
-                title: "投票"
+                title: "投票",
+                requiresAuth: true
             }
         },
         {
@@ -109,19 +110,43 @@ const router = new VueRouter({
     ]
 });
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title + ' - 福州一中 校园音乐征集'
-  next()
+    /*if (to.matched.some(record => record.meta.requiresAuth)) {
+        window.location.href = '/Login'
+        next()
+    }*/
+    document.title = to.meta.title + ' - 福州一中 校园音乐征集'
+    next()
 })
-axios.interceptors.response.use(data => {
-    // loadinginstace.close()
-    return data
-}, error => {
-    // loadinginstace.close()
-    Message.error({
-        message: '加载失败'
-    })
-    return Promise.reject(error)
-})
+axios.interceptors.response.use(
+    response => {
+        return response;
+    },
+    error => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    Message.error({
+                        showClose: true,
+                        message: '请先登录!'
+                    })
+                    setTimeout("window.location.href = '/Login'", 2000);
+                    break;
+                case 500:
+                    Message.error({
+                        showClose: true,
+                        message: 'Oops!出错了,我们会尽快修复这一问题~'
+                    })
+                    break;
+                default:
+                    Message.error({
+                        showClose: true,
+                        message: '加载失败了╭(╯ε╰)╮'
+                    });
+            }
+        }
+        return Promise.reject(error.response.data)
+    }
+);
 const app = new Vue({
     el: '#app',
     render: h => h(App),

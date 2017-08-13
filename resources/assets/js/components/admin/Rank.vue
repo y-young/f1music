@@ -2,7 +2,7 @@
     <div>
     <el-breadcrumb separator="/">
         <el-breadcrumb-item>投票结果</el-breadcrumb-item>
-        <el-breadcrumb-item>Tank</el-breadcrumb-item>
+        <el-breadcrumb-item>Rank</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
             <el-table :data="rank" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
