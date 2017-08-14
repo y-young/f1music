@@ -25,9 +25,9 @@ $app->group(['middleware' => 'redirect'], function () use ($app) {
 $app->post('/Login', 'AuthController@Login');
 
 $app->group(['middleware' => 'auth'], function () use ($app) {
-    $app->post('/Upload', 'UploadController@Upload');
+    $app->post('/Upload', ['middleware' => 'can:upload', 'uses' => 'UploadController@Upload']);
     $app->post('/List', 'VoteController@getSongs');
-    $app->post('/Vote', 'VoteController@Vote');
+    $app->get('/Vote', ['middleware' => 'can:vote', 'uses' => 'VoteController@Vote']);
     $app->post('/Report', 'ReportController@Report');
 });
 
@@ -42,23 +42,25 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($a
     $app->post('/Song/Trash', 'ManageController@trashSongs');
     $app->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
     $app->post('/Song/Restore', 'ManageController@restoreSongs');
-    $app->get('/Song/Delete', 'ManageController@deleteSongs');
+    $app->get('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
 
     $app->get('/Files', 'ManageController@getFiles');
     $app->post('/File/Trash', 'ManageController@trashFiles');
     $app->get('/Files/Trashed', 'ManageController@getTrashedFiles');
     $app->post('/File/Restore', 'ManageController@restoreFiles');
-    $app->get('/File/Delete', 'ManageController@deleteFiles');
+    $app->get('/File/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteFiles']);
 
     $app->get('/Reports', 'ManageController@getReports');
     $app->post('/Report/Delete', 'ManageController@deleteReports');
 
-    $app->get('/Votes', 'ManageController@getVotes');
-    $app->get('/Rank', 'ManageController@getRank');
-    $app->get('/Log', 'ManageController@Log');
+    $app->get('/Option/Edit', ['middleware' => 'can:admin', 'uses' => 'ManageController@editOption']);
+
+    $app->get('/Votes', ['middleware' => 'can:admin', 'uses' => 'ManageController@getVotes']);
+    $app->get('/Rank', ['middleware' => 'can:admin', 'uses' => 'ManageController@getRank']);
+    $app->get('/Log', ['middleware' => 'can:admin', 'uses' => 'ManageController@Log']);
 });
 
-$app->group(['prefix' => 'Music'], function () use ($app) {
+$app->group(['prefix' => 'Music', 'middleware' => 'auth'], function () use ($app) {
     $app->post('/Search', 'MusicController@Search');
     $app->post('/Mp3', 'MusicController@Mp3');
     $app->get('/Playlist', 'MusicController@Playlist');

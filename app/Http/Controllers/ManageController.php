@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\File;
 use App\Song;
 use App\Vote;
 use App\Report;
+use App\Option;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -165,7 +167,25 @@ class ManageController extends Controller
         return response()->json(['error' => 0, 'songs' => $songs]);
     }
 
+    public function editOption(Request $request)
+    {
+        /*$validator = Validator::make($request->all(), [
+            'name' => 'required | exists:options',
+            'value' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
+        }*/
+
+        $option = Option::updateOrCreate(
+            ['name' => $request->input('name')],
+            ['value' => ['***REMOVED***', '***REMOVED***']]
+        );
+        return response()->json(['error' => 0]);
+    }
+
     public function Log() {
+        Log::debug('Test');
         return Storage::disk('log')->get('lumen.log');
     }
 }

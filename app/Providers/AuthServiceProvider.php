@@ -3,10 +3,9 @@
 namespace App\Providers;
 
 use App\User;
-use App\Http\Controllers;
+use App\Option;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -28,38 +27,45 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Here you may define how you wish users to be authenticated for your Lumen
-        // application. The callback which receives the incoming request instance
-        // should return either a User instance or null. You're free to obtain
-        // the User instance via an API token or any other method necessary.
-
         $this->app['auth']->viaRequest('api', function ($request) {
-            $stuId = self::checkLogin($request);
-            if($stuId) {
+            $stuId = $this->checkLogin($request);
+            if ($stuId) {
                 return new User(['stuId' => $stuId]);
             }
             return null;
         });
+
         Gate::define('admin', function ($user) {
-            return in_array($user->stuId, Config::get('music.admin')); 
+            return in_array($user->stuId, config('music.admin')); 
+        });
+        Gate::define('censor', function ($user) {
+            return in_array($user->stuId, Option::find('censor')->value); 
+        });
+
+        Gate::define('upload', function ($user) {
+            return !in_array($user->stuId, Option::find('ban_upload')->value);
+        });
+        Gate::define('vote', function ($user) {
+            return !in_array($user->stuId, Option::find('ban_vote')->value);
         });
     }
 
-    public static function campusAuth(AuthData $authData) {
+    public function campusAuth(AuthData $authData)
+    {
 		    $post_data = [
 				    "staffCode" => $authData->stuId,
 				    "password" => $authData->password,
 				    "loginRole" => '2'
 		    ];
-        if(!Config::get('music.debugauth')) {
-	          $ch = curl_init();
+        if (!config('music.debugauth')) {
+            $ch = curl_init();
 			      curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
 			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			      curl_setopt($ch, CURLOPT_POST, 1);
 			      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 			      $output = curl_exec($ch);
 			      $rinfo = curl_getinfo($ch);
-            if(curl_errno($ch)) {
+            if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
@@ -70,18 +76,19 @@ class AuthServiceProvider extends ServiceProvider
         return $result;
     }
 
-    public static function checkLogin($request) {
+    public function checkLogin($request)
+    {
         $stuId = $request->session()->get('stuId');
         $authData = Cookie::get();
-		    if(!empty($authData)) {
-            if($stuId = $authData->stuId)
+		    if (!empty($authData)) {
+            if ($stuId = $authData->stuId) {
 			          return $stuId;
-            elseif(AuthController::campusAuth($authData) == 1) {
+            } elseif ($this->campusAuth($authData) == 1) {
                 $request->session()->put('stuId', $authData->stuId);
                 return $authData->stuId;
-		        }
-            else
+		        } else {
                 return false;
+            }
         }
         return false;
     }
@@ -95,8 +102,9 @@ class AuthData
 
 class Cookie
 {
-    public static function get() {
-		    if((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))){
+    public static function get()
+    {
+		    if ((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))) {
 			      return null;
 		    }
 		    $cookieData = $_COOKIE['MusicAuth'];

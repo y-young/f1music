@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2017-08-05 18:46:28
+-- Generation Time: 2017-08-14 18:32:28
 -- 服务器版本： 5.6.19
 -- PHP Version: 7.1.0
 
@@ -32,7 +32,7 @@ CREATE TABLE `files` (
   `uploader` varchar(11) NOT NULL COMMENT '上传者学号',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
   `deleted_at` timestamp NULL DEFAULT NULL COMMENT '软删除标志'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文件' ROW_FORMAT=COMPACT;
 
 --
 -- 转存表中的数据 `files`
@@ -47,7 +47,30 @@ INSERT INTO `files` (`id`, `md5`, `uploader`, `time`, `deleted_at`) VALUES
 (6, '***REMOVED***', '***REMOVED***', '2017-08-01 14:28:07', NULL),
 (7, '***REMOVED***', '***REMOVED***', '2017-08-01 15:16:34', NULL),
 (8, '***REMOVED***', '***REMOVED***', '2017-08-03 14:49:18', NULL),
-(9, '***REMOVED***', '***REMOVED***', '2017-08-05 16:10:49', NULL);
+(9, '***REMOVED***', '***REMOVED***', '2017-08-05 16:10:49', NULL),
+(10, '***REMOVED***', '***REMOVED***', '2017-08-07 09:00:04', NULL),
+(11, '***REMOVED***', '***REMOVED***', '2017-08-07 09:05:41', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `options`
+--
+
+CREATE TABLE `options` (
+  `name` varchar(10) NOT NULL COMMENT '字段名',
+  `value` tinytext COMMENT '值',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='配置';
+
+--
+-- 转存表中的数据 `options`
+--
+
+INSERT INTO `options` (`name`, `value`, `updated_at`) VALUES
+('censor', '***REMOVED***,***REMOVED***', '2017-08-14 14:46:56'),
+('ban_upload', NULL, '2017-08-14 15:57:59'),
+('ban_vote', NULL, '2017-08-14 15:39:58');
 
 -- --------------------------------------------------------
 
@@ -61,7 +84,7 @@ CREATE TABLE `reports` (
   `reason` tinytext NOT NULL COMMENT '原因',
   `reporter` varchar(11) NOT NULL COMMENT '举报者学号',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='举报';
 
 --
 -- 转存表中的数据 `reports`
@@ -87,7 +110,7 @@ CREATE TABLE `songs` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '最后更新时间',
   `deleted_at` timestamp NULL DEFAULT NULL COMMENT '软删除标志'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='曲目';
 
 --
 -- 转存表中的数据 `songs`
@@ -98,9 +121,11 @@ INSERT INTO `songs` (`id`, `playtime`, `name`, `origin`, `uploader`, `file_id`, 
 (8, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 6, '2017-08-01 14:28:07', NULL, NULL),
 (9, 2, '***REMOVED***', '***REMOVED***', '***REMOVED***', 7, '2017-08-01 15:16:34', NULL, NULL),
 (4, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 3, '2017-07-27 15:28:19', NULL, NULL),
-(16, 1, '***REMOVED***', '', '***REMOVED***', 9, '2017-08-06 00:24:13', '2017-08-06 00:35:49', NULL),
+(18, 2, '***REMOVED*** ', '***REMOVED***', '***REMOVED***', 10, '2017-08-07 17:00:04', '2017-08-07 17:00:04', NULL),
 (6, 1, '***REMOVED***', '***REMOVED***', '0', 5, '2017-07-29 12:58:34', NULL, NULL),
-(10, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 8, '2017-08-03 14:49:18', NULL, NULL);
+(10, 1, '***REMOVED***', '***REMOVED***', '***REMOVED***', 8, '2017-08-03 14:49:18', NULL, NULL),
+(19, 4, '***REMOVED***', '***REMOVED***', '***REMOVED***', 11, '2017-08-07 17:05:41', '2017-08-07 17:05:41', NULL),
+(20, 3, '***REMOVED***', '***REMOVED***', '***REMOVED***', 7, '2017-08-07 17:08:57', '2017-08-07 17:08:57', NULL);
 
 -- --------------------------------------------------------
 
@@ -115,17 +140,17 @@ CREATE TABLE `votes` (
   `voter` varchar(11) NOT NULL COMMENT '投票者学号',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '最后更新时间'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='投票';
 
 --
 -- 转存表中的数据 `votes`
 --
 
 INSERT INTO `votes` (`id`, `song_id`, `vote`, `voter`, `created_at`, `updated_at`) VALUES
-(8, 1, 5, '***REMOVED***', '2017-07-31 12:34:17', NULL),
-(7, 3, 10, '***REMOVED***', '2017-07-28 09:03:38', NULL),
-(6, 1, -10, '***REMOVED***', '2017-07-28 09:03:59', NULL),
 (5, 2, 10, '***REMOVED***', '2017-07-28 09:02:37', NULL),
+(6, 1, -10, '***REMOVED***', '2017-07-28 09:03:59', NULL),
+(7, 3, 10, '***REMOVED***', '2017-07-28 09:03:38', NULL),
+(8, 1, 5, '***REMOVED***', '2017-07-31 12:34:17', NULL),
 (9, 10, 10, '***REMOVED***', '2017-08-03 14:59:41', NULL);
 
 --
@@ -137,6 +162,12 @@ INSERT INTO `votes` (`id`, `song_id`, `vote`, `voter`, `created_at`, `updated_at
 --
 ALTER TABLE `files`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `options`
+--
+ALTER TABLE `options`
+  ADD PRIMARY KEY (`name`);
 
 --
 -- Indexes for table `reports`
@@ -166,7 +197,7 @@ ALTER TABLE `votes`
 -- 使用表AUTO_INCREMENT `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` smallint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=10;
+  MODIFY `id` smallint(9) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=12;
 --
 -- 使用表AUTO_INCREMENT `reports`
 --
@@ -176,7 +207,7 @@ ALTER TABLE `reports`
 -- 使用表AUTO_INCREMENT `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=17;
+  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=21;
 --
 -- 使用表AUTO_INCREMENT `votes`
 --

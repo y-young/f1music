@@ -16,8 +16,9 @@ class AdminAuth
      */
     public function handle($request, Closure $next)
     {
-        if (Gate::denies('admin'))
+        if (Gate::denies('censor') && Gate::denies('admin')) {
             abort(404);
+        }
         return $next($request);
     }
 }
