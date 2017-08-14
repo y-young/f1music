@@ -31,10 +31,29 @@
                 collapsed: desktop
             }
         },
+        watch: {
+            $route: function() {
+                this.checkLogin()
+                this.mobileCollapse()
+            }
+        },
+        created() {
+            this.checkLogin()
+        },
         methods: {
             collapse: function(){
                 this.collapsed = !this.collapsed;
-            }
+            },
+            mobileCollapse: function() {
+                if (!desktop) {
+                    this.collapse()
+                }
+            },
+            checkLogin: function() {
+                if (this.$route.meta.requiresAuth == true && getCookie('MusicAuth') == null) {
+                   window.location.href = '/Login'
+                }
+            } 
         },
         components: {
             Sidebar,
@@ -45,6 +64,13 @@
 
     function isDesktop() {
         return window.innerWidth > 993;
+    }
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return (arr[2]);
+        else
+            return null;
     }
 </script>
 

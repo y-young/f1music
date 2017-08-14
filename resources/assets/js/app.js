@@ -104,16 +104,13 @@ const router = new VueRouter({
             component: UploadPage,
             meta: {
                 title: "上传",
-                nav: '2'
+                nav: '2',
+                requiresAuth: true
             }
         }
     ]
 });
 router.beforeEach((to, from, next) => {
-    /*if (to.matched.some(record => record.meta.requiresAuth)) {
-        window.location.href = '/Login'
-        next()
-    }*/
     document.title = to.meta.title + ' - 福州一中 校园音乐征集'
     next()
 })
@@ -129,7 +126,7 @@ axios.interceptors.response.use(
                         showClose: true,
                         message: '请先登录!'
                     })
-                    setTimeout("window.location.href = '/Login'", 2000);
+                    setTimeout("window.location.href = '/Login'", 1500);
                     break;
                 case 500:
                     Message.error({

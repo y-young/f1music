@@ -41,7 +41,7 @@
     .sidebar {
         width: calc(100% - 60px);
         bottom: 0;
-        left: -100%
+        left: calc(60px - 100%);
     }
     .logo {
         width: calc(100% - 60px);
