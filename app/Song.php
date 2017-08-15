@@ -44,4 +44,9 @@ class Song extends Model
         $votes = $this->votes;
         return $votes->sum->vote;
     }
+
+    public function scopeOfTime($query, $time)
+    {
+        return $query->where('playtime', $time); 
+    }
 }

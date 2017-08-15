@@ -67,11 +67,12 @@ class VoteController extends Controller
         }
 
            /*$musicList = Cache::remember('musiclist'.$request->input('time'),30,function() use ($request) {
-                $songs = Song::select('id')->where('playtime', $request->input('time'))->inRandomOrder()->get()->only(['id', 'file']);
+                $songs = Song::select('id')->ofTime($request->input('time'))->inRandomOrder()->get()->only(['id', 'file']);
                // Log::info(var_export($songs,true));
                 return $songs;
             });*/
-            $musicList = Song::select('id', 'file_id')->where('playtime', $request->input('time'))->inRandomOrder()->get();
+
+            $musicList = Song::select('id', 'file_id')->ofTime($request->input('time'))->inRandomOrder()->get();
             $id = 0;
             $songs = $musicList->mapWithKeys(function ($song, $id) {
                 $vote = $song->votes->where('voter', Auth::user()->stuId)->first();

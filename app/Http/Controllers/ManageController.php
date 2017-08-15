@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Validator;
 use App\File;
 use App\Song;
 use App\Vote;
@@ -167,25 +168,33 @@ class ManageController extends Controller
         return response()->json(['error' => 0, 'songs' => $songs]);
     }
 
+    public function Options(Request $request)
+    {
+        return response()->json(['error' => 0, 'options' => Option::all()]);
+    }
+
     public function editOption(Request $request)
     {
-        /*$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required | exists:options',
-            'value' => 'required'
+            'value' => 'nullable'
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }*/
+        }
 
         $option = Option::updateOrCreate(
             ['name' => $request->input('name')],
-            ['value' => ['***REMOVED***', '***REMOVED***']]
+            ['value' => $request->input('value')]
         );
         return response()->json(['error' => 0]);
     }
 
     public function Log() {
         Log::debug('Test');
-        return Storage::disk('log')->get('lumen.log');
+        Log::info('User Login:***REMOVED***');
+        Log::error('Cannot connect to Database');
+        Log::notice('Notice');
+        return Storage::disk('log')->get('info.log');
     }
 }

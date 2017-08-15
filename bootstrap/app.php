@@ -23,11 +23,13 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
+// Enable Storage
 $app->configure('filesystems');
 if (!class_exists('Storage')) {
     class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 }
 
+// Enable Session
 $app->configure('session');
 $app->alias('session', 'Illuminate\Session\SessionManager');
 
@@ -56,6 +58,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+// Enable Storage
 $app->singleton(
     Illuminate\Contracts\Filesystem\Factory::class,
         function ($app) {
@@ -74,8 +77,10 @@ $app->singleton(
 |
 */
 
+// Enable Session
 $app->middleware([Illuminate\Session\Middleware\StartSession::class]);
 $app->routeMiddleware([
+     'can' => \Illuminate\Auth\Middleware\Authorize::class,
      'auth' => App\Http\Middleware\Authenticate::class,
      'admin' => App\Http\Middleware\AdminAuth::class,
      'redirect' => App\Http\Middleware\RedirectIfLogged::class,
@@ -98,6 +103,23 @@ $app->routeMiddleware([
  $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 //Enable Session
  $app->register(Illuminate\Session\SessionServiceProvider::class);
+
+// Optimize Log
+$app->configureMonologUsing(function(Monolog\Logger $monolog) {
+    // DEBUG -> lumen.log
+    $monolog->pushHandler(new \Monolog\Handler\StreamHandler(storage_path().'/logs/lumen.log'));
+
+    // INFO -> info.log
+    $info = new Monolog\Handler\RotatingFileHandler(storage_path("logs/info.log"), 30, Monolog\Logger::INFO, false);
+    $monolog->pushHandler($info);
+    //$info->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true));
+
+    // NOTICE, WARNING, ERROR, ALERT -> Daily Log, Saved for 30 days
+    $monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler(storage_path().'/logs/lumen.log', 30, Monolog\Logger::NOTICE, false));
+
+    $monolog->pushProcessor(new \Monolog\Processor\WebProcessor());
+    return $monolog;
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -27,7 +27,7 @@ $app->post('/Login', 'AuthController@Login');
 $app->group(['middleware' => 'auth'], function () use ($app) {
     $app->post('/Upload', ['middleware' => 'can:upload', 'uses' => 'UploadController@Upload']);
     $app->post('/List', 'VoteController@getSongs');
-    $app->get('/Vote', ['middleware' => 'can:vote', 'uses' => 'VoteController@Vote']);
+    $app->post('/Vote', ['middleware' => 'can:vote', 'uses' => 'VoteController@Vote']);
     $app->post('/Report', 'ReportController@Report');
 });
 
@@ -42,18 +42,19 @@ $app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($a
     $app->post('/Song/Trash', 'ManageController@trashSongs');
     $app->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
     $app->post('/Song/Restore', 'ManageController@restoreSongs');
-    $app->get('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
+    $app->post('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
 
     $app->get('/Files', 'ManageController@getFiles');
     $app->post('/File/Trash', 'ManageController@trashFiles');
     $app->get('/Files/Trashed', 'ManageController@getTrashedFiles');
     $app->post('/File/Restore', 'ManageController@restoreFiles');
-    $app->get('/File/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteFiles']);
+    $app->post('/File/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteFiles']);
 
     $app->get('/Reports', 'ManageController@getReports');
     $app->post('/Report/Delete', 'ManageController@deleteReports');
 
-    $app->get('/Option/Edit', ['middleware' => 'can:admin', 'uses' => 'ManageController@editOption']);
+    $app->get('/Options', ['middleware' => 'can:admin', 'uses' => 'ManageController@Options']);
+    $app->post('/Option/Edit', ['middleware' => 'can:admin', 'uses' => 'ManageController@editOption']);
 
     $app->get('/Votes', ['middleware' => 'can:admin', 'uses' => 'ManageController@getVotes']);
     $app->get('/Rank', ['middleware' => 'can:admin', 'uses' => 'ManageController@getRank']);
