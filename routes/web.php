@@ -27,7 +27,7 @@ $app->post('/Login', 'AuthController@Login');
 $app->group(['middleware' => 'auth'], function () use ($app) {
     $app->post('/Upload', ['middleware' => 'can:upload', 'uses' => 'UploadController@Upload']);
     $app->post('/List', 'VoteController@getSongs');
-    $app->get('/Vote', ['middleware' => 'can:vote', 'uses' => 'VoteController@Vote']);
+    $app->post('/Vote', ['middleware' => 'can:vote', 'uses' => 'VoteController@Vote']);
     $app->post('/Report', 'ReportController@Report');
 });
 

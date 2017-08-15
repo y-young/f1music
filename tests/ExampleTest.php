@@ -57,7 +57,8 @@ class ExampleTest extends TestCase
 
     public function testMusic()
     {
-        $this->json('POST', '/Music/Search', ['keyword' => '***REMOVED***'])
+        $user = factory('App\User')->make();
+        $this->actingAs($user)->json('POST', '/Music/Search', ['keyword' => '***REMOVED***'])
              ->seeJson(['artist' => ['***REMOVED***']]);
     }
 
