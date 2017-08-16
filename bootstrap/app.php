@@ -81,6 +81,7 @@ $app->singleton(
 $app->middleware([Illuminate\Session\Middleware\StartSession::class]);
 $app->routeMiddleware([
      'can' => \Illuminate\Auth\Middleware\Authorize::class,
+     'throttle' => App\Http\Middleware\ThrottleRequests::class,
      'auth' => App\Http\Middleware\Authenticate::class,
      'admin' => App\Http\Middleware\AdminAuth::class,
      'redirect' => App\Http\Middleware\RedirectIfLogged::class,
