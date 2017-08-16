@@ -8,10 +8,8 @@ use App\Song;
 use App\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class VoteController extends Controller
 {
@@ -33,7 +31,7 @@ class VoteController extends Controller
 
     public function Vote(Request $request)
     {
-        if (!Config::get('music.openVote')) {
+        if (!config('music.openVote')) {
             return response()->json(['error' => 1, 'msg' => '投票已关闭']);
         }
         $validator = Validator::make($request->all(), [

@@ -6,7 +6,6 @@ use Auth;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Config;
 
 class AuthController extends Controller
 {
@@ -24,9 +23,9 @@ class AuthController extends Controller
             "password" => $authData->password,
             "loginRole" => '2'
         ];
-        if (!Config::get('music.debugauth')) {
+        if (!config('music.debugauth')) {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
+            curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);

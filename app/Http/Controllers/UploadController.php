@@ -9,11 +9,9 @@ use App\File;
 use App\Song;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-require_once(Config::get('music.apppath').'/Http/Controllers/getid3/getid3.php');
-require_once(Config::get('music.apppath').'/Http/Controllers/getid3/write.php');
+require_once(config('music.apppath').'/Http/Controllers/getid3/getid3.php');
+require_once(config('music.apppath').'/Http/Controllers/getid3/write.php');
 
 class UploadController extends Controller
 {
@@ -49,7 +47,7 @@ class UploadController extends Controller
     public static function Upload(Request $request)
     {
         Log::info('Requests: '.var_export($request->all(),true));
-        if (!Config::get('music.openUpload')) {
+        if (!config('music.openUpload')) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
         }
         $validator = Validator::make($request->all(), [
