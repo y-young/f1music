@@ -9,10 +9,10 @@
             <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? 'fa-pause' : 'fa-play']" style="margin-right: 0;"></i></el-button>
             <el-button type="primary" @click="stop" v-if="detail"><i class="fa fa-stop" style="margin-right: 0;"></i></el-button>
         </el-button-group>
-        <div class="control" v-if="detail">
+        <!-- <div class="control" v-if="detail">
             <i class="fa" v-bind:class="[volume ? 'fa-volume-up' : 'fa-volume-off']" id="volume"></i>
             <el-slider v-model="volume" :max="100" @change="changeVolume" id="changeVolume"></el-slider>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -73,6 +73,7 @@
             },
             end: function() {
                 this.isPlaying = false
+                this.$emit('end')
             },
             changeVolume: function(volume) {
                 this.audio.volume = volume / 100

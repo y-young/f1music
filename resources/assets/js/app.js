@@ -18,7 +18,7 @@ import {
     BreadcrumbItem,
     Menu,
     MenuItem,
-    MenuItemGroup,
+    Submenu,
     Slider,
     Button,
     ButtonGroup,
@@ -40,6 +40,7 @@ import {
     Loading,
     Message,
     MessageBox,
+    Tooltip
     // Steps,
     // Step
 } from 'element-ui';
@@ -53,7 +54,7 @@ Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
 Vue.use(Menu);
 Vue.use(MenuItem);
-Vue.use(MenuItemGroup);
+Vue.use(Submenu);
 Vue.use(Slider);
 Vue.use(Button);
 Vue.use(ButtonGroup);
@@ -72,6 +73,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(Tooltip);
 // Vue.use(Steps);
 // Vue.use(Step);
 Vue.use(Loading.directive);
