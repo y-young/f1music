@@ -120,54 +120,62 @@ class UploadController extends Controller
                 Storage::disk('tmp')->delete($file->name);
             }
         } else { //文件未上传过,则进行验证
-            // 初始化文件处理
-            $getID3 = new \getID3;
-            $getID3->option_tag_id3v1 = false;
-            $getID3->option_tag_id3v2 = false;
-            $getID3->option_tag_lyrics3 = false;
-            $getID3->option_tag_apetag = false;
-            $getID3->option_md5_data = true;
-            $mp3_info = $getID3->analyze($file->url);
-            $file->playtime = intval(round($mp3_info['playtime_seconds']));
-            if ($file->playtime < 2.5 * 60) {
+            $file->duration = self::getDuration($file);
+            if ($file->duration < 2.5 * 60) {
                 $file->error = self::$errorMsg['time_too_short'];
-            } elseif ($file->playtime > 6 * 60) {
+            } elseif ($file->duration > 6 * 60) {
                 $file->error = self::$errorMsg['time_too_long'];
             }
         }
         return $file;
     }
 
+    public static function getDuration($file)
+    {
+        $getID3 = new \getID3;
+        $getID3->option_tag_id3v1 = false;
+        $getID3->option_tag_id3v2 = false;
+        $getID3->option_tag_lyrics3 = false;
+        $getID3->option_tag_apetag = false;
+        $getID3->option_md5_data = true;
+        $mp3Info = $getID3->analyze($file->url);
+        return intval(round($mp3Info['playtime_seconds']));
+    }
+
     public static function insert($file)
     {
         $song = Song::create([
-                    'playtime' => $file->time,
-                    'name' => $file->songName,
-                    'origin' => $file->songOrigin,
-                    'uploader' => self::$stuId,
-                    'file_id' => $file->id
-                ]);
+            'playtime' => $file->time,
+            'name' => $file->songName,
+            'origin' => $file->songOrigin,
+            'uploader' => self::$stuId,
+            'file_id' => $file->id
+        ]);
         $song->save();
     }
 
     public static function store($vFile)
     {
         if (empty($vFile->id)) { //未上传过则存储
-            //消除标签信息
-            $writer = new \getid3_writetags;
-            $writer->filename = $vFile->url;
-            $writer->overwrite_tags = true;
-            $writer->remove_other_tags = true;
-            $writer->WriteTags();
+            self::removeTags($vFile);
             Storage::move('tmp/'.$vFile->name, 'uploads/'.$vFile->storageName);
             $file = File::create([
-                    'md5' => $vFile->md5,
-                    'uploader' => self::$stuId
-                    ]);
+                'md5' => $vFile->md5,
+                'uploader' => self::$stuId
+            ]);
             $file->save();
             $vFile->id = $file->id;
         }
         return $vFile;
+    }
+
+    public static function removeTags($file)
+    {
+        $writer = new \getid3_writetags;
+        $writer->filename = $file->url;
+        $writer->overwrite_tags = true;
+        $writer->remove_other_tags = true;
+        $writer->WriteTags();
     }
 
     public static function curlGet($url)

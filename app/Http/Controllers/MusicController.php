@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Metowolf\Meting;
 
 class MusicController extends Controller
@@ -45,15 +46,18 @@ class MusicController extends Controller
 
     public function Playlist()
     {
-        $res = json_decode(self::$API->format(true)->playlist(163809839), true);
-        $res = array_map(function ($song) {
-            return [
-                'title' => $song['name'],
-                'author' => implode('', $song['artist']),
-                'url' => json_decode(self::$API->format(true)->url($song['id']))->url,
-                'pic' => json_decode(self::$API->format(true)->pic($song['pic_id']))->url
-            ];
-        }, $res);
-        return json_encode($res);
+        $list = Cache::remember('playlist', 30, function() {
+            $result = json_decode(self::$API->format(true)->playlist('163809839'), true);
+            $list = array_map(function ($song) {
+                return [
+                    'title' => $song['name'],
+                    'author' => implode('', $song['artist']),
+                    'url' => json_decode(self::$API->format(true)->url($song['id']))->url,
+                    'pic' => json_decode(self::$API->format(true)->pic($song['pic_id']))->url
+                ];
+            }, $result);
+            return $list;
+        });
+        return response()->json($list);
     }
 }

@@ -44,15 +44,25 @@ class ExampleTest extends TestCase
     public function testPermission()
     {
         $user = factory('App\User')->make();
-        $res = [
-            $this->call('POST', '/Upload'),
-            $this->call('POST', '/List'),
-            $this->call('POST', '/Vote'),
-            $this->call('POST', '/Report')
-        ];
-        foreach ($res as $r) {
-            $this->assertEquals(401, $r->status());
+        $urls = ['Upload', 'List', 'Vote', 'Report'];
+        foreach ($urls as $url) {
+            $this->assertEquals(401, $this->call("POST', '/'.$url)->status());
         }
+    }
+
+    public function testUpload()
+    {
+        //
+    }
+
+    public function testVote()
+    {
+        //
+    }
+
+    public function testReport()
+    {
+        //
     }
 
     public function testMusic()
@@ -60,6 +70,8 @@ class ExampleTest extends TestCase
         $user = factory('App\User')->make();
         $this->actingAs($user)->json('POST', '/Music/Search', ['keyword' => '***REMOVED***'])
              ->seeJson(['artist' => ['***REMOVED***']]);
+        $this->actingAs($user)->json('GET', '/Music/Playlist')
+             ->seeJson(['author' => '***REMOVED***']);
     }
 
     public function testAdmin()
@@ -68,25 +80,12 @@ class ExampleTest extends TestCase
         $response = $this->actingAs($admin)
                          ->call('GET', '/Manage');
         $this->assertEquals(200, $response->status());
-        $this->actingAs($admin)
-             ->json('GET', '/Manage/Songs')
-             ->seeJson(['error' => 0]);
-        $this->actingAs($admin)
-             ->json('GET', '/Manage/Files')
-             ->seeJson(['error' => 0]);
-        $this->actingAs($admin)
-             ->json('GET', '/Manage/Votes')
-             ->seeJson(['error' => 0]);
-        $this->actingAs($admin)
-             ->json('GET', '/Manage/Reports')
-             ->seeJson(['error' => 0]);
-        $this->actingAs($admin)
-             ->json('GET', '/Manage/Rank')
-             ->seeJson(['error' => 0]);
-    }
 
-    public function testUpload()
-    {
-        //
+        $_this = $this->actingAs($admin);
+        $adminUrls = ['Songs', 'Files', 'Votes', 'Reports', 'Rank'];
+        foreach ($adminUrls as $url) {
+             $_this->json('GET', '/Manage/'.$url)
+                 ->seeJson(['error' => 0]);
+        }
     }
 }
