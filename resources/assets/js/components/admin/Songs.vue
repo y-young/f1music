@@ -11,7 +11,6 @@
                 <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
                 <el-table-column prop="name" label="曲名"></el-table-column>
                 <el-table-column prop="reports_count" label="举报数" sortable></el-table-column>
-                <el-table-column prop="uploader" label="上传者"></el-table-column>
                 <el-table-column prop="created_at" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
@@ -27,9 +26,6 @@
                             </el-form-item>
                             <el-form-item label="举报数">
                                 <span>{{ props.row.reports_count }}</span>
-                            </el-form-item>
-                            <el-form-item label="上传者">
-                                <span>{{ props.row.uploader }}</span>
                             </el-form-item>
                             <el-form-item label="创建时间">
                                 <span>{{ props.row.created_at }}</span>

@@ -9,14 +9,10 @@
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="md5" label="MD5"></el-table-column>
-                <el-table-column prop="uploader" label="上传者"></el-table-column>
                 <el-table-column prop="time" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
                     <template scope="props">
                         <el-form label-position="left" inline>
-                            <el-form-item label="上传者">
-                                <span>{{ props.row.uploader }}</span>
-                            </el-form-item>
                             <el-form-item label="时间">
                                 <span>{{ props.row.time }}</span>
                             </el-form-item>

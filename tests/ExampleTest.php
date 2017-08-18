@@ -46,7 +46,7 @@ class ExampleTest extends TestCase
         $user = factory('App\User')->make();
         $urls = ['Upload', 'List', 'Vote', 'Report'];
         foreach ($urls as $url) {
-            $this->assertEquals(401, $this->call("POST', '/'.$url)->status());
+            $this->assertEquals(401, $this->call('POST', '/'.$url)->status());
         }
     }
 
