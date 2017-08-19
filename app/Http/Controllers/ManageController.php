@@ -16,7 +16,7 @@ class ManageController extends Controller
 {
     public function getSongs()
     {
-        $songs = Song::withCount('reports')->get();
+        $songs = Song::with('file')->withCount('reports')->get();
         return response()->json(['error' => 0, 'songs' => $songs]);
     }
 

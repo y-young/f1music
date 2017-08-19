@@ -70,10 +70,12 @@ class VoteController extends Controller
                 return $songs;
             });*/
 
-            $musicList = Song::select('id', 'file_id')->ofTime($request->input('time'))->inRandomOrder()->get();
+            $songs = Song::with(['votes' => function($query) {
+                $query->where('voter', self::$stuId);
+            }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->inRandomOrder()->get();
             $id = 0;
-            $songs = $musicList->mapWithKeys(function ($song, $id) {
-                $vote = $song->votes->where('voter', Auth::user()->stuId)->first();
+            $songs = $songs->mapWithKeys(function ($song, $id) {
+                $vote = $song->votes->first();
                 if (empty($vote)) {
                     $vote = '未投票';
                 } else {
