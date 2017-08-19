@@ -148,13 +148,13 @@ class ManageController extends Controller
 
     public function getRank(Request $request)
     {
-        $songs = Song::withCount('votes')->get();
+        $songs = Song::with('votes')->withCount('votes')->get();
         foreach ($songs as $song) {
+            $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
-        $songs = $songs->sortByDesc('score');
-        $songs = array_map(function ($song) {
-            //$score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
+        $songs = $songs->sortByDesc('score')->sortBy('playtime');
+        $songs = $songs->map(function ($song) {
             return [
                 'id' => $song->id,
                 'playtime' => $song->playtime,
@@ -164,8 +164,8 @@ class ManageController extends Controller
                 'sum' => $song->vote_sum,
                 'counts' => $song->votes_count
             ];
-        }, $songs->all());
-        return response()->json(['error' => 0, 'songs' => $songs]);
+        });
+        return response()->json(['error' => 0, 'songs' => $songs->values()]);
     }
 
     public function Options(Request $request)

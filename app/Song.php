@@ -39,12 +39,6 @@ class Song extends Model
         return $this->file->url;
     }
     
-    public function getVoteSumAttribute()
-    {
-        $votes = $this->votes;
-        return $votes->sum->vote;
-    }
-
     public function scopeOfTime($query, $time)
     {
         return $query->where('playtime', $time); 
