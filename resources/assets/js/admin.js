@@ -73,7 +73,8 @@ const router = new VueRouter({
             path: '/Songs',
             component: Songs,
             meta: {
-                title: "曲目"
+                title: "曲目",
+                nav: '1-1'
             }
         },
         {
@@ -81,14 +82,16 @@ const router = new VueRouter({
             component: Songs,
             meta: {
                 title: "曲目 - 回收站",
-                type: 'trashed'
+                type: 'trashed',
+                nav: '1-2'
             }
         },
         {
             path: '/Files',
             component: Files,
             meta: {
-                title: "文件"
+                title: "文件",
+                nav: '3-1'
             }
         },
         {
@@ -96,28 +99,32 @@ const router = new VueRouter({
             component: Files,
             meta: {
                 title: "文件 - 回收站",
-                type: 'trashed'
+                type: 'trashed',
+                nav: '3-2'
             }
         },
         {
             path: '/Reports',
             component: Reports,
             meta: {
-                title: "举报"
+                title: "举报",
+                nav: '4'
             }
         },
         {
             path: '/Votes',
             component: Votes,
             meta: {
-                title: "投票"
+                title: "投票",
+                nav: '2'
             }
         },
         {
             path: '/Rank',
             component: Rank,
             meta: {
-                title: "投票结果"
+                title: "投票结果",
+                nav: '5'
             }
         }
     ]
@@ -126,16 +133,35 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title + ' - 福州一中 校园音乐征集管理系统'
     next()
 })
-axios.interceptors.response.use(data => {
-    // loadinginstace.close()
-    return data
-}, error => {
-    // loadinginstace.close()
-    Message.error({
-        message: '加载失败'
-    })
-    return Promise.reject(error)
-})
+axios.interceptors.response.use(
+    response => {
+        return response;
+    },
+    error => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 403:
+                    Message.error({
+                        showClose: true,
+                        message: '您没有权限!'
+                    })
+                    break;
+                case 500:
+                    Message.error({
+                        showClose: true,
+                        message: 'Oops!出错了,我们会尽快修复这一问题~'
+                    })
+                    break;
+                default:
+                    Message.error({
+                        showClose: true,
+                        message: '加载失败了╭(╯ε╰)╮'
+                    });
+            }
+        }
+        return Promise.reject(error.response.data)
+    }
+);
 const app = new Vue({
     el: '#app',
     render: h => h(App),

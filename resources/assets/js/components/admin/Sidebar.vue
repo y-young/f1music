@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <div class="logo">FZYZ 校园音乐征集</div>
+        <div class="logo">FZYZ 校园音乐征集管理系统</div>
             <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
                 <el-submenu index="1">
                     <template slot="title">曲目</template>

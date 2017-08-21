@@ -1,6 +1,6 @@
 <template>
     <div class="app" v-bind:class="{ 'show-sidebar': collapsed }">
-        <Sidebar activeIndex="1"></Sidebar>
+        <Sidebar :activeIndex="$route.meta.nav"></Sidebar>
         <div class="container">
             <div class="container-inner">
                 <Heading :title="$route.meta.title" v-on:collapse="collapse"></Heading>
@@ -31,9 +31,19 @@
                 collapsed: desktop
             }
         },
+        watch: {
+            $route: function() {
+                this.mobileCollapse()
+            }
+        },
         methods: {
             collapse: function(){
                 this.collapsed = !this.collapsed;
+            },
+            mobileCollapse: function() {
+                if (!desktop) {
+                    this.collapse()
+                }
             }
         },
         components: {

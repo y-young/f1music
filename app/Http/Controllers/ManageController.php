@@ -113,7 +113,7 @@ class ManageController extends Controller
 
     public function getReports()
     {
-        $reports = Report::with('song')->get();
+        $reports = Report::with('song.file')->get();
         // $id = 0;
         // $reports = $reports->mapWithKeys(function ($report, $id) {
         //     $id++;

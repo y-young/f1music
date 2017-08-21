@@ -28,7 +28,7 @@
                                 <span>{{ props.row.time }}</span>
                             </el-form-item>
                             <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="!props.row.song.url"></i><YPlayer :src="props.row.song.url" :detail="false" v-if="props.row.song.url"></YPlayer></span>
+                                <span><i class="el-icon-loading" v-if="!props.row.song.file.url"></i><YPlayer :src="props.row.song.file.url" :detail="false" v-if="props.row.song.file.url"></YPlayer></span>
                             </el-form-item>
                             <el-form-item label="操作">
                                 <span><el-button type="danger" @click="del(props.row.id, props.row.$index)" :loading="btnLoading">删除</el-button></span>
