@@ -33,9 +33,10 @@ class UploadController extends Controller
 
     public static $errorMsg = [
         'stop_upload' => '文件上传已关闭',
-        'time_too_long' => '您所上传的歌曲超过了6分钟，请选择短一些的曲目',
-        'time_too_short' => '您所上传的歌曲还不到2分半钟，请选择长一些的曲目',
-        'already_exists' => '您所上传的音乐在该时段已经有人推荐'
+        'max_upload_num' => '上传数目已达到限定数码,感谢您对校园音乐的支持',
+        'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
+        'time_too_short' => '歌曲时长还不足2分半钟，请选择长一些的曲目',
+        'already_exists' => '所上传的音乐在该时段已经有人推荐'
     ];
     public static $stuId;
 
@@ -48,6 +49,8 @@ class UploadController extends Controller
     {
         Log::info('Requests: '.var_export($request->all(),true));
         if (!config('music.openUpload')) {
+            return response()->json(['error' => 1, 'msg' => self::$errorMsg['max_upload_num']]);
+        } elseif (Song::where('uploader', self::$stuId)->count() >= 10) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
         }
         $validator = Validator::make($request->all(), [
@@ -64,35 +67,17 @@ class UploadController extends Controller
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
         }
 
-        $tmpDir = storage_path('app/tmp/');
-        $uFile = new UnvalidatedFile();
-        $uFile->time = $request->input('time');
-        $uFile->songName = $request->input('name');
-        $uFile->songOrigin = $request->input('origin');
-
-        if ($request->hasFile('file')) { //Manual Upload
-            $t1 = microtime(true);
-            $reqFile = $request->file('file');
-            $uFile->name = $reqFile->getClientOriginalName();
-            $uFile->url = $tmpDir.$uFile->name;
-            $reqFile->move($tmpDir, $uFile->name); //先存储到临时目录以便验证
-            $uFile->md5 = md5_file($uFile->url);
-            $t2 = microtime(true);
-            Log::debug('Fetching:'.round($t2-$t1, 3));
-        } else { //Cloud Music Upload
-            //TODO: 检查Mp3文件是否可用
-            $uFile->name = explode('/', $request->input('url'))[9];
-            $uFile->md5 = substr($uFile->name, 0, -4);
-            $t1 = microtime(true);
-            Storage::disk('tmp')->put($uFile->name, file_get_contents($request->input('url')));
-            $t2 = microtime(true);
-            Log::debug('Fetching:'.round($t2-$t1, 3));
-            $uFile->url = $tmpDir.$uFile->name;
-        }
+        $t1 = microtime(true);
+        // $uFile => Unvalidated File
+        $uFile = self::getFileFromRequest($request);
+        $t2 = microtime(true);
+        Log::debug('Fetching:'.round($t2-$t1, 3));
+        // $vFile => Validated File
         $vFile = self::validateFile($uFile);
         $t3 = microtime(true);
         Log::debug('Validation:'.round($t3-$t2, 3));
         Log::info('Files: '.var_export($vFile,true));
+
         if (empty($vFile->error)) {
             $vFile = self::store($vFile);
             self::insert($vFile);
@@ -104,6 +89,30 @@ class UploadController extends Controller
         Log::debug('Storing:'.round($t4-$t3, 3));
         Log::debug('Total:'.round($t4-$t1, 3));
         return response()->json(['error' => 0]);
+    }
+
+    public static function getFileFromRequest(Request $request)
+    {
+        $tmpDir = storage_path('app/tmp/');
+        $file = new UnvalidatedFile();
+        $file->time = $request->input('time');
+        $file->songName = $request->input('name');
+        $file->songOrigin = $request->input('origin');
+
+        if ($request->hasFile('file')) { //Manual Upload
+            $reqFile = $request->file('file');
+            $file->name = $reqFile->getClientOriginalName();
+            $file->url = $tmpDir.$file->name;
+            $reqFile->move($tmpDir, $file->name); //先存储到临时目录以便验证
+            $file->md5 = md5_file($file->url);
+        } else { //Cloud Music Upload
+            //TODO: 检查Mp3文件是否可用
+            $file->name = explode('/', $request->input('url'))[9];
+            $file->md5 = substr($file->name, 0, -4);
+            Storage::disk('tmp')->put($file->name, file_get_contents($request->input('url')));
+            $file->url = $tmpDir.$file->name;
+        }
+        return $file;
     }
 
     public static function validateFile($file)
