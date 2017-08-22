@@ -100,7 +100,8 @@
                 this.$router.push('/Manage/Song/Edit' + id);
             },
             trash(id, index) {
-                axios.post('/Manage/Song/Trash',{
+                this.btnLoading = true
+                axios.post('/Manage/Song/Trash', {
                     id: [id]
                 })
                 .then((res) => {
@@ -119,7 +120,8 @@
                 });
             },
             del(id, index) {
-                axios.post('/Manage/Song/Delete',{
+                this.btnLoading = true
+                axios.post('/Manage/Song/Delete', {
                     id: [id]
                 })
                 .then((res) => {
@@ -137,7 +139,8 @@
                 });
             },
             batchTrash() {
-                axios.post('/Manage/Song/Trash',{
+                this.btnLoading = true
+                axios.post('/Manage/Song/Trash', {
                     id: this.selected
                 })
                 .then((res) => {

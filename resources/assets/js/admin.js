@@ -38,6 +38,7 @@ import {
 import 'element-ui/lib/theme-default/index.css';
 
 import Songs from './components/admin/Songs.vue';
+import EditSong from './components/admin/EditSong.vue';
 import Files from './components/admin/Files.vue';
 import Reports from './components/admin/Reports.vue';
 import Votes from './components/admin/Votes.vue';
@@ -84,6 +85,13 @@ const router = new VueRouter({
                 title: "曲目 - 回收站",
                 type: 'trashed',
                 nav: '1-2'
+            }
+        },
+        {
+            path: '/Song/Edit/:id',
+            component: EditSong,
+            meta: {
+                title: "编辑曲目"
             }
         },
         {

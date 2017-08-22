@@ -4,7 +4,6 @@
         <el-breadcrumb-item>上传</el-breadcrumb-item>
         <el-breadcrumb-item>Upload</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- <h3>上传</h3> -->
     <div class="main">
     <el-alert title="曲目要求" type="info" description="格式:MP3;时长:3-5分钟;大小:1MB-15MB为宜;不得出现非伴奏人声" show-icon></el-alert>
     <el-tabs active-name="netease">

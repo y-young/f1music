@@ -22,7 +22,7 @@ class ManageController extends Controller
 
     public function viewSong(Request $request)
     {
-        $song = Song::with('reports')->where('id', $request->input('id'))->get();
+        $song = Song::with('reports', 'file')->where('id', $request->input('id'))->get();
         return response()->json(['error' => 0, 'song' => $song]);
     }
 
