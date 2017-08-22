@@ -3,7 +3,7 @@
         <audio id="audio" @loadedmetadata="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>
         <div class="control" v-if="detail">
             <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
-            <div id="timeDetail" style="">{{ played }} / {{ duration }}</div>
+            <div id="timeDetail">{{ played }} / {{ duration }}</div>
         </div>
         <el-button-group id="controls">
             <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? 'fa-pause' : 'fa-play']" style="margin-right: 0;"></i></el-button>

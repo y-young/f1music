@@ -1,6 +1,6 @@
 <template>
     <div class="app" v-bind:class="{ 'show-sidebar': collapsed }">
-        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('3-'+$route.params.time)"></Sidebar>
+        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('3-'+$route.params.time)" :loggedIn="loggedIn"></Sidebar>
         <div class="container">
             <div class="container-inner">
                 <Heading :title="$route.meta.title" v-on:collapse="collapse"></Heading>
@@ -28,7 +28,8 @@
         name: 'app',
         data() {
             return {
-                collapsed: desktop
+                collapsed: desktop,
+                loggedIn: false
             }
         },
         watch: {
@@ -42,18 +43,19 @@
         },
         methods: {
             collapse: function(){
-                this.collapsed = !this.collapsed;
+                this.collapsed = !this.collapsed
             },
             mobileCollapse: function() {
                 if (!desktop) {
-                    this.collapse()
+                    this.collapsed = false
                 }
             },
             checkLogin: function() {
-                if (this.$route.meta.requiresAuth == true && getCookie('MusicAuth') == null) {
+                this.loggedIn = getCookie('MusicAuth') != null
+                if (this.$route.meta.requiresAuth == true && !this.loggedIn) {
                    window.location.href = '/Login'
                 }
-            } 
+            }
         },
         components: {
             Sidebar,

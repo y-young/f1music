@@ -4,6 +4,7 @@
             <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
                 <el-menu-item index="1" :route="{path: '/'}"><i class="fa fa-home"></i>首页</el-menu-item>
                 <el-menu-item index="2" :route="{path: '/Upload'}"><i class="el-icon-upload"></i>上传</el-menu-item>
+                <el-menu-item><a :href="[loggedIn ? '/Logout' : '/Login']"><i class="fa" v-bind:class="[loggedIn ? 'fa-sign-out' : 'fa-sign-in']"></i>{{ loggedIn ? '登出' : '登录' }}</a></el-menu-item>
                 <el-submenu index="3">
                     <template slot="title">投票</template>
                     <el-menu-item index="3-1" :route="{path: '/Vote/1'}"> 6:30 起床铃</el-menu-item>
@@ -19,7 +20,7 @@
 
 <script>
     export default {
-        props: ['activeIndex'],
+        props: ['activeIndex', 'loggedIn'],
     }
 </script>
 
