@@ -37,7 +37,7 @@ $app->group(['middleware' => 'auth'], function () use ($app) {
         'uses' => 'VoteController@getSongs'
     ]);
     $app->post('/Vote', [
-        'middleware' => ['thorttle:30', 'can:vote'],
+        'middleware' => ['throttle:30', 'can:vote'],
         'uses' => 'VoteController@Vote'
     ]);
     $app->post('/Report', [

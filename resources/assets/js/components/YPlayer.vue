@@ -1,6 +1,6 @@
 <template>
     <div class="yplayer">
-        <audio id="audio" @loadedmetadata="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>
+        <audio id="audio" @durationchange="init" @timeupdate="progress" @ended="end" :src="src" ref="player" preload></audio>
         <div class="control" v-if="detail">
             <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
             <div id="timeDetail">{{ played }} / {{ duration }}</div>
@@ -9,10 +9,10 @@
             <el-button type="primary" @click="play"><i class="fa" v-bind:class="[isPlaying ? 'fa-pause' : 'fa-play']" style="margin-right: 0;"></i></el-button>
             <el-button type="primary" @click="stop" v-if="detail"><i class="fa fa-stop" style="margin-right: 0;"></i></el-button>
         </el-button-group>
-        <!-- <div class="control" v-if="detail">
-            <i class="fa" v-bind:class="[volume ? 'fa-volume-up' : 'fa-volume-off']" id="volume"></i>
-            <el-slider v-model="volume" :max="100" @change="changeVolume" id="changeVolume"></el-slider>
-        </div> -->
+        <!--<div class="control" v-if="detail">
+           <i class="fa" v-bind:class="[volume ? 'fa-volume-up' : 'fa-volume-off']" id="volume"></i>
+           <el-slider v-model="volume" :max="100" @change="changeVolume" id="changeVolume"></el-slider>
+        </div>-->
     </div>
 </template>
 
@@ -50,7 +50,7 @@
         methods: {
             init: function() {
                 this.totalTime = this.audio.duration
-                this.volume = this.audio.volume * 100
+//                this.volume = this.audio.volume * 100
                 //this.$set(this, 'duration', formatTime(this.totalTime)) //this.duration = formatTime(this.totalTime)
             },
             progress: function() {
