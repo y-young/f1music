@@ -38,7 +38,7 @@
                             </el-form-item>
                             <el-form-item label="操作">
                                 <span>
-                                    <el-button @click="edit">查看/编辑</el-button>
+                                    <el-button @click="edit(props.row.id)">查看/编辑</el-button>
                                     <span v-if="type == 'trashed'">
                                         <el-button type="danger" @click="del(props.row.id, props.row.$index)" :loading="btnLoading">彻底删除</el-button>
                                     </span>
@@ -97,7 +97,7 @@
                 return row.playtime === value;
             },
             edit(id) {
-                this.$router.push('/Manage/Song/Edit' + id);
+                this.$router.push('/Song/Edit/' + id);
             },
             trash(id, index) {
                 this.btnLoading = true

@@ -42,7 +42,7 @@
                                 <input type="hidden" v-model="uploadForm.url" :value="props.row.mp3">
                             </el-form-item>
                             <el-form-item label="上传">
-                                <span><el-button type="primary" :loading="btnLoading" @click="cloudUpload(props.row.mp3)">上传</el-button></span>
+                                <span><el-button type="primary" icon="upload" :loading="btnLoading" @click="cloudUpload(props.row.mp3)">上传</el-button></span>
                             </el-form-item>
                         </el-form>
                     </template>

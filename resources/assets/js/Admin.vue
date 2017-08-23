@@ -42,7 +42,7 @@
             },
             mobileCollapse: function() {
                 if (!desktop) {
-                    this.collapse()
+                    this.collapsed = false
                 }
             }
         },
