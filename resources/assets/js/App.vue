@@ -1,6 +1,6 @@
 <template>
     <div class="app" v-bind:class="{ 'show-sidebar': collapsed }">
-        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('3-'+$route.params.time)" :loggedIn="loggedIn"></Sidebar>
+        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('4-'+$route.params.time)" :loggedIn="loggedIn"></Sidebar>
         <div class="container">
             <div class="container-inner">
                 <Heading :title="$route.meta.title" v-on:collapse="collapse"></Heading>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8470206fab2e25160d7d8a799799b02",
+    "content-hash": "b511d039983bf1e7db80767135f84e02",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -1304,16 +1304,16 @@
         },
         {
             "name": "metowolf/meting",
-            "version": "v1.3.6.1",
+            "version": "v1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/metowolf/Meting.git",
-                "reference": "a5ba951c7cbc7020c3fb9b79d7e4d58d7b244680"
+                "reference": "465c5ea03ee36f471e2ea5d9aa9d8015c4728ac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/metowolf/Meting/a5ba951c7cbc7020c3fb9b79d7e4d58d7b244680.zip",
-                "reference": "a5ba951c7cbc7020c3fb9b79d7e4d58d7b244680",
+                "url": "https://files.phpcomposer.com/files/metowolf/Meting/465c5ea03ee36f471e2ea5d9aa9d8015c4728ac6.zip",
+                "reference": "465c5ea03ee36f471e2ea5d9aa9d8015c4728ac6",
                 "shasum": ""
             },
             "require": {
@@ -1346,7 +1346,7 @@
                 "music api",
                 "php music"
             ],
-            "time": "2017-06-25T07:17:15+00:00"
+            "time": "2017-08-06T03:03:13+00:00"
         },
         {
             "name": "monolog/monolog",

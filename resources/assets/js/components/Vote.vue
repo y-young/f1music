@@ -24,7 +24,7 @@
             </transition>
             <transition name="el-fade-in-linear">
                 <div v-show="showReport">
-                    <br><el-input v-model="reason" placeholder="填写举报原因" style="width: 70%; float: left; margin-bottom: 10px;"></el-input>
+                    <br><el-input v-model="reason" placeholder="填写举报原因" style="width: 70%; float: left; margin-bottom: 10px;" :maxlength="50"></el-input>
                     <el-button type="primary" :loading="reportLoading" @click="report(song.id)" style="float: right;">提交</el-button>
                 </div>
             </transition>

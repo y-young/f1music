@@ -25,7 +25,13 @@ class MusicController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
         }
-        return self::$API->format(true)->search($request->input('keyword'));
+
+        $result = self::$API->format(true)->search($request->input('keyword'));
+        if ($result == '[]') {
+            return response()->json(['error' => 1, 'msg' => '未能找到相关搜索结果']);
+        } else {
+            return response($result);
+        }
     }
 
     public function Mp3(Request $request)

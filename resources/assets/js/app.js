@@ -136,6 +136,12 @@ axios.interceptors.response.use(
                         message: 'Oops!出错了,我们会尽快修复这一问题~'
                     })
                     break;
+                case 429:
+                    Message.error({
+                        showClose: true,
+                        message: '操作过于频繁,请稍后再试'
+                    })
+                    break;
                 default:
                     Message.error({
                         showClose: true,

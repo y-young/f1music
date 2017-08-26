@@ -3,16 +3,20 @@
         <div class="logo">FZYZ 校园音乐征集</div>
             <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
                 <el-menu-item index="1" :route="{path: '/'}"><i class="fa fa-home"></i>首页</el-menu-item>
-                <el-menu-item index="2" :route="{path: '/Upload'}"><i class="el-icon-upload"></i>上传</el-menu-item>
-                <el-menu-item><a :href="[loggedIn ? '/Logout' : '/Login']"><i class="fa" v-bind:class="[loggedIn ? 'fa-sign-out' : 'fa-sign-in']"></i>{{ loggedIn ? '登出' : '登录' }}</a></el-menu-item>
-                <el-submenu index="3">
-                    <template slot="title">投票</template>
-                    <el-menu-item index="3-1" :route="{path: '/Vote/1'}"> 6:30 起床铃</el-menu-item>
-                    <el-menu-item index="3-2" :route="{path: '/Vote/2'}"> 7:00 早出门</el-menu-item>
-                    <el-menu-item index="3-3" :route="{path: '/Vote/3'}">13:45 午出门</el-menu-item>
-                    <el-menu-item index="3-4" :route="{path: '/Vote/4'}">18:40 晚出门</el-menu-item>
-                    <el-menu-item index="3-5" :route="{path: '/Vote/5'}">21:35 晚自习结束</el-menu-item>
-                    <el-menu-item index="3-6" :route="{path: '/Vote/6'}">22:30 熄灯铃</el-menu-item>
+                <el-menu-item index="2" :route="{path: '/Upload'}"><i class="fa fa-upload"></i>上传</el-menu-item>
+                <el-menu-item>
+                    <a :href="[loggedIn ? '/Logout' : '/Login']">
+                        <i class="fa" v-bind:class="[loggedIn ? 'fa-sign-out' : 'fa-sign-in']"></i>{{ loggedIn ? '登出' : '登录' }}
+                    </a>
+                </el-menu-item>
+                <el-submenu index="4">
+                    <template slot="title"><i class="fa fa-check-square-o"></i>投票</template>
+                    <el-menu-item index="4-1" :route="{path: '/Vote/1'}"> 6:30 起床铃</el-menu-item>
+                    <el-menu-item index="4-2" :route="{path: '/Vote/2'}"> 7:00 早出门</el-menu-item>
+                    <el-menu-item index="4-3" :route="{path: '/Vote/3'}">13:45 午出门</el-menu-item>
+                    <el-menu-item index="4-4" :route="{path: '/Vote/4'}">18:40 晚出门</el-menu-item>
+                    <el-menu-item index="4-5" :route="{path: '/Vote/5'}">21:45 晚自习结束</el-menu-item>
+                    <el-menu-item index="4-6" :route="{path: '/Vote/6'}">22:30 熄灯铃</el-menu-item>
                 </el-submenu>
             </el-menu>
     </div>

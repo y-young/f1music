@@ -5,10 +5,12 @@
         <el-breadcrumb-item>Upload</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-    <el-alert title="曲目要求" type="info" description="格式:MP3;时长:3-5分钟;大小:1MB-15MB为宜;不得出现非伴奏人声" show-icon></el-alert>
+    <el-alert title="曲目要求" type="info" show-icon>
+        <div>格式:MP3; 时长:3-5分钟; 大小:1MB-15MB为宜; 不得出现非伴奏人声<br>上传前请先查看上传说明</div>
+    </el-alert>
     <el-tabs active-name="netease">
         <el-tab-pane label="网易云音乐" name="netease">
-            <el-input placeholder="搜索音乐" icon="search" v-model="keyword" :on-icon-click="search" @keyup.enter.native="search" style="margin-bottom: 10px;" required></el-input>
+            <el-input placeholder="搜索音乐" icon="search" v-model="keyword" :on-icon-click="search" @keyup.enter.native="search" style="margin-bottom: 10px;" required :maxlength="30"></el-input>
             <el-table :data="result" v-loading.body="formLoading" element-loading-text="加载中..." max-height="500" @expand="getMp3" style="width: 100%" stripe>
                 <el-table-column prop="name" label="曲名"></el-table-column>
                 <el-table-column prop="artist" label="歌手"></el-table-column>
@@ -68,10 +70,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="曲名" prop="name">
-                    <el-input v-model="uploadForm.name" placeholder="歌曲名称"></el-input>
+                    <el-input v-model="uploadForm.name" placeholder="歌曲名称" :maxlength="30"></el-input>
                 </el-form-item>
                 <el-form-item label="来源" prop="origin">
-                    <el-input v-model="uploadForm.origin" placeholder="该曲目来自的专辑、音乐家或节目、游戏等，不是表示上传者，不明来源可以留空"></el-input>
+                    <el-input v-model="uploadForm.origin" placeholder="该曲目来自的专辑、音乐家或节目、游戏等，不是表示上传者，不明来源可以留空" :maxlength="50"></el-input>
                 </el-form-item>
                 <el-form-item label="上传文件" prop="file">
                     <el-upload accept="audio/mpeg" :data="uploadForm" :before-upload="beforeUpload" :on-success="onSuccess" :on-error="onError" :file-list="fileList" drag action="/Upload" :with-credentials="true">
@@ -132,18 +134,17 @@
                 })
                 .then((res) => {
                     this.formLoading = false
-                    if(res.data.length > 0) {
+                    if(!res.data.error) {
                         this.result = res.data
                     } else {
                         this.$message.error({
                             showClose: true,
-                            message: '发生了错误，请重试'
+                            message: res.data.msg
                         });
                     }
                 })
                 .catch((err) => {
                     this.formLoading = false
-                    console.log(err);
                 });
             },
             getMp3: function(row, expanded) {

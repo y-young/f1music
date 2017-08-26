@@ -20,7 +20,9 @@ class UploadController extends Controller
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
-        'string' => ':attribute 应为文本格式',
+        'name.size' => '歌曲名称不得超过30个字符'，
+        'origin.size' => '歌曲来源不得超过50个字符'
+        'string' => ':attribute 应为文本',
         'url.required_without' => '参数错误,请重新搜索音乐',
         'url.url' => '云音乐地址应为URL格式',
         'url.regex' => '不是合法的云音乐URL地址',
@@ -58,10 +60,11 @@ class UploadController extends Controller
                 'required',
                 Rule::in(['1', '2', '3', '4', '5', '6'])
             ],
-            'name' => 'required | string',
-            'origin' => 'nullable | string',
+            'name' => 'required | string | max: 30',
+            'origin' => 'nullable | string | max: 50',
             'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
-            'file' => ['required_without:url', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480'] //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
+            'file' => ['required_without:url', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']
+            //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
         ], self::$messages);
         if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);

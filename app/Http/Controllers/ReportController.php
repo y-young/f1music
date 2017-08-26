@@ -13,7 +13,8 @@ class ReportController extends Controller
     public static $messages = [
         'id.required' => '参数错误,请刷新重试',
         'id.exists' => '歌曲不存在,请刷新重试',
-        'reason.required' => '请填写举报原因'
+        'reason.required' => '请填写举报原因',
+        'reason.max' => '举报原因不得超过50个字符'
     ];
 
     public function __construct()
@@ -25,7 +26,7 @@ class ReportController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required | exists:songs',
-            'reason' => 'required'
+            'reason' => 'required | string | max: 50'
         ], self::$messages);
         if ($validator->fails()) {
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
