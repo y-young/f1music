@@ -34,4 +34,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasMany('App\Song', 'uploader');
     }
+
+    public function order()
+    {
+        return $this->hasOne('App\Order');
+    }
 }

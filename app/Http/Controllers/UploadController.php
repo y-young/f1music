@@ -50,7 +50,7 @@ class UploadController extends Controller
     public static function Upload(Request $request)
     {
         Log::info('Requests: '.var_export($request->all(),true));
-        if (!config('music.openUpload')) {
+        if (! config('music.openUpload')) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['max_upload_num']]);
         } elseif (Song::where('uploader', self::$stuId)->count() >= 10) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);

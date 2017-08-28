@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2017-08-15 19:18:19
+-- Generation Time: 2017-08-28 19:13:51
 -- 服务器版本： 5.6.19
 -- PHP Version: 7.1.0
 
@@ -71,6 +71,24 @@ INSERT INTO `options` (`name`, `value`, `updated_at`) VALUES
 ('censor', '', '2017-08-15 16:04:04'),
 ('ban_upload', NULL, '2017-08-14 15:57:59'),
 ('ban_vote', NULL, '2017-08-14 15:39:58');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `orders`
+--
+
+CREATE TABLE `orders` (
+  `user_id` char(11) NOT NULL COMMENT '学号',
+  `order` tinytext NOT NULL COMMENT '曲目顺序'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='曲目顺序';
+
+--
+-- 转存表中的数据 `orders`
+--
+
+INSERT INTO `orders` (`user_id`, `order`) VALUES
+('***REMOVED***', '1,20,9,19,18,6,8,10,4');
 
 -- --------------------------------------------------------
 
@@ -168,6 +186,12 @@ ALTER TABLE `files`
 --
 ALTER TABLE `options`
   ADD PRIMARY KEY (`name`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- Indexes for table `reports`

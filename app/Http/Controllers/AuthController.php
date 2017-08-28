@@ -23,7 +23,7 @@ class AuthController extends Controller
             "password" => $authData->password,
             "loginRole" => '2'
         ];
-        if (!config('music.debugauth')) {
+        if (! config('music.debugauth')) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -44,7 +44,7 @@ class AuthController extends Controller
 
     public static function checkLogin(Request $request)
     {
-        if (Auth::check()) {//TODO
+        if (Auth::check()) { //TODO
             var_export(Auth::user()->stuId);
         } else {
             return 0;

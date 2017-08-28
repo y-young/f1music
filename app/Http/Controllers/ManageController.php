@@ -60,7 +60,7 @@ class ManageController extends Controller
     {
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
-            if (!empty($song) && $song->trashed()) {
+            if (! empty($song) && $song->trashed()) {
                 //必须用find而不能用where,否则无法触发事件,见文档
                 $song->forceDelete();
             }

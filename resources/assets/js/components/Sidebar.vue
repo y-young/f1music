@@ -15,7 +15,7 @@
                     <el-menu-item index="4-2" :route="{path: '/Vote/2'}"> 7:00 早出门</el-menu-item>
                     <el-menu-item index="4-3" :route="{path: '/Vote/3'}">13:45 午出门</el-menu-item>
                     <el-menu-item index="4-4" :route="{path: '/Vote/4'}">18:40 晚出门</el-menu-item>
-                    <el-menu-item index="4-5" :route="{path: '/Vote/5'}">21:45 晚自习结束</el-menu-item>
+                    <el-menu-item index="4-5" :route="{path: '/Vote/5'}">21:35 晚自习结束</el-menu-item>
                     <el-menu-item index="4-6" :route="{path: '/Vote/6'}">22:30 熄灯铃</el-menu-item>
                 </el-submenu>
             </el-menu>

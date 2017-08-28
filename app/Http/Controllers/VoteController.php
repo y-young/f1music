@@ -6,6 +6,7 @@ use Auth;
 use Validator;
 use App\Song;
 use App\Vote;
+use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Cache;
@@ -31,7 +32,7 @@ class VoteController extends Controller
 
     public function Vote(Request $request)
     {
-        if (!config('music.openVote')) {
+        if (! config('music.openVote')) {
             return response()->json(['error' => 1, 'msg' => '投票已关闭']);
         }
         $validator = Validator::make($request->all(), [
@@ -54,6 +55,9 @@ class VoteController extends Controller
 
     public function getSongs(Request $request)
     {
+        if (! config('music.openVote')) {
+            return response()->json(['error' => 1, 'msg' => '投票已关闭']);
+        }
         $validator = Validator::make($request->all(), [
             'time' => [
                 'required',
@@ -64,32 +68,41 @@ class VoteController extends Controller
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
         }
 
-           /*$musicList = Cache::remember('musiclist'.$request->input('time'),30,function() use ($request) {
-                $songs = Song::select('id')->ofTime($request->input('time'))->inRandomOrder()->get()->only(['id', 'file']);
-               // Log::info(var_export($songs,true));
-                return $songs;
-            });*/
+        // 为减少一条SQL查询所以不用firstOrCreate
+        $order = Order::find(self::$stuId);
+        if (empty($order)) {
+            $order = Order::create([
+                'user_id' => self::$stuId,
+                'order' => Song::select('id')->inRandomOrder()->get()]);
+            $order->save();
+        }
+        $songs = Song::with(['votes' => function($query) {
+            $query->where('voter', self::$stuId);
+        }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
 
-            $songs = Song::with(['votes' => function($query) {
-                $query->where('voter', self::$stuId);
-            }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->inRandomOrder()->get();
-            $id = 0;
-            $songs = $songs->mapWithKeys(function ($song, $id) {
-                $vote = $song->votes->first();
-                if (empty($vote)) {
-                    $vote = '未投票';
-                } else {
-                    $vote = $this->texts[$vote->vote];
-                }
-                $id++;
-                return [
-                    $id => [
-                        'id' => $song->id,
-                        'url' => $song->file->url,
-                        'vote' => $vote
-                    ]
-                ];
-            });
-            return response()->json(['error' => 0, 'songs' =>$songs]);
+        $order = array_flip($order->order); // 翻转数组以便使用sortBy
+        // 由于数据库返回是按id递增排序,故需要重新按固定顺序排序
+        $songs = $songs->sortBy(function ($song) use ($order) {
+            return $order[$song['id']];
+        });
+        // Ugly Solution
+        $id = 0;
+        $songs = $songs->mapWithKeys(function ($song, $id) {
+            $vote = $song->votes->first();
+            if (empty($vote)) {
+                $vote = '未投票';
+            } else {
+                $vote = $this->texts[$vote->vote];
+            }
+            $id++;
+            return [
+                $id => [
+                    'id' => $song->id,
+                    'url' => $song->file->url,
+                    'vote' => $vote
+                ]
+            ];
+        });
+        return response()->json(['error' => 0, 'songs' =>$songs]);
     }
 }
