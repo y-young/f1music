@@ -45,7 +45,7 @@ class ManageController extends Controller
 
     public function getTrashedSongs()
     {
-        return response()->json(['error' => 0, 'songs' => Song::onlyTrashed()->get()]);
+        return response()->json(['error' => 0, 'songs' => Song::onlyTrashed()->with('file')->withCount('reports')->get()]);
     }
 
     public function restoreSongs(Request $request)

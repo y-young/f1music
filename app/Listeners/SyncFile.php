@@ -11,12 +11,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SyncFile
 {
-    public function onSongDeleting($event)
+    public function onSongDeleted($event)
     {
-Log::info('OnDeletingSong'.$event->song->id);
+Log::info('OnDeletedSong'.$event->song->id);
         if ($event->song->isForceDeleting()) {
-Log::info('FDeleting'.$event->song->file_id);
-            if (!Song::withTrashed()->where('file_id', $event->song->file_id)->exists()) {
+Log::info('FDeleted'.$event->song->file_id);
+            if ($event->song->file->songs->count() == 0) {
             //文件无已关联的曲目,则彻底删除
 Log::info('FileNotexists'.$event->song->file_id);
                 File::withTrashed()->find($event->song->file_id)->forceDelete(); //存储系统的文件同步由FileDeleting事件触发
@@ -25,18 +25,23 @@ Log::info('FileNotexists'.$event->song->file_id);
     }
 
     public function onFileDeleting($event)
-    {  Log::info('OnDeletingFile');
-        if (!File::withTrashed()->find($event->file->id)->exists()) { //文件已从数据库被彻底删除,则删除存储文件
-            Log::info('ForceDeleted'.$event->file->id);
-            Storage::disk('public')->delete($event->song->file->md5.'.mp3');
+    {
+Log::info('OnDeletingFile');
+        if ($event->file->isForceDeleting()) { // 是彻底删除,则删除存储文件
+            if ($event->file->songs->count() == 0) { // 无关联的活跃曲目 TODO
+                Log::info('ForceDeleted'.$event->file->id);
+                Storage::disk('public')->delete($event->file->md5.'.mp3');
+            } else {
+                return false; // 停止删除操作
+            }
         }
     }
 
     public function subscribe($events)
     {
         $events->listen(
-            'App\Events\SongDeleting',
-            'App\Listeners\SyncFile@onSongDeleting'
+            'App\Events\SongDeleted',
+            'App\Listeners\SyncFile@onSongDeleted'
         );
         $events->listen(
             'App\Events\FileDeleting',
