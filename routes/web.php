@@ -11,91 +11,91 @@
 |
 */
 
-$app->get('/', function () use ($app) {
+$router->get('/', function () use ($router) {
     return view('index');
 });
-$app->get('/Check', 'AuthController@checkLogin');
-$app->get('/Logout', 'AuthController@Logout');
+$router->get('/Check', 'AuthController@checkLogin');
+$router->get('/Logout', 'AuthController@Logout');
 
-$app->group(['middleware' => 'redirect'], function () use ($app) {
-    $app->get('/Login', ['as' => 'login', function() {
+$router->group(['middleware' => 'redirect'], function () use ($router) {
+    $router->get('/Login', ['as' => 'login', function() {
         return view('login');
     }]);
 });
-$app->post('/Login', [
+$router->post('/Login', [
     'middleware' => 'throttle:20',
     'uses' => 'AuthController@Login'
 ]);
 
-$app->group(['middleware' => 'auth'], function () use ($app) {
-    $app->post('/Upload', [
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->post('/Upload', [
         'middleware' => ['throttle:20', 'can:upload'],
         'uses' => 'UploadController@Upload'
     ]);
-    $app->post('/List', [
+    $router->post('/List', [
         'middleware' => 'throttle:20',
         'uses' => 'VoteController@getSongs'
     ]);
-    $app->post('/Vote', [
+    $router->post('/Vote', [
         'middleware' => ['throttle:30', 'can:vote'],
         'uses' => 'VoteController@Vote'
     ]);
-    $app->post('/Report', [
+    $router->post('/Report', [
         'middleware' => 'throttle:30',
         'uses' => 'ReportController@Report'
     ]);
 });
 
-$app->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($app) {
-    $app->get('/', function() {
+$router->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($router) {
+    $router->get('/', function() {
         return view('admin');
     });
 
-    $app->get('/Songs', 'ManageController@getSongs');
-    $app->post('/Song/View', 'ManageController@viewSong');
-    $app->post('/Song/Edit', 'ManageController@editSong');
-    $app->post('/Song/Trash', 'ManageController@trashSongs');
-    $app->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
-    $app->post('/Song/Restore', 'ManageController@restoreSongs');
-    $app->post('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
+    $router->get('/Songs', 'ManageController@getSongs');
+    $router->post('/Song/View', 'ManageController@viewSong');
+    $router->post('/Song/Edit', 'ManageController@editSong');
+    $router->post('/Song/Trash', 'ManageController@trashSongs');
+    $router->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
+    $router->post('/Song/Restore', 'ManageController@restoreSongs');
+    $router->post('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
 
-    $app->get('/Files', 'ManageController@getFiles');
-    $app->post('/File/Trash', 'ManageController@trashFiles');
-    $app->get('/Files/Trashed', 'ManageController@getTrashedFiles');
-    $app->post('/File/Restore', 'ManageController@restoreFiles');
-    $app->post('/File/Delete', [
+    $router->get('/Files', 'ManageController@getFiles');
+    $router->post('/File/Trash', 'ManageController@trashFiles');
+    $router->get('/Files/Trashed', 'ManageController@getTrashedFiles');
+    $router->post('/File/Restore', 'ManageController@restoreFiles');
+    $router->post('/File/Delete', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@deleteFiles'
     ]);
 
-    $app->get('/Reports', 'ManageController@getReports');
-    $app->post('/Report/Delete', 'ManageController@deleteReports');
+    $router->get('/Reports', 'ManageController@getReports');
+    $router->post('/Report/Delete', 'ManageController@deleteReports');
 
-    $app->get('/Options', [
+    $router->get('/Options', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@Options'
     ]);
-    $app->post('/Option/Edit', [
+    $router->post('/Option/Edit', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@editOption'
     ]);
 
-    $app->get('/Votes', [
+    $router->get('/Votes', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@getVotes'
     ]);
-    $app->get('/Rank', [
+    $router->get('/Rank', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@getRank'
     ]);
-    $app->get('/Log', [
+    $router->get('/Log', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@Log'
     ]);
 });
 
-$app->group(['prefix' => 'Music', 'middleware' => ['auth', 'throttle:40']], function () use ($app) {
-    $app->post('/Search', 'MusicController@Search');
-    $app->post('/Mp3', 'MusicController@Mp3');
-    $app->get('/Playlist', 'MusicController@Playlist');
+$router->group(['prefix' => 'Music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
+    $router->post('/Search', 'MusicController@Search');
+    $router->post('/Mp3', 'MusicController@Mp3');
+    $router->get('/Playlist', 'MusicController@Playlist');
 });

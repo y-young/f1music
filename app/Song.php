@@ -14,7 +14,7 @@ class Song extends Model
     protected $guarded = [];
     protected $dates = ['deleted_at'];
     protected $hidden = ['deleted_at'];
-    protected $events = [
+    protected $dispatchesEvents = [
         'deleted' => SongDeleted::class
     ];
 

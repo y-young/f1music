@@ -136,7 +136,9 @@ $app->configureMonologUsing(function(Monolog\Logger $monolog) {
 |
 */
 $app->configure('music');
-$app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
+$app->router->group([
+    'namespace' => 'App\Http\Controllers',
+], function ($router) {
     require __DIR__.'/../routes/web.php';
 });
 

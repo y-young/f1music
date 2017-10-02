@@ -16,7 +16,7 @@ class File extends Model
     protected $dates = ['deleted_at'];
     protected $hidden = ['deleted_at'];
     protected $appends = ['url'];
-    protected $events = [
+    protected $dispatchesEvents = [
         'deleting' => FileDeleting::class
     ];
 
