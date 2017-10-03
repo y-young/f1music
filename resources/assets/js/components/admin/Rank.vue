@@ -62,12 +62,12 @@
                 rank: null,
                 mp3: '',
                 filters: [
-                    { text: '6:30', value: 1 },
-                    { text: '7:00', value: 2 },
-                    { text: '13:45', value: 3 },
-                    { text: '18:40', value: 4 },
-                    { text: '21:35', value: 5 },
-                    { text: '22:30', value: 6 }
+                    { text: '6:30', value: '1' },
+                    { text: '7:00', value: '2' },
+                    { text: '13:45', value: '3' },
+                    { text: '18:40', value: '4' },
+                    { text: '21:35', value: '5' },
+                    { text: '22:30', value: '6' }
                 ],
                 selected: []
             }

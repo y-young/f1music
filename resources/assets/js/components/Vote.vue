@@ -62,6 +62,14 @@
             '$route': 'getSongs'
         },
         methods: {
+            init: function() {
+                this.currentTime = 0
+                this.rate = 0
+                this.reason = ''
+                this.canVote = false
+                this.canSubmit = false
+                this.showReport = false
+            },
             redirect: function() {
                 this.$router.push('/Vote/' + this.time);
             },
@@ -71,12 +79,7 @@
                     this.canVote = true
             },
             changeListener: function(index) {
-                this.currentTime = 0
-                this.rate = 0
-                this.reason = ''
-                this.canVote = false
-                this.canSubmit = false
-                this.showReport = false
+                this.init()
                 if(this.index != '')
                     this.$refs.player[this.index - 1].stop();
                 this.index = index
@@ -151,6 +154,7 @@
             getSongs: function() {
                 this.time = this.$route.params.time
                 this.pageLoading = true
+                this.init()
                 axios.post('/List',{
                     time: this.time
                 })

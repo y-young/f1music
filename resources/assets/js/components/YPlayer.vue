@@ -1,6 +1,6 @@
 <template>
     <div class="yplayer">
-        <audio id="audio" @durationchange="init" @timeupdate="progress" @progress="onLoad" @ended="end" :src="src" ref="player" preload></audio>
+        <audio id="audio" @durationchange="init" @timeupdate="progress" @progress="onLoad" @ended="end" @error="error" :src="src" ref="player" preload></audio>
         <div class="control" v-if="detail">
             <el-slider v-model="currentTime" :min="0" :max="audio.duration" :show-tooltip="false"></el-slider>
             <div id="timeDetail">{{ played }} / {{ duration }}</div>
@@ -85,6 +85,7 @@
                     showClose: true,
                     message: 'Error happens ╥﹏╥'
                 });
+                this.audio.pause()
             },
             changeVolume: function(volume) {
                 this.audio.volume = volume / 100
