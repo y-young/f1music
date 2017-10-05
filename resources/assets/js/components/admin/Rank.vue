@@ -5,8 +5,7 @@
         <el-breadcrumb-item>Rank</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-            <el-table :data="rank" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
-                <el-table-column type="selection" width="45"></el-table-column>
+            <el-table :data="rank" @expand="expand" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="55"></el-table-column>
                 <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
                 <el-table-column prop="name" label="曲名"></el-table-column>
@@ -41,9 +40,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div style="margin-top: 20px">
-                <el-button type="danger" :loading="btnLoading">删除所选</el-button>
-            </div>
         </div>
     </div>
 </template>
@@ -68,8 +64,7 @@
                     { text: '18:40', value: '4' },
                     { text: '21:35', value: '5' },
                     { text: '22:30', value: '6' }
-                ],
-                selected: []
+                ]
             }
         },
         created() {
@@ -81,12 +76,6 @@
             },
             filterPlaytime(value, row) {
                 return row.playtime === value;
-            },
-            handleSelectionChange(val) {
-                this.selected = val;
-                this.selected = this.selected.map(function(song) {
-                    return song.id;
-                })
             },
             getRank() {
                 this.tableLoading = true
