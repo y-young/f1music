@@ -53,7 +53,7 @@
             checkLogin: function() {
                 this.loggedIn = getCookie('MusicAuth') != null
                 if (this.$route.meta.requiresAuth == true && !this.loggedIn) {
-                   window.location.href = '/Login'
+                   window.location.href = '/Login?redirect=' + this.$route.path
                 }
             }
         },

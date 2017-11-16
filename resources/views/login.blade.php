@@ -21,7 +21,7 @@
         background-color: #f7fafc;
     }
     </style>
-    <title>登录</title>
+    <title>登录 - 福州一中 校园音乐征集</title>
 </head>
 <body>
     <div id="app"></div>

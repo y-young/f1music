@@ -43,6 +43,7 @@
         }
     };
     export default {
+        props: ['redirect'],
         data() {
             return {
                 ruleForm: {
@@ -76,7 +77,7 @@
                             this.loading = false
                             if(res.data.error == '0') {
                                 this.loginSuccess = true
-                                location.href = "/"
+                                location.href = '/#' + this.getRedirect()
                             } else {
                                 this.errorMsg = res.data.msg
                             }
@@ -90,6 +91,9 @@
                         return false;
                     }
                 });
+            },
+            getRedirect: function() {
+                    return ((new RegExp('[?|&]' + 'redirect=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [''])[1] || '/');
             }
         }
     }
