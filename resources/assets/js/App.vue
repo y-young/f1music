@@ -92,6 +92,9 @@
     .app.show-sidebar .container {
         left: 300px;
     }
+    .container-inner {
+        min-height: calc(100% - 50px)
+    }
 }
 @media (max-width:600px) {
     .app.show-sidebar {
@@ -112,10 +115,10 @@
     left: 0;
     bottom: 0;
     overflow-y: auto;
-    -webkit-transition: left 250ms ease;
-    -moz-transition: left 250ms ease;
-    -o-transition: left 250ms ease;
-    transition: left 250ms ease;
+    -webkit-transition: all 250ms ease;
+    -moz-transition: all 250ms ease;
+    -o-transition: all 250ms ease;
+    transition: all 250ms ease;
 }
 .container.without-animation {
     -webkit-transition: none!important;
@@ -131,19 +134,6 @@
     left: 0;
     bottom: 0;
     overflow-y: auto
-}
-@media (max-width:1240px) {
-    .container {
-        -webkit-transition: -webkit-transform 250ms ease;
-        -moz-transition: -moz-transform 250ms ease;
-        -o-transition: -o-transform 250ms ease;
-        transition: transform 250ms ease;
-        padding-bottom: 20px
-    }
-
-    .container-inner {
-        min-height: calc(100% - 50px)
-    }
 }
 .page {
     margin-top: 60px;
