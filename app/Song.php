@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\SongDeleting;
+use App\Events\SongDeleted;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

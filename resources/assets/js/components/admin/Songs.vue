@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Songs</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-            <el-table :data="songs" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+            <el-table :data="songs" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="55"></el-table-column>
                 <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
@@ -40,10 +40,11 @@
                                 <span>
                                     <el-button @click="edit(props.row.id)">查看/编辑</el-button>
                                     <span v-if="type == 'trashed'">
-                                        <el-button type="danger" @click="del(props.row.id, props.row.$index)" :loading="btnLoading">彻底删除</el-button>
+                                        <el-button @click="restore(props.row.id, props.row)" :loading="restoreLoading">Restore</el-button>
+                                        <el-button type="danger" @click="del(props.row.id, props.row)" :loading="delLoading">彻底删除</el-button>
                                     </span>
                                     <span v-else>
-                                        <el-button type="danger" @click="trash(props.row.id, props.row.$index)" :loading="btnLoading">删除</el-button>
+                                        <el-button type="danger" @click="trash(props.row.id, props.row)" :loading="delLoading">删除</el-button>
                                     </span>
                                 </span>
                             </el-form-item>
@@ -52,7 +53,7 @@
                 </el-table-column>
             </el-table>
             <div style="margin-top: 20px">
-                <el-button type="danger" @click="batchTrash" :loading="btnLoading">删除所选</el-button>
+                <el-button type="danger" @click="batchTrash" :loading="delLoading">删除所选</el-button>
             </div>
         </div>
     </div>
@@ -67,7 +68,8 @@
                 type: '',
                 url: '/Manage/Songs',
                 tableLoading: false,
-                btnLoading: false,
+                delLoading: false,
+                restoreLoading: false,
                 error: false,
                 songs: null,
                 mp3: '',
@@ -90,61 +92,60 @@
             '$route': 'getSongs'
         },
         methods: {
-            expand: function(row, expanded) {
-                return row;
-            },
             filterPlaytime(value, row) {
                 return row.playtime === value;
             },
             edit(id) {
                 this.$router.push('/Song/Edit/' + id);
             },
-            trash(id, index) {
-                this.btnLoading = true
+            trash(id, row) {
+                let index = this.songs.indexOf(row); //Ugly Solution
+                this.delLoading = true
                 axios.post('/Manage/Song/Trash', {
                     id: [id]
                 })
                 .then((res) => {
-                    this.btnLoading = false
+                    this.delLoading = false
                     if(res.data.error == 0) {
                         this.$message.success('操作成功!');
                         console.log(index);
-                        this.songs.splice(index + 1, 1);
+                        this.songs.splice(index, 1);
                     } else {
                         this.$message.error(res.data.msg);
                     }
                 })
                 .catch((err) => {
-                    this.btnLoading = false
+                    this.delLoading = false
                     console.log(err);
                 });
             },
-            del(id, index) {
-                this.btnLoading = true
+            del(id, row) {
+                let index = this.songs.indexOf(row); //Ugly Solution
+                this.delLoading = true
                 axios.post('/Manage/Song/Delete', {
                     id: [id]
                 })
                 .then((res) => {
-                    this.btnLoading = false
+                    this.delLoading = false
                     if(res.data.error == 0) {
                         this.$message.success('操作成功!');
-                        this.songs.splice(index + 1, 1);
+                        this.songs.splice(index, 1);
                     } else {
                         this.$message.error(res.data.msg);
                     }
                 })
                 .catch((err) => {
-                    this.btnLoading = false
+                    this.delLoading = false
                     console.log(err);
                 });
             },
             batchTrash() {
-                this.btnLoading = true
+                this.delLoading = true
                 axios.post('/Manage/Song/Trash', {
                     id: this.selected
                 })
                 .then((res) => {
-                    this.btnLoading = false
+                    this.delLoading = false
                     if(res.data.error == 0) {
                         this.$message.success('操作成功!');
                         setTimeout("location.reload()", 1000);
@@ -153,7 +154,27 @@
                     }
                 })
                 .catch((err) => {
-                    this.btnLoading = false
+                    this.delLoading = false
+                    console.log(err);
+                });
+            },
+            restore(id, row) {
+                let index = this.songs.indexOf(row); //Ugly Solution
+                this.restoreLoading = true
+                axios.post('/Manage/Song/Restore', {
+                    id: [id]
+                })
+                .then((res) => {
+                    this.restoreLoading = false
+                    if(res.data.error == 0) {
+                        this.$message.success('操作成功!');
+                        this.songs.splice(index, 1);
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                .catch((err) => {
+                    this.restoreLoading = false
                     console.log(err);
                 });
             },
