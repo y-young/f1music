@@ -40,7 +40,7 @@
                                 <span>
                                     <el-button @click="edit(props.row.id)">查看/编辑</el-button>
                                     <span v-if="type == 'trashed'">
-                                        <el-button @click="restore(props.row.id, props.row)" :loading="restoreLoading">Restore</el-button>
+                                        <el-button @click="restore(props.row.id, props.row)" :loading="restoreLoading">恢复</el-button>
                                         <el-button type="danger" @click="del(props.row.id, props.row)" :loading="delLoading">彻底删除</el-button>
                                     </span>
                                     <span v-else>

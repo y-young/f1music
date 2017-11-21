@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Files</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-            <el-table :data="files" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+            <el-table :data="files" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="md5" label="MD5"></el-table-column>
@@ -21,10 +21,10 @@
                             </el-form-item>
                             <el-form-item label="操作">
                                 <span v-if="type == 'trashed'">
-                                    <el-button type="danger" @click="del(props.row.id, props.row.$index)" :loading="btnLoading">彻底删除</el-button>
+                                    <el-button type="danger" @click="del(props.row.id, props.row)" :loading="btnLoading">彻底删除</el-button>
                                 </span>
                                 <span v-else>
-                                    <el-button type="danger" @click="trash(props.row.id, props.row.$index)" :loading="btnLoading">删除</el-button>
+                                    <el-button type="danger" @click="trash(props.row.id, props.row)" :loading="btnLoading">删除</el-button>
                                 </span>
                             </el-form-item>
                         </el-form>
@@ -62,13 +62,9 @@
             '$route': 'getFiles'
         },
         methods: {
-            expand: function(row, expanded) {
-                return row;
-            },
-            edit(id) {
-                this.$router.push('/Manage/File/Edit' + id);
-            },
-            trash(id, index) {
+            trash(id, row) {
+                let index = this.songs.indexOf(row); //Ugly Solution
+                this.btnLoading = true
                 axios.post('/Manage/File/Trash',{
                     id: [id]
                 })
@@ -76,7 +72,7 @@
                     this.btnLoading = false
                     if(res.data.error == 0) {
                         this.$message.success('操作成功!');
-                        this.files.splice(index + 1, 1);
+                        this.files.splice(index, 1);
                     } else {
                         this.$message.error(res.data.msg);
                     }
@@ -86,10 +82,28 @@
                     console.log(err);
                 });
             },
-            del(id, index) {
-
+            del(id, row) {
+                let index = this.songs.indexOf(row); //Ugly Solution
+                this.btnLoading = true
+                axios.post('/Manage/File/Delete',{
+                    id: [id]
+                })
+                .then((res) => {
+                    this.btnLoading = false
+                    if(res.data.error == 0) {
+                        this.$message.success('操作成功!');
+                        this.files.splice(index, 1);
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+                .catch((err) => {
+                    this.btnLoading = false
+                    console.log(err);
+                });
             },
             batchTrash() {
+                this.btnLoading = true
                 axios.post('/Manage/File/Trash',{
                     id: this.selected
                 })
