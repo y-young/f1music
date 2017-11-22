@@ -20,6 +20,7 @@ footer {
 }
 .footer {
     padding-left: 1.6rem;
+    padding-right: 1.6rem;
     color: #777;
 }
 .footer a{

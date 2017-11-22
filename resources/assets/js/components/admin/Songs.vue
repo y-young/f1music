@@ -34,7 +34,7 @@
                                 <span>{{props.row.updated_at}}</span>
                             </el-form-item>
                             <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="!props.row.file.url"></i><YPlayer :src="props.row.file.url" :detail="false" v-if="props.row.file.url"></YPlayer></span>
+                                <span><i class="el-icon-loading" v-if="!props.row.file.url"></i><audio :src="props.row.file.url" v-if="props.row.file.url" controls="controls"></audio></span>
                             </el-form-item>
                             <el-form-item label="操作">
                                 <span>

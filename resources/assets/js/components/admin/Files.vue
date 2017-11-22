@@ -17,7 +17,7 @@
                                 <span>{{ props.row.time }}</span>
                             </el-form-item>
                             <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer></span>
+                                <span><i class="el-icon-loading" v-if="!props.row.url"></i><audio :src="props.row.url" v-if="props.row.url" controls="controls"></audio></span>
                             </el-form-item>
                             <el-form-item label="操作">
                                 <span v-if="type == 'trashed'">
