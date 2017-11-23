@@ -23,6 +23,13 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
+    protected $messages = [
+        403 => 'Permission Denied',
+        404 => 'Page Not Found',
+        429 => 'Please Try Later',
+        503 => 'Be Right Back'
+    ];
+
     /**
      * Report or log an exception.
      *
@@ -45,6 +52,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof HttpException) {
+            $code = $e->getStatusCode();
+            if (in_array($code, [403, 404, 429, 503])) {
+                $message = $e->getMessage();
+                return response(view('errors.http', ['message' => $this->messages[$code]]), $code);
+            }
+        }
         return parent::render($request, $e);
     }
 }
