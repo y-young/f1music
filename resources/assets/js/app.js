@@ -49,6 +49,7 @@ import 'element-ui/lib/theme-default/index.css';
 import Index from './components/Index.vue';
 import Vote from './components/Vote.vue';
 import UploadPage from './components/Upload.vue';
+import Login from './Login.vue';
 
 Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
@@ -89,7 +90,7 @@ const router = new VueRouter({
             path: '/',
             component: Index,
             meta: {
-                title: "首页",
+                title: '首页',
                 nav: '1'
             }
         },
@@ -97,7 +98,7 @@ const router = new VueRouter({
             path: '/Vote/:time',
             component: Vote,
             meta: {
-                title: "投票",
+                title: '投票',
                 requiresAuth: true
             }
         },
@@ -105,9 +106,17 @@ const router = new VueRouter({
             path: '/Upload',
             component: UploadPage,
             meta: {
-                title: "上传",
+                title: '上传',
                 nav: '2',
                 requiresAuth: true
+            }
+        },
+        {
+            path: '/Login',
+            component: Login,
+            meta: {
+                title: '登录',
+                layout: 'login'
             }
         }
     ]

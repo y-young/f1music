@@ -1,5 +1,6 @@
 <template>
     <div class="app" v-bind:class="{ 'show-sidebar': collapsed }">
+        <div v-if="$route.meta.layout != 'login'">
         <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('4-'+$route.params.time)" :loggedIn="loggedIn"></Sidebar>
         <div class="container">
             <div class="container-inner">
@@ -13,6 +14,11 @@
                 </div>
                 <Foot></Foot>
             </div>
+        </div></div>
+        <div v-else>
+            <transition name="el-fade-in-linear">
+                <router-view></router-view>
+            </transition>
         </div>
     </div>
 </template>
