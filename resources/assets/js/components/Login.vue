@@ -46,7 +46,6 @@
         }
     };
     export default {
-        props: ['redirect'],
         data() {
             return {
                 ruleForm: {
@@ -67,6 +66,9 @@
             }
         },
         mounted() {
+            if(this.$route.meta.action == 'logout') {
+                location.href = '/Logout';
+            }
             this.drawCurve();
         },
         methods: {
@@ -83,7 +85,9 @@
                             this.loading = false
                             if(res.data.error == '0') {
                                 this.loginSuccess = true
-                                location.href = '/#' + this.getRedirect()
+                                let redirect = this.$route.query.redirect
+
+                                this.$router.push(redirect ? decodeURI(redirect) : '/')
                             } else {
                                 this.errorMsg = res.data.msg
                             }

@@ -49,7 +49,7 @@ import 'element-ui/lib/theme-default/index.css';
 import Index from './components/Index.vue';
 import Vote from './components/Vote.vue';
 import UploadPage from './components/Upload.vue';
-import Login from './Login.vue';
+import Login from './components/Login.vue';
 
 Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
@@ -118,6 +118,15 @@ const router = new VueRouter({
                 title: '登录',
                 layout: 'login'
             }
+        },
+        {
+            path: '/Logout',
+            component: Login,
+            meta: {
+                title: '登出',
+                layout: 'login',
+                action: 'logout'
+            }
         }
     ]
 });
@@ -137,7 +146,7 @@ axios.interceptors.response.use(
                         showClose: true,
                         message: '请先登录!'
                     })
-                    setTimeout("window.location.href = '/Login'", 1500);
+                    setTimeout("router.push('Login')", 1500);
                     break;
                 case 500:
                     Message.error({

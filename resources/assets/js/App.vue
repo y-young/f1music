@@ -59,7 +59,7 @@
             checkLogin: function() {
                 this.loggedIn = getCookie('MusicAuth') != null
                 if (this.$route.meta.requiresAuth == true && !this.loggedIn) {
-                   window.location.href = '/Login?redirect=' + this.$route.path
+                   this.$router.push({ path: 'Login', query: { redirect: this.$route.path}})
                 }
             }
         },
@@ -73,6 +73,7 @@
     function isDesktop() {
         return window.innerWidth > 993;
     }
+
     function getCookie(name) {
         var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
         if (arr = document.cookie.match(reg))

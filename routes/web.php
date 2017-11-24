@@ -17,11 +17,6 @@ $router->get('/', function () use ($router) {
 $router->get('/Check', 'AuthController@checkLogin');
 $router->get('/Logout', 'AuthController@Logout');
 
-$router->group(['middleware' => 'redirect'], function () use ($router) {
-    $router->get('/Login', ['as' => 'login', function() {
-        return view('login');
-    }]);
-});
 $router->post('/Login', [
     'middleware' => 'throttle:20',
     'uses' => 'AuthController@Login'
