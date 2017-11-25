@@ -88,6 +88,7 @@ const router = new VueRouter({
     routes: [
         {
             path: '/',
+            name: 'Home',
             component: Index,
             meta: {
                 title: '首页',
@@ -104,6 +105,7 @@ const router = new VueRouter({
         },
         {
             path: '/Upload',
+            name: 'Upload',
             component: UploadPage,
             meta: {
                 title: '上传',
@@ -113,6 +115,7 @@ const router = new VueRouter({
         },
         {
             path: '/Login',
+            name: 'Login',
             component: Login,
             meta: {
                 title: '登录',
@@ -121,6 +124,7 @@ const router = new VueRouter({
         },
         {
             path: '/Logout',
+            name: 'Logout',
             component: Login,
             meta: {
                 title: '登出',
@@ -146,7 +150,7 @@ axios.interceptors.response.use(
                         showClose: true,
                         message: '请先登录!'
                     })
-                    setTimeout("router.push('Login')", 1500);
+                    setTimeout("router.push({ name: 'Login' })", 1500);
                     break;
                 case 500:
                     Message.error({
