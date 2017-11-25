@@ -20,7 +20,7 @@ class UploadController extends Controller
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
-        'name.size' => '歌曲名称不得超过30个字符'，
+        'name.size' => '歌曲名称不得超过30个字符',
         'origin.size' => '歌曲来源不得超过50个字符'
         'string' => ':attribute 应为文本',
         'url.required_without' => '参数错误,请重新搜索音乐',
