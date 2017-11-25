@@ -41,10 +41,9 @@
                             </el-form-item>
                             <el-form-item label="试听" style="margin-left: 10px;">
                                 <span><i class="el-icon-loading" v-if="!props.row.mp3"></i><YPlayer :src="props.row.mp3" :detail="false" v-if="props.row.mp3"></YPlayer></span>
-                                <input type="hidden" v-model="uploadForm.url" :value="props.row.mp3">
                             </el-form-item>
                             <el-form-item label="上传">
-                                <span><el-button type="primary" icon="upload" :loading="btnLoading" @click="cloudUpload(props.row.mp3)">上传</el-button></span>
+                                <span><el-button type="primary" icon="upload" :loading="btnLoading" @click="cloudUpload(props.row.id)">上传</el-button></span>
                             </el-form-item>
                         </el-form>
                     </template>
@@ -106,8 +105,7 @@
                     time: '',
                     name: '',
                     origin: '',
-                    file: '',
-                    url: ''
+                    file: ''
                 },
                 rules: {
                     time: [
@@ -167,7 +165,7 @@
                 });
                 return row;
             },
-            cloudUpload: function(url) {
+            cloudUpload: function(id) {
                 this.$refs.uploadForm.validate((valid) => {
                     if (!valid) {
                         this.$message.error({
@@ -184,7 +182,7 @@
                     time: this.uploadForm.time,
                     name: this.uploadForm.name,
                     origin: this.uploadForm.origin,
-                    url: url
+                    id: id
                 })
                 .then((res) => {
                     this.btnLoading = false

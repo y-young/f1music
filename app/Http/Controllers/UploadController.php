@@ -10,6 +10,7 @@ use App\Song;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Metowolf\Meting;
 require_once(config('music.apppath').'/Http/Controllers/getid3/getid3.php');
 require_once(config('music.apppath').'/Http/Controllers/getid3/write.php');
 
@@ -21,11 +22,9 @@ class UploadController extends Controller
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
         'name.size' => '歌曲名称不得超过30个字符',
-        'origin.size' => '歌曲来源不得超过50个字符'
+        'origin.size' => '歌曲来源不得超过50个字符',
         'string' => ':attribute 应为文本',
-        'url.required_without' => '参数错误,请重新搜索音乐',
-        'url.url' => '云音乐地址应为URL格式',
-        'url.regex' => '不是合法的云音乐URL地址',
+        'id.required_without' => '参数错误,请重新搜索音乐',
         'file.required_without' => '请上传一个文件',
         'file.file' => '上传的文件无效,请重新上传',
         'file.max' => '禁止上传超过20MB的文件',
@@ -35,7 +34,7 @@ class UploadController extends Controller
 
     public static $errorMsg = [
         'stop_upload' => '文件上传已关闭',
-        'max_upload_num' => '上传数目已达到限定数码,感谢您对校园音乐的支持',
+        'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
         'time_too_short' => '歌曲时长还不足2分半钟，请选择长一些的曲目',
         'already_exists' => '所上传的音乐在该时段已经有人推荐'
@@ -62,8 +61,8 @@ class UploadController extends Controller
             ],
             'name' => 'required | string | max: 30',
             'origin' => 'nullable | string | max: 50',
-            'url' => ['required_without:file', 'url', 'regex:/^((https|http)?:\/\/)(m[0-9].music.126.net)[^\s]+(.mp3)/'],
-            'file' => ['required_without:url', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']
+            'id' => 'required_without:file',
+            'file' => ['required_without:id', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']
             //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
         ], self::$messages);
         if ($validator->fails()) {
@@ -71,8 +70,12 @@ class UploadController extends Controller
         }
 
         $t1 = microtime(true);
+        try {
         // $uFile => Unvalidated File
         $uFile = self::getFileFromRequest($request);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 1, 'msg' => $e->getMessage()]);
+        }
         $t2 = microtime(true);
         Log::debug('Fetching:'.round($t2-$t1, 3));
         // $vFile => Validated File
@@ -109,10 +112,13 @@ class UploadController extends Controller
             $reqFile->move($tmpDir, $file->name); //先存储到临时目录以便验证
             $file->md5 = md5_file($file->url);
         } else { //Cloud Music Upload
-            //TODO: 检查Mp3文件是否可用
-            $file->name = explode('/', $request->input('url'))[9];
+            $url = self::getMp3($request->input('id'));
+            if (empty($url)) {
+                throw new \Exception('网易云音乐ID无效,请重新输入');
+            }
+            $file->name = explode('/', $url)[9];
             $file->md5 = substr($file->name, 0, -4);
-            Storage::disk('tmp')->put($file->name, file_get_contents($request->input('url')));
+            Storage::disk('tmp')->put($file->name, file_get_contents($url));
             $file->url = $tmpDir.$file->name;
         }
         return $file;
@@ -188,6 +194,14 @@ class UploadController extends Controller
         $writer->overwrite_tags = true;
         $writer->remove_other_tags = true;
         $writer->WriteTags();
+    }
+
+    public static function getMp3($id)
+    {
+        $api = new Meting('netease');
+        $res = $api->format(true)->url($id, 128);
+        $url = json_decode($res)->url;
+        return $url;
     }
 
     public static function curlGet($url)
