@@ -40,12 +40,12 @@
         },
         watch: {
             $route: function() {
-                this.checkLogin()
+                this.handleRedirect()
                 this.mobileCollapse()
             }
         },
-        created() {
-            this.checkLogin()
+        mounted() {
+            this.handleRedirect()
         },
         methods: {
             collapse: function(){
@@ -57,9 +57,15 @@
                 }
             },
             checkLogin: function() {
-                this.loggedIn = getCookie('MusicAuth') != null
+                this.loggedIn = getCookie() != null
+            },
+            handleRedirect: function() {
+                this.checkLogin()
                 if (this.$route.meta.requiresAuth == true && !this.loggedIn) {
-                   this.$router.push({ path: 'Login', query: { redirect: this.$route.path}})
+                   this.$router.push({ name: 'Login', query: { redirect: this.$route.path } })
+                }
+                if (this.$route.name == 'Login' && this.loggedIn) {
+                    this.$router.push({ name: 'Home' })
                 }
             }
         },
@@ -74,13 +80,13 @@
         return window.innerWidth > 993;
     }
 
-    function getCookie(name) {
-        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    function getCookie() {
+        var arr, reg = new RegExp("(^| )" + 'MusicAuth' + "=([^;]*)(;|$)");
         if (arr = document.cookie.match(reg))
             return (arr[2]);
         else
             return null;
-    }
+    };
 </script>
 
 <style>

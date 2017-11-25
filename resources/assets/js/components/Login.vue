@@ -2,7 +2,7 @@
     <div>
         <div class="login">
             <div style="width: 300px; margin: auto;">
-                <div style="line-height: 36px; font-size: 20px; text-align: center; margin-bottom: 20px;"><b>登录</b></div>
+                <div style="font-size: 30px; text-align: center; margin-bottom: 20px;"><b>登录</b></div>
                 <div v-show="loginSuccess">
                     <el-alert title="登录成功，正在跳转..." type="success"></el-alert><br>
                 </div>
@@ -20,6 +20,7 @@
                         <el-button type="primary" :loading="loading" @click="login" style="width: 300px;">{{ loading ? "登录中" : "登录" }}</el-button>
                     </el-form-item>
                 </el-form>
+                <router-link to="/" style="font-size: 13px; color: #777;"><i class="el-icon-arrow-left"></i> 返回首页</router-link>
             </div>
         </div>
         <canvas width="1080" height="1608" id="curve"></canvas>
@@ -64,7 +65,7 @@
                     ]
                 }
             }
-        },
+        }, 
         mounted() {
             if(this.$route.meta.action == 'logout') {
                 location.href = '/Logout';
