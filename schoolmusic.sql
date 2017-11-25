@@ -154,7 +154,7 @@ INSERT INTO `songs` (`id`, `playtime`, `name`, `origin`, `uploader`, `file_id`, 
 CREATE TABLE `votes` (
   `id` mediumint(9) NOT NULL COMMENT 'ID',
   `song_id` smallint(6) NOT NULL COMMENT '曲目ID',
-  `vote` enum('-10','-5','0','5','10') NOT NULL COMMENT '投票',
+  `vote` tinyint(4) NOT NULL COMMENT '投票',
   `voter` char(11) NOT NULL COMMENT '投票者学号',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '最后更新时间'

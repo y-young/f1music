@@ -16,7 +16,7 @@ class VoteController extends Controller
 {
 
     public static $stuId;
-    public $texts = ['-10' => '非常不合适', '-5' => '不合适', '0' => '中立', '5' => '合适', '10' => '非常合适'];
+    public $texts = [-10 => '非常不合适', -5 => '不合适', 0 => '中立', 5 => '合适', 10 => '非常合适'];
     public $points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
     public static $messages = [
         'id.required' => '参数错误,请刷新页面',
