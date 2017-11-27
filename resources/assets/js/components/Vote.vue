@@ -18,7 +18,7 @@
             <YPlayer :src="song.url" @progress="timeListener" @end="vote(song)" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
             <transition name="el-fade-in-linear">
                 <div v-show="canVote" style="position: relative; margin-top: 10px;">
-                    <hr><el-rate v-model="rate" @change="canSubmit = true" :max="5" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="4" show-text :texts="texts" style="margin: 15px 20px; float: left;"></el-rate>
+                    <hr><el-rate v-model="rate" @change="canSubmit = true" :max="5" :colors="['#99A9BF', '#F7BA2A','#FF9900']" :low-threshold="2" :high-threshold="4" show-text :texts="texts" style="margin: 15px 15px; float: left;"></el-rate>
                         <el-button type="primary" :loading="voteLoading" @click="vote(song)" style="float: right;">投票</el-button>
                 </div>
             </transition>
@@ -105,6 +105,7 @@
                             showClose: true,
                             message: '投票成功!'
                         });
+                        song.vote = this.texts[this.rate - 1]
                         this.canSubmit = false
                     } else {
                         this.$message.error({
