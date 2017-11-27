@@ -55,13 +55,6 @@ $router->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use 
     $router->post('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
 
     $router->get('/Files', 'ManageController@getFiles');
-    $router->post('/File/Trash', 'ManageController@trashFiles');
-    $router->get('/Files/Trashed', 'ManageController@getTrashedFiles');
-    $router->post('/File/Restore', 'ManageController@restoreFiles');
-    $router->post('/File/Delete', [
-        'middleware' => 'can:admin',
-        'uses' => 'ManageController@deleteFiles'
-    ]);
 
     $router->get('/Reports', 'ManageController@getReports');
     $router->post('/Report/Delete', 'ManageController@deleteReports');

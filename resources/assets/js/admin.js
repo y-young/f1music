@@ -99,16 +99,7 @@ const router = new VueRouter({
             component: Files,
             meta: {
                 title: "文件",
-                nav: '3-1'
-            }
-        },
-        {
-            path: '/Files/Trashed',
-            component: Files,
-            meta: {
-                title: "文件 - 回收站",
-                type: 'trashed',
-                nav: '3-2'
+                nav: '3'
             }
         },
         {

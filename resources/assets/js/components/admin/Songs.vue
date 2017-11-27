@@ -60,8 +60,6 @@
 </template>
 
 <script>
-    import YPlayer from '../YPlayer.vue';
-
     export default {
         data() {
             return {
@@ -205,9 +203,6 @@
                     console.log(err);
                 });
             }
-        },
-        components: {
-            YPlayer
         }
     }
 </script>

@@ -37,6 +37,9 @@ class ManageController extends Controller
 
     public function trashSongs(Request $request)
     {
+        if (config('music.openVote')) {
+            return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
+        }
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
         }
@@ -58,6 +61,9 @@ class ManageController extends Controller
 
     public function deleteSongs(Request $request)
     {
+        if (config('music.openVote')) {
+            return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
+        }
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
             if (! empty($song) && $song->trashed()) {
@@ -72,43 +78,6 @@ class ManageController extends Controller
     {
         $files = File::all();
         return response()->json(['error' => 0, 'files' => $files]);
-    }
-
-    public function editFile(Request $request)
-    {
-        $file = File::find($request->input('id'));
-        $file->md5 = $request->input('md5');
-        $file->save();
-        return response()->json(['error' => 0]);
-    }
-
-    public function trashFiles(Request $request)
-    {
-        foreach ($request->input('id') as $id) {
-           File::destroy($id);
-        }
-        return response()->json(['error' => 0]);
-    }
-
-    public function getTrashedFiles()
-    {
-        return response()->json(['error' => 0, 'files' => File::onlyTrashed()->get()]);
-    }
-
-    public function restoreFiles(Request $request)
-    {
-        foreach ($request->input('id') as $id) {
-            File::withTrashed()->where('id', $id)->restore();
-        }
-        return response()->json(['error' => 0]);
-    }
-
-    public function deleteFiles(Request $request)
-    {
-        foreach ($request->input('id') as $id) {
-            File::withTrashed()->where('id', $id)->forceDelete();
-        }
-        return response()->json(['error' => 0]);
     }
 
     public function getReports()
