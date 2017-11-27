@@ -1,7 +1,7 @@
 <template>
     <div class="app" v-bind:class="{ 'show-sidebar': collapsed }">
         <div v-if="$route.meta.layout != 'login'">
-        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('4-'+$route.params.time)" :loggedIn="loggedIn"></Sidebar>
+        <Sidebar :activeIndex="$route.meta.nav ? $route.meta.nav : ('4-'+$route.params.time)" :loggedIn="loggedIn" :isDesktop="isDesktop"></Sidebar>
         <div class="container">
             <div class="container-inner">
                 <Heading :title="$route.meta.title" v-on:collapse="collapse"></Heading>
@@ -35,6 +35,7 @@
         data() {
             return {
                 collapsed: desktop,
+                isDesktop: desktop,
                 loggedIn: false
             }
         },

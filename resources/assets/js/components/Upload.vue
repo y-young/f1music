@@ -6,7 +6,7 @@
     </el-breadcrumb>
     <div class="main">
     <el-alert title="曲目要求" type="info" show-icon>
-        <div>格式:MP3; 时长:3-5分钟; 大小:1MB-15MB为宜; 不得出现非伴奏人声<br>上传前请先查看上传说明</div>
+        <div>格式:MP3; 时长:2-5分钟; 大小:2MB-15MB为宜; 不得出现非伴奏人声<br>上传前请先查看上传说明</div>
     </el-alert>
     <el-tabs active-name="netease">
         <el-tab-pane label="网易云音乐" name="netease">
@@ -51,12 +51,6 @@
             </el-table>
         </el-tab-pane>
         <el-tab-pane label="手动上传" name="manual">
-            <!-- <el-steps :space="100" :active="0" finish-status="success">
-                <el-step title="填写信息"></el-step>
-                <el-step title="上传文件"></el-step>
-                <el-step title="完成"></el-step>
-            </el-steps> -->
-
             <el-form :model="uploadForm" label-position="left" :rules="rules" ref="uploadForm" label-width="80px" enctype="multipart/form-data">
                 <el-form-item label="时段" prop="time">
                     <el-select v-model="uploadForm.time" placeholder="选择时段">
