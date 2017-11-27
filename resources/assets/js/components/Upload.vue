@@ -144,7 +144,6 @@
                     id: row.id
                 })
                 .then((res) => {
-                    console.log(res.data);
                     if(res.data.length > 0) {
                         this.$set(row, 'mp3', res.data) // !IMPORTANT
                     } else {
@@ -155,7 +154,10 @@
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
+                    this.$message.error({
+                        showClose: true,
+                        message: 'Oops!Please try again.'
+                    });
                 });
                 return row;
             },
