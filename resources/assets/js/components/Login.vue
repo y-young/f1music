@@ -17,7 +17,7 @@
                         <el-input type="password" v-model="ruleForm.password" placeholder="校园网密码"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" :loading="loading" @click="login" style="width: 300px;">{{ loading ? "登录中" : "登录" }}</el-button>
+                        <el-button type="primary" :loading="loading" @click="login" @keyup.enter.native="login" style="width: 300px;">{{ loading ? "登录中" : "登录" }}</el-button>
                     </el-form-item>
                 </el-form>
                 <router-link to="/" style="font-size: 13px; color: #777;"><i class="el-icon-arrow-left"></i> 返回首页</router-link>

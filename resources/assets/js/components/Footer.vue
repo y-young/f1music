@@ -1,7 +1,7 @@
 <template>
 	<footer><hr>
         <div class="footer">
-            <p>Copyright © 2007-2017 FZYZ SCAN@7HMakers. All rights reserved.<br>
+            <p>Copyright © 2007-2017 FZYZ SCAN. All rights reserved.<br>
             Past Maintainer: <a href="https://blog.robotshell.org">Robot</a> <a href="http://blog.miskcoo.com">Miskcoo</a> <a href="https://www.upsuper.org">Upsuper</a><br>
             Now Maintainer: Googleplex
             </p>

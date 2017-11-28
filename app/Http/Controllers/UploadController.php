@@ -50,9 +50,9 @@ class UploadController extends Controller
     {
         Log::info('Requests: '.var_export($request->all(),true));
         if (! config('music.openUpload')) {
-            return response()->json(['error' => 1, 'msg' => self::$errorMsg['max_upload_num']]);
-        } elseif (Song::where('uploader', self::$stuId)->count() >= 10) {
             return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
+        } elseif (Song::withTrashed()->where('uploader', self::$stuId)->count() >= 10) {
+            return response()->json(['error' => 1, 'msg' => self::$errorMsg['max_upload_num']]);
         }
         $validator = Validator::make($request->all(), [
             'time' => [

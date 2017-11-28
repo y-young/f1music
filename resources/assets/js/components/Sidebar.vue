@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <div class="logo">FZYZ 校园音乐征集</div>
-            <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
+            <el-menu mode="vertical" :default-active="activeIndex" :default-openeds="isDesktop ? ['4'] : []" class="nav" :router="true">
                 <el-menu-item index="1" :route="{path: '/'}"><i class="fa fa-home"></i>首页</el-menu-item>
                 <el-menu-item index="2" :route="{path: '/Upload'}"><i class="fa fa-upload"></i>上传</el-menu-item>
                 <el-menu-item index="5" :route="{path: loggedIn ? '/Logout' : '/Login'}">
@@ -22,7 +22,7 @@
 
 <script>
     export default {
-        props: ['activeIndex', 'loggedIn'],
+        props: ['activeIndex', 'loggedIn', 'isDesktop'],
     }
 </script>
 

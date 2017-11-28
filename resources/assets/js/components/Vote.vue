@@ -75,7 +75,7 @@
             },
             timeListener: function(time) {
                 this.currentTime = time
-                if(this.currentTime >= 15)
+                if(this.currentTime >= 20)
                     this.canVote = true
             },
             changeListener: function(index) {

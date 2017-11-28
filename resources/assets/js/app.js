@@ -50,6 +50,7 @@ import Index from './components/Index.vue';
 import Vote from './components/Vote.vue';
 import UploadPage from './components/Upload.vue';
 import Login from './components/Login.vue';
+import NotFound from './components/404.vue';
 
 Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
@@ -75,8 +76,6 @@ Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
 Vue.use(Tooltip);
-// Vue.use(Steps);
-// Vue.use(Step);
 Vue.use(Loading.directive);
 Vue.use(VueRouter);
 
@@ -130,6 +129,14 @@ const router = new VueRouter({
                 title: '登出',
                 layout: 'login',
                 action: 'logout'
+            }
+        },
+        {
+            path: '*',
+            name: '404',
+            component: NotFound,
+            meta: {
+                title: '404 Page Not Found'
             }
         }
     ]
