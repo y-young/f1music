@@ -47,6 +47,7 @@ class MusicController extends Controller
         $url = json_decode($res)->url;
         if(empty($url))
             return response()->json(['error' => 1, 'msg' => '歌曲未找到']);
+        $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
         return $url;
     }
 
