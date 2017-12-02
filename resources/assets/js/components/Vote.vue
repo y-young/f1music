@@ -44,7 +44,7 @@
                 currentTime: 0,
                 rate: 0,
                 reason: '',
-                index: 0, 
+                index: '', 
                 canVote: false,
                 canSubmit: false,
                 showReport: false,
@@ -71,6 +71,9 @@
                 this.showReport = false
             },
             redirect: function() {
+                if(this.index != '')
+                    this.$refs.player[this.index - 1].stop();
+                this.index = ''
                 this.$router.push('/Vote/' + this.time);
             },
             timeListener: function(time) {

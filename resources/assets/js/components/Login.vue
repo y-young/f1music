@@ -68,7 +68,11 @@
         }, 
         mounted() {
             if(this.$route.meta.action == 'logout') {
+                this.errorMsg = "正在登出..."
                 location.href = '/Logout';
+            }
+            if(this.$route.query.redirect) {
+                this.errorMsg = "您还未登录，请先登录"
             }
             this.drawCurve();
         },

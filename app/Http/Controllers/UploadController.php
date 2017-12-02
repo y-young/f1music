@@ -36,7 +36,7 @@ class UploadController extends Controller
         'stop_upload' => '文件上传已关闭',
         'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
-        'time_too_short' => '歌曲时长还不足2分半钟，请选择长一些的曲目',
+        'time_too_short' => '歌曲时长还不足2分钟,请选择长一些的曲目',
         'already_exists' => '所上传的音乐在该时段已经有人推荐'
     ];
     public static $stuId;
@@ -69,20 +69,14 @@ class UploadController extends Controller
             return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
         }
 
-        $t1 = microtime(true);
         try {
         // $uFile => Unvalidated File
         $uFile = self::getFileFromRequest($request);
         } catch (\Exception $e) {
             return response()->json(['error' => 1, 'msg' => $e->getMessage()]);
         }
-        $t2 = microtime(true);
-        Log::debug('Fetching:'.round($t2-$t1, 3));
         // $vFile => Validated File
         $vFile = self::validateFile($uFile);
-        $t3 = microtime(true);
-        Log::debug('Validation:'.round($t3-$t2, 3));
-        Log::info('Files: '.var_export($vFile,true));
 
         if (empty($vFile->error)) {
             $vFile = self::store($vFile);
@@ -91,9 +85,6 @@ class UploadController extends Controller
             Storage::disk('tmp')->delete($vFile->name);
             return response()->json(['error' => 1, 'msg' => $vFile->error]);
         }
-        $t4 = microtime(true);
-        Log::debug('Storing:'.round($t4-$t3, 3));
-        Log::debug('Total:'.round($t4-$t1, 3));
         return response()->json(['error' => 0]);
     }
 
@@ -139,7 +130,7 @@ class UploadController extends Controller
             }
         } else { //文件未上传过,则进行验证
             $file->duration = self::getDuration($file);
-            if ($file->duration < 2.5 * 60) {
+            if ($file->duration < 2 * 60) {
                 $file->error = self::$errorMsg['time_too_short'];
             } elseif ($file->duration > 6 * 60) {
                 $file->error = self::$errorMsg['time_too_long'];

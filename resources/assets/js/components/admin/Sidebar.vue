@@ -12,7 +12,6 @@
                 <el-menu-item index="3" :route="{path: '/Files'}">文件</el-menu-item>
                 <el-menu-item index="4" :route="{path: '/Reports'}">举报</el-menu-item>
                 <el-menu-item index="5" :route="{path: '/Rank'}">投票结果</el-menu-item>
-                <el-menu-item index="6" :route="{path: '/'}">反馈</el-menu-item>
             </el-menu>
     </div>
 </template>

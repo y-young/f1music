@@ -72,7 +72,6 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
-Vue.use(Tooltip);
 Vue.use(Loading.directive);
 Vue.use(VueRouter);
 
