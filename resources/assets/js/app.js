@@ -39,10 +39,7 @@ import {
     Option,
     Loading,
     Message,
-    MessageBox,
-    Tooltip
-    // Steps,
-    // Step
+    MessageBox
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
@@ -155,7 +152,7 @@ axios.interceptors.response.use(
                 case 401:
                     Message.error({
                         showClose: true,
-                        message: '请先登录!'
+                        message: '您还未登录,正在跳转登录界面'
                     })
                     setTimeout("router.push({ name: 'Login' })", 1500);
                     break;

@@ -2,6 +2,7 @@
     <div class="sidebar">
         <div class="logo">FZYZ 校园音乐征集管理系统</div>
             <el-menu mode="vertical" :default-active="activeIndex" class="nav" :router="true">
+                <el-menu-item index="0" :route="{path: '/'}">首页</el-menu-item>
                 <el-submenu index="1">
                     <template slot="title">曲目</template>
                     <el-menu-item index="1-1" :route="{path: '/Songs'}">所有曲目</el-menu-item>

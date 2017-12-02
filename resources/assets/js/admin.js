@@ -37,6 +37,7 @@ import {
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
+import Index from './components/admin/Index.vue';
 import Songs from './components/admin/Songs.vue';
 import EditSong from './components/admin/EditSong.vue';
 import Files from './components/admin/Files.vue';
@@ -71,10 +72,18 @@ Vue.prototype.$alert = MessageBox.alert
 const router = new VueRouter({
     routes: [
         {
+            path: '/',
+            component: Index,
+            meta: {
+                title: '首页',
+                nav: '0'
+            }
+        },
+        {
             path: '/Songs',
             component: Songs,
             meta: {
-                title: "曲目",
+                title: '曲目',
                 nav: '1-1'
             }
         },
@@ -82,7 +91,7 @@ const router = new VueRouter({
             path: '/Songs/Trashed',
             component: Songs,
             meta: {
-                title: "曲目 - 回收站",
+                title: '曲目 - 回收站',
                 type: 'trashed',
                 nav: '1-2'
             }
@@ -91,14 +100,14 @@ const router = new VueRouter({
             path: '/Song/Edit/:id',
             component: EditSong,
             meta: {
-                title: "编辑曲目"
+                title: '编辑曲目'
             }
         },
         {
             path: '/Files',
             component: Files,
             meta: {
-                title: "文件",
+                title: '文件',
                 nav: '3'
             }
         },
@@ -106,7 +115,7 @@ const router = new VueRouter({
             path: '/Reports',
             component: Reports,
             meta: {
-                title: "举报",
+                title: '举报',
                 nav: '4'
             }
         },
@@ -114,7 +123,7 @@ const router = new VueRouter({
             path: '/Votes',
             component: Votes,
             meta: {
-                title: "投票",
+                title: '投票',
                 nav: '2'
             }
         },
@@ -122,7 +131,7 @@ const router = new VueRouter({
             path: '/Rank',
             component: Rank,
             meta: {
-                title: "投票结果",
+                title: '投票结果',
                 nav: '5'
             }
         }
@@ -142,7 +151,7 @@ axios.interceptors.response.use(
                 case 403:
                     Message.error({
                         showClose: true,
-                        message: '您没有权限!'
+                        message: '您没有此权限!'
                     })
                     break;
                 case 500:
