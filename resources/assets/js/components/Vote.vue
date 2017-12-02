@@ -82,9 +82,9 @@
                     this.canVote = true
             },
             changeListener: function(index) {
-                this.init()
                 if(this.index != '')
                     this.$refs.player[this.index - 1].stop();
+                this.init()
                 this.index = index
                 return index;
             },
