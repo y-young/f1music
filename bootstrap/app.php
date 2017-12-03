@@ -80,7 +80,7 @@ $app->singleton(
 // Enable Session
 $app->middleware([
     Illuminate\Session\Middleware\StartSession::class,
-    App\Http\Middleware\SqlLogger::class,
+//    App\Http\Middleware\SqlLogger::class,
 ]);
 $app->routeMiddleware([
      'can' => \Illuminate\Auth\Middleware\Authorize::class,
