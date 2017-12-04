@@ -13,7 +13,7 @@
         <el-option label="21:35" value="5"></el-option>
         <el-option label="22:30" value="6"></el-option>
     </el-select>
-    <el-collapse accordion @change="changeListener" v-loading.fullscreen.lock="pageLoading" element-loading-text="Loading...">
+    <el-collapse accordion @change="changeListener" v-model="index" v-loading.fullscreen.lock="pageLoading" element-loading-text="Loading...">
         <el-collapse-item v-for="(song, index) in songs" :title="'# ' + index + ' 您的投票: ' + song.vote" :name="index" :key="song.id">
             <YPlayer :src="song.url" @progress="timeListener" @end="vote(song)" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
             <transition name="el-fade-in-linear">
@@ -44,7 +44,8 @@
                 currentTime: 0,
                 rate: 0,
                 reason: '',
-                index: '', 
+                index: '',
+                lastIndex: '',
                 canVote: false,
                 canSubmit: false,
                 showReport: false,
@@ -71,9 +72,10 @@
                 this.showReport = false
             },
             redirect: function() {
-                if(this.index != '')
-                    this.$refs.player[this.index - 1].stop();
+                if(this.lastIndex != '')
+                    this.$refs.player[this.lastIndex - 1].stop();
                 this.index = ''
+                this.lastIndex = ''
                 this.$router.push('/Vote/' + this.time);
             },
             timeListener: function(time) {
@@ -82,10 +84,10 @@
                     this.canVote = true
             },
             changeListener: function(index) {
-                if(this.index != '')
-                    this.$refs.player[this.index - 1].stop();
+                if(this.lastIndex != '')
+                    this.$refs.player[this.lastIndex - 1].stop();
                 this.init()
-                this.index = index
+                this.lastIndex = index
                 return index;
             },
             vote: function(song) {
@@ -119,7 +121,6 @@
                 })
                 .catch((err) => {
                     this.voteLoading = false
-                    console.log(err);
                 });
             },
             report: function(id) {
@@ -152,7 +153,6 @@
                 })
                 .catch((err) => {
                     this.reportLoading = false
-                    console.log(err);
                 });
             },
             getSongs: function() {
@@ -175,7 +175,6 @@
                 })
                 .catch((err) => {
                     this.pageLoading = false
-                    console.log(err);
                 });
             },
         },
