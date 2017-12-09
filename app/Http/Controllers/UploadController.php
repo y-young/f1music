@@ -122,7 +122,7 @@ class UploadController extends Controller
 
         if (File::where('md5', $file->md5)->exists()) {
             $file->id = File::where('md5', $file->md5)->first()->id; //文件已上传过,获取ID
-            if (Song::ofTime($file->time)->where('file_id', $file->id)->exists()) {
+            if (Song::withTrashed()->ofTime($file->time)->where('file_id', $file->id)->exists()) {
                 $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
             } else {
                 //文件已经上传该时段但还未有人推荐,则直接使用,无需验证
