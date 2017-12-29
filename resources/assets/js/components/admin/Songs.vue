@@ -54,7 +54,12 @@
                 </el-table-column>
             </el-table>
             <div style="margin-top: 20px">
-                <el-button type="danger" @click="batchTrash" :loading="delLoading">删除所选</el-button>
+                <div v-if="type == 'trashed'">
+                    <el-button type="danger" @click="batch(true)" :loading="delLoading">彻底删除所选</el-button>
+                </div>
+                <div v-else>
+                    <el-button type="danger" @click="batch" :loading="delLoading">删除所选</el-button>
+                </div>
             </div>
         </div>
     </div>
@@ -146,9 +151,10 @@
                     console.log(err);
                 });
             },
-            batchTrash() {
+            batch(del = false) {
                 this.delLoading = true
-                axios.post('/Manage/Song/Trash', {
+                let url = del ? '/Manage/Song/Delete' : '/Manage/Song/Trash'
+                axios.post(url, {
                     id: this.selected
                 })
                 .then((res) => {

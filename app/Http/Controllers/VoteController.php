@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Log;
 use Validator;
 use App\Song;
 use App\Vote;
@@ -50,6 +51,7 @@ class VoteController extends Controller
             ['song_id' => $request->input('id'), 'voter' => self::$stuId],
             ['vote' => $this->points[$request->input('vote')]]
         );
+        Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $request->input('vote')]);
         return response()->json(['error' => 0]);
     }
 

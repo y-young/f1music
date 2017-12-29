@@ -93,6 +93,10 @@ const router = new VueRouter({
             }
         },
         {
+            path: '/Vote',
+            redirect: '/Vote/1'
+        },
+        {
             path: '/Vote/:time',
             component: Vote,
             meta: {
