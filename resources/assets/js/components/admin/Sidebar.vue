@@ -78,5 +78,6 @@
     border-right-width: 1px;
     border-right-style: solid;
     background: #20a0ff;
+    overflow: hidden;
 }
 </style>

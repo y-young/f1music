@@ -39,7 +39,8 @@ import {
     Option,
     Loading,
     Message,
-    MessageBox
+    MessageBox,
+    Switch
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
@@ -72,6 +73,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(Switch);
 Vue.use(Loading.directive);
 Vue.use(VueRouter);
 

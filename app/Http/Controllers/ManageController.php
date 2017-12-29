@@ -30,6 +30,7 @@ class ManageController extends Controller
     {
         $song = Song::find($request->input('id'));
         $song->name = $request->input('name');
+        $song->playtime = $request->input('playtime');
         $song->origin = $request->input('origin');
         $song->save();
         return response()->json(['error' => 0]);
@@ -37,9 +38,9 @@ class ManageController extends Controller
 
     public function trashSongs(Request $request)
     {
-        if (config('music.openVote')) {
+/*        if (config('music.openVote')) {
             return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
-        }
+    }*/
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
         }
@@ -117,7 +118,7 @@ class ManageController extends Controller
 
     public function getRank(Request $request)
     {
-        $songs = Song::with('votes')->withCount('votes')->get();
+        $songs = Song::with('votes', 'file')->withCount('votes')->get();
         foreach ($songs as $song) {
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
@@ -131,7 +132,8 @@ class ManageController extends Controller
                 'origin' => $song->origin,
                 'score' => $song->score,
                 'sum' => $song->vote_sum,
-                'counts' => $song->votes_count
+                'counts' => $song->votes_count,
+                'url' => $song->file->url
             ];
         });
         return response()->json(['error' => 0, 'songs' => $songs->values()]);

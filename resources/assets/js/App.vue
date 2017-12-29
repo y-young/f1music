@@ -102,7 +102,7 @@
     -o-transition: none!important;
     transition: none!important
 }
-@media (min-width:600px) {
+@media (min-width:500px) {
     .app.show-sidebar .container {
         left: 300px;
     }
@@ -110,7 +110,7 @@
         min-height: calc(100% - 50px)
     }
 }
-@media (max-width:600px) {
+@media (max-width:500px) {
     .app.show-sidebar {
         overflow: hidden;
     }

@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Vote</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-    <el-select v-model="time" @change="redirect" placeholder="选择时段" style="margin-bottom: 10px;">
+    <el-select v-model="time" @change="redirect" placeholder="选择时段" style="width: 90px; margin-bottom: 10px;">
         <el-option label="6:30" value="1"></el-option>
         <el-option label="7:00" value="2"></el-option>
         <el-option label="13:45" value="3"></el-option>
@@ -13,6 +13,7 @@
         <el-option label="21:35" value="5"></el-option>
         <el-option label="22:30" value="6"></el-option>
     </el-select>
+    <div style="float: right; margin-top: 5px"><font style="color: #777;font-size: 14px">自动播放: </font><el-switch v-model="auto" on-text="" off-text=""></el-switch></div>
     <el-collapse accordion @change="changeListener" v-model="index" v-loading.fullscreen.lock="pageLoading" element-loading-text="Loading...">
         <el-collapse-item v-for="(song, index) in songs" :title="'# ' + index + ' 您的投票: ' + song.vote" :name="index" :key="song.id">
             <YPlayer :src="song.url" @progress="timeListener" @end="vote(song)" ref="player"></YPlayer><el-button size="small" style="float: right;" @click="showReport = !showReport">举报</el-button><br>
@@ -49,6 +50,7 @@
                 canVote: false,
                 canSubmit: false,
                 showReport: false,
+                auto: true,
                 pageLoading: false,
                 voteLoading: false,
                 reportLoading: false,
@@ -70,6 +72,8 @@
                 this.canVote = false
                 this.canSubmit = false
                 this.showReport = false
+                this.reportLoading = false
+                this.voteLoading = false
             },
             redirect: function() {
                 if(this.lastIndex != '')
@@ -85,9 +89,12 @@
             },
             changeListener: function(index) {
                 if(this.lastIndex != '')
-                    this.$refs.player[this.lastIndex - 1].stop();
+                    this.$refs.player[this.lastIndex - 1].stop()
                 this.init()
                 this.lastIndex = index
+                if(this.auto && index != '') {
+                    this.$refs.player[index - 1].play()
+                }
                 return index;
             },
             vote: function(song) {
@@ -98,7 +105,14 @@
                     });
                     return;
                 }
+                let newIndex =  String(Number(this.index) + 1)
                 this.voteLoading = true
+                // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
+                if(this.songs[newIndex] && this.auto) {
+                    //this.$refs.player[newIndex - 1].play()
+                    this.$refs.player[newIndex - 1].audio.play()
+                    this.$refs.player[newIndex - 1].audio.pause()
+                }
                 axios.post('/Vote',{
                     id: song.id,
                     vote: this.rate
@@ -112,6 +126,10 @@
                         });
                         song.vote = this.texts[this.rate - 1]
                         this.canSubmit = false
+                        if(this.songs[newIndex] && this.auto) {
+                            this.index = newIndex
+                            this.changeListener(this.index)
+                        }
                     } else {
                         this.$message.error({
                             showClose: true,

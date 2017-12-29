@@ -40,7 +40,7 @@
     -o-transition: left 250ms ease;
     transition: left 250ms ease;
 }
-@media (max-width:600px) {
+@media (max-width:500px) {
     .sidebar {
         width: calc(100% - 60px);
         bottom: 0;
@@ -82,5 +82,6 @@
     border-right-width: 1px;
     border-right-style: solid;
     background: #20a0ff;
+    overflow: hidden;
 }
 </style>

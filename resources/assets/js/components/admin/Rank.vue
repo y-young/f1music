@@ -33,9 +33,9 @@
                             <el-form-item label="投票人数">
                                 <span>{{ props.row.counts }}</span>
                             </el-form-item>
-                            <!-- <el-form-item label="试听">
-                                <span><i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer></span>
-                            </el-form-item> -->
+                            <el-form-item label="试听">
+                                <span><audio :src="props.row.url" v-if="props.row.url" controls="controls"></audio></span>
+                            </el-form-item>
                         </el-form>
                     </template>
                 </el-table-column>

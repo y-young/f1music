@@ -5,6 +5,7 @@
         <el-breadcrumb-item>Songs</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
+            <div style="font-size: 14px; color: #777">曲目总数: {{ allCnt }} 首 已选中: {{ selectedCnt }} 首</div><br>
             <el-table :data="songs" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="55"></el-table-column>
@@ -69,6 +70,8 @@
                 delLoading: false,
                 restoreLoading: false,
                 error: false,
+                allCnt: 0,
+                selectedCnt: 0,
                 songs: null,
                 mp3: '',
                 fileList: [],
@@ -87,7 +90,13 @@
             this.getSongs()
         },
         watch: {
-            '$route': 'getSongs'
+            '$route': 'getSongs',
+            'songs': function() {
+                this.allCnt = this.songs.length
+            },
+            'selected': function() {
+                this.selectedCnt = this.selected.length
+            }
         },
         methods: {
             filterPlaytime(value, row) {
