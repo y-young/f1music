@@ -58,7 +58,7 @@
                     <el-button type="danger" @click="batch(true)" :loading="delLoading">彻底删除所选</el-button>
                 </div>
                 <div v-else>
-                    <el-button type="danger" @click="batch" :loading="delLoading">删除所选</el-button>
+                    <el-button type="danger" @click="batch(false)" :loading="delLoading">删除所选</el-button>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@
                     console.log(err);
                 });
             },
-            batch(del = false) {
+            batch(del) {
                 this.delLoading = true
                 let url = del ? '/Manage/Song/Delete' : '/Manage/Song/Trash'
                 axios.post(url, {

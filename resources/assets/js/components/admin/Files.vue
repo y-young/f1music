@@ -5,6 +5,7 @@
         <el-breadcrumb-item>Files</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
+            <div style="font-size: 14px; color: #777">文件总数: {{ allCnt }} 个</div><br>
             <el-table :data="files" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="md5" label="MD5"></el-table-column>
@@ -34,6 +35,7 @@
                 error: false,
                 files: '',
                 mp3: '',
+                allCnt: 0,
                 fileList: [],
             }
         },
@@ -41,7 +43,10 @@
             this.getFiles()
         },
         watch: {
-            '$route': 'getFiles'
+            '$route': 'getFiles',
+            'files': function() {
+                this.allCnt = this.files.length
+            }
         },
         methods: {
             getFiles() {
