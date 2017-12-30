@@ -38,9 +38,9 @@ class ManageController extends Controller
 
     public function trashSongs(Request $request)
     {
-/*        if (config('music.openVote')) {
+        if (config('music.openVote')) {
             return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
-    }*/
+        }
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
         }
@@ -123,7 +123,9 @@ class ManageController extends Controller
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
-        $songs = $songs->sortByDesc('score')->sortBy('playtime');
+        $songs = $songs->sortBy(function($song) {
+            return $song->playtime.'-'.(1 - 0.1 * $song->score);
+        }); // Ugly Solution
         $songs = $songs->map(function ($song) {
             return [
                 'id' => $song->id,
