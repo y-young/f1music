@@ -34,6 +34,7 @@ import {
     Loading,
     Message,
     MessageBox,
+    Pagination
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
@@ -62,6 +63,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(Pagination);
 Vue.use(Loading.directive);
 Vue.use(VueRouter);
 

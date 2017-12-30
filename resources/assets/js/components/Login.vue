@@ -31,8 +31,8 @@
     var validatestuId = (rule, value, callback) => {
         if (value === '') {
             callback(new Error('请输入学号'));
-        } else if (value.length != 11) {
-            callback(new Error('长度应为11个字符'));
+        } else if (value.length != 10 && value.length != 11) {
+            callback(new Error('长度应为10或11个字符'));
         } else {
             callback();
         }
@@ -40,7 +40,7 @@
     var validatepass = (rule, value, callback) => {
         if (value == '') {
             callback(new Error('请输入密码'));
-        } else if (value.length == '123456') {
+        } else if (value == '123456') {
             callback(new Error('为保证投票质量目前禁止使用校网初始密码登录,请更改密码'));
         } else {
             callback();

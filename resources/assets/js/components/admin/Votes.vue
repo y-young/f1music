@@ -5,7 +5,8 @@
         <el-breadcrumb-item>Votes</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-           <div style="font-size: 14px; color: #777">投票总数: {{ allCnt }} 票</div><br>
+            <div style="font-size: 14px; color: #777">投票总数: {{ allCnt }} 票</div>
+            <el-pagination @current-change="pageChange" :current-page="1" :page-size="100" layout="prev, pager, next" :total="allCnt" style="margin-bottom: 10px"></el-pagination>
             <el-table :data="votes" @expand="expand" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="song.name" label="曲目"></el-table-column>
@@ -49,28 +50,34 @@
                 btnLoading: false,
                 error: false,
                 allCnt: 0,
-                votes: ''
+                votes: [],
+                data: []
             }
         },
         created() {
             this.getVotes()
         },
         watch: {
-            'votes': function() {
-                this.allCnt = this.votes.length
+            'data': function() {
+                this.allCnt = this.data.length
             }
         },
         methods: {
-            expand: function(row, expanded) {
-                return row;
-            },
+            pageChange: function(current) {
+                this.tableLoading = true
+                let first = 100 * (current - 1)
+                let last = 100 * current
+                this.votes = this.data.slice(first, last)
+                this.tableLoading = false
+            }, 
             getVotes() {
                 this.tableLoading = true
                 axios.get('/Manage/Votes')
                 .then((res) => {
                     this.tableLoading = false
                     if(res.data.error == 0) {
-                        this.votes = res.data.votes
+                        this.data = res.data.votes
+                        this.votes = this.data.slice(0, 100)
                     } else {
                         this.$message.error('获取数据失败');
                     }

@@ -11,7 +11,7 @@ class AuthController extends Controller
 {
     public static $messages = [
         'stuId.required' => '请输入学号',
-        'stuId.size' => '学号应为11位',
+        'stuId.between' => '学号应为10或11位',
         'password.required' => '请输入密码',
         'password.not_in' => '为保证投票质量目前禁止使用校网初始密码登录,请更改密码'
     ];
@@ -59,7 +59,7 @@ class AuthController extends Controller
         }
         
         $validator = Validator::make($request->all(), [
-            'stuId' => 'required | size: 11',
+            'stuId' => 'required | between: 10,11', // 寄读生学号为10位,如GJ16010001
             'password' => 'required | not_in:123456'
         ], self::$messages);
         if ($validator->fails()) {
