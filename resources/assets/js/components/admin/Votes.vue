@@ -5,6 +5,7 @@
         <el-breadcrumb-item>Votes</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
+           <div style="font-size: 14px; color: #777">投票总数: {{ allCnt }} 票</div><br>
             <el-table :data="votes" @expand="expand" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="song.name" label="曲目"></el-table-column>
@@ -47,11 +48,17 @@
                 tableLoading: false,
                 btnLoading: false,
                 error: false,
+                allCnt: 0,
                 votes: ''
             }
         },
         created() {
             this.getVotes()
+        },
+        watch: {
+            'votes': function() {
+                this.allCnt = this.votes.length
+            }
         },
         methods: {
             expand: function(row, expanded) {
