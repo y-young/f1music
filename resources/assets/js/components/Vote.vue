@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Vote</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-    <el-alert title="温馨提示" type="info" description="试听30秒后显示评分栏,建议试听1分钟以上,详见首页投票说明" show-icon></el-alert>
+    <el-alert title="温馨提示" type="info" description="试听30秒后显示评分栏,建议试听1分钟以上,详见首页投票说明" show-icon></el-alert><br>
     <el-select v-model="time" @change="redirect" placeholder="选择时段" style="width: 90px; margin-bottom: 10px;">
         <el-option label="6:30" value="1"></el-option>
         <el-option label="7:00" value="2"></el-option>
