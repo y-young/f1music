@@ -62,15 +62,7 @@ return [
         'log' => [
             'driver' => 'local',
             'root' => storage_path('logs'),
-        ],
-
-        's3' => [
-            'driver' => 's3',
-            'key' => 'your-key',
-            'secret' => 'your-secret',
-            'region' => 'your-region',
-            'bucket' => 'your-bucket',
-        ],
+        ]
 
     ],
 

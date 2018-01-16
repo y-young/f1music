@@ -17,13 +17,13 @@ class ManageController extends Controller
     public function getSongs()
     {
         $songs = Song::with('file')->withCount('reports')->get();
-        return response()->json(['error' => 0, 'songs' => $songs]);
+        return $this->success('songs', $songs);
     }
 
     public function viewSong(Request $request)
     {
         $song = Song::with('reports', 'file')->where('id', $request->input('id'))->first();
-        return response()->json(['error' => 0, 'song' => $song]);
+        return $this->success('song', $song);
     }
 
     public function editSong(Request $request)
@@ -33,23 +33,23 @@ class ManageController extends Controller
         $song->playtime = $request->input('playtime');
         $song->origin = $request->input('origin');
         $song->save();
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public function trashSongs(Request $request)
     {
         if (config('music.openVote')) {
-            return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
+            return $this->error('开放投票期间禁止删除曲目');
         }
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
         }
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public function getTrashedSongs()
     {
-        return response()->json(['error' => 0, 'songs' => Song::onlyTrashed()->with('file')->withCount('reports')->get()]);
+        return $this->success('songs', Song::onlyTrashed()->with('file')->withCount('reports')->get());
     }
 
     public function restoreSongs(Request $request)
@@ -57,13 +57,13 @@ class ManageController extends Controller
         foreach ($request->input('id') as $id) {
             Song::withTrashed()->where('id', $id)->restore();
         }
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public function deleteSongs(Request $request)
     {
         if (config('music.openVote')) {
-            return response()->json(['error' => 1, 'msg' => '开放投票期间禁止删除曲目']);
+            return $this->error('开放投票期间禁止删除曲目');
         }
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
@@ -72,13 +72,13 @@ class ManageController extends Controller
                 $song->forceDelete();
             }
         }
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public function getFiles()
     {
         $files = File::all();
-        return response()->json(['error' => 0, 'files' => $files]);
+        return $this->success('files', $files);
     }
 
     public function getReports()
@@ -99,7 +99,7 @@ class ManageController extends Controller
         //         ]
         //     ];
         // });
-        return response()->json(['error' => 0, 'reports' => $reports]);
+        return $this->success('reports', $reports);
     }
 
     public function deleteReports(Request $request)
@@ -107,13 +107,13 @@ class ManageController extends Controller
         foreach ($request->input('id') as $id) {
             Report::destroy($id);
         }
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public function getVotes()
     {
         $votes = Vote::with('song')->get();
-        return response()->json(['error' => 0, 'votes' => $votes]);
+        return $this->success('votes', $votes);
     }
 
     public function getRank(Request $request)
@@ -138,32 +138,39 @@ class ManageController extends Controller
                 'url' => $song->file->url
             ];
         });
-        return response()->json(['error' => 0, 'songs' => $songs->values()]);
+        return $this->success('songs', $songs->values());
     }
 
     public function Options(Request $request)
     {
-        return response()->json(['error' => 0, 'options' => Option::all()]);
+        return $this->success('options', Option::all());
     }
 
     public function editOption(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'name' => 'required | exists:options',
             'value' => 'nullable'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ])->validate();
 
         $option = Option::updateOrCreate(
             ['name' => $request->input('name')],
             ['value' => $request->input('value')]
         );
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
-    public function Log() {
+    public function Download($id)
+    {
+        $song = Song::find($id);
+        if (empty($song)) {
+            abort(404);
+        }
+        return response()->download('uploads/'.$song->file->md5.'.mp3', $song->name.'.mp3');
+    }
+
+    public function Log()
+    {
         Log::debug('Test');
         Log::info('User Login:***REMOVED***');
         Log::error('Cannot connect to Database');

@@ -52,19 +52,16 @@ class AuthController extends Controller
         }
     }
 
-    public static function Login(Request $request)
+    public function Login(Request $request)
     {
         if (Auth::check()) {
-            return response()->json(['error' => '0']);
+            return $this->success();
         }
         
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'stuId' => 'required | between: 10,11', // 寄读生学号为10位,如GJ16010001
             'password' => 'required | not_in:123456'
-        ], self::$messages);
-        if ($validator->fails()) {
-            return response ()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ], self::$messages)->validate();
 
         $authData = new AuthData();
         $authData->stuId = $request->input('stuId');
@@ -73,30 +70,21 @@ class AuthController extends Controller
             case 1:
                 Cookie::set($authData);
                 $request->session()->put('stuId', $authData->stuId);
-                return response()->json(['error' => '0']);
+                return $this->success();
                 break;
            case 0:
-                return response()->json([
-                    'error' => '1',
-                    'msg' => '用户名或密码错误'
-                ]);
+                return $this->error('用户名或密码错误');
                 break;
             case -1:
-                return response()->json([
-                    'error' => '1',
-                    'msg' => '无法连接校园网,请等待校网恢复后再登录'
-                ]);
+                return $this->error('无法连接校园网,请等待校网恢复后再登录');
                 break;
             default:
-                return response()->json([
-                    'error' => '1',
-                    'msg' => '未知错误'
-                ]);
+                return $this->error('未知错误');
                 break;
         }
     }
 
-    public static function Logout(Request $request)
+    public function Logout(Request $request)
     {
         Cookie::forget();
         $request->session()->forget('stuId');

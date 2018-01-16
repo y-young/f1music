@@ -39,6 +39,10 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         'middleware' => 'throttle:30',
         'uses' => 'ReportController@Report'
     ]);
+    $router->get('/Download/{id:[0-9]+}', [
+        'middleware' => ['throttle:30', 'can:download'],
+        'uses' => 'ManageController@Download'
+    ]);
 });
 
 $router->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($router) {

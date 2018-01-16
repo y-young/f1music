@@ -59,6 +59,10 @@ class Handler extends ExceptionHandler
                 return response(view('errors.http', ['message' => $this->messages[$code]]), $code);
             }
         }
+        if ($e instanceof ValidationException) {
+            $message = $e->validator->errors()->first();
+            return response()->json(['error' => 1, 'msg' => $message]);
+        }
         return parent::render($request, $e);
     }
 }

@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public static $stuId;
-    public static $messages = [
+    private static $stuId;
+    private static $messages = [
         'id.required' => '参数错误,请刷新重试',
         'id.exists' => '歌曲不存在,请刷新重试',
         'reason.required' => '请填写举报原因',
@@ -24,13 +24,10 @@ class ReportController extends Controller
 
     public function Report(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'id' => 'required | exists:songs',
             'reason' => 'required | string | max: 50'
-        ], self::$messages);
-        if ($validator->fails()) {
-            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ], self::$messages)->validate();
 
         $report = Report::updateOrCreate(
             ['song_id' => $request->input('id'), 'reporter' => self::$stuId],
@@ -38,6 +35,6 @@ class ReportController extends Controller
         );
         $report->save();
 
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 }

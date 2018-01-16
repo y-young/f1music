@@ -10,7 +10,7 @@ use Metowolf\Meting;
 class MusicController extends Controller
 {
 
-    public static $API;
+    private static $API;
 
     public function __construct()
     {
@@ -19,16 +19,13 @@ class MusicController extends Controller
 
     public function Search(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'keyword' => 'required'
-        ], ['required' => '请输入搜索词']);
-        if ($validator->fails()) {
-            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ], ['required' => '请输入搜索词'])->validate();
 
         $result = self::$API->format(true)->search($request->input('keyword'));
         if ($result == '[]') {
-            return response()->json(['error' => 1, 'msg' => '未能找到相关搜索结果']);
+            return $this->error('未能找到相关搜索结果');
         } else {
             return response($result);
         }
@@ -36,17 +33,14 @@ class MusicController extends Controller
 
     public function Mp3(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'id' => 'required'
-        ], ['required' => '参数错误,请刷新重试']);
-        if ($validator->fails()) {
-            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ], ['required' => '参数错误,请刷新重试'])->validate();
 
         $res = self::$API->format(true)->url($request->input('id'), 128);
         $url = json_decode($res)->url;
         if(empty($url))
-            return response()->json(['error' => 1, 'msg' => '歌曲未找到']);
+            return $this->error('歌曲未找到');
         $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
         return $url;
     }

@@ -16,8 +16,7 @@ require_once(config('music.apppath').'/Http/Controllers/getid3/write.php');
 
 class UploadController extends Controller
 {
-
-    public static $messages = [
+    private static $messages = [
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
@@ -32,29 +31,29 @@ class UploadController extends Controller
         'file.mimetypes' => '只能上传MP3格式的文件'  
     ];
 
-    public static $errorMsg = [
+    private static $errorMsg = [
         'stop_upload' => '文件上传已关闭',
         'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
         'time_too_short' => '歌曲时长还不足2分钟,请选择长一些的曲目',
         'already_exists' => '所上传的音乐在该时段已经有人推荐'
     ];
-    public static $stuId;
+    private static $stuId;
 
     public function __construct(Request $request)
     {
         self::$stuId = Auth::user()->stuId;
     }
 
-    public static function Upload(Request $request)
+    public function Upload(Request $request)
     {
         Log::info('Requests: '.var_export($request->all(),true));
         if (! config('music.openUpload')) {
-            return response()->json(['error' => 1, 'msg' => self::$errorMsg['stop_upload']]);
+            return $this->error(self::$errorMsg['stop_upload']);
         } elseif (Song::withTrashed()->where('uploader', self::$stuId)->count() >= 10) {
-            return response()->json(['error' => 1, 'msg' => self::$errorMsg['max_upload_num']]);
+            return $this->error(self::$errorMsg['max_upload_num']);
         }
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'time' => [
                 'required',
                 Rule::in(['1', '2', '3', '4', '5', '6'])
@@ -64,16 +63,13 @@ class UploadController extends Controller
             'id' => 'required_without:file',
             'file' => ['required_without:id', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']
             //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
-        ], self::$messages);
-        if ($validator->fails()) {
-            return response()->json(['error' => 1, 'msg' => $validator->errors()->first()]);
-        }
+        ], self::$messages)->validate();
 
         try {
         // $uFile => Unvalidated File
         $uFile = self::getFileFromRequest($request);
         } catch (\Exception $e) {
-            return response()->json(['error' => 1, 'msg' => $e->getMessage()]);
+            return $this->error($e->getMessage());
         }
         // $vFile => Validated File
         $vFile = self::validateFile($uFile);
@@ -83,9 +79,9 @@ class UploadController extends Controller
             self::insert($vFile);
         } else {
             Storage::disk('tmp')->delete($vFile->name);
-            return response()->json(['error' => 1, 'msg' => $vFile->error]);
+            return $this->error($vFile->error);
         }
-        return response()->json(['error' => 0]);
+        return $this->success();
     }
 
     public static function getFileFromRequest(Request $request)

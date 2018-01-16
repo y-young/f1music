@@ -48,6 +48,12 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('vote', function ($user) {
             return !in_array($user->stuId, Option::find('ban_vote')->value);
         });
+        Gate::define('download', function () {
+            if (Gate::allows('admin') || Gate::allows('censor') || config('music.openDownload')) {
+                return true;
+            }
+            return false;
+        });
     }
 
     public function campusAuth(AuthData $authData)
@@ -57,7 +63,7 @@ class AuthServiceProvider extends ServiceProvider
 				    "password" => $authData->password,
 				    "loginRole" => '2'
 		    ];
-        if (!config('music.debugauth')) {
+        if (! config('music.debugauth')) {
             $ch = curl_init();
 			      curl_setopt($ch, CURLOPT_URL, Config::get('music.loginUrl'));
 			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -80,8 +86,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $stuId = $request->session()->get('stuId');
         $authData = Cookie::get();
-		    if (!empty($authData)) {
-            if ($stuId = $authData->stuId) {
+		    if (! empty($authData)) {
+            if ($stuId == $authData->stuId) {
 			          return $stuId;
             } elseif ($this->campusAuth($authData) == 1) {
                 $request->session()->put('stuId', $authData->stuId);
