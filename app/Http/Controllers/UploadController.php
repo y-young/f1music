@@ -11,8 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Metowolf\Meting;
-require_once(config('music.apppath').'/Http/Controllers/getid3/getid3.php');
-require_once(config('music.apppath').'/Http/Controllers/getid3/write.php');
+require_once(app_path('Http/Controllers/getid3/getid3.php'));
+require_once(app_path('Http/Controllers/getid3/write.php'));
 
 class UploadController extends Controller
 {
