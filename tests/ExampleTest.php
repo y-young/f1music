@@ -11,12 +11,9 @@ class ExampleTest extends TestCase
 
     public function testPages()
     {
-        $response = $this->call('GET', '/');
-        $this->assertEquals(200, $response->status());
-        $response = $this->call('GET', '/Login');
-        $this->assertEquals(200, $response->status());
-        $response = $this->call('GET', '/Manage');
-        $this->assertEquals(404, $response->status());
+        $this->call('GET', '/')->assertResponseOk();
+        $this->call('GET', '/Login')->assertResponseOk();
+        $this->call('GET', '/Manage')->seeStatusCode(404);
     }
 
     public function testLogin()
@@ -32,13 +29,6 @@ class ExampleTest extends TestCase
                    'password' => '123456'
                ])
              ->seeJson(['error' => 1]);
-        $user = factory('App\User')->make();
-        $response = $this->actingAs($user)
-                         ->call('GET', '/Login');
-        $this->assertEquals(302, $response->status());
-      /*$res = $this->actingAs($user)
-                    ->call('GET', '/Logout');
-         $this->assertEquals(302, $res->status());*/
     }
 
     public function testPermission()
@@ -46,7 +36,7 @@ class ExampleTest extends TestCase
         $user = factory('App\User')->make();
         $urls = ['Upload', 'List', 'Vote', 'Report'];
         foreach ($urls as $url) {
-            $this->assertEquals(401, $this->call('POST', '/'.$url)->status());
+            $this->call('POST', '/'.$url)->seeStatusCode(401);
         }
     }
 
@@ -77,9 +67,8 @@ class ExampleTest extends TestCase
     public function testAdmin()
     {
         $admin = factory('App\User')->make(['stuId' => '***REMOVED***']);
-        $response = $this->actingAs($admin)
-                         ->call('GET', '/Manage');
-        $this->assertEquals(200, $response->status());
+        $this->actingAs($admin)
+                         ->call('GET', '/Manage')->assertResponseOk();
 
         $_this = $this->actingAs($admin);
         $adminUrls = ['Songs', 'Files', 'Votes', 'Reports', 'Rank'];
