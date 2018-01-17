@@ -25,7 +25,7 @@ $app = new Laravel\Lumen\Application(
 
 // Enable Storage
 $app->configure('filesystems');
-if (!class_exists('Storage')) {
+if (! class_exists('Storage')) {
     class_alias('Illuminate\Support\Facades\Storage', 'Storage');
 }
 
@@ -61,9 +61,9 @@ $app->singleton(
 // Enable Storage
 $app->singleton(
     Illuminate\Contracts\Filesystem\Factory::class,
-        function ($app) {
-            return new Illuminate\Filesystem\FilesystemManager($app);
-        }
+    function ($app) {
+        return new Illuminate\Filesystem\FilesystemManager($app);
+    }
 );
 
 /*
@@ -111,15 +111,19 @@ $app->routeMiddleware([
 // Optimize Log
 $app->configureMonologUsing(function(Monolog\Logger $monolog) {
     // DEBUG -> lumen.log
-    $monolog->pushHandler(new \Monolog\Handler\StreamHandler(storage_path().'/logs/lumen.log'));
+    $debug = new \Monolog\Handler\StreamHandler(storage_path('/logs/lumen.log'));
+    $debug->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+    $monolog->pushHandler($debug);
 
-    // INFO -> info.log
-    $info = new Monolog\Handler\RotatingFileHandler(storage_path("logs/info.log"), 30, Monolog\Logger::INFO, false);
+    // INFO -> info.log, Daily Log
+    $info = new Monolog\Handler\RotatingFileHandler(storage_path('logs/info.log'), 30, Monolog\Logger::INFO, false);
+    $info->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
     $monolog->pushHandler($info);
-    //$info->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true));
 
     // NOTICE, WARNING, ERROR, ALERT -> Daily Log, Saved for 30 days
-    $monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler(storage_path().'/logs/lumen.log', 30, Monolog\Logger::NOTICE, false));
+    $error = new \Monolog\Handler\RotatingFileHandler(storage_path('/logs/lumen.log'), 30, Monolog\Logger::NOTICE, false);
+    $error->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+    $monolog->pushHandler($error);
 
     $monolog->pushProcessor(new \Monolog\Processor\WebProcessor());
     return $monolog;
