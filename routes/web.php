@@ -16,6 +16,10 @@ $router->get('/', function () use ($router) {
 });
 $router->get('/Check', 'AuthController@checkLogin');
 $router->get('/Logout', 'AuthController@Logout');
+$router->get('/Result', function () use ($router) {
+    return view('result');
+});
+$router->get('/Playlist', 'MusicController@Playlist');
 
 $router->post('/Login', [
     'middleware' => 'throttle:20',
@@ -89,5 +93,4 @@ $router->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use 
 $router->group(['prefix' => 'Music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
     $router->post('/Search', 'MusicController@Search');
     $router->post('/Mp3', 'MusicController@Mp3');
-    $router->get('/Playlist', 'MusicController@Playlist');
 });
