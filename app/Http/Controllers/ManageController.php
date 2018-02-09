@@ -175,6 +175,6 @@ class ManageController extends Controller
         Log::info('User Login:***REMOVED***');
         Log::error('Cannot connect to Database');
         Log::notice('Notice');
-        return Storage::disk('log')->get('info.log');
+        return Storage::disk('log')->get('lumen.log');
     }
 }

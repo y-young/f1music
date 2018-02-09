@@ -1,11 +1,9 @@
 {
-      "presets": [
-	      ["env", { "modules": false }]
-	        ],
-	    "plugins": [["component", [
-		    {
-			      "libraryName": "element-ui",
-			            "styleLibraryName": "theme-default"
-					    }
-        ]]]
+    "presets": [
+        ["env", { "modules": false }]
+    ],
+    "plugins": [["component", {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-default"
+    }]]
 }

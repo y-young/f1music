@@ -108,27 +108,6 @@ $app->routeMiddleware([
 //Enable Session
  $app->register(Illuminate\Session\SessionServiceProvider::class);
 
-// Optimize Log
-$app->configureMonologUsing(function(Monolog\Logger $monolog) {
-    // DEBUG -> lumen.log
-    $debug = new \Monolog\Handler\StreamHandler(storage_path('/logs/lumen.log'));
-    $debug->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
-    $monolog->pushHandler($debug);
-
-    // INFO -> info.log, Daily Log
-    $info = new Monolog\Handler\RotatingFileHandler(storage_path('logs/info.log'), 30, Monolog\Logger::INFO, false);
-    $info->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
-    $monolog->pushHandler($info);
-
-    // NOTICE, WARNING, ERROR, ALERT -> Daily Log, Saved for 30 days
-    $error = new \Monolog\Handler\RotatingFileHandler(storage_path('/logs/lumen.log'), 30, Monolog\Logger::NOTICE, false);
-    $error->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
-    $monolog->pushHandler($error);
-
-    $monolog->pushProcessor(new \Monolog\Processor\WebProcessor());
-    return $monolog;
-});
-
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
