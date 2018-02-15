@@ -48,6 +48,7 @@ import Index from './components/Index.vue';
 import Vote from './components/Vote.vue';
 import UploadPage from './components/Upload.vue';
 import Login from './components/Login.vue';
+import Result from './components/Result.vue';
 import NotFound from './components/404.vue';
 
 Vue.use(Breadcrumb);
@@ -112,6 +113,14 @@ const router = new VueRouter({
                 title: '上传',
                 nav: '2',
                 requiresAuth: true
+            }
+        },
+        {
+            path: '/Result',
+            name: 'Result',
+            component: Result,
+            meta: {
+                title: '投票结果',
             }
         },
         {

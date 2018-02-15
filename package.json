@@ -15,11 +15,12 @@
     "babel-plugin-component": "^0.10.0",
     "bootstrap-sass": "^3.3.7",
     "cross-env": "^5.1",
-    "laravel-mix": "^2.0",
+    "laravel-mix": "^1.0",
     "vue": "^2.1.10",
     "vue-router": "^2.7.0"
   },
   "dependencies": {
+    "aplayer": "^1.6.0",
     "element-ui": "^1.4.13"
   }
 }
