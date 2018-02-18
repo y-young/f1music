@@ -15,7 +15,7 @@
                 <el-table-column prop="created_at" label="创建时间" sortable></el-table-column>
                 <el-table-column prop="updated_at" label="最后更新时间" sortable></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form label-position="left" inline>
                             <el-form-item label="曲目ID">
                                 <span>{{props.row.song_id}}</span>

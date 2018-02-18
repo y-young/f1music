@@ -11,7 +11,7 @@
                 <el-table-column prop="md5" label="MD5"></el-table-column>
                 <el-table-column prop="time" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form label-position="left" inline>
                             <el-form-item label="时间">
                                 <span>{{ props.row.time }}</span>

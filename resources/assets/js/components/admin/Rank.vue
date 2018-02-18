@@ -13,7 +13,7 @@
                 <el-table-column prop="sum" label="总分" sortable></el-table-column>
                 <el-table-column prop="counts" label="投票人数" sortable></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form label-position="left" inline>
                             <el-form-item label="时段">
                                 <span>{{ props.row.playtime }}</span>

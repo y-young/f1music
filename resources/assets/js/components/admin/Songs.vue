@@ -14,7 +14,7 @@
                 <el-table-column prop="reports_count" label="举报数" sortable></el-table-column>
                 <el-table-column prop="created_at" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form label-position="left" inline>
                             <el-form-item label="时段">
                                 <span>{{ props.row.playtime }}</span>

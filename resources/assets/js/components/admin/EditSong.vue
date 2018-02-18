@@ -36,7 +36,7 @@
                 <el-table-column prop="reporter" label="举报者"></el-table-column>
                 <el-table-column prop="time" label="时间" sortable></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form label-position="left" inline>
                             <el-form-item label="曲目ID">
                                 <span>{{ props.row.song_id }}</span>

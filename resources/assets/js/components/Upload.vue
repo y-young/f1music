@@ -16,7 +16,7 @@
                 <el-table-column prop="artist" label="歌手"></el-table-column>
                 <el-table-column prop="album" label="专辑"></el-table-column>
                 <el-table-column type="expand">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <el-form :model="uploadForm" label-position="left" :rules="rules" ref="uploadForm" inline>
                             <el-form-item label="时段" prop="time">
                                 <span><el-select v-model="uploadForm.time" placeholder="请选择时段">

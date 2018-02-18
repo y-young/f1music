@@ -176,13 +176,13 @@
     .login {
         padding-top: 15%;
         margin: auto;    
-        //position: absolute;
+        /* position: absolute; */
         left: 0;
         width: 320px;
         text-align: center;
-        //top: 50%;
-        //left: 50%;
-        //margin-left: -160px;
-        //margin-top: -160px;
+        /* top: 50%;
+        left: 50%;
+        margin-left: -160px;
+        margin-top: -160px; */
     }
 </style>

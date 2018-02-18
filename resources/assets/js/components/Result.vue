@@ -21,7 +21,7 @@
                 <el-table-column prop="origin" label="来源"></el-table-column>
                 <el-table-column prop="score" label="得分" sortable></el-table-column>
                 <el-table-column label="试听">
-                    <template scope="props">
+                    <template slot-scope="props">
                         <i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer>
                     </template>
                 </el-table-column>
