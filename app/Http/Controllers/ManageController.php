@@ -141,29 +141,6 @@ class ManageController extends Controller
         return $this->success('songs', $songs->values());
     }
 
-    public function getResult(Request $request)
-    {
-        $songs = Song::with('votes', 'file')->withCount('votes')->get();
-        foreach ($songs as $song) {
-            $song->vote_sum = $song->votes->sum->vote;
-            $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
-        }
-        $songs = $songs->sortBy(function($song) {
-            return $song->playtime.'-'.(1 - 0.1 * $song->score);
-        }); // Ugly Solution
-        $songs = $songs->map(function ($song) {
-            return [
-                'id' => $song->id,
-                'playtime' => $song->playtime,
-                'name' => $song->name,
-                'origin' => $song->origin,
-                'score' => $song->score,
-                'url' => $song->file->url
-            ];
-        });
-        return response()->json($songs->values());
-    }
-
     public function Options(Request $request)
     {
         return $this->success('options', Option::all());

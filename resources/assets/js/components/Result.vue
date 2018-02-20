@@ -25,6 +25,11 @@
                         <i class="el-icon-loading" v-if="!props.row.url"></i><YPlayer :src="props.row.url" :detail="false" v-if="props.row.url"></YPlayer>
                     </template>
                 </el-table-column>
+                <el-table-column label="下载">
+                    <template slot-scope="props">
+                        <el-button type="primary" @click="download(props.row.id)"><i class="fa fa-download" style="margin-right: 0px;"></i></el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             </div>
         </el-tab-pane>
@@ -55,6 +60,9 @@
         methods: {
             filterPlaytime(value, row) {
                 return row.playtime === value;
+            },
+            download(id) {
+                window.open('/Download/' + id);
             }
         },
         components: {

@@ -7,7 +7,7 @@
     <div class="main">
             <div style="font-size: 14px; color: #777">投票总数: {{ allCnt }} 票</div>
             <el-pagination @current-change="pageChange" :current-page="1" :page-size="100" layout="prev, pager, next" :total="allCnt" style="margin-bottom: 10px"></el-pagination>
-            <el-table :data="votes" @expand="expand" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+            <el-table :data="votes" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="song.name" label="曲目"></el-table-column>
                 <el-table-column prop="vote" label="投票"></el-table-column>

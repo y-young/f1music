@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Rank</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-            <el-table :data="rank" @expand="expand" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+            <el-table :data="rank" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column prop="id" label="#" width="55"></el-table-column>
                 <el-table-column prop="playtime" label="时段" :filters="filters" :filter-method="filterPlaytime" filter-placement="bottom-end" width="70px"></el-table-column>
                 <el-table-column prop="name" label="曲名"></el-table-column>
@@ -40,13 +40,17 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div style="margin-top: 20px">
+                <el-button type="primary" @click="showResult = ! showResult">{{ showResult ? '收起' : '生成'}}结果</el-button>
+                <transition name="el-fade-in-linear">
+                    <el-input type="textarea" v-model="result" v-show="showResult" :autosize="{ minRows: 5, maxRows: 20}" style="margin-top: 10px"></el-input>
+                </transition>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import YPlayer from '../YPlayer.vue';
-
     export default {
         data() {
             return {
@@ -56,7 +60,7 @@
                 btnLoading: false,
                 error: false,
                 rank: null,
-                mp3: '',
+                showResult: false,
                 filters: [
                     { text: '6:30', value: '1' },
                     { text: '7:00', value: '2' },
@@ -70,10 +74,21 @@
         created() {
             this.getRank()
         },
-        methods: {
-            expand: function(row, expanded) {
-                return row;
+        computed: {
+            result: function() {
+                if(this.rank != null) {
+                    let result = JSON.parse(JSON.stringify(this.rank)) //!important:  Copy Array
+                    result.forEach(v => {
+                            this.$delete(v, 'sum')
+                            this.$delete(v, 'counts')
+                        })
+                    return JSON.stringify(result);
+                } else {
+                    return null;
+                }
             },
+        },
+        methods: {
             filterPlaytime(value, row) {
                 return row.playtime === value;
             },
@@ -93,9 +108,6 @@
                     console.log(err);
                 });
             }
-        },
-        components: {
-            YPlayer
         }
     }
 </script>

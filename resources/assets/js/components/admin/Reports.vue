@@ -5,7 +5,7 @@
         <el-breadcrumb-item>Reports</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="main">
-            <el-table :data="reports" @expand="expand" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
+            <el-table :data="reports" @selection-change="handleSelectionChange" v-loading.body="tableLoading" element-loading-text="加载中..." max-height="500" style="width: 100%" stripe>
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="id" label="#" width="40px"></el-table-column>
                 <el-table-column prop="song.name" label="曲目"></el-table-column>
@@ -62,9 +62,6 @@
             this.getReports()
         },
         methods: {
-            expand: function(row, expanded) {
-                return row;
-            },
             del(id, index) {
                 console.log(index);
                 axios.post('/Manage/Report/Delete',{
