@@ -23,7 +23,7 @@
 
                 <hr/>
                 <p>出于公平性考虑，本次征集投票时将隐藏歌曲信息，因此将预先进行审核，对于严重恶搞、不符合要求、以及重复上传的内容，将直接删除。如果投票过程中发现上述情况，请点击播放器右下方的举报按钮进行举报，我们会尽快处理。此外，出于同样目的，上传时曲目的标签信息将被删除。但此操作耗时较多，因此上传进度到达100%后可能出现几秒的停顿，请耐心等待。</p>
-                <router-link to="/Upload" style="font-size: 14px; color: #777;">前往上传 <i class="el-icon-arrow-right"></i></router-link>
+                <router-link :to="{ name: 'Upload' }" style="font-size: 14px; color: #777;">前往上传 <i class="el-icon-arrow-right"></i></router-link>
             </el-tab-pane>
             <el-tab-pane label="投票说明" name="vote">
                 <p>为保证投票质量禁止使用校园网默认密码登录投票，使用默认密码的同学请先登录福州一中官网修改密码(推荐使用IE浏览器)。</p>

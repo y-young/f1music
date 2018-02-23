@@ -75,6 +75,7 @@ const router = new VueRouter({
     routes: [
         {
             path: '/',
+            name: 'Home',
             component: Index,
             meta: {
                 title: '首页',
@@ -83,6 +84,7 @@ const router = new VueRouter({
         },
         {
             path: '/Songs',
+            name: 'Songs',
             component: Songs,
             meta: {
                 title: '曲目',
@@ -91,6 +93,7 @@ const router = new VueRouter({
         },
         {
             path: '/Songs/Trashed',
+            name: 'TrashedSongs',
             component: Songs,
             meta: {
                 title: '曲目 - 回收站',
@@ -100,6 +103,7 @@ const router = new VueRouter({
         },
         {
             path: '/Song/Edit/:id',
+            name: 'EditSong',
             component: EditSong,
             meta: {
                 title: '编辑曲目'
@@ -107,6 +111,7 @@ const router = new VueRouter({
         },
         {
             path: '/Files',
+            name: 'Files',
             component: Files,
             meta: {
                 title: '文件',
@@ -115,6 +120,7 @@ const router = new VueRouter({
         },
         {
             path: '/Reports',
+            name: 'Reports',
             component: Reports,
             meta: {
                 title: '举报',
@@ -123,6 +129,7 @@ const router = new VueRouter({
         },
         {
             path: '/Votes',
+            name: 'Votes',
             component: Votes,
             meta: {
                 title: '投票',
@@ -131,6 +138,7 @@ const router = new VueRouter({
         },
         {
             path: '/Rank',
+            name: 'Rank',
             component: Rank,
             meta: {
                 title: '投票结果',

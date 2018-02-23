@@ -85,7 +85,7 @@ Vue.prototype.$alert = MessageBox.alert
 const router = new VueRouter({
     routes: [
         {
-            path: '/',
+            path: '/Index',
             name: 'Home',
             component: Index,
             meta: {
@@ -116,7 +116,7 @@ const router = new VueRouter({
             }
         },
         {
-            path: '/Result',
+            path: '/',
             name: 'Result',
             component: Result,
             meta: {
