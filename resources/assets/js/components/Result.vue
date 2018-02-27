@@ -9,7 +9,7 @@
         <el-tab-pane label="当选歌曲" name="songs">
             <div class="aplayer"><font style="text-align: center; font-size: 24px; color: #777">Loading...</font></div><br>
             <div>
-                <a href="http://music.163.com" style="font-size: 13px; color: #777; text-decoration: none">前往网易云歌单 <i class="el-icon-arrow-right"></i></a>
+                <a href="http://music.163.com/playlist/2064024722/" style="font-size: 13px; color: #777; text-decoration: none">前往网易云歌单 <i class="el-icon-arrow-right"></i></a>
                 <router-link :to="{ name: 'Home' }" style="font-size: 13px; color: #777;">进入首页 <i class="el-icon-arrow-right"></i></router-link>
             </div>
         </el-tab-pane>
