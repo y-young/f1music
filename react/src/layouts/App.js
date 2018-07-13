@@ -1,49 +1,48 @@
-import React from 'react';
-import classnames from 'classnames';
-import { withRouter, Switch, Route } from 'dva/router';
-import styles from './App.css';
-import Sidebar from '../components/Sidebar';
-import Index from '../routes/Index';
-import Vote from '../routes/Vote';
-import { Layout, Icon } from 'antd';
-const { Header, Content, Footer } = Layout;
+import React from 'react'
+import { connect } from 'dva'
+import classnames from 'classnames'
+import { withRouter, Switch, Route } from 'dva/router'
+import { Sidebar } from 'components'
+import { Index, Upload, Vote } from 'routes'
+import { LocaleProvider, Layout, Icon } from 'antd'
+import zhCN from 'antd/lib/locale-provider/zh_CN'
+import styles from './App.css'
 
-class App extends React.Component
-{
-  constructor({ children, location }) {
-    super();
-    this.state = {
-      collapsed: false
-    }; 
-  }
-  componentDidMount = () => {
-    this.setState({collapsed: !this.isDesktop()});
-  }
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
+const { Header, Content, Footer } = Layout
+
+const App = ({ children, dispatch, app, location }) => {
+
+  const { siderFolded, loggedIn, isDesktop } = app;
+
+  const componentDidUpdate = (prevProps) => {
+    /*if (this.props.location !== prevProps.location) {
+      window.scrollTo(0, 0);
+      if (!this.isDesktop()) {
+        this.toggle();
+      }
+    }*/
   }
 
-  isDesktop = () => {
-    return window.innerWidth > 993;
+  const toggle = () => {
+    dispatch({ type: 'app/toggleSider' });
   }
 
-  render() {
-    const appClass = classnames({
-      [styles.app]: true,
-      [styles.withsidebar]: !this.state.collapsed
-    })
+  const appClass = classnames({
+    [styles.app]: true,
+    [styles.withsidebar]: !siderFolded
+  })
+
     return (
+      <LocaleProvider locale={zhCN}>
       <div className={appClass}>
-        <Sidebar collapsed={this.state.collapsed} location={this.props.location} desktop={this.isDesktop()}/>
+        <Sidebar collapsed={siderFolded} location={location} desktop={isDesktop} loggedIn={loggedIn} />
         <div className={styles.container}>
         <div className={styles.containerinner}>
           <Header className={styles.header} >
             <Icon
                 className={styles.trigger}
-                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                onClick={this.toggle}
+                type={siderFolded ? 'menu-unfold' : 'menu-fold'}
+                onClick={toggle}
               />
             <span className={styles.title}>Home</span>
           </Header>
@@ -51,6 +50,7 @@ class App extends React.Component
             <div className={styles.contentinner}>
               <Switch>
                 <Route path="/" exact component={Index} />
+                <Route path="/upload" exact component={Upload} />
                 <Route path="/vote/:time" exact component={Vote} />
               </Switch>
             </div>
@@ -58,12 +58,13 @@ class App extends React.Component
           <Footer style={{ textAlign: 'center' }}>
           Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br/>
           Author & Current Maintainer: Googleplex<br/>
-          Past Mainainter: Robot Miskcoo Upsuper
+          Past Maintainer: Robot Miskcoo Upsuper
           </Footer>
         </div>
         </div>
       </div>
+      </LocaleProvider>
     );
-  }
 };
-export default withRouter(App);
+
+export default withRouter(connect(({ app }) => ({ app }))(App))

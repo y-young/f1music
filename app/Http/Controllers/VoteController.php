@@ -99,6 +99,6 @@ class VoteController extends Controller
                 ]
             ];
         });
-        return $this->success('songs', $songs);
+        return $this->success('songs', $songs->values());
     }
 }

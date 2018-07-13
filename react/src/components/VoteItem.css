@@ -1,0 +1,31 @@
+.yplayer {
+  margin-bottom: 25px;
+}
+.toggleReport {
+  float: right;
+}
+.voteArea {
+  position: relative;
+  margin-top: 10px;
+background-color: red;
+}
+.rate {
+  margin: 0px 15px;
+  float: left;
+}
+.voteButton {
+  float: right;
+  margin-bottom: 10px;
+}
+.reportArea {
+  position: relative;
+  margin-top: 10px;
+}
+.reason {
+  width: 70%;
+  float: left;
+  margin-bottom: 7px;
+}
+.reportButton {
+  float: right;
+}

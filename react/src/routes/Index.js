@@ -1,6 +1,6 @@
-import React from 'react';
-import { Tabs } from 'antd';
-const TabPane = Tabs.TabPane;
+import React from 'react'
+import { Tabs } from 'antd'
+const TabPane = Tabs.TabPane
 
 const Index = ({location}) => {
   return (
@@ -57,4 +57,4 @@ const Index = ({location}) => {
       </Tabs>
   );
 };
-export default Index;
+export default Index

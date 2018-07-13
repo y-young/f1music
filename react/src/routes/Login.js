@@ -1,15 +1,34 @@
-import React from 'react';
-import styles from './Login.css';
-import { Link } from 'dva/router';
-import { Form, Icon, Button, Input, Alert } from 'antd';
-const FormItem = Form.Item;
+import React from 'react'
+import { connect } from 'dva'
+import styles from './Login.css'
+import { Link } from 'dva/router'
+import { Form, Icon, Button, Input, Alert } from 'antd'
 
-const Login = () => {
+const FormItem = Form.Item
+
+const Login = ({ loading, dispatch, error, msg, form: { getFieldDecorator, validateFieldsAndScroll } }) => {
+
+  function handleSubmit () {
+    validateFieldsAndScroll((errors, values) => {
+      if (errors) {
+        return
+      }
+      dispatch({ type: 'login/login', payload: values })
+    })
+  }
+
+  function validatePassword (rule, value, callback) {
+    if (value === '123456') {
+      callback('为保证投票质量目前禁止使用校网初始密码登录,请更改密码')
+    }
+    callback()
+  }
+
   return (
     <div>
       <div className={styles.login}>
         <div style={{ width: "300px", margin: "auto" }}>
-          <div style={{ "font-size": "30px", "text-align": "center", "margin-bottom": "20px" }}><b>登录</b></div>
+          <div style={{ fontSize: "30px", textAlign: "center", marginBottom: "20px" }}><b>登录</b></div>
             <div>
               <Alert title="登录成功，正在跳转..." type="success" /><br/>
             </div>
@@ -17,17 +36,27 @@ const Login = () => {
               <Alert title="errorMsg" type="error" /><br/>
             </div>
             <Form>
-              <FormItem prop="stuId">
-                <Input placeholder="学号" />
+              <FormItem hasFeedback>
+                {getFieldDecorator('stuId', {
+                  rules: [
+                    { required: true, message: '请输入学号' },
+                    { min: 10, message: '学号应为10或11位' },
+                    { max: 11, message: '学号应为10或11位' }
+                   ]
+                })(<Input placeholder="学号" />)}
               </FormItem>
-              <FormItem prop="password">
-                <Input type="password" placeholder="校园网密码" />
+              <FormItem hasFeedback>
+                {getFieldDecorator('password', {
+                  rules: [
+                    { required: true, message: '请输入密码' }, { validator: validatePassword }
+                   ]
+                })(<Input type="password" placeholder="校园网密码" />)}
               </FormItem>
               <FormItem>
-                <Button type="primary">登录</Button>
+                <Button type="primary" onClick={handleSubmit} loading={loading} style={{width: "100%"}}>登录</Button>
               </FormItem>
             </Form>
-            <Link to="/" style={{ "font-size": "13px", color: "#777" }}><Icon type="arrow-left" /> 返回首页</Link>
+            <Link to="/" style={{ fontSize: "13px", color: "#777" }}><Icon type="arrow-left" /> 返回首页</Link>
           </div>
         </div>
         <canvas width="1080" height="1608" id="curve"></canvas>
@@ -35,4 +64,9 @@ const Login = () => {
   );
 };
 
-export default Login;
+function mapStateToProps(state) {
+  const { error, msg } = state.login;
+  return { loading: state.loading.models.login, error, msg };
+}
+
+export default connect(mapStateToProps)(Form.create()(Login))

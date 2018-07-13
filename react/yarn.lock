@@ -1468,6 +1468,13 @@ aws4@^1.2.1, aws4@^1.6.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.7.0.tgz#d4d0e9b9dbfca77bf08eeb0a8a471550fe39e289"
 
+axios@^0.18.0:
+  version "0.18.0"
+  resolved "http://registry.npm.taobao.org/axios/download/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
+  dependencies:
+    follow-redirects "^1.3.0"
+    is-buffer "^1.1.5"
+
 axobject-query@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-0.1.0.tgz#62f59dbc59c9f9242759ca349960e7a2fe3c36c0"
@@ -3106,6 +3113,12 @@ dva-core@^1.3.0:
     redux-saga "^0.16.0"
     warning "^3.0.0"
 
+dva-loading@^2.0.3:
+  version "2.0.3"
+  resolved "http://registry.npm.taobao.org/dva-loading/download/dva-loading-2.0.3.tgz#4719c7b54bca1f89a212628ee279affefea953e6"
+  dependencies:
+    "@babel/runtime" "^7.0.0-beta.34"
+
 dva@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/dva/-/dva-2.3.0.tgz#0f5072476446399e49042996b54f2f3f505666d9"
@@ -3931,6 +3944,12 @@ flush-write-stream@^1.0.0:
 follow-redirects@^1.0.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.0.tgz#234f49cf770b7f35b40e790f636ceba0c3a0ab77"
+  dependencies:
+    debug "^3.1.0"
+
+follow-redirects@^1.3.0:
+  version "1.5.1"
+  resolved "http://registry.npm.taobao.org/follow-redirects/download/follow-redirects-1.5.1.tgz#67a8f14f5a1f67f962c2c46469c79eaec0a90291"
   dependencies:
     debug "^3.1.0"
 
@@ -6699,6 +6718,10 @@ path-to-regexp@^1.0.1, path-to-regexp@^1.7.0:
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
   dependencies:
     isarray "0.0.1"
+
+path-to-regexp@^2.2.1:
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/path-to-regexp/download/path-to-regexp-2.2.1.tgz#90b617025a16381a879bc82a38d4e8bdeb2bcf45"
 
 path-type@^1.0.0:
   version "1.1.0"

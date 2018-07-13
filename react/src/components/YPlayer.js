@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import styles from './YPlayer.css';
 import { Button, Slider, Icon } from 'antd';
 const ButtonGroup = Button.Group;
@@ -13,6 +14,16 @@ class YPlayer extends React.Component
       time: 0,
       loaded: 0
     };
+    this.updateTime = _.debounce(this.updateTime, 200);
+  }
+
+  onTimeUpdate = (event) => {
+    this.updateTime(event.target.currentTime);
+  }
+
+  play() {
+    this.audio.play();
+    this.setState({playing: true});
   }
 
   toggle = () => {
@@ -34,44 +45,53 @@ class YPlayer extends React.Component
   }
 
   render() {
+    const { mini } = this.props;
     return (
       <div>
         <audio
-          controls="controls"
           ref={(audio) => {this.audio = audio}}
-          src="http://music.7hmakers.com/uploads/***REMOVED***.mp3"
-          onProgress={this.onProgress} onDurationChange={this.updateDuration} onTimeUpdate={this.updateTime} onEnded={this.ended} preload="metadata" />
-        <div>
-          <Slider value={this.state.time} max={this.state.duration} />
+          src={this.props.src}
+          onTimeUpdate={this.onTimeUpdate}
+          onDurationChange={this.updateDuration}
+          onEnded={this.ended} preload="metadata" />
+        { !mini &&
+        (<div>
+          <Slider value={this.state.time} max={this.state.duration} tipFormatter={null} />
           <div className={styles.timeDetail}>{ this.formatTime(this.state.time) } / { this.formatTime(this.state.duration) }</div>
-        </div>
-        <ButtonGroup size="large" className={styles.controls}>
+        </div>)
+        }
+        <ButtonGroup className={styles.controls}>
             <Button type="primary" onClick={this.toggle}><Icon type={ this.state.playing ? "pause" : "caret-right"} /></Button>
             <Button type="primary" onClick={this.stop}><Icon type="step-backward" /></Button>
         </ButtonGroup>
-        <div className={styles.control}>
+        {/*<div className={styles.control}>
            { this.state.loaded }
-        </div>
+        </div>*/}
     </div>
     );
   }
 
-  onProgress(e) {
-    console.log('progress');
+  onProgress = (e) => {
+    e.persist();
+    this.props.onProgress(this.state.time);
   }
 
   updateDuration = (e) => {
     e.persist();
-    console.log(e.target.duration);
+    //console.log(e.target.duration);
     this.setState({ duration: e.target.duration });
   }
 
-  updateTime = (e) => {
-    this.setState({ time: e.target.currentTime });
+  updateTime = (time) => {
+    this.setState({ time: time });
+    if(this.props.onProgress) {
+      this.props.onProgress(time);
+    }
   }
 
   ended = () => {
     this.setState({playing: false});
+    this.props.onEnded();
   }
 
   formatTime(seconds) {
