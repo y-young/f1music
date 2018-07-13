@@ -6,14 +6,8 @@ import VoteItem from './VoteItem';
 const Panel = Collapse.Panel;
 
 class VoteList extends React.Component {
-  constructor(props) { 
-    //handleAuto, handleChange, setRef, loading, dispatch, vote
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleAuto = this.handleAuto.bind(this);
-  }
-
-  handleChange(index) {
+// TODO: 跳转时段后停止播放
+  handleChange = (index) => {
     const { dispatch, vote } = this.props;
     const { lastIndex, auto } = vote;
     if(lastIndex) {
@@ -30,12 +24,12 @@ class VoteList extends React.Component {
     return index;
   }
 
-  handleAuto(submitted) {
+  handleAuto = (submitted) => {
     const { dispatch, vote } = this.props;
     const { songs, auto, newIndex, nowIndex } = vote;
     if (!submitted) {
-      let nextIndex =  String(Number(this.nowIndex) + 1)
-      dispatch({ type: 'vote/updateNewIndex', payload: nextIndex })
+      const nextIndex =  String(Number(nowIndex) + 1);
+      dispatch({ type: 'vote/updateNewIndex', payload: nextIndex });
       // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
       if(songs[nextIndex] && auto) {
         const player = this.refs["item"+nextIndex].getWrappedInstance();
@@ -44,8 +38,8 @@ class VoteList extends React.Component {
       }
     } else {
       if(songs[newIndex] && auto) {
-        dispatch({ type: 'vote/setNowIndex', payload: newIndex });
-        this.handleChange(nowIndex)
+        // dispatch({ type: 'vote/setNowIndex', payload: newIndex });
+        this.handleChange(newIndex);
       }
     }
   }
@@ -57,16 +51,16 @@ class VoteList extends React.Component {
     const list = songs.map((song, key) => {
       return (
         <Panel header={'#'+(key+1)+' 您的投票: '+song.vote} key={key} forceRender={true} >
-        <VoteItem song={song} handleAuto={this.handleAuto} ref={"item"+key} />
+          <VoteItem song={song} handleAuto={this.handleAuto} ref={"item"+key} />
         </Panel>
       )});
 
 
       return (
         <Spin spinning={listLoading}>
-        <Collapse accordion bordered={false} onChange={this.handleChange} activeKey={nowIndex}>
-        { list }
-        </Collapse>
+          <Collapse accordion bordered={false} onChange={this.handleChange} activeKey={nowIndex}>
+            { list }
+          </Collapse>
         </Spin>
       )
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Alert, Tabs } from 'antd'
-import { CloudUpload } from 'components'
+import { CloudUpload, ManualUpload } from 'components'
 
 const TabPane = Tabs.TabPane
 
@@ -14,7 +14,7 @@ const Upload = () => {
         <CloudUpload />
       </TabPane>
       <TabPane tab="手动上传" key="manual">
-        
+        <ManualUpload />
       </TabPane>
     </Tabs>
     </div>

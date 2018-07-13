@@ -35,19 +35,19 @@ const Sidebar = (props) => {
         </Menu.Item>
         <SubMenu key="/vote" title={<span><Icon type="form" /><span>投票</span></span>}>
           <Menu.Item key="/vote/1">
-            <Link to="/vote/1">6:30</Link>
+            <Link to="/vote/1">6:30 起床铃</Link>
           </Menu.Item>
           <Menu.Item key="/vote/2">
-            <Link to="/vote/2">7:00</Link>
+            <Link to="/vote/2">7:00 早出门</Link>
           </Menu.Item>
           <Menu.Item key="/vote/3">
-            <Link to="/vote/3">13:45</Link>
+            <Link to="/vote/3">13:45 午出门</Link>
           </Menu.Item>
           <Menu.Item key="/vote/4">
-            <Link to="/vote/4">18:40</Link>
+            <Link to="/vote/4">18:40 晚出门</Link>
           </Menu.Item>
           <Menu.Item key="/vote/5">
-            <Link to="/vote/5">21:35</Link>
+            <Link to="/vote/5">21:35 晚自习结束</Link>
           </Menu.Item>
           <Menu.Item key="/vote/6">
             <Link to="/vote/6">22:30</Link>

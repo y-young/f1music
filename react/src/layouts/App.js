@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import classnames from 'classnames'
 import { withRouter, Switch, Route } from 'dva/router'
 import { Sidebar } from 'components'
-import { Index, Upload, Vote } from 'routes'
+import { Home, Upload, Vote } from 'routes'
 import { LocaleProvider, Layout, Icon } from 'antd'
 import zhCN from 'antd/lib/locale-provider/zh_CN'
 import styles from './App.css'
@@ -49,7 +49,7 @@ const App = ({ children, dispatch, app, location }) => {
           <Content className={styles.content}>
             <div className={styles.contentinner}>
               <Switch>
-                <Route path="/" exact component={Index} />
+                <Route path="/" exact component={Home}/>
                 <Route path="/upload" exact component={Upload} />
                 <Route path="/vote/:time" exact component={Vote} />
               </Switch>

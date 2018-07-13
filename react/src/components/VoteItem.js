@@ -3,6 +3,9 @@ import { connect } from 'dva';
 import { Input, Rate, Button, message } from 'antd';
 import styles from './VoteItem.css';
 import YPlayer from './YPlayer';
+import { config } from 'utils';
+
+const { voteTexts } = config;
 
 class VoteItem extends React.Component
 {
@@ -29,46 +32,55 @@ class VoteItem extends React.Component
     dispatch({ type: 'vote/vote', payload:  song.id }).then((success) => {
       if(success) {
         message.success('投票成功!', 5);
-        dispatch({ type: 'vote/setSubmit', payload: false });
         this.props.handleAuto(true);
       }
     });
   }
   report(id) {};
 
-  play() {
+  play = () => {
     this.player.play();
   }
 
-  stop() {
+  stop = () => {
     this.player.stop();
   }
 
   render() {
     const { song, vote, dispatch, loading } = this.props;
-    const { canSubmit, canVote, showReport, rate } = vote;
+    const { canVote, showReport, rate, isDesktop } = vote;
+    const buttonProps = {
+      shape: !isDesktop ? "circle" : undefined
+    };
     return (
       <span>
       <div>
       <YPlayer
-          src={"http://192.168.0.105:81"+song.url}
+          src={"http://localhost:81"+song.url}
           onProgress={this.timeListener}
           onEnded={this.handleVote}
           ref={(player) => {this.player = player}}
           className={styles.yplayer}
-      />{ rate }<br/>
-        <Button size="small" className={styles.toggleReport} >举报</Button>
+      /><br/>
+        <Button size="small" onClick={() => dispatch({ type: 'vote/toggleReport' })} className={styles.toggleReport} >举报</Button>
         </div><br/>
         {/*<transition name="el-fade-in-linear">*/}
-        { true
+        { canVote
           && (<div className={styles.voteArea}><hr/>
-            <Rate onChange={(value) => dispatch({ type: 'vote/updateRate', payload: value }) } className={styles.rate} />
-            <Button type="primary" loading={loading.effects['vote/vote']} className={styles.voteButton} onClick={this.handleVote}>投票</Button>
+            <Rate value={rate} onChange={(value) => dispatch({ type: 'vote/updateRate', payload: value }) } className={styles.rate} />
+              {rate !== 0 && <div className="ant-rate-text" className={styles.voteText}>{voteTexts[rate]}</div>}
+            <Button
+              type="primary"
+              loading={loading.effects['vote/vote']}
+              className={styles.voteButton}
+              onClick={this.handleVote}
+              icon="check"
+              {...buttonProps}>{ isDesktop && "投票" }</Button>
           </div>)
         }
         {/*</transition>
           <transition name="el-fade-in-linear">*/}
-          { true
+          { showReport
             && (<div className={styles.reportArea}>
               <Input placeholder="填写举报原因" className={styles.reason} maxLength="50" />
               <Button type="primary" onClick={this.report(song.id)} className={styles.reportButton}>提交</Button>

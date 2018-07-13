@@ -20,7 +20,6 @@ export function Report (id, reason) {
 }
 
 export function Vote (params) {
-console.log(params);
   return request({
     url: vote,
     method: 'post',

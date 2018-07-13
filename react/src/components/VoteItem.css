@@ -7,24 +7,30 @@
 .voteArea {
   position: relative;
   margin-top: 10px;
-background-color: red;
+  height: 37px;
+  transition: all ease 1s;
 }
 .rate {
-  margin: 0px 15px;
+  /* margin: 0px 15px; */
+  float: left;
+}
+.voteText {
+  font-size: 0.95rem;
+  margin-top: 5px;
   float: left;
 }
 .voteButton {
   float: right;
-  margin-bottom: 10px;
 }
 .reportArea {
   position: relative;
   margin-top: 10px;
+  height: 32px;
+  transition: all 1s ease;
 }
 .reason {
   width: 70%;
   float: left;
-  margin-bottom: 7px;
 }
 .reportButton {
   float: right;

@@ -44,11 +44,12 @@ class VoteController extends Controller
             ]
         ], self::$messages)->validate();
 
+        $rate = $this->points[$request->input('vote')];
         $vote = Vote::updateOrCreate(
             ['song_id' => $request->input('id'), 'voter' => self::$stuId],
-            ['vote' => $this->points[$request->input('vote')]]
+            ['vote' => $rate]
         );
-        Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $request->input('vote')]);
+        Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);
         return $this->success();
     }
 

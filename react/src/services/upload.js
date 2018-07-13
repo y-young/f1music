@@ -19,10 +19,10 @@ export function Mp3 (id) {
   })
 }
 
-export function Upload (time, name, origin, id) {
+export function Upload (params) {
   return request({
     url: upload,
     method: 'post',
-    data: { 'time': time, 'name': name, 'origin': origin, 'id': id }
+    data: params
   })
 }

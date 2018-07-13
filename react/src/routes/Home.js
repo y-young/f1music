@@ -2,8 +2,9 @@ import React from 'react'
 import { Tabs } from 'antd'
 const TabPane = Tabs.TabPane
 
-const Index = ({location}) => {
+const Home = ({location}) => {
   return (
+    <div>
       <Tabs defaultActiveKey="vote">
         <TabPane tab="上传说明" key="upload">
           <p>每位同学最多推荐10首歌曲，<strong>上传前请确认您推荐的歌曲在同一时段尚未有人推荐</strong>，尽量不要重复上传(重复上传系统将予以提示)。</p>
@@ -55,6 +56,7 @@ const Index = ({location}) => {
           </ol>
         </TabPane>
       </Tabs>
+    </div>
   );
 };
-export default Index
+export default Home

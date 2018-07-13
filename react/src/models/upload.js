@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { Search, Mp3, Upload } from 'services/upload';
 
 export default {
@@ -39,6 +40,12 @@ export default {
     *fetchMp3({ payload: row }, { call, put }) {
       const data = yield call(Mp3, row.id);
       yield put({ type: 'updateMp3', payload: { row, url: data.url } });
+    },
+    *upload({ payload }, { call, put }) {
+      const data = yield call(Upload, payload);
+      if(data.error === 0) {
+        message.success('上传成功');
+      }
     }
   }
 

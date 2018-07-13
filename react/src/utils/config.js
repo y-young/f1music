@@ -10,4 +10,5 @@ module.exports = {
     mp3: '/api/Music/Mp3',
     upload: '/api/Upload'
   },
+  voteTexts: [ 0, "非常不合适", "不合适", "中立", "合适", "非常合适" ]
 }
