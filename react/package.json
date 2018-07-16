@@ -14,7 +14,8 @@
     "dva-loading": "^2.0.3",
     "path-to-regexp": "^2.2.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-transition-group": "^2.4.0"
   },
   "devDependencies": {
     "babel-plugin-dva-hmr": "^0.3.2",

@@ -1,23 +1,23 @@
 .controls {
-    float: left;
-    margin-right: 20px;
+  float: left;
+  margin-right: 20px;
 }
 .controls Button Icon {
-    margin: 0px;
+  margin: 0px;
 }
 .volume {
-    float: left;
-    vertical-align: middle;
-    margin-right: 15px;
-    padding-top: 10px;
+  float: left;
+  vertical-align: middle;
+  margin-right: 15px;
+  padding-top: 10px;
 }
 .changeVolume {
-    width: 80px;
-    float: left;
+  width: 80px;
+  float: left;
 }
 .timeDetail {
-    font-size: 12px;
-    color: #777;
-    display: inline;
-    float: right;
+  font-size: 12px;
+  color: #777;
+  display: inline;
+  float: right;
 }

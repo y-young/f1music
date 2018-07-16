@@ -1,63 +1,63 @@
-.sidebar{
-    position: absolute;
-    width: 300px;
-    top: 0;
-    left: -300px;
-    bottom: 0;
-    z-index: 1;
-    overflow-y: auto;
-    -webkit-transition: left 250ms ease;
-    -moz-transition: left 250ms ease;
-    -o-transition: left 250ms ease;
-    transition: left 250ms ease;
+.sidebar {
+  position: absolute;
+  width: 300px;
+  top: 0;
+  left: -300px;
+  bottom: 0;
+  z-index: 1;
+  overflow-y: auto;
+  -webkit-transition: left 250ms ease;
+  -moz-transition: left 250ms ease;
+  -o-transition: left 250ms ease;
+  transition: left 250ms ease;
 }
 
-@media (max-width:500px) {
-    .sidebar {
-        width: 70%;
-        left: -70%;
-        bottom: 0;
-    }
-    .logo {
-        width: 70%;
-    }
+@media (max-width: 500px) {
+  .sidebar {
+    width: 70%;
+    left: -70%;
+    bottom: 0;
+  }
+  .logo {
+    width: 70%;
+  }
 }
 
 .sidebar.show {
-    left: 0;
+  left: 0;
 }
 
 .logo {
-    position: fixed;
-    top: 0;
-    width: 70%;
-    padding: 0 15px;
-    transition: all 250ms ease;
-    font-size: 1.3rem;
-    line-height: 64px;
-    z-index: 2;
-    color: #fff;
-    /*border-color: rgba(238,241,146,0.3);
+  position: fixed;
+  top: 0;
+  width: 70%;
+  padding: 0 15px;
+  transition: all 250ms ease;
+  font-size: 1.3rem;
+  line-height: 64px;
+  z-index: 2;
+  color: #fff;
+  /*border-color: rgba(238,241,146,0.3);
     border-right-width: 1px;
     border-right-style: solid;*/
-    background: #1890ff;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  background: #1890ff;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .nav {
-    display: block;
-    position: absolute;
-    top: 64px;
-    bottom: 0;
-    margin: 0;
-    width: 100%;
-    -webkit-transition: left 250ms ease;
-    -moz-transition: left 250ms ease;
-    -o-transition: left 250ms ease;
-    transition: left 250ms ease;
+  display: block;
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  margin: 0;
+  width: 100%;
+  -webkit-transition: left 250ms ease;
+  -moz-transition: left 250ms ease;
+  -o-transition: left 250ms ease;
+  transition: left 250ms ease;
 }
 .nav a {
-    text-decoration: none;
+  text-decoration: none;
 }

@@ -1,70 +1,93 @@
-import React from 'react'
-import { connect } from 'dva'
-import classnames from 'classnames'
-import { withRouter, Switch, Route } from 'dva/router'
-import { Sidebar } from 'components'
-import { Home, Upload, Vote } from 'routes'
-import { LocaleProvider, Layout, Icon } from 'antd'
-import zhCN from 'antd/lib/locale-provider/zh_CN'
-import styles from './App.css'
+import React from "react";
+import { connect } from "dva";
+import classnames from "classnames";
+import { withRouter, Switch, Route } from "dva/router";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { Sidebar } from "components";
+import { Home, Upload, Vote } from "routes";
+import { LocaleProvider, Layout, Icon } from "antd";
+import zhCN from "antd/lib/locale-provider/zh_CN";
+import styles from "./App.css";
 
-const { Header, Content, Footer } = Layout
+const { Header, Content, Footer } = Layout;
 
 const App = ({ children, dispatch, app, location }) => {
+  const { title, siderFolded, loggedIn, isDesktop } = app;
 
-  const { siderFolded, loggedIn, isDesktop } = app;
-
-  const componentDidUpdate = (prevProps) => {
-    /*if (this.props.location !== prevProps.location) {
+  /*const componentDidUpdate = (prevProps) => {
+    if (this.props.location !== prevProps.location) {
       window.scrollTo(0, 0);
       if (!this.isDesktop()) {
         this.toggle();
       }
-    }*/
-  }
+    }
+  }*/
 
   const toggle = () => {
-    dispatch({ type: 'app/toggleSider' });
-  }
+    dispatch({ type: "app/toggleSider" });
+  };
 
   const appClass = classnames({
     [styles.app]: true,
-    [styles.withsidebar]: !siderFolded
-  })
+    [styles.withSidebar]: !siderFolded
+  });
 
-    return (
-      <LocaleProvider locale={zhCN}>
+  return (
+    <LocaleProvider locale={zhCN}>
       <div className={appClass}>
-        <Sidebar collapsed={siderFolded} location={location} desktop={isDesktop} loggedIn={loggedIn} />
+        <Sidebar
+          collapsed={siderFolded}
+          location={location}
+          desktop={isDesktop}
+          loggedIn={loggedIn}
+        />
         <div className={styles.container}>
-        <div className={styles.containerinner}>
-          <Header className={styles.header} >
-            <Icon
+          <div className={styles.containerInner}>
+            <Header className={styles.header}>
+              <Icon
                 className={styles.trigger}
-                type={siderFolded ? 'menu-unfold' : 'menu-fold'}
+                type={siderFolded ? "menu-unfold" : "menu-fold"}
                 onClick={toggle}
               />
-            <span className={styles.title}>Home</span>
-          </Header>
-          <Content className={styles.content}>
-            <div className={styles.contentinner}>
-              <Switch>
-                <Route path="/" exact component={Home}/>
-                <Route path="/upload" exact component={Upload} />
-                <Route path="/vote/:time" exact component={Vote} />
-              </Switch>
-            </div>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>
-          Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br/>
-          Author & Current Maintainer: Googleplex<br/>
-          Past Maintainer: Robot Miskcoo Upsuper
-          </Footer>
-        </div>
+              <span className={styles.title}>{title}</span>
+            </Header>
+            <Content className={styles.content}>
+              <div className={styles.contentInner}>
+                <TransitionGroup>
+                  <CSSTransition
+                    key={location.pathname}
+                    classNames="fade"
+                    timeout={200}
+                  >
+                    <Switch>
+                      <Route path="/" exact component={Home} key="Home" />
+                      <Route
+                        path="/upload"
+                        exact
+                        component={Upload}
+                        key="Upload"
+                      />
+                      <Route
+                        path="/vote/:time"
+                        exact
+                        component={Vote}
+                        key="Vote"
+                      />
+                    </Switch>
+                  </CSSTransition>
+                </TransitionGroup>
+              </div>
+            </Content>
+            <Footer style={{ textAlign: "center" }}>
+              Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br />
+              Author & Current Maintainer: Googleplex<br />
+              Past Maintainer: Robot Miskcoo Upsuper
+            </Footer>
+          </div>
         </div>
       </div>
-      </LocaleProvider>
-    );
+    </LocaleProvider>
+  );
 };
 
-export default withRouter(connect(({ app }) => ({ app }))(App))
+export default withRouter(connect(({ app }) => ({ app }))(App));

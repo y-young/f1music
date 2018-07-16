@@ -18,5 +18,6 @@ export default {
             changeOrigin: true,
             pathRewrite: { "^/api" : "" }
         }
-    }
+    },
+    ignoreMomentLocale: true
 }

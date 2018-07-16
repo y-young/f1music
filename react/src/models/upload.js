@@ -1,8 +1,8 @@
-import { message } from 'antd';
-import { Search, Mp3, Upload } from 'services/upload';
+import { message } from "antd";
+import { Search, Mp3, Upload } from "services/upload";
 
 export default {
-  namespace: 'upload',
+  namespace: "upload",
   state: {
     searchResult: []
   },
@@ -11,10 +11,15 @@ export default {
     save(state, { payload }) {
       return { ...state, ...payload };
     },
-    updateMp3(state, { payload: { row, url } }) {
+    updateMp3(
+      state,
+      {
+        payload: { row, url }
+      }
+    ) {
       const result = state.searchResult;
-      const records = result.filter((item) => {
-        if(item.id === row.id) {
+      const records = result.filter(item => {
+        if (item.id === row.id) {
           let record = item;
           record.mp3 = url;
           return record;
@@ -24,9 +29,7 @@ export default {
       });
       return {
         ...state,
-        searchResult: [
-          ...records
-        ]
+        searchResult: [...records]
       };
     }
   },
@@ -34,19 +37,21 @@ export default {
   effects: {
     *search({ payload: keyword }, { call, put }) {
       const data = yield call(Search, keyword);
-      if(data.error === 0)
-        yield put({ type: 'save', payload: { searchResult: JSON.parse(data.result) } });
+      if (data.error === 0)
+        yield put({
+          type: "save",
+          payload: { searchResult: JSON.parse(data.result) }
+        });
     },
     *fetchMp3({ payload: row }, { call, put }) {
       const data = yield call(Mp3, row.id);
-      yield put({ type: 'updateMp3', payload: { row, url: data.url } });
+      yield put({ type: "updateMp3", payload: { row, url: data.url } });
     },
     *upload({ payload }, { call, put }) {
       const data = yield call(Upload, payload);
-      if(data.error === 0) {
-        message.success('上传成功');
+      if (data.error === 0) {
+        message.success("上传成功");
       }
     }
   }
-
-}
+};

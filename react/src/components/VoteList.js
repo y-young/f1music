@@ -1,69 +1,203 @@
-import React from 'react';
-import { connect } from 'dva';
-import { Collapse, Spin } from 'antd';
-import VoteItem from './VoteItem';
+import React from "react";
+import { connect } from "dva";
+import { Collapse, Spin, Input, Rate, Button, message } from "antd";
+import styles from "./VoteList.css";
+import YPlayer from "./YPlayer";
+import { config } from "utils";
 
 const Panel = Collapse.Panel;
+const { voteTexts } = config;
 
 class VoteList extends React.Component {
-// TODO: 跳转时段后停止播放
-  handleChange = (index) => {
-    const { dispatch, vote } = this.props;
-    const { lastIndex, auto } = vote;
-    if(lastIndex) {
-      const player = this.refs["item"+lastIndex].getWrappedInstance();
-      player.stop();
+  state = {
+    time: "1",
+    currentTime: 0,
+    rate: 0,
+    reason: "",
+    nowIndex: "",
+    lastIndex: "",
+    canVote: false,
+    canSubmit: false,
+    showReport: false,
+    auto: true
+  };
+
+  init = () => {
+    this.setState({
+      currentTime: 0,
+      rate: 0,
+      reason: "",
+      canVote: false,
+      canSubmit: false
+    });
+  };
+  redirect = time => {
+    const { dispatch } = this.props;
+    if (this.state.lastIndex) this.refs["player" + this.state.lastIndex].stop();
+    this.setState({
+      nowIndex: "",
+      lastIndex: ""
+    });
+    dispatch({ type: "vote/redirect", payload: time });
+    //this.$router.push('/Vote/' + this.time);
+  };
+  timeListener = time => {
+    //this.setState({ currentTime: time });
+    if (!this.state.canVote && time >= 30) {
+      this.setState({ canVote: true });
     }
-    dispatch({ type: 'vote/init' });
-    dispatch({ type: 'vote/setNowIndex', payload: index });
-    dispatch({ type: 'vote/updateLastIndex', payload: index });
-    if(auto && index) {
-      const player = this.refs["item"+index].getWrappedInstance();
+  };
+  handleChange = index => {
+    const { vote } = this.props;
+    const { auto, songs } = vote;
+    if (this.state.lastIndex) {
+      this.refs["player" + this.state.lastIndex].stop();
+    }
+    this.init();
+    this.setState({
+      lastIndex: index,
+      nowIndex: index
+    });
+    const player = this.refs["player" + index];
+    if (auto && index) {
+      //this.init();
       player.play();
+player.audio.currentTime = 120;
     }
     return index;
-  }
-
-  handleAuto = (submitted) => {
-    const { dispatch, vote } = this.props;
-    const { songs, auto, newIndex, nowIndex } = vote;
-    if (!submitted) {
-      const nextIndex =  String(Number(nowIndex) + 1);
-      dispatch({ type: 'vote/updateNewIndex', payload: nextIndex });
-      // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
-      if(songs[nextIndex] && auto) {
-        const player = this.refs["item"+nextIndex].getWrappedInstance();
-        player.play();
-        player.stop();
-      }
-    } else {
-      if(songs[newIndex] && auto) {
-        // dispatch({ type: 'vote/setNowIndex', payload: newIndex });
-        this.handleChange(newIndex);
-      }
+  };
+  handleVote = song => {
+    const { vote, dispatch } = this.props;
+    const { songs, auto } = vote;
+    if (!this.state.canSubmit) {
+      message.error("选择或更改评价后才能提交");
+      return;
     }
-  }
+    let newIndex = String(Number(this.state.nowIndex) + 1);
+    // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
+    if (songs[newIndex] && auto) {
+      this.refs["player" + newIndex].audio.play();
+      this.refs["player" + newIndex].audio.pause();
+    }
+    const id = song.id;
+    const rate = this.state.rate;
+    dispatch({ type: "vote/vote", payload: { id, rate } }).then(success => {
+      if (success) {
+        message.success("投票成功!");
+        //dispatch(updateVoteText)
+        this.setState({ canSubmit: false });
+        if (songs[newIndex] && auto) {
+          this.setState({ nowIndex: newIndex });
+          this.handleChange(newIndex);
+        }
+      }
+    });
+  };
+  report = id => {
+    //dispatch
+  };
 
   render() {
     const { vote, loading } = this.props;
-    const { songs, nowIndex } = vote;
-    const listLoading = loading.effects['vote/fetch'];
+    const { isDesktop, songs } = vote;
+    const listLoading = loading.effects["vote/fetch"];
+    const buttonProps = {
+      shape: !isDesktop ? "circle" : undefined
+    };
     const list = songs.map((song, key) => {
       return (
-        <Panel header={'#'+(key+1)+' 您的投票: '+song.vote} key={key} forceRender={true} >
-          <VoteItem song={song} handleAuto={this.handleAuto} ref={"item"+key} />
+        <Panel
+          header={"#" + (key + 1) + " 您的投票: " + song.vote}
+          key={key}
+          forceRender={true}
+        >
+          <span>
+            <div>
+              <YPlayer
+                src={"http://192.168.0.105:81" + song.url}
+                onProgress={this.timeListener}
+                onEnded={() => this.handleVote(song)}
+                ref={"player" + key}
+                className={styles.yplayer}
+              />
+              <br />
+              <Button
+                size="small"
+                onClick={() =>
+                  this.setState({ showReport: !this.state.showReport })
+                }
+                className={styles.toggleReport}
+              >
+                举报
+              </Button>
+            </div>
+            <br />
+            {this.state.canVote && (
+              <div className={styles.voteArea}>
+                <hr />
+                <Rate
+                  value={this.state.rate}
+                  onChange={value =>
+                    this.setState({ rate: value, canSubmit: true })
+                  }
+                  className={styles.rate}
+                />
+                {this.state.rate !== 0 && (
+                  <div className="ant-rate-text" className={styles.voteText}>
+                    {voteTexts[this.state.rate]}
+                  </div>
+                )}
+                <Button
+                  type="primary"
+                  loading={loading.effects["vote/vote"]}
+                  className={styles.voteButton}
+                  onClick={() => this.handleVote(song)}
+                  icon="check"
+                  {...buttonProps}
+                >
+                  {isDesktop && "投票"}
+                </Button>
+              </div>
+            )}
+            {this.state.showReport && (
+              <div className={styles.reportArea}>
+                <Input
+                  placeholder="填写举报原因"
+                  className={styles.reason}
+                  maxLength="50"
+                />
+                <Button
+                  type="primary"
+                  onClick={this.report(song.id)}
+                  className={styles.reportButton}
+                >
+                  提交
+                </Button>
+              </div>
+            )}
+          </span>
         </Panel>
-      )});
-
-
-      return (
-        <Spin spinning={listLoading}>
-          <Collapse accordion bordered={false} onChange={this.handleChange} activeKey={nowIndex}>
-            { list }
-          </Collapse>
-        </Spin>
-      )
+      );
+    });
+    return (
+      <Spin spinning={listLoading}>
+        <Collapse
+          accordion
+          bordered={false}
+          onChange={this.handleChange}
+          activeKey={this.state.nowIndex}
+          ref={list => (this.list = list)}
+        >
+          {list}
+        </Collapse>
+      </Spin>
+    );
   }
 }
 
-export default connect(({ vote, loading }) => ({ vote, loading }))(VoteList);
+export default connect(
+  ({ vote, loading }) => ({ vote, loading }),
+  null,
+  null,
+  { withRef: true }
+)(VoteList);

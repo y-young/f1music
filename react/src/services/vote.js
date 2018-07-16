@@ -1,28 +1,28 @@
-import { request, config } from 'utils'
+import { request, config } from "utils";
 
-const { api } = config
-const { list, report, vote } = api
+const { api } = config;
+const { list, report, vote } = api;
 
-export function Songs (time) {
-  return request({
-    url: list,
-    method: 'post',
-    data: { 'time': time }
-  })
+export async function Songs(time) {
+  return request({
+    url: list,
+    method: "post",
+    data: { time: time }
+  });
 }
 
-export function Report (id, reason) {
+export function Report(id, reason) {
   return request({
     url: report,
-    method: 'post',
-    data: { 'id': id, 'reason': reason }
-   })
+    method: "post",
+    data: { id: id, reason: reason }
+  });
 }
 
-export function Vote (params) {
+export async function Vote(params) {
   return request({
     url: vote,
-    method: 'post',
+    method: "post",
     data: params
-  })
+  });
 }

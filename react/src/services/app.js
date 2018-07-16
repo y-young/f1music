@@ -1,28 +1,27 @@
-import { request, config } from 'utils'
+import { request, config } from "utils";
 
-const { api } = config
-const { login } = api
+const { api } = config;
+const { login } = api;
 
-function Login(data) {
-  return request({
-    url: login,
-    method: 'post',
+export async function Login(data) {
+  return request({
+    url: login,
+    method: "post",
     /*headers: {
       'Content-type': 'application/json'
     },*/
-    data: data,
-  })
+    data: data
+  });
 }
 
-function getCookie() {
-  var match = document.cookie.match(new RegExp('(^| )' + 'MusicAuth' + '=([^;]+)'));
+export async function getCookie() {
+  var match = document.cookie.match(
+    new RegExp("(^| )" + "MusicAuth" + "=([^;]+)")
+  );
   if (match) return match[2];
   else return null;
 }
 
-function checkLogin() {
+export function checkLogin() {
   return getCookie() !== null;
 }
-
-export { Login, checkLogin }
-
