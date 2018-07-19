@@ -1,5 +1,4 @@
 import axios from "axios";
-import { message } from "antd";
 import { routerRedux } from "dva/router";
 import store from "../pages/app";
 
@@ -46,8 +45,9 @@ export default function request(opt) {
 
       // 打印错误提示
       if (response.data && response.data.error !== 0) {
-        //message.error(response.data.msg);
-        const error = new Error(response.data.msg);
+        const error = new Error();
+        error.type = "notice"; //用户操作引起的错误而非程序错误
+        error.message = response.data.msg;
         throw error;
       }
 
@@ -57,14 +57,12 @@ export default function request(opt) {
       // >>>>>>>>>>>>>> 请求失败 <<<<<<<<<<<<<<
       // 请求配置发生的错误
       if (!error.response) {
-        return Promise.reject({ message: error.message });
+        return Promise.reject({ type: "notice", message: error.message });
       }
 
       // 响应时状态码处理
       const status = error.response.status;
       const errortext = errorMsg[status] || "加载失败了╭(╯ε╰)╮";
-
-      //message.error(errortext, 3);
 
       // 存在请求，但是服务器的返回一个状态码，它们都在2xx之外
       const { dispatch } = store;
@@ -81,6 +79,6 @@ export default function request(opt) {
         error.response
       );
 
-      return Promise.reject({ code: status, message: errortext });
+      return Promise.reject({ type: "notice", code: status, message: errortext });
     });
 }

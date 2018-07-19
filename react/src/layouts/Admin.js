@@ -40,24 +40,26 @@ const Admin = ({ children, dispatch, admin, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
-            <Content className={styles.content}>
-              <div className={styles.contentInner}>
-                <TransitionGroup>
-                  <CSSTransition
-                    key={location.pathname}
-                    classNames="fade"
-                    timeout={200}
-                  >
-                    { children }
-                  </CSSTransition>
-                </TransitionGroup>
-              </div>
-            </Content>
-            <Footer style={{ textAlign: "center" }}>
-              Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br />
-              Author & Current Maintainer: Googleplex<br />
-              Past Maintainer: Robot Miskcoo Upsuper
-            </Footer>
+            <div className={styles.main}>
+              <Content>
+                <div className={styles.content}>
+                  <TransitionGroup>
+                    <CSSTransition
+                      key={location.pathname}
+                      classNames="fade"
+                      timeout={200}
+                    >
+                      {children}
+                    </CSSTransition>
+                  </TransitionGroup>
+                </div>
+              </Content>
+              <Footer style={{ textAlign: "center" }}>
+                Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br />
+                Author & Current Maintainer: Googleplex<br />
+                Past Maintainer: Robot Miskcoo Upsuper
+              </Footer>
+            </div>
           </div>
         </div>
       </div>

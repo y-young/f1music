@@ -6,8 +6,12 @@ import "./app.css";
 // 1. Initialize
 const app = dva({
   onError(e, dispatch) {
-    console.log(e);
-    message.error(e.message, 3);
+    if (e.type && e.type === "notice") {
+      message.error(e.message);
+    } else { // 程序错误不提示
+      message.error("出错了,请刷新重试");
+      console.log(e);
+    }
   }
 });
 

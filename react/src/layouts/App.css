@@ -33,7 +33,7 @@
   left: 0;
   bottom: 0;
   height: 100%;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
   -webkit-transition: all 250ms ease;
   -moz-transition: all 250ms ease;
   -o-transition: all 250ms ease;
@@ -45,7 +45,6 @@
   right: 0;
   left: 0;
   bottom: 0;
-  overflow-y: auto;
 }
 @media (min-width: 500px) {
   .app.withSidebar .container {
@@ -75,15 +74,16 @@
   cursor: pointer;
   transition: color 0.3s;
 }
-/* .trigger:hover {
-  color: #69c0ff;
-} */
-.content {
-  margin-top: 64px;
-  position: relative;
+.main {
+  top: 64px;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
   outline: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.contentInner {
+.content {
   position: relative;
   max-width: 800px;
   margin: 0 auto;

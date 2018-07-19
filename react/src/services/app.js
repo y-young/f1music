@@ -16,7 +16,7 @@ export async function Login(data) {
 
 export async function getCookie() {
   var match = document.cookie.match(
-    new RegExp("(^| )" + "MusicAuth" + "=([^;]+)")
+    new RegExp("(^| )MusicAuth=([^;]+)")
   );
   if (match) return match[2];
   else return null;

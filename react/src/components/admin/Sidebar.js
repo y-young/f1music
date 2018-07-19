@@ -13,11 +13,6 @@ const Sidebar = props => {
     [styles.show]: !props.collapsed
   });
 
-  const openKeys = () => {
-    if (props.location.pathname === "/vote") return ["/vote"];
-    else return [];
-  };
-
   return (
     <div className={sidebarClass}>
       <Header className={styles.logo}>FZYZ 校园音乐征集管理系统</Header>

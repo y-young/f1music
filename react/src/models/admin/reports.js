@@ -1,3 +1,4 @@
+import { Reports } from "services/admin/reports";
 import { message } from "antd";
 
 export default {
@@ -14,8 +15,8 @@ export default {
 
   effects: {
     *fetch(_, { call, put }) {
-//      const data = yield call(Reports);
-//      yield put({ type: "save", payload: { list: data.reports } });
+      const data = yield call(Reports);
+      yield put({ type: "save", payload: { list: data.reports } });
     },
     *trash(
       {
@@ -23,6 +24,7 @@ export default {
       },
       { call, put, select }
     ) {
+      message.success("操作成功");
     }
   },
 

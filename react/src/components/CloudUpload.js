@@ -19,7 +19,6 @@ const Option = Select.Option;
 const CloudUpload = ({ upload, loading, dispatch, form }) => {
   const { searchResult } = upload;
   const { getFieldDecorator, validateFieldsAndScroll } = form;
-  const uploadLoading = loading.effects["upload/upload"];
 
   const columns = [
     { dataIndex: "name", title: "曲名" },
@@ -42,10 +41,8 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
   };
 
   const getMp3 = (expanded, row) => {
-console.log(expanded);
 // music.163.com/song/media/outer/url?id={id}.mp3
-    if (row && !row.mp3) {
-      console.log(row);
+    if (expanded && row && !row.mp3) {
       dispatch({ type: "upload/fetchMp3", payload: row });
     }
   };
@@ -115,7 +112,7 @@ console.log(expanded);
             <Button
               type="primary"
               onClick={handleUpload}
-              loading={uploadLoading}
+              loading={loading.effects['upload/upload']}
               icon="upload"
             >
               上传

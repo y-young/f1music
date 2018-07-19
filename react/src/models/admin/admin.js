@@ -1,12 +1,9 @@
-import { routerRedux } from "dva/router";
-
 export default {
   namespace: "admin",
   state: {
     title: "首页",
     siderFolded: false,
-    isDesktop: window.innerWidth > 993,
-    navOpenKeys: []
+    isDesktop: window.innerWidth > 993
   },
 
   subscriptions: {
@@ -55,18 +52,6 @@ export default {
       yield put({ type: "updateState", payload: { title: title } });
       document.title = title + " - 福州一中校园音乐征集 管理系统 ";
     },
-    *logout({ payload }, { call, put }) {
-      /*const data = yield call(logout, parse(payload))
-      if (data.error == 0) {*/
-      yield put({
-        type: "updateState",
-        payload: {
-          loggedIn: false
-        }
-      }); /*} else {
-        throw (data)
-      }*/
-    },
     *mobileCollapse(action, { call, put }) {
       const isDesktop = window.innerWidth > 993;
       yield put({
@@ -86,12 +71,6 @@ export default {
       return {
         ...state,
         siderFolded: !state.siderFolded
-      };
-    },
-    handleNavOpenKeys(state, { payload: navOpenKeys }) {
-      return {
-        ...state,
-        ...navOpenKeys
       };
     }
   }

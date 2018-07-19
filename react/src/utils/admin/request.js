@@ -1,16 +1,14 @@
 import axios from "axios";
-import { message } from "antd";
-import { routerRedux } from "dva/router";
-import store from "../pages/admin";
 
 const errorMsg = {
   500: "Oops!出错了",
-  429: "操作过于频繁,请稍后再试"
+  403: "您没有此操作权限",
+  404: "404 资源未找到"
 };
 
 // 设置全局参数
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = '/api;
+axios.defaults.baseURL = '/api';
 axios.defaults.withCredentials = true;
 
 // 添加请求拦截器
@@ -46,7 +44,7 @@ export default function request(opt) {
       // 打印错误提示
       if (response.data && response.data.error !== 0) {
         //message.error(response.data.msg);
-        const error = new Error(response.data.msg);
+        const error = new Error();
         throw error;
       }
 
@@ -61,18 +59,7 @@ export default function request(opt) {
 
       // 响应时状态码处理
       const status = error.response.status;
-      const errortext = errorMsg[status] || "加载失败了╭(╯ε╰)╮";
-
-      //message.error(errortext, 3);
-
-      // 存在请求，但是服务器的返回一个状态码，它们都在2xx之外
-      const { dispatch } = store;
-
-      if (status === 401) {
-        dispatch(routerRedux.push("/login"));
-      } else if (status >= 404 && status < 422) {
-        dispatch(routerRedux.push("/404"));
-      }
+      const errortext = errorMsg[status] || status;
 
       // 开发时使用
       console.log(
