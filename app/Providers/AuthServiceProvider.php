@@ -39,15 +39,9 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->stuId, config('music.admin')); 
         });
         Gate::define('censor', function ($user) {
-            return in_array($user->stuId, Option::find('censor')->value); 
+            return in_array($user->stuId, config('music.censor')); 
         });
 
-        Gate::define('upload', function ($user) {
-            return !in_array($user->stuId, Option::find('ban_upload')->value);
-        });
-        Gate::define('vote', function ($user) {
-            return !in_array($user->stuId, Option::find('ban_vote')->value);
-        });
         Gate::define('download', function () {
             if (Gate::allows('admin') || Gate::allows('censor') || config('music.openDownload')) {
                 return true;

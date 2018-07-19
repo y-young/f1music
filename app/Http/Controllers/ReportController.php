@@ -30,7 +30,7 @@ class ReportController extends Controller
         ], self::$messages)->validate();
 
         $report = Report::updateOrCreate(
-            ['song_id' => $request->input('id'), 'reporter' => self::$stuId],
+            ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
             ['reason' => $request->input('reason')]
         );
         $report->save();

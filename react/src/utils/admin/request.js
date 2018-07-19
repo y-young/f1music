@@ -1,17 +1,16 @@
 import axios from "axios";
 import { message } from "antd";
 import { routerRedux } from "dva/router";
-import store from "../pages/app";
+import store from "../pages/admin";
 
 const errorMsg = {
-  401: "请先登录",
-  500: "Oops!出错了,我们会尽快修复这一问题~",
+  500: "Oops!出错了",
   429: "操作过于频繁,请稍后再试"
 };
 
 // 设置全局参数
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = '/api;
 axios.defaults.withCredentials = true;
 
 // 添加请求拦截器

@@ -1,30 +1,20 @@
 import React from "react";
 import { connect } from "dva";
 import classnames from "classnames";
-import { withRouter, Switch, Route } from "dva/router";
+import { withRouter } from "dva/router";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-import { Sidebar } from "components";
-import { Home, Upload, Vote, NotFound } from "routes";
+import { Sidebar } from "components/admin";
 import { LocaleProvider, Layout, Icon } from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
 import styles from "./App.css";
 
 const { Header, Content, Footer } = Layout;
 
-const App = ({ children, dispatch, app, location }) => {
-  const { title, siderFolded, loggedIn, isDesktop } = app;
-
-  /*const componentDidUpdate = (prevProps) => {
-    if (this.props.location !== prevProps.location) {
-      window.scrollTo(0, 0);
-      if (!this.isDesktop()) {
-        this.toggle();
-      }
-    }
-  }*/
+const Admin = ({ children, dispatch, admin, location }) => {
+  const { title, siderFolded, isDesktop } = admin;
 
   const toggle = () => {
-    dispatch({ type: "app/toggleSider" });
+    dispatch({ type: "admin/toggleSider" });
   };
 
   const appClass = classnames({
@@ -39,7 +29,6 @@ const App = ({ children, dispatch, app, location }) => {
           collapsed={siderFolded}
           location={location}
           desktop={isDesktop}
-          loggedIn={loggedIn}
         />
         <div className={styles.container}>
           <div className={styles.containerInner}>
@@ -59,22 +48,7 @@ const App = ({ children, dispatch, app, location }) => {
                     classNames="fade"
                     timeout={200}
                   >
-                    <Switch>
-                      <Route path="/" exact component={Home} key="Home" />
-                      <Route
-                        path="/upload"
-                        exact
-                        component={Upload}
-                        key="Upload"
-                      />
-                      <Route
-                        path="/vote/:time"
-                        exact
-                        component={Vote}
-                        key="Vote"
-                      />
-                      <Route path="*" component={NotFound} />
-                    </Switch>
+                    { children }
                   </CSSTransition>
                 </TransitionGroup>
               </div>
@@ -91,4 +65,4 @@ const App = ({ children, dispatch, app, location }) => {
   );
 };
 
-export default withRouter(connect(({ app }) => ({ app }))(App));
+export default withRouter(connect(({ admin }) => ({ admin }))(Admin));

@@ -7,5 +7,6 @@ return [
     'admin' => [
         '***REMOVED***',
     ],
-    'debugauth' => true
+    'censor' => [],
+    'debugauth' => env('APP_DEBUG', false);
 ];

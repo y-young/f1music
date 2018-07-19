@@ -153,7 +153,7 @@ class UploadController extends Controller
             'playtime' => $file->time,
             'name' => $file->songName,
             'origin' => $file->songOrigin,
-            'uploader' => self::$stuId,
+            'user_id' => self::$stuId,
             'file_id' => $file->id
         ]);
         $song->save();

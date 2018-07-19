@@ -49,7 +49,7 @@ class VoteList extends React.Component {
   };
   handleChange = index => {
     const { vote } = this.props;
-    const { auto, songs } = vote;
+    const { auto } = vote;
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
@@ -143,8 +143,8 @@ player.audio.currentTime = 120;
                   className={styles.rate}
                 />
                 {this.state.rate !== 0 && (
-                  <div className="ant-rate-text" className={styles.voteText}>
-                    {voteTexts[this.state.rate]}
+                  <div className={styles.voteText}><span className="ant-rate-text">
+                    {voteTexts[this.state.rate]}</span>
                   </div>
                 )}
                 <Button

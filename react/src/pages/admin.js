@@ -1,7 +1,7 @@
 import dva from "dva";
 import createLoading from "dva-loading";
 import { message } from "antd";
-import "./index.css";
+import "./admin.css";
 
 // 1. Initialize
 const app = dva({
@@ -15,11 +15,11 @@ const app = dva({
 app.use(createLoading());
 
 // 3. Model
-const models = ["login", "vote", "app", "upload"];
-models.forEach(m => app.model(require("./models/" + m).default));
+const models = ["admin"];
+models.forEach(m => app.model(require("../models/admin/" + m).default));
 
 // 4. Router
-app.router(require("./router").default);
+app.router(require("./adminRouter").default);
 
 // 5. Start
 app.start("#root");

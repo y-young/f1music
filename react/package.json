@@ -3,6 +3,7 @@
   "scripts": {
     "start": "roadhog server",
     "build": "roadhog build",
+    "analyze": "cross-env ANALYZE=true roadhog build",
     "lint": "eslint --ext .js src test",
     "precommit": "npm run lint"
   },
@@ -12,13 +13,13 @@
     "babel-plugin-import": "^1.7.0",
     "dva": "^2.3.0",
     "dva-loading": "^2.0.3",
-    "path-to-regexp": "^2.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-transition-group": "^2.4.0"
   },
   "devDependencies": {
     "babel-plugin-dva-hmr": "^0.3.2",
+    "cross-env": "^5.2.0",
     "eslint": "^4.14.0",
     "eslint-config-umi": "^0.1.1",
     "eslint-plugin-flowtype": "^2.34.1",

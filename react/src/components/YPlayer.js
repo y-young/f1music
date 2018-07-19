@@ -1,5 +1,5 @@
 import React from "react";
-import _ from "lodash";
+import throttle from "lodash/throttle";
 import styles from "./YPlayer.css";
 import { Button, Slider, Icon, message } from "antd";
 
@@ -14,7 +14,7 @@ class YPlayer extends React.Component {
       time: 0,
       loaded: 0
     };
-    this.updateTime = _.throttle(this.updateTime, 200);
+    this.updateTime = throttle(this.updateTime, 200);
   }
 
   onTimeUpdate = event => {

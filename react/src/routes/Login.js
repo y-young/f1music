@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import styles from "./Login.css";
 import { Link } from "dva/router";
-import { Form, Icon, Button, Input, Alert } from "antd";
+import { Form, Icon, Button, Input } from "antd";
 
 const FormItem = Form.Item;
 

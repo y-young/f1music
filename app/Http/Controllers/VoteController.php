@@ -46,7 +46,7 @@ class VoteController extends Controller
 
         $rate = $this->points[$request->input('vote')];
         $vote = Vote::updateOrCreate(
-            ['song_id' => $request->input('id'), 'voter' => self::$stuId],
+            ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
             ['vote' => $rate]
         );
         Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);

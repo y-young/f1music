@@ -20,9 +20,9 @@ class ManageController extends Controller
         return $this->success('songs', $songs);
     }
 
-    public function viewSong(Request $request)
+    public function viewSong($id)
     {
-        $song = Song::with('reports', 'file')->where('id', $request->input('id'))->first();
+        $song = Song::with('reports', 'file')->where('id', $id)->first();
         return $this->success('song', $song);
     }
 
@@ -84,21 +84,6 @@ class ManageController extends Controller
     public function getReports()
     {
         $reports = Report::with('song.file')->get();
-        // $id = 0;
-        // $reports = $reports->mapWithKeys(function ($report, $id) {
-        //     $id++;
-        //     return [
-        //         $id => [
-        //             'id' => $report->id,
-        //             'song_id' => $report->song_id,
-        //             'song' => $report->song->name,
-        //             'url' => $report->song->url,
-        //             'reason' => $report->reason,
-        //             'reporter' => $report->reporter,
-        //             'time' => $report->time
-        //         ]
-        //     ];
-        // });
         return $this->success('reports', $reports);
     }
 
@@ -108,12 +93,6 @@ class ManageController extends Controller
             Report::destroy($id);
         }
         return $this->success();
-    }
-
-    public function getVotes()
-    {
-        $votes = Vote::with('song')->get();
-        return $this->success('votes', $votes);
     }
 
     public function getRank(Request $request)
@@ -139,25 +118,6 @@ class ManageController extends Controller
             ];
         });
         return $this->success('songs', $songs->values());
-    }
-
-    public function Options(Request $request)
-    {
-        return $this->success('options', Option::all());
-    }
-
-    public function editOption(Request $request)
-    {
-        Validator::make($request->all(), [
-            'name' => 'required | exists:options',
-            'value' => 'nullable'
-        ])->validate();
-
-        $option = Option::updateOrCreate(
-            ['name' => $request->input('name')],
-            ['value' => $request->input('value')]
-        );
-        return $this->success();
     }
 
     public function Download($id)
