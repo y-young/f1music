@@ -15,10 +15,19 @@ hr {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-:global(.fade-enter .fade-leave .fade-leave-active) {
+:global {
+.footer {
+  text-align: center;
+}
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+.fade-enter .fade-leave .fade-leave-active {
   opacity: 0;
 }
-:global(.fade-enter-active .fade-leave-active) {
+.fade-enter-active .fade-leave-active {
   opacity: 1;
   transition: opacity 200ms linear;
+}
 }

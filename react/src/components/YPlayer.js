@@ -12,7 +12,7 @@ class YPlayer extends React.Component {
       playing: false,
       duration: 0,
       time: 0,
-      loaded: 0
+      loaded: "0"
     };
     this.updateTime = throttle(this.updateTime, 200);
   }
@@ -32,21 +32,23 @@ class YPlayer extends React.Component {
     });
   };
 
-  play = (disableWarning) => {
+  play = disableWarning => {
     if (!this.state.playing) {
-      //const promise = this.audio.play();
-      this.audio.play();
-      /*if (promise) {
-        promise.catch((e) => {
-          console.warn(e);
-          if (e.name === 'NotAllowedError') {
-            //this.stop();
+      const promise = this.audio.play();
+      //this.audio.play();
+      if (promise) {
+        promise.catch(e => {
+          console.warn(e);
+          if (e.name === "NotAllowedError") {
+            //this.stop();
             if (!disableWarning) {
-                message.warning('您的浏览器可能不兼容自动播放功能,请尝试手动播放');
+              message.warning(
+                "您的浏览器可能不兼容自动播放功能,请尝试手动播放"
+              );
             }
-          }
-        });
-      }*/
+          }
+        });
+      }
       this.setState({ playing: true });
     }
   };
@@ -56,8 +58,8 @@ class YPlayer extends React.Component {
       this.audio.pause();
       this.setState({ playing: false });
     }
-  }
-    
+  };
+
   toggle = () => {
     if (this.state.playing) {
       this.pause();
@@ -77,7 +79,7 @@ class YPlayer extends React.Component {
         this.state.duration
       : 0;
     const percent = (loaded * 100).toFixed(2);
-    this.setState({ loaded: percent });
+    this.setState({ loaded: percent.toString() });
   };
 
   updateDuration = e => {
@@ -144,10 +146,12 @@ class YPlayer extends React.Component {
           </Button>
         </ButtonGroup>
         {!mini && (
-          <div style={{ width: "5px", float: "left" }}>
-            {loaded !== 0.00 && loaded !== 100.00 && loaded + "%"}
-          </div>)
-         }
+          <div className={styles.bufferDetail}>
+            {loaded === "100.00"
+              ? "缓冲完毕"
+              : loaded !== "0.00" && loaded + "%"}
+          </div>
+        )}
       </div>
     );
   }

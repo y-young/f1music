@@ -5,7 +5,7 @@
   left: -300px;
   bottom: 0;
   z-index: 1;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
   -webkit-transition: left 250ms ease;
   -moz-transition: left 250ms ease;
   -o-transition: left 250ms ease;
@@ -53,6 +53,8 @@
   bottom: 0;
   margin: 0;
   width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   -webkit-transition: left 250ms ease;
   -moz-transition: left 250ms ease;
   -o-transition: left 250ms ease;

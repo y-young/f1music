@@ -33,7 +33,9 @@ class VoteList extends React.Component {
   };
   redirect = time => {
     const { dispatch } = this.props;
-    if (this.state.lastIndex) this.refs["player" + this.state.lastIndex].stop();
+    if (this.state.lastIndex) {
+     this.refs["player" + this.state.lastIndex].stop();
+    }
     this.setState({
       nowIndex: "",
       lastIndex: ""
@@ -47,9 +49,19 @@ class VoteList extends React.Component {
       this.setState({ canVote: true });
     }
   };
+  triggerNext = nowIndex => {
+    const { vote } = this.props;
+    const { auto, songs } = vote;
+    let newIndex = String(Number(nowIndex) + 1);
+    // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
+    if (songs[newIndex] && auto) {
+      this.refs["player" + newIndex].audio.play();
+      this.refs["player" + newIndex].audio.pause();
+    }
+  }
   handleChange = index => {
     const { vote } = this.props;
-    const { auto } = vote;
+    const { auto, songs } = vote;
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
@@ -58,11 +70,12 @@ class VoteList extends React.Component {
       lastIndex: index,
       nowIndex: index
     });
+    this.triggerNext(index);
     const player = this.refs["player" + index];
     if (auto && index) {
       //this.init();
       player.play();
-player.audio.currentTime = 120;
+//player.audio.currentTime = 120;
     }
     return index;
   };
@@ -74,17 +87,12 @@ player.audio.currentTime = 120;
       return;
     }
     let newIndex = String(Number(this.state.nowIndex) + 1);
-    // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
-    if (songs[newIndex] && auto) {
-      this.refs["player" + newIndex].audio.play();
-      this.refs["player" + newIndex].audio.pause();
-    }
+    //this.triggerNext(this.state.nowIndex);
     const id = song.id;
     const rate = this.state.rate;
     dispatch({ type: "vote/vote", payload: { id, rate } }).then(success => {
       if (success) {
         message.success("投票成功!");
-        //dispatch(updateVoteText)
         this.setState({ canSubmit: false });
         if (songs[newIndex] && auto) {
           this.setState({ nowIndex: newIndex });

@@ -20,7 +20,7 @@ const Sidebar = props => {
         className={styles.nav}
         mode="inline"
         selectedKeys={[props.location.pathname]}
-        defaultOpenKeys={props.desktop ? ["/song"] : []}
+        defaultOpenKeys={["/song"]}
       >
         <Menu.Item key="/">
           <Link to="/">
@@ -57,6 +57,9 @@ const Sidebar = props => {
           <Link to="/rank">
             <Icon type="profile" />投票结果
           </Link>
+        </Menu.Item>
+        <Menu.Item key="back">
+          <a href="/"><Icon type="arrow-left" />返回前台</a>
         </Menu.Item>
       </Menu>
     </div>

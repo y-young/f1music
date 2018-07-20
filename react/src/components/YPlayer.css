@@ -21,3 +21,10 @@
   display: inline;
   float: right;
 }
+.bufferDetail {
+  width: 5px;
+  font-size: 12px;
+  color: #777;
+  float: left;
+  white-space: nowrap;
+}

@@ -47,7 +47,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 });
 
 $router->group(['middleware' => 'admin'], function () use ($router) {
-    $router->get('/', function() {
+    $router->get('/manage', function() {
         return view('admin');
     });
 

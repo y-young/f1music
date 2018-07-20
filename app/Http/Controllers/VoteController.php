@@ -49,7 +49,7 @@ class VoteController extends Controller
             ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
             ['vote' => $rate]
         );
-        Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);
+        Log::info('Vote: ', ['user_id' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);
         return $this->success();
     }
 
@@ -74,7 +74,7 @@ class VoteController extends Controller
             $order->save();
         }
         $songs = Song::with(['votes' => function($query) {
-            $query->where('voter', self::$stuId);
+            $query->where('user_id', self::$stuId);
         }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
 
         $order = array_flip($order->order); // 翻转数组以便使用sortBy

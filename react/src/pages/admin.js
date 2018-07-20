@@ -15,7 +15,7 @@ const app = dva({
 app.use(createLoading());
 
 // 3. Model
-const models = ["admin"];
+const models = ["admin", "songs", "reports"];
 models.forEach(m => app.model(require("../models/admin/" + m).default));
 
 // 4. Router

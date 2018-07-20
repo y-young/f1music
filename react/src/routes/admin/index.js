@@ -1,3 +1,5 @@
 import Home from "./Home";
+import Songs from "./Songs";
+import Reports from "./Reports";
 
-export { Home };
+export { Home, Songs, Reports };

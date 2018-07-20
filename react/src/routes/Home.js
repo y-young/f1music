@@ -1,11 +1,12 @@
 import React from "react";
 import { Tabs } from "antd";
+
 const TabPane = Tabs.TabPane;
 
-const Home = ({ location }) => {
+const Home = () => {
   return (
     <div>
-      <Tabs defaultActiveKey="vote">
+      <Tabs defaultActiveKey="upload">
         <TabPane tab="上传说明" key="upload">
           <p>
             每位同学最多推荐10首歌曲，<strong>

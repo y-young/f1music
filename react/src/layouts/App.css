@@ -87,5 +87,12 @@
   position: relative;
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px 15px 40px 15px;
+  padding: 13px 15px 40px 15px;
+}
+.footer {
+  text-align: center;
+}
+.footer a {
+  color: inherit;
+  text-decoration: underline;
 }

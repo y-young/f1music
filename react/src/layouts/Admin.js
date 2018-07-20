@@ -16,6 +16,10 @@ const Admin = ({ children, dispatch, admin, location }) => {
   const toggle = () => {
     dispatch({ type: "admin/toggleSider" });
   };
+  const Year = () => {
+    const date = new Date();
+    return date.getFullYear();
+  }
 
   const appClass = classnames({
     [styles.app]: true,
@@ -54,10 +58,10 @@ const Admin = ({ children, dispatch, admin, location }) => {
                   </TransitionGroup>
                 </div>
               </Content>
-              <Footer style={{ textAlign: "center" }}>
-                Copyright ©2007-2018 FZYZ SCAN.All rights reserved.<br />
+              <Footer className={styles.footer}>
+                Copyright © 2007-{ Year() } FZYZ SCAN & 7HMakers. All rights reserved.<br />
                 Author & Current Maintainer: Googleplex<br />
-                Past Maintainer: Robot Miskcoo Upsuper
+                Past Maintainer: <a href="https://blog.robotshell.org">Robot</a> <a href="http://blog.miskcoo.com">Miskcoo</a> <a href="https://www.upsuper.org">Upsuper</a>
               </Footer>
             </div>
           </div>
