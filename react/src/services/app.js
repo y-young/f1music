@@ -7,14 +7,11 @@ export async function Login(data) {
   return request({
     url: login,
     method: "post",
-    /*headers: {
-      'Content-type': 'application/json'
-    },*/
     data: data
   });
 }
 
-export async function getCookie() {
+export function getCookie() {
   var match = document.cookie.match(
     new RegExp("(^| )MusicAuth=([^;]+)")
   );

@@ -10,6 +10,16 @@ export default {
   reducers: {
     save(state, { payload }) {
       return { ...state, ...payload };
+    },
+    reduce(state, { payload: id }) {
+      const list = state.list;
+      const newList = list.filter(item => {
+        return id.indexOf(item.id) === -1;
+      });
+      return {
+        ...state,
+        list: newList
+      };
     }
   },
 
@@ -18,13 +28,15 @@ export default {
       const data = yield call(Reports);
       yield put({ type: "save", payload: { list: data.reports } });
     },
-    *trash(
+    *delete(
       {
         payload: id
       },
-      { call, put, select }
+      { call, put }
     ) {
-      //message.success("操作成功");
+       //const response = yield call(Delete, payload: id);
+      message.success("操作成功");
+      yield put({ type: "reduce", payload: id });
     }
   },
 

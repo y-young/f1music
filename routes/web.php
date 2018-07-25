@@ -62,7 +62,7 @@ $router->group(['middleware' => 'admin'], function () use ($router) {
     $router->get('/files', 'ManageController@getFiles');
 
     $router->get('/reports', 'ManageController@getReports');
-    $router->delete('/report', 'ManageController@deleteReports');
+    $router->delete('/reports', 'ManageController@deleteReports');
 
     $router->get('/options', [
         'middleware' => 'can:admin',

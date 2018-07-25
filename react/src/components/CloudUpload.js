@@ -1,20 +1,11 @@
 import React from "react";
 import { connect } from "dva";
-import {
-  AutoComplete,
-  Input,
-  Table,
-  Form,
-  Button,
-  Select,
-  Spin,
-  message
-} from "antd";
-import { YPlayer } from "components";
+import { AutoComplete, Input, Table, Form, Button, Spin, message } from "antd";
+import { YPlayer, TimeSelector } from "components";
 
 const Search = Input.Search;
 const FormItem = Form.Item;
-const Option = Select.Option;
+const Option = AutoComplete.Option;
 
 const CloudUpload = ({ upload, loading, dispatch, form }) => {
   const { searchResult } = upload;
@@ -41,7 +32,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
   };
 
   const getMp3 = (expanded, row) => {
-// music.163.com/song/media/outer/url?id={id}.mp3
+    // music.163.com/song/media/outer/url?id={id}.mp3
     if (expanded && row && !row.mp3) {
       dispatch({ type: "upload/fetchMp3", payload: row });
     }
@@ -66,16 +57,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
           <FormItem label="时段" hasFeedback>
             {getFieldDecorator("time", {
               rules: [{ required: true, message: "请选择时段" }]
-            })(
-              <Select placeholder="选择时段" style={{ width: "95px" }}>
-                <Option value="1">6:30</Option>
-                <Option value="2">7:00</Option>
-                <Option value="3">13:45</Option>
-                <Option value="4">18:40</Option>
-                <Option value="5">21:35</Option>
-                <Option value="6">22:30</Option>
-              </Select>
-            )}
+            })(<TimeSelector style={{ width: "110px" }} />)}
           </FormItem>
           <FormItem label="曲名" hasFeedback>
             {getFieldDecorator("name", {
@@ -112,7 +94,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
             <Button
               type="primary"
               onClick={handleUpload}
-              loading={loading.effects['upload/upload']}
+              loading={loading.effects["upload/upload"]}
               icon="upload"
             >
               上传

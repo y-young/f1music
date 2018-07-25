@@ -117,7 +117,7 @@ class ManageController extends Controller
                 'url' => $song->file->url
             ];
         });
-        return $this->success('songs', $songs->values());
+        return $this->success('rank', $songs->values());
     }
 
     public function Download($id)

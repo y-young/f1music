@@ -1,10 +1,13 @@
 import React from "react";
-import { Table } from "and";
+import { connect } from "dva";
+import { Table, Form } from "antd";
 
-const Files = () => {
+const FormItem = Form.Item;
 
+const Files = ({ files, loading }) => {
+  const { list } = files;
   const columns = [
-    { dataIndex: "id", title: "#", width:"40px" },
+    { dataIndex: "id", title: "#", width: "60px" },
     { dataIndex: "md5", title: "MD5" },
     { dataIndex: "time", title: "时间" }
   ];
@@ -24,10 +27,13 @@ const Files = () => {
 
   return (
     <div>
-            <div style={{fontSize: "14px", color: "#777"}}>文件总数:  个</div><br/>
-            <Table dataSource={list} style={{width: "100%"}} />
-        </div>
+      <div style={{ fontSize: "14px", color: "#777" }}>
+        文件总数: {list.length}个
+      </div>
+      <br />
+      <Table dataSource={list} expandedRowRender={renderExpanded} columns={columns} loading={loading.effects["files/fetch"]} scroll={{x: 400 }} rowKey="id" style={{ width: "100%" }} />
+    </div>
   );
 };
 
-export default Files;
+export default connect(({ files, loading }) => ({ files, loading }))(Files);

@@ -19,20 +19,24 @@ class Reports extends React.Component {
     this.setState({ selected: selected });
   };
 
+  handleDelete = id => {
+    const { dispatch } = this.props;
+    dispatch({ type: "reports/delete", payload: id });
+  }
+
   renderExpanded = row => {
+    const { loading } = this.props;
     return (
       <div>
         <Form layout="inline">
           <FormItem label="曲目ID">{row.song_id}</FormItem>
           <FormItem label="原因">{row.reason}</FormItem>
-          <FormItem label="举报者">{row.user_id}</FormItem>
-          <br />
-          <FormItem label="时间">{row.time}</FormItem>
+          <FormItem label="时间">{row.time}</FormItem><br/>
           <FormItem label="试听">
             <audio src={row.song.file.url} controls="controls" />
           </FormItem>
           <FormItem label="操作">
-            <Button type="danger" icon="delete">
+            <Button type="danger" icon="delete" loading={loading.effects["reports/delete"]} onClick={() => this.handleDelete([ row.id ])}>
               删除
             </Button>
           </FormItem>
@@ -60,12 +64,14 @@ class Reports extends React.Component {
           dataSource={list}
           columns={columns}
           rowSelection={rowSelection}
+          expandedRowRender={this.renderExpanded}
           rowKey="id"
           scroll={{ x: 600 }}
           loading={loading.effects["reports/fetch"]}
           style={{ width: "100%" }}
         />
-        <Button type="danger">删除所选</Button>
+        <Button type="danger" loading={loading.effects["reports/delete"]} onClick={() => {this.handleDelete(this.state.selected);
+  this.setState({ selected: [] }); } }>删除所选</Button>
       </div>
     );
   }

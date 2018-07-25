@@ -1,12 +1,10 @@
 import React from "react";
-import { Form, Input, Icon, Select, Upload, message } from "antd";
+import { Form, Input, Icon, Upload, message } from "antd";
+import { TimeSelector } from "components";
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 class ManualUpload extends React.Component {
-  //({ upload, loading,form }) => {
-
   state = {
     fileList: []
   };
@@ -89,16 +87,7 @@ class ManualUpload extends React.Component {
         <FormItem {...formItemLayout} label="时段" hasFeedback>
           {getFieldDecorator("time", {
             rules: [{ required: true, message: "请选择时段" }]
-          })(
-            <Select placeholder="选择时段" style={{ width: "120px" }}>
-              <Option value="1">6:30</Option>
-              <Option value="2">7:00</Option>
-              <Option value="3">13:45</Option>
-              <Option value="4">18:40</Option>
-              <Option value="5">21:35</Option>
-              <Option value="6">22:30</Option>
-            </Select>
-          )}
+          })(<TimeSelector style={{ width: "120px" }} />)}
         </FormItem>
         <FormItem {...formItemLayout} label="曲名" hasFeedback>
           {getFieldDecorator("name", {

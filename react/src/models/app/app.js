@@ -1,5 +1,6 @@
 import { routerRedux } from "dva/router";
-import { checkLogin } from "services/app";
+import { checkLogin, Login } from "services/app";
+import { getPageQuery } from "utils/utils";
 
 export default {
   namespace: "app",
@@ -7,13 +8,11 @@ export default {
     title: "首页",
     siderFolded: false,
     isDesktop: window.innerWidth > 993,
-    navOpenKeys: [],
-    loggedIn: checkLogin()
+    loggedIn: false
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
-      //alert(checkLogin())
       let tid;
       window.onresize = () => {
         clearTimeout(tid);
@@ -25,6 +24,7 @@ export default {
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
         dispatch({ type: "mobileCollapse" });
+        dispatch({ type: "save", payload: { loggedIn: checkLogin() } });
       });
     }
   },
@@ -57,6 +57,19 @@ export default {
       yield put({ type: "updateState", payload: { title: title } });
       document.title = title + " - 福州一中 校园音乐征集";
     },
+    *login({ payload }, { put, call }) {
+      const res = yield call(Login, payload);
+      if (res.error === 0) {
+        const urlParams = new URL(window.location.href);
+        const params = getPageQuery();
+        let { redirect } = params;
+        if (redirect) {
+          const redirectUrlParams = new URL(redirect);
+          redirect = redirect.substr(redirectUrlParams.origin.length);
+        }
+        yield put(routerRedux.push(redirect || "/"));
+      }
+    },
     *logout({ payload }, { call, put }) {
       /*const data = yield call(logout, parse(payload))
       if (data.error == 0) {*/
@@ -88,12 +101,6 @@ export default {
       return {
         ...state,
         siderFolded: !state.siderFolded
-      };
-    },
-    handleNavOpenKeys(state, { payload: navOpenKeys }) {
-      return {
-        ...state,
-        ...navOpenKeys
       };
     }
   }

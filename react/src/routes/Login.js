@@ -7,10 +7,9 @@ import { Form, Icon, Button, Input } from "antd";
 const FormItem = Form.Item;
 
 const Login = ({
+  app,
   loading,
   dispatch,
-  error,
-  msg,
   form: { getFieldDecorator, validateFieldsAndScroll }
 }) => {
   const handleSubmit = () => {
@@ -18,7 +17,7 @@ const Login = ({
       if (errors) {
         return;
       }
-      dispatch({ type: "login/login", payload: values });
+      dispatch({ type: "app/login", payload: values });
     });
   };
 
@@ -50,7 +49,7 @@ const Login = ({
                   { min: 10, message: "学号应为10或11位" },
                   { max: 11, message: "学号应为10或11位" }
                 ]
-              })(<Input placeholder="学号" />)}
+              })(<Input placeholder="学号" onPressEnter={handleSubmit} />)}
             </FormItem>
             <FormItem hasFeedback>
               {getFieldDecorator("password", {
@@ -58,13 +57,13 @@ const Login = ({
                   { required: true, message: "请输入密码" },
                   { validator: validatePassword }
                 ]
-              })(<Input type="password" placeholder="校园网密码" />)}
+              })(<Input type="password" placeholder="校园网密码" onPressEnter={handleSubmit} />)}
             </FormItem>
             <FormItem>
               <Button
                 type="primary"
                 onClick={handleSubmit}
-                loading={loading}
+                loading={loading.effects["app/login"]}
                 style={{ width: "100%" }}
               >
                 登录
@@ -76,14 +75,8 @@ const Login = ({
           </Link>
         </div>
       </div>
-      <canvas width="1080" height="1608" id="curve" />
     </div>
   );
 };
 
-function mapStateToProps(state) {
-  const { error, msg } = state.login;
-  return { loading: state.loading.models.login, error, msg };
-}
-
-export default connect(mapStateToProps)(Form.create()(Login));
+export default connect(({ app, loading }) => ({ app, loading }))(Form.create()(Login));

@@ -19,7 +19,7 @@ const app = dva({
 app.use(createLoading());
 
 // 3. Model
-const models = ["login", "vote", "app", "upload"];
+const models = ["app", "upload", "vote"];
 models.forEach(m => app.model(require("../models/app/" + m).default));
 
 // 4. Router

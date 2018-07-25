@@ -16,14 +16,14 @@ hr {
   box-sizing: content-box;
 }
 :global {
-.ant-table td {
-  white-space: nowrap;
-}
-.fade-enter .fade-leave .fade-leave-active) {
-  opacity: 0;
-}
-.fade-enter-active .fade-leave-active) {
-  opacity: 1;
-  transition: opacity 200ms linear;
-}
+  .ant-table td {
+    white-space: nowrap;
+  }
+  .fade-enter .fade-leave .fade-leave-active {
+    opacity: 0;
+  }
+  .fade-enter-active .fade-leave-active {
+    opacity: 1;
+    transition: opacity 200ms linear;
+  }
 }

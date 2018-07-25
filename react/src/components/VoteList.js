@@ -10,7 +10,6 @@ const { voteTexts } = config;
 
 class VoteList extends React.Component {
   state = {
-    time: "1",
     currentTime: 0,
     rate: 0,
     reason: "",
@@ -18,8 +17,7 @@ class VoteList extends React.Component {
     lastIndex: "",
     canVote: false,
     canSubmit: false,
-    showReport: false,
-    auto: true
+    showReport: false
   };
 
   init = () => {
@@ -34,14 +32,13 @@ class VoteList extends React.Component {
   redirect = time => {
     const { dispatch } = this.props;
     if (this.state.lastIndex) {
-     this.refs["player" + this.state.lastIndex].stop();
+      this.refs["player" + this.state.lastIndex].stop();
     }
     this.setState({
       nowIndex: "",
       lastIndex: ""
     });
     dispatch({ type: "vote/redirect", payload: time });
-    //this.$router.push('/Vote/' + this.time);
   };
   timeListener = time => {
     //this.setState({ currentTime: time });
@@ -58,10 +55,10 @@ class VoteList extends React.Component {
       this.refs["player" + newIndex].audio.play();
       this.refs["player" + newIndex].audio.pause();
     }
-  }
+  };
   handleChange = index => {
     const { vote } = this.props;
-    const { auto, songs } = vote;
+    const { auto } = vote;
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
@@ -75,7 +72,7 @@ class VoteList extends React.Component {
     if (auto && index) {
       //this.init();
       player.play();
-//player.audio.currentTime = 120;
+      //player.audio.currentTime = 120;
     }
     return index;
   };
@@ -151,8 +148,10 @@ class VoteList extends React.Component {
                   className={styles.rate}
                 />
                 {this.state.rate !== 0 && (
-                  <div className={styles.voteText}><span className="ant-rate-text">
-                    {voteTexts[this.state.rate]}</span>
+                  <div className={styles.voteText}>
+                    <span className="ant-rate-text">
+                      {voteTexts[this.state.rate]}
+                    </span>
                   </div>
                 )}
                 <Button

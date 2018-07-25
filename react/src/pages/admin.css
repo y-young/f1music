@@ -16,18 +16,18 @@ hr {
   box-sizing: content-box;
 }
 :global {
-.footer {
-  text-align: center;
-}
-.footer a {
-  color: inherit;
-  text-decoration: underline;
-}
-.fade-enter .fade-leave .fade-leave-active {
-  opacity: 0;
-}
-.fade-enter-active .fade-leave-active {
-  opacity: 1;
-  transition: opacity 200ms linear;
-}
+  .footer {
+    text-align: center;
+  }
+  .footer a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  .fade-enter .fade-leave .fade-leave-active {
+    opacity: 0;
+  }
+  .fade-enter-active .fade-leave-active {
+    opacity: 1;
+    transition: opacity 200ms linear;
+  }
 }
