@@ -8,7 +8,6 @@
   position: relative;
   margin-top: 10px;
   height: 37px;
-  transition: all ease 1s;
 }
 .rate {
   /* margin: 0px 15px; */
@@ -26,7 +25,6 @@
   position: relative;
   margin-top: 10px;
   height: 32px;
-  transition: all 1s ease;
 }
 .reason {
   width: 70%;

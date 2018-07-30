@@ -7,7 +7,7 @@ export default {
   },
 
   reducers: {
-    save(state, { payload }) {
+    updateState(state, { payload }) {
       return { ...state, ...payload };
     }
   },
@@ -15,7 +15,7 @@ export default {
   effects: {
     *fetch(_, { call, put }) {
       const data = yield call(Rank);
-      yield put({ type: "save", payload: { voteResult: data.rank } });
+      yield put({ type: "updateState", payload: { voteResult: data.rank } });
     }
   },
 

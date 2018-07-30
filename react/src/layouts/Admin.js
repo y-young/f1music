@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter } from "dva/router";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { CSSTransitionGroup } from "react-transition-group";
 import { Sidebar } from "components/admin";
 import { LocaleProvider, Layout, Icon } from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
@@ -19,7 +19,7 @@ const Admin = ({ children, dispatch, admin, location }) => {
   const Year = () => {
     const date = new Date();
     return date.getFullYear();
-  }
+  };
 
   const appClass = classnames({
     [styles.app]: true,
@@ -47,21 +47,24 @@ const Admin = ({ children, dispatch, admin, location }) => {
             <div className={styles.main}>
               <Content>
                 <div className={styles.content}>
-                  <TransitionGroup>
-                    <CSSTransition
-                      key={location.pathname}
-                      classNames="fade"
-                      timeout={200}
-                    >
-                      {children}
-                    </CSSTransition>
-                  </TransitionGroup>
+                  <CSSTransitionGroup
+                    transitionName="fade"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={200}
+                  >
+                    {children}
+                  </CSSTransitionGroup>
                 </div>
               </Content>
               <Footer className={styles.footer}>
-                Copyright © 2007-{ Year() } FZYZ SCAN & 7HMakers. All rights reserved.<br />
+                Copyright © 2007-{Year()} FZYZ SCAN & 7HMakers. All rights
+                reserved.<br />
                 Author & Current Maintainer: Googleplex<br />
-                Past Maintainer: <a href="https://blog.robotshell.org">Robot</a> <a href="http://blog.miskcoo.com">Miskcoo</a> <a href="https://www.upsuper.org">Upsuper</a>
+                Past Maintainer: <a href="https://blog.robotshell.org">
+                  Robot
+                </a>{" "}
+                <a href="http://blog.miskcoo.com">Miskcoo</a>{" "}
+                <a href="https://www.upsuper.org">Upsuper</a>
               </Footer>
             </div>
           </div>

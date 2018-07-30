@@ -14,10 +14,9 @@ const Login = ({
 }) => {
   const handleSubmit = () => {
     validateFieldsAndScroll((errors, values) => {
-      if (errors) {
-        return;
+      if (!errors) {
+        dispatch({ type: "app/login", payload: values });
       }
-      dispatch({ type: "app/login", payload: values });
     });
   };
 
@@ -42,7 +41,7 @@ const Login = ({
             <b>登录</b>
           </div>
           <Form>
-            <FormItem hasFeedback>
+            <FormItem>
               {getFieldDecorator("stuId", {
                 rules: [
                   { required: true, message: "请输入学号" },
@@ -51,13 +50,19 @@ const Login = ({
                 ]
               })(<Input placeholder="学号" onPressEnter={handleSubmit} />)}
             </FormItem>
-            <FormItem hasFeedback>
+            <FormItem>
               {getFieldDecorator("password", {
                 rules: [
                   { required: true, message: "请输入密码" },
                   { validator: validatePassword }
                 ]
-              })(<Input type="password" placeholder="校园网密码" onPressEnter={handleSubmit} />)}
+              })(
+                <Input
+                  type="password"
+                  placeholder="校园网密码"
+                  onPressEnter={handleSubmit}
+                />
+              )}
             </FormItem>
             <FormItem>
               <Button
@@ -79,4 +84,6 @@ const Login = ({
   );
 };
 
-export default connect(({ app, loading }) => ({ app, loading }))(Form.create()(Login));
+export default connect(({ app, loading }) => ({ app, loading }))(
+  Form.create()(Login)
+);

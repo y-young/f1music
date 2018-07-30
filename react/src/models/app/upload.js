@@ -8,7 +8,7 @@ export default {
   },
 
   reducers: {
-    save(state, { payload }) {
+    updateState(state, { payload }) {
       return { ...state, ...payload };
     },
     updateMp3(
@@ -39,7 +39,7 @@ export default {
       const data = yield call(Search, keyword);
       if (data.error === 0)
         yield put({
-          type: "save",
+          type: "updateState",
           payload: { searchResult: JSON.parse(data.result) }
         });
     },

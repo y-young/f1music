@@ -16,7 +16,7 @@ export default {
   },
 
   reducers: {
-    save(state, { payload }) {
+    updateState(state, { payload }) {
       return { ...state, ...payload };
     },
     toggleAuto(state, { payload }) {
@@ -48,13 +48,13 @@ export default {
   effects: {
     *fetch({ payload: time }, { call, put }) {
       const data = yield call(Songs, time);
-      yield put({ type: "save", payload: { songs: data.songs } });
+      yield put({ type: "updateState", payload: { songs: data.songs } });
     },
     *vote(
       {
         payload: { id, rate }
       },
-      { call, put, select }
+      { call, put }
     ) {
       if (rate === 0) {
         message.error("请选择评价");
@@ -83,7 +83,7 @@ export default {
         const match = pathToRegexp("/vote/:time").exec(pathname);
         if (match) {
           const time = match[1];
-          dispatch({ type: "save", payload: { time: time } });
+          dispatch({ type: "updateState", payload: { time: time } });
           dispatch({ type: "fetch", payload: time });
         }
       });

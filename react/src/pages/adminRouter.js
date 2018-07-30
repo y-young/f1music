@@ -8,12 +8,12 @@ function RouterConfig({ history }) {
     <Router history={history}>
       <Admin>
         <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/songs" exact component={Songs} />
-          <Route path="/songs/trashed" exact component={Songs} />
-          <Route path="/files" exact component={Files} />
-          <Route path="/reports" exact component={Reports} />
-          <Route path="/rank" exact component={Rank} />
+          <Route path="/" exact component={Home} key="Home" />
+          <Route path="/songs" exact component={Songs} key="Songs" />
+          <Route path="/songs/trashed" exact component={Songs} key="TrashedSongs" />
+          <Route path="/files" exact component={Files} key="Files" />
+          <Route path="/reports" exact component={Reports} key="Reports" />
+          <Route path="/rank" exact component={Rank} key="Rank" />
         </Switch>
       </Admin>
     </Router>

@@ -1,4 +1,10 @@
-import { Songs, TrashedSongs } from "services/admin/songs";
+import {
+  Songs,
+  TrashedSongs,
+  Save,
+  Trash,
+  Restore
+} from "services/admin/songs";
 import { message } from "antd";
 
 export default {
@@ -9,8 +15,27 @@ export default {
   },
 
   reducers: {
-    save(state, { payload }) {
+    updateState(state, { payload }) {
       return { ...state, ...payload };
+    },
+    saveSong(state, { payload }) {
+      const list = state.list;
+      const { id, playtime, name, origin } = payload;
+      const songs = list.filter(item => {
+        if (item.id === id) {
+          let song = item;
+          song.playtime = playtime;
+          song.name = name;
+          song.origin = origin;
+          return payload;
+        } else {
+          return item;
+        }
+      });
+      return {
+        ...state,
+        list: [...songs]
+      };
     },
     reduce(state, { payload: id }) {
       const list = state.list;
@@ -33,35 +58,26 @@ export default {
       } else {
         data = yield call(Songs);
       }
-      yield put({ type: "save", payload: { list: data.songs } });
+      yield put({ type: "updateState", payload: { list: data.songs } });
     },
-    *delete(
-      {
-        payload: id
-      },
-      { call, put }
-    ) {
-       //const response = yield call(Delete, payload: id);
+    *save({ payload }, { call, put }) {
+      //const response = yield call(Save, payload);
+      message.success("操作成功");
+      yield put({ type: "saveSong", payload });
+      return true;
+    },
+    *delete({ payload: id }, { call, put }) {
+      //const response = yield call(Delete, payload: id);
       message.success("操作成功");
       yield put({ type: "reduce", payload: id });
     },
-    *trash(
-      {
-        payload: id
-      },
-      { call, put }
-    ) {
-       //const response = yield call(Trash, payload: id);
+    *trash({ payload: id }, { call, put }) {
+      //const response = yield call(Trash, payload: id);
       message.success("操作成功");
       yield put({ type: "reduce", payload: id });
     },
-    *restore(
-      {
-        payload: id
-      },
-      { call, put }
-    ) {
-       //const response = yield call(Restore, payload: id);
+    *restore({ payload: id }, { call, put }) {
+      //const response = yield call(Restore, payload: id);
       message.success("操作成功");
       yield put({ type: "reduce", payload: id });
     }
@@ -71,11 +87,11 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === "/songs") {
-          dispatch({ type: "save", payload: { type: "" } });
+          dispatch({ type: "updateState", payload: { type: "" } });
           dispatch({ type: "fetch" });
         }
         if (pathname === "/songs/trashed") {
-          dispatch({ type: "save", payload: { type: "trashed" } });
+          dispatch({ type: "updateState", payload: { type: "trashed" } });
           dispatch({ type: "fetch" });
         }
       });

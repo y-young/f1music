@@ -37,7 +37,21 @@ class Songs extends React.Component {
   };
 
   editSong = row => {
+    this.props.form.resetFields();
     this.setState({ row: row, modalVisible: true });
+  };
+
+  handleSave = () => {
+    const { dispatch, form } = this.props;
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        dispatch({ type: "songs/save", payload: values }).then(success => {
+          if (success) {
+            this.setState({ modalVisible: false });
+          }
+        });
+      }
+    });
   };
 
   handleCancel = () => {
@@ -47,7 +61,7 @@ class Songs extends React.Component {
   handleDelete = id => {
     const { dispatch } = this.props;
     dispatch({ type: "songs/delete", payload: id });
-  }
+  };
 
   renderExpanded = row => {
     const { songs, dispatch } = this.props;
@@ -119,18 +133,16 @@ class Songs extends React.Component {
           <Modal
             visible={this.state.modalVisible}
             onCancel={this.handleCancel}
+            confirmLoading={loading.effects["songs/save"]}
+            okText="保存"
             title="编辑曲目"
-            footer={[
-              <Button key="cancel" onClick={this.handleCancel}>
-                取消
-              </Button>,
-              <Button key="save" type="primary">
-                保存
-              </Button>
-            ]}
-            style={{ top: "70px" }}
+            onOk={this.handleSave}
+            style={{ top: "60px" }}
           >
             <Form>
+              {getFieldDecorator("id", { initialValue: row.id })(
+                <Input type="hidden" />
+              )}
               <FormItem label="时段">
                 {getFieldDecorator("playtime", { initialValue: row.playtime })(
                   <TimeSelector style={{ width: "120px" }} />
@@ -139,7 +151,7 @@ class Songs extends React.Component {
               <FormItem label="曲名">
                 {getFieldDecorator("name", {
                   initialValue: row.name,
-                  rules: [{ required: true }]
+                  rules: [{ required: true, message: "请填写曲名" }]
                 })(<Input placeholder="曲名" />)}
               </FormItem>
               <FormItem label="来源">

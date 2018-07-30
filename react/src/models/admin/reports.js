@@ -8,7 +8,7 @@ export default {
   },
 
   reducers: {
-    save(state, { payload }) {
+    updateState(state, { payload }) {
       return { ...state, ...payload };
     },
     reduce(state, { payload: id }) {
@@ -26,15 +26,10 @@ export default {
   effects: {
     *fetch(_, { call, put }) {
       const data = yield call(Reports);
-      yield put({ type: "save", payload: { list: data.reports } });
+      yield put({ type: "updateState", payload: { list: data.reports } });
     },
-    *delete(
-      {
-        payload: id
-      },
-      { call, put }
-    ) {
-       //const response = yield call(Delete, payload: id);
+    *delete({ payload: id }, { call, put }) {
+      //const response = yield call(Delete, payload: id);
       message.success("操作成功");
       yield put({ type: "reduce", payload: id });
     }

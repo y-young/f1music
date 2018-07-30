@@ -116,9 +116,7 @@ class ManualUpload extends React.Component {
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
             </p>
-            <p className="ant-upload-text">
-              将文件拖到此处，或<em>点击上传</em>
-            </p>
+            <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
             <p className="ant-upload-hint">只能上传mp3文件，且大小不超过20MB</p>
           </Upload.Dragger>
         </FormItem>

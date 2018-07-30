@@ -54,12 +54,12 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
           {getFieldDecorator("id", { initialValue: row.id })(
             <Input type="hidden" />
           )}
-          <FormItem label="时段" hasFeedback>
+          <FormItem label="时段">
             {getFieldDecorator("time", {
               rules: [{ required: true, message: "请选择时段" }]
             })(<TimeSelector style={{ width: "110px" }} />)}
           </FormItem>
-          <FormItem label="曲名" hasFeedback>
+          <FormItem label="曲名">
             {getFieldDecorator("name", {
               rules: [{ required: true, message: "请选择或填写曲名" }]
             })(
@@ -71,7 +71,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
               </AutoComplete>
             )}
           </FormItem>
-          <FormItem label="来源" hasFeedback>
+          <FormItem label="来源">
             {getFieldDecorator("origin")(
               <AutoComplete
                 placeholder="请选择或输入来源"
@@ -125,7 +125,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         loading={loading.effects["upload/search"]}
         rowKey="id"
         pagination={false}
-        scroll={{ x: true }}
+        scroll={{ x: 600 }}
         style={{ width: "100%" }}
       />
     </div>

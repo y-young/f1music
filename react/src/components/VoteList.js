@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { Collapse, Spin, Input, Rate, Button, message } from "antd";
+import { CSSTransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
 import { config } from "utils";
@@ -137,51 +138,57 @@ class VoteList extends React.Component {
               </Button>
             </div>
             <br />
-            {this.state.canVote && (
-              <div className={styles.voteArea}>
-                <hr />
-                <Rate
-                  value={this.state.rate}
-                  onChange={value =>
-                    this.setState({ rate: value, canSubmit: true })
-                  }
-                  className={styles.rate}
-                />
-                {this.state.rate !== 0 && (
-                  <div className={styles.voteText}>
-                    <span className="ant-rate-text">
-                      {voteTexts[this.state.rate]}
-                    </span>
-                  </div>
-                )}
-                <Button
-                  type="primary"
-                  loading={loading.effects["vote/vote"]}
-                  className={styles.voteButton}
-                  onClick={() => this.handleVote(song)}
-                  icon="check"
-                  {...buttonProps}
-                >
-                  {isDesktop && "投票"}
-                </Button>
-              </div>
-            )}
-            {this.state.showReport && (
-              <div className={styles.reportArea}>
-                <Input
-                  placeholder="填写举报原因"
-                  className={styles.reason}
-                  maxLength="50"
-                />
-                <Button
-                  type="primary"
-                  onClick={this.report(song.id)}
-                  className={styles.reportButton}
-                >
-                  提交
-                </Button>
-              </div>
-            )}
+            <CSSTransitionGroup
+              transitionName="fade"
+              transitionEnterTimeout={500}
+              transitionLeaveTimeout={200}
+            >
+              {this.state.canVote && (
+                <div className={styles.voteArea} key="vote">
+                  <hr />
+                  <Rate
+                    value={this.state.rate}
+                    onChange={value =>
+                      this.setState({ rate: value, canSubmit: true })
+                    }
+                    className={styles.rate}
+                  />
+                  {this.state.rate !== 0 && (
+                    <div className={styles.voteText}>
+                      <span className="ant-rate-text">
+                        {voteTexts[this.state.rate]}
+                      </span>
+                    </div>
+                  )}
+                  <Button
+                    type="primary"
+                    loading={loading.effects["vote/vote"]}
+                    className={styles.voteButton}
+                    onClick={() => this.handleVote(song)}
+                    icon="check"
+                    {...buttonProps}
+                  >
+                    {isDesktop && "投票"}
+                  </Button>
+                </div>
+              )}
+              {this.state.showReport && (
+                <div className={styles.reportArea} key="report">
+                  <Input
+                    placeholder="填写举报原因"
+                    className={styles.reason}
+                    maxLength="50"
+                  />
+                  <Button
+                    type="primary"
+                    onClick={this.report(song.id)}
+                    className={styles.reportButton}
+                  >
+                    提交
+                  </Button>
+                </div>
+              )}
+            </CSSTransitionGroup>
           </span>
         </Panel>
       );

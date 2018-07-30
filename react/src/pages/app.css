@@ -15,15 +15,14 @@ hr {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-:global {
-  .ant-table td {
-    white-space: nowrap;
-  }
-  .fade-enter .fade-leave .fade-leave-active {
+:global(#root) {
+  .fade-enter .fade-leave-active {
     opacity: 0;
   }
   .fade-enter-active .fade-leave-active {
-    opacity: 1;
-    transition: opacity 200ms linear;
+    -webkit-transition: opacity 200ms ease;
+    -moz-transition: opacity 200ms ease;
+    -o-transition: opacity 200ms ease;
+    transition: opacity 200ms ease;
   }
 }

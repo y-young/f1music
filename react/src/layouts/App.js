@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter, Switch, Route } from "dva/router";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { CSSTransitionGroup } from "react-transition-group";
 import { Sidebar } from "components";
 import { Home, Upload, Vote, NotFound } from "routes";
 import { LocaleProvider, Layout, Icon } from "antd";
@@ -20,7 +20,7 @@ const App = ({ children, dispatch, app, location }) => {
   const Year = () => {
     const date = new Date();
     return date.getFullYear();
-  }
+  };
 
   const appClass = classnames({
     [styles.app]: true,
@@ -49,36 +49,39 @@ const App = ({ children, dispatch, app, location }) => {
             <div className={styles.main}>
               <Content>
                 <div className={styles.content}>
-                  <TransitionGroup>
-                    <CSSTransition
-                      key={location.pathname}
-                      classNames="fade"
-                      timeout={200}
+                  <Switch>
+                    <CSSTransitionGroup
+                      transitionName="fade"
+                      transitionEnterTimeout={500}
+                      transitionLeaveTimeout={200}
                     >
-                      <Switch>
-                        <Route path="/" exact component={Home} key="Home" />
-                        <Route
-                          path="/upload"
-                          exact
-                          component={Upload}
-                          key="Upload"
-                        />
-                        <Route
-                          path="/vote/:time"
-                          exact
-                          component={Vote}
-                          key="Vote"
-                        />
-                        <Route path="*" component={NotFound} />
-                      </Switch>
-                    </CSSTransition>
-                  </TransitionGroup>
+                      <Route path="/" exact component={Home} key="Home" />
+                      <Route
+                        path="/upload"
+                        exact
+                        component={Upload}
+                        key="Upload"
+                      />
+                      <Route
+                        path="/vote/:time"
+                        exact
+                        component={Vote}
+                        key="Vote"
+                      />
+                    </CSSTransitionGroup>
+                    <Route path="*" component={NotFound} key="NotFound" />
+                  </Switch>
                 </div>
               </Content>
               <Footer className={styles.footer}>
-                Copyright © 2007-{ Year() } FZYZ SCAN & 7HMakers. All rights reserved.<br />
+                Copyright © 2007-{Year()} FZYZ SCAN & 7HMakers. All rights
+                reserved.<br />
                 Author & Current Maintainer: Googleplex<br />
-                Past Maintainer: <a href="https://blog.robotshell.org">Robot</a> <a href="http://blog.miskcoo.com">Miskcoo</a> <a href="https://www.upsuper.org">Upsuper</a>
+                Past Maintainer: <a href="https://blog.robotshell.org">
+                  Robot
+                </a>{" "}
+                <a href="http://blog.miskcoo.com">Miskcoo</a>{" "}
+                <a href="https://www.upsuper.org">Upsuper</a>
               </Footer>
             </div>
           </div>

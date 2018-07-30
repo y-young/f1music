@@ -97,7 +97,9 @@ class YPlayer extends React.Component {
 
   ended = () => {
     this.setState({ playing: false });
-    this.props.onEnded();
+    if (this.props.onEnd) {
+      this.props.onEnded();
+    }
   };
 
   onError = () => {

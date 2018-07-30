@@ -15,7 +15,7 @@ hr {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-:global {
+:global(#root) {
   .footer {
     text-align: center;
   }
@@ -23,11 +23,13 @@ hr {
     color: inherit;
     text-decoration: underline;
   }
-  .fade-enter .fade-leave .fade-leave-active {
+  .fade-enter .fade-leave-active {
     opacity: 0;
   }
   .fade-enter-active .fade-leave-active {
-    opacity: 1;
-    transition: opacity 200ms linear;
+    -webkit-transition: opacity 200ms;
+    -moz-transition: opacity 200ms;
+    -o-transition: opacity 200ms;
+    transition: opacity 200ms;
   }
 }

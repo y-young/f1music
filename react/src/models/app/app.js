@@ -21,6 +21,9 @@ export default {
         }, 300);
       };
       history.listen(({ pathname }) => {
+        if (pathname === "/logout") {
+          window.location.href = "/logout";
+        }
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
         dispatch({ type: "mobileCollapse" });
