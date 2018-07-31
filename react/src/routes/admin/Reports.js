@@ -22,7 +22,7 @@ class Reports extends React.Component {
   handleDelete = id => {
     const { dispatch } = this.props;
     dispatch({ type: "reports/delete", payload: id });
-  }
+  };
 
   renderExpanded = row => {
     const { loading } = this.props;
@@ -31,12 +31,18 @@ class Reports extends React.Component {
         <Form layout="inline">
           <FormItem label="曲目ID">{row.song_id}</FormItem>
           <FormItem label="原因">{row.reason}</FormItem>
-          <FormItem label="时间">{row.time}</FormItem><br/>
+          <FormItem label="时间">{row.time}</FormItem>
+          <br />
           <FormItem label="试听">
             <audio src={row.song.file.url} controls="controls" />
           </FormItem>
           <FormItem label="操作">
-            <Button type="danger" icon="delete" loading={loading.effects["reports/delete"]} onClick={() => this.handleDelete([ row.id ])}>
+            <Button
+              type="danger"
+              icon="delete"
+              loading={loading.effects["reports/delete"]}
+              onClick={() => this.handleDelete([row.id])}
+            >
               删除
             </Button>
           </FormItem>
@@ -46,7 +52,7 @@ class Reports extends React.Component {
   };
 
   render() {
-    const { reports, dispatch, loading } = this.props;
+    const { reports, loading } = this.props;
     const { list } = reports;
     const { selected } = this.state;
     const rowSelection = {
@@ -70,8 +76,16 @@ class Reports extends React.Component {
           loading={loading.effects["reports/fetch"]}
           style={{ width: "100%" }}
         />
-        <Button type="danger" loading={loading.effects["reports/delete"]} onClick={() => {this.handleDelete(this.state.selected);
-  this.setState({ selected: [] }); } }>删除所选</Button>
+        <Button
+          type="danger"
+          loading={loading.effects["reports/delete"]}
+          onClick={() => {
+            this.handleDelete(this.state.selected);
+            this.setState({ selected: [] });
+          }}
+        >
+          删除所选
+        </Button>
       </div>
     );
   }

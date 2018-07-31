@@ -1,5 +1,6 @@
 import React from "react";
-import { Tabs } from "antd";
+import { Link } from "dva/router";
+import { Tabs, Icon } from "antd";
 
 const TabPane = Tabs.TabPane;
 
@@ -27,9 +28,7 @@ const Home = () => {
           </p>
           <p>
             在提交新曲目时，需要参考各时段音乐要求选择一个推荐的播放时段，并填入曲名。“来源”一项表示此曲目的出处，可以填写该曲目来自的专辑、音乐家或节目、游戏等，
-            <strong>
-              不是表示上传者
-            </strong>。如果不明来源可留空。上传时<strong>
+            <strong>不是表示上传者</strong>。如果不明来源可留空。上传时<strong>
               请先填写信息再上传文件
             </strong>。
           </p>
@@ -50,6 +49,9 @@ const Home = () => {
           <p>
             出于公平性考虑，本次征集投票时将隐藏歌曲信息，因此将预先进行审核，对于严重恶搞、不符合要求、以及重复上传的内容，将直接删除。如果投票过程中发现上述情况，请点击播放器右下方的举报按钮进行举报，我们会尽快处理。此外，出于同样目的，上传时曲目的标签信息将被删除。但此操作耗时较多，因此上传进度到达100%后可能出现几秒的停顿，请耐心等待。
           </p>
+          <Link to="/upload" style={{ fontSize: "14px", color: "#777" }}>
+            <Icon type="arrow-right" /> 前往上传
+          </Link>
         </TabPane>
         <TabPane tab="投票说明" key="vote">
           <p>
@@ -93,6 +95,9 @@ const Home = () => {
               请勿依据过于强烈的主观感受进行评价，禁止恶意投票、拉票等违规行为
             </strong>，一经发现将采取相应措施。
           </p>
+          <Link to="/vote/1" style={{ fontSize: "14px", color: "#777" }}>
+            <Icon type="arrow-right" /> 前往投票
+          </Link>
         </TabPane>
         <TabPane tab="各时段音乐要求" key="requirements">
           <p>

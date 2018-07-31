@@ -10,7 +10,7 @@ const errorMsg = {
 
 // 设置全局参数
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = "/api";
 axios.defaults.withCredentials = true;
 
 // 添加请求拦截器
@@ -68,7 +68,12 @@ export default function request(opt) {
       const { dispatch } = store;
 
       if (status === 401) {
-        dispatch(routerRedux.push("/login"));
+        dispatch(
+          routerRedux.push({
+            pathname: "/login",
+            search: "?redirect=" + window.location.href
+          })
+        );
       } else if (status >= 404 && status < 422) {
         dispatch(routerRedux.push("/404"));
       }
@@ -79,6 +84,10 @@ export default function request(opt) {
         error.response
       );
 
-      return Promise.reject({ type: "notice", code: status, message: errortext });
+      return Promise.reject({
+        type: "notice",
+        code: status,
+        message: errortext
+      });
     });
 }

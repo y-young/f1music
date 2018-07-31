@@ -49,7 +49,7 @@ class UploadController extends Controller
     {
         Log::info('Requests: '.var_export($request->all(),true));
         if (! config('music.openUpload')) {
-            return $this->error(self::$errorMsg['stop_upload']);
+            return $this->error(self::$errorMsg['stop_upload'], 2);
         } elseif (Song::withTrashed()->where('uploader', self::$stuId)->count() >= 10) {
             return $this->error(self::$errorMsg['max_upload_num']);
         }

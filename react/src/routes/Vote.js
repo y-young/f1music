@@ -1,9 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { TimeSelector, VoteList } from "components";
-import { Select, Alert, Switch } from "antd";
-
-const Option = Select.Option;
+import { Alert, Switch } from "antd";
 
 class Vote extends React.Component {
   toggleAuto = () => {
@@ -12,9 +10,7 @@ class Vote extends React.Component {
   };
 
   handleRedirect = time => {
-    //const { dispatch } = this.props;
     this.voteList.getWrappedInstance().redirect(time);
-    //dispatch({ type: 'vote/redirect', payload: time });
   };
 
   render() {

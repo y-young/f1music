@@ -64,7 +64,7 @@ class Songs extends React.Component {
   };
 
   renderExpanded = row => {
-    const { songs, dispatch } = this.props;
+    const { songs } = this.props;
     const { type } = songs;
 
     return (
@@ -109,10 +109,10 @@ class Songs extends React.Component {
   };
 
   render() {
-    const { songs, dispatch, loading, form } = this.props;
+    const { songs, loading, form } = this.props;
     const { type, list } = songs;
     const { getFieldDecorator } = form;
-    const { selected, row } = this.state;
+    const { selected, row, modalVisible } = this.state;
 
     return (
       <div>
@@ -131,7 +131,7 @@ class Songs extends React.Component {
         />
         {row && (
           <Modal
-            visible={this.state.modalVisible}
+            visible={modalVisible}
             onCancel={this.handleCancel}
             confirmLoading={loading.effects["songs/save"]}
             okText="保存"

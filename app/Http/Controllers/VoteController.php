@@ -17,7 +17,7 @@ class VoteController extends Controller
 {
 
     private static $stuId;
-    private $texts = [-10 => '非常不合适', -5 => '不合适', 0 => '中立', 5 => '合适', 10 => '非常合适'];
+    private $stars = [-10 => 1, -5 => 2, 0 => 3, 5 => 4, 10 => 5];
     private $points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
     private static $messages = [
         'id.required' => '参数错误,请刷新页面',
@@ -34,7 +34,7 @@ class VoteController extends Controller
     public function Vote(Request $request)
     {
         if (! config('music.openVote')) {
-            return $this->error('投票已关闭');
+            return $this->error('投票已关闭', 2);
         }
         Validator::make($request->all(), [
             'id' => 'required | exists:songs',
@@ -87,9 +87,9 @@ class VoteController extends Controller
         $songs = $songs->mapWithKeys(function ($song, $id) {
             $vote = $song->votes->first();
             if (empty($vote)) {
-                $vote = '未投票';
+                $vote = 0;
             } else {
-                $vote = $this->texts[$vote->vote];
+                $vote = $this->stars[$vote->vote];
             }
             $id++;
             return [

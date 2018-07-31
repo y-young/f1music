@@ -12,7 +12,9 @@ class YPlayer extends React.Component {
       playing: false,
       duration: 0,
       time: 0,
-      loaded: "0"
+      displayTime: 0,
+      loaded: "0.00",
+      disableSliderUpdate: false
     };
     this.updateTime = throttle(this.updateTime, 200);
   }
@@ -82,16 +84,37 @@ class YPlayer extends React.Component {
     this.setState({ loaded: percent.toString() });
   };
 
+  onPlay = () => {
+    if (!this.state.playing) {
+      this.setState({ playing: true });
+    }
+    if (this.props.onPlay) {
+      this.props.onPlay();
+    }
+  };
+
+  onPause = () => {
+    if (this.state.playing) {
+      this.setState({ playing: false });
+    }
+    if (this.props.onPause) {
+      this.props.onPause();
+    }
+  };
+
   updateDuration = e => {
     e.persist();
-    //console.log(e.target.duration);
     this.setState({ duration: e.target.duration });
   };
 
   updateTime = time => {
     this.setState({ time: time });
+    if (!this.state.disableSliderUpdate) {
+      this.setState({ displayTime: time });
+    }
+    const offset = time - this.state.time;
     if (this.props.onProgress) {
-      this.props.onProgress(time);
+      this.props.onProgress(offset);
     }
   };
 
@@ -105,6 +128,19 @@ class YPlayer extends React.Component {
   onError = () => {
     this.stop();
     message.error("播放出错了,请重试");
+  };
+
+  onSeeking = time => {
+    this.setState({ disableSliderUpdate: true, displayTime: time });
+  };
+
+  fastSeek = time => {
+    this.setState({
+      disableSliderUpdate: false,
+      displayTime: time,
+      time: time
+    });
+    this.audio.currentTime = time;
   };
 
   render() {
@@ -121,7 +157,8 @@ class YPlayer extends React.Component {
           onProgress={this.onLoad}
           onTimeUpdate={this.onTimeUpdate}
           onDurationChange={this.updateDuration}
-          onPause={() => this.setState({ playing: false })}
+          onPlay={this.onPlay}
+          onPause={this.onPause}
           onEnded={this.ended}
           onError={this.onError}
           preload="none"
@@ -129,12 +166,14 @@ class YPlayer extends React.Component {
         {!mini && (
           <div>
             <Slider
-              value={this.state.time}
+              value={this.state.displayTime}
               max={this.state.duration}
+              onChange={this.onSeeking}
+              onAfterChange={this.fastSeek}
               tipFormatter={null}
             />
             <div className={styles.timeDetail}>
-              {this.formatTime(this.state.time)} /{" "}
+              {this.formatTime(this.state.displayTime)} /{" "}
               {this.formatTime(this.state.duration)}
             </div>
           </div>

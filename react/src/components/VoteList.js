@@ -18,7 +18,8 @@ class VoteList extends React.Component {
     lastIndex: "",
     canVote: false,
     canSubmit: false,
-    showReport: false
+    showReport: false,
+    countDown: 31
   };
 
   init = () => {
@@ -27,7 +28,9 @@ class VoteList extends React.Component {
       rate: 0,
       reason: "",
       canVote: false,
-      canSubmit: false
+      canSubmit: false,
+      showReport: false,
+      countDown: 31
     });
   };
   redirect = time => {
@@ -41,10 +44,14 @@ class VoteList extends React.Component {
     });
     dispatch({ type: "vote/redirect", payload: time });
   };
-  timeListener = time => {
-    //this.setState({ currentTime: time });
-    if (!this.state.canVote && time >= 30) {
+  timeListener = offset => {
+    /*if (!this.state.canVote && time >= 30) {
       this.setState({ canVote: true });
+    }*/
+    if (this.state.countDown > 0) {
+      this.setState(prevState => {
+        countDown: prevState.countDown - offset;
+      });
     }
   };
   triggerNext = nowIndex => {
@@ -59,11 +66,14 @@ class VoteList extends React.Component {
   };
   handleChange = index => {
     const { vote } = this.props;
-    const { auto } = vote;
+    const { auto, songs } = vote;
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
     this.init();
+    if (index && songs[index].vote !== 0) {
+      this.setState({ countDown: 0 });
+    }
     this.setState({
       lastIndex: index,
       nowIndex: index
@@ -80,6 +90,10 @@ class VoteList extends React.Component {
   handleVote = song => {
     const { vote, dispatch } = this.props;
     const { songs, auto } = vote;
+    if (this.state.countDown > 0) {
+      message.warning("试听时长需达到30秒才能投票");
+      return;
+    }
     if (!this.state.canSubmit) {
       message.error("选择或更改评价后才能提交");
       return;
@@ -99,8 +113,12 @@ class VoteList extends React.Component {
       }
     });
   };
-  report = id => {
-    //dispatch
+  handleReport = id => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: "vote/report",
+      payload: { id: id, reason: this.state.reason }
+    });
   };
 
   render() {
@@ -108,12 +126,14 @@ class VoteList extends React.Component {
     const { isDesktop, songs } = vote;
     const listLoading = loading.effects["vote/fetch"];
     const buttonProps = {
-      shape: !isDesktop ? "circle" : undefined
+      shape: !isDesktop ? "circle" : undefined,
+      icon: this.state.countDown <= 0 ? "check" : undefined,
+      disabled: this.state.countDown > 0
     };
     const list = songs.map((song, key) => {
       return (
         <Panel
-          header={"#" + (key + 1) + " 您的投票: " + song.vote}
+          header={"#" + (key + 1) + " 您的投票: " + voteTexts[song.vote]}
           key={key}
           forceRender={true}
         >
@@ -138,50 +158,52 @@ class VoteList extends React.Component {
               </Button>
             </div>
             <br />
+            <div className={styles.voteArea} key="vote">
+              <hr />
+              <Rate
+                value={this.state.rate}
+                onChange={value =>
+                  this.setState({ rate: value, canSubmit: true })
+                }
+                className={styles.rate}
+              />
+              {this.state.rate !== 0 && (
+                <div className={styles.voteText}>
+                  <span className="ant-rate-text">
+                    {voteTexts[this.state.rate]}
+                  </span>
+                </div>
+              )}
+              <Button
+                type="primary"
+                loading={loading.effects["vote/vote"]}
+                className={styles.voteButton}
+                onClick={() => this.handleVote(song)}
+                {...buttonProps}
+              >
+                {this.state.countDown > 0
+                  ? Math.floor(this.state.countDown)
+                  : isDesktop && "投票"}
+              </Button>
+            </div>
             <CSSTransitionGroup
               transitionName="fade"
               transitionEnterTimeout={500}
               transitionLeaveTimeout={200}
             >
-              {this.state.canVote && (
-                <div className={styles.voteArea} key="vote">
-                  <hr />
-                  <Rate
-                    value={this.state.rate}
-                    onChange={value =>
-                      this.setState({ rate: value, canSubmit: true })
-                    }
-                    className={styles.rate}
-                  />
-                  {this.state.rate !== 0 && (
-                    <div className={styles.voteText}>
-                      <span className="ant-rate-text">
-                        {voteTexts[this.state.rate]}
-                      </span>
-                    </div>
-                  )}
-                  <Button
-                    type="primary"
-                    loading={loading.effects["vote/vote"]}
-                    className={styles.voteButton}
-                    onClick={() => this.handleVote(song)}
-                    icon="check"
-                    {...buttonProps}
-                  >
-                    {isDesktop && "投票"}
-                  </Button>
-                </div>
-              )}
               {this.state.showReport && (
                 <div className={styles.reportArea} key="report">
                   <Input
+                    value={this.state.reason}
                     placeholder="填写举报原因"
                     className={styles.reason}
+                    onChange={e => this.setState({ reason: e.target.value })}
                     maxLength="50"
                   />
                   <Button
                     type="primary"
-                    onClick={this.report(song.id)}
+                    onClick={() => this.handleReport(song.id)}
+                    loading={loading.effects["vote/report"]}
                     className={styles.reportButton}
                   >
                     提交

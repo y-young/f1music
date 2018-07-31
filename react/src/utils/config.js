@@ -9,5 +9,5 @@ module.exports = {
     mp3: "/music/mp3",
     upload: "/upload"
   },
-  voteTexts: [0, "非常不合适", "不合适", "中立", "合适", "非常合适"]
+  voteTexts: ["未投票", "非常不合适", "不合适", "中立", "合适", "非常合适"]
 };

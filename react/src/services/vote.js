@@ -11,11 +11,11 @@ export async function Songs(time) {
   });
 }
 
-export function Report(id, reason) {
+export function Report(params) {
   return request({
     url: report,
     method: "post",
-    data: { id: id, reason: reason }
+    data: params
   });
 }
 
