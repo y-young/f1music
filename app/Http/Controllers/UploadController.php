@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Metowolf\Meting;
-require_once(base_path('app/Http/Controllers/getid3/getid3.php'));
-require_once(base_path('app/Http/Controllers/getid3/write.php'));
 
 class UploadController extends Controller
 {
@@ -35,7 +33,7 @@ class UploadController extends Controller
         'stop_upload' => '文件上传已关闭',
         'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
-        'time_too_short' => '歌曲时长还不足2分钟,请选择长一些的曲目',
+        'time_too_short' => '歌曲时长还不足2分半钟,请选择长一些的曲目',
         'already_exists' => '所上传的音乐在该时段已经有人推荐'
     ];
     private static $stuId;
@@ -50,7 +48,7 @@ class UploadController extends Controller
         Log::info('Requests: '.var_export($request->all(),true));
         if (! config('music.openUpload')) {
             return $this->error(self::$errorMsg['stop_upload'], 2);
-        } elseif (Song::withTrashed()->where('uploader', self::$stuId)->count() >= 10) {
+        } elseif (Song::withTrashed()->where('user_id', self::$stuId)->count() >= 10) {
             return $this->error(self::$errorMsg['max_upload_num']);
         }
         Validator::make($request->all(), [
@@ -126,7 +124,7 @@ class UploadController extends Controller
             }
         } else { //文件未上传过,则进行验证
             $file->duration = self::getDuration($file);
-            if ($file->duration < 2 * 60) {
+            if ($file->duration < 2.5 * 60) {
                 $file->error = self::$errorMsg['time_too_short'];
             } elseif ($file->duration > 6 * 60) {
                 $file->error = self::$errorMsg['time_too_long'];
@@ -166,7 +164,7 @@ class UploadController extends Controller
             Storage::move('tmp/'.$vFile->name, 'uploads/'.$vFile->storageName);
             $file = File::create([
                 'md5' => $vFile->md5,
-                'uploader' => self::$stuId
+                'user_id' => self::$stuId
             ]);
             $file->save();
             $vFile->id = $file->id;
