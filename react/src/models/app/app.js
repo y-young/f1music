@@ -27,7 +27,7 @@ export default {
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
         dispatch({ type: "mobileCollapse" });
-        dispatch({ type: "save", payload: { loggedIn: checkLogin() } });
+        dispatch({ type: "updateState", payload: { loggedIn: checkLogin() } });
       });
     }
   },
@@ -52,6 +52,9 @@ export default {
           break;
         case "/login":
           title = "登录";
+          break;
+        case "/logout":
+          title = "登出";
           break;
         default:
           title = "404";

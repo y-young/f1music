@@ -53,6 +53,7 @@
   bottom: 0;
   margin: 0;
   width: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   -webkit-transition: left 250ms ease;

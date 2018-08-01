@@ -19,6 +19,6 @@ export function getCookie() {
   else return null;
 }
 
-export async function checkLogin() {
+export function checkLogin() {
   return getCookie() !== null;
 }

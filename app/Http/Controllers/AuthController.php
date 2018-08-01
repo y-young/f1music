@@ -88,7 +88,7 @@ class AuthController extends Controller
     {
         Cookie::forget();
         $request->session()->forget('stuId');
-        return redirect('/#/Login');
+        return redirect('/#/login');
     }
 }
 
