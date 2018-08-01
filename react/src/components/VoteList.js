@@ -50,7 +50,7 @@ class VoteList extends React.Component {
     }*/
     if (this.state.countDown > 0) {
       this.setState(prevState => {
-        countDown: prevState.countDown - offset;
+        return { countDown: prevState.countDown - offset };
       });
     }
   };
