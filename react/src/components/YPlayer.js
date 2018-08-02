@@ -118,9 +118,9 @@ class YPlayer extends React.Component {
     }
   };
 
-  ended = () => {
+  onEnded = () => {
     this.setState({ playing: false });
-    if (this.props.onEnd) {
+    if (this.props.onEnded) {
       this.props.onEnded();
     }
   };
@@ -159,7 +159,7 @@ class YPlayer extends React.Component {
           onDurationChange={this.updateDuration}
           onPlay={this.onPlay}
           onPause={this.onPause}
-          onEnded={this.ended}
+          onEnded={this.onEnded}
           onError={this.onError}
           preload="none"
         />

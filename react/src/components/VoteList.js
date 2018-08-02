@@ -30,7 +30,6 @@ class VoteList extends React.Component {
       canVote: false,
       canSubmit: false,
       showReport: false,
-      countDown: 31
     });
   };
   redirect = time => {
@@ -48,7 +47,8 @@ class VoteList extends React.Component {
     /*if (!this.state.canVote && time >= 30) {
       this.setState({ canVote: true });
     }*/
-    if (this.state.countDown > 0) {
+    //offset > 0: In case that currentTime didn't update in time
+    if (this.state.countDown > 0 && offset > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
       });
@@ -73,6 +73,8 @@ class VoteList extends React.Component {
     this.init();
     if (index && songs[index].vote !== 0) {
       this.setState({ countDown: 0 });
+    } else {
+      this.setState({ countDown: 31 });
     }
     this.setState({
       lastIndex: index,
@@ -87,11 +89,14 @@ class VoteList extends React.Component {
     }
     return index;
   };
-  handleVote = song => {
+  handleVote = (song, index) => {
     const { vote, dispatch } = this.props;
     const { songs, auto } = vote;
     if (this.state.countDown > 0) {
       message.warning("试听时长需达到30秒才能投票");
+      const player = this.refs["player" + index];
+      player.audio.currentTime = 0;
+      player.play();
       return;
     }
     if (!this.state.canSubmit) {
@@ -142,7 +147,7 @@ class VoteList extends React.Component {
               <YPlayer
                 src={song.url}
                 onProgress={this.timeListener}
-                onEnded={() => this.handleVote(song)}
+                onEnded={() => this.handleVote(song, key)}
                 ref={"player" + key}
                 className={styles.yplayer}
               />
