@@ -12,16 +12,21 @@ const columns = [
 
 class Reports extends React.Component {
   state = {
-    selected: []
+    selectedRowKeys: []
   };
 
-  onSelectChange = selected => {
-    this.setState({ selected: selected });
+  onSelectChange = selectedRowKeys => {
+    this.setState({ selectedRowKeys });
   };
 
   handleDelete = id => {
     const { dispatch } = this.props;
     dispatch({ type: "reports/delete", payload: id });
+  };
+
+  handleBatchDelete = () => {
+    this.handleDelete(this.state.selectedRowKeys);
+    this.setState({ selectedRowKeys: [] });
   };
 
   renderExpanded = row => {
@@ -54,16 +59,16 @@ class Reports extends React.Component {
   render() {
     const { reports, loading } = this.props;
     const { list } = reports;
-    const { selected } = this.state;
+    const { selectedRowKeys } = this.state;
     const rowSelection = {
-      selected,
+      selectedRowKeys,
       onChange: this.onSelectChange
     };
 
     return (
       <div>
         <div style={{ fontSize: "14px", color: "#777" }}>
-          举报总数: {list.length} 条 已选中: {selected.length} 条
+          举报总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
         </div>
         <br />
         <Table
@@ -79,10 +84,7 @@ class Reports extends React.Component {
         <Button
           type="danger"
           loading={loading.effects["reports/delete"]}
-          onClick={() => {
-            this.handleDelete(this.state.selected);
-            this.setState({ selected: [] });
-          }}
+          onClick={this.handleBatchDelete}
         >
           删除所选
         </Button>

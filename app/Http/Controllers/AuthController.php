@@ -108,7 +108,7 @@ class Cookie
                 $authData->password
             ])
         );
-	     	setcookie('MusicAuth', $cookieData, time()+24*60*60);
+	     	setcookie('MusicAuth', $cookieData, time()+24*60*60, '/'); //Set path to '/' to fix Cross-Origin problems
 	      $_COOKIE['MusicAuth'] = $cookieData;
     }
 

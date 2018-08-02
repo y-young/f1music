@@ -56,7 +56,6 @@ class ManualUpload extends React.Component {
       console.log(file, info.fileList);
     }
     if (file.status === "done") {
-      console.log(response);
       if (response.error === 0) {
         message.success("上传成功");
       } else {
@@ -106,7 +105,7 @@ class ManualUpload extends React.Component {
           {/* {getFieldDecorator('file')( */}
           <Upload.Dragger
             fileList={this.state.fileList}
-            action="/api/Upload"
+            action="/api/upload"
             data={this.getFormData}
             accept="audio/mpeg"
             beforeUpload={this.beforeUpload}

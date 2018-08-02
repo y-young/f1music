@@ -24,10 +24,15 @@ export default {
   },
   proxy: {
     "/api": {
-      target: "http://localhost:81/",
+      target: "http://localhost:81/api/",
       changeOrigin: true,
       pathRewrite: { "^/api": "" }
-    }
+    },
+    "/uploads": {
+      target: "http://localhost:81/uploads/",
+      changeOrigin: true,
+      pathRewrite: { "^/uploads": "" }
+    },
   },
   ignoreMomentLocale: true
 };

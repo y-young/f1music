@@ -11,19 +11,24 @@
 |
 */
 
-$router->get('/', function () use ($router) {
+$router->get('/', function () {
     return view('index');
 });
+$router->get('/manage', ['middleware' => 'admin', function() {
+    return view('admin');
+}]);
 $router->get('/check', 'AuthController@checkLogin');
 $router->get('/logout', 'AuthController@Logout');
-$router->get('/playlist', 'MusicController@Playlist');
 
-$router->post('/login', [
+//Since Lumen does not support nested route groups, we will use parallel ones instead
+$router->get('/api/playlist', 'MusicController@Playlist');
+
+$router->post('/api/login', [
     'middleware' => 'throttle:20',
     'uses' => 'AuthController@Login'
 ]);
 
-$router->group(['middleware' => 'auth'], function () use ($router) {
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
     $router->post('/upload', [
         'middleware' => 'throttle:20',
         'uses' => 'UploadController@Upload'
@@ -46,11 +51,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     ]);
 });
 
-$router->group(['middleware' => 'admin'], function () use ($router) {
-    $router->get('/manage', function() {
-        return view('admin');
-    });
-
+$router->group(['prefix' => 'api', 'middleware' => 'admin'], function () use ($router) {
     $router->get('/songs', 'ManageController@getSongs');
     $router->get('/songs/{id:[0-9]+}', 'ManageController@viewSong');
     $router->put('/songs', 'ManageController@editSong');
@@ -79,7 +80,7 @@ $router->group(['middleware' => 'admin'], function () use ($router) {
     ]);
 });
 
-$router->group(['prefix' => 'music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
+$router->group(['prefix' => 'api/music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
     $router->post('/search', 'MusicController@Search');
     $router->post('/mp3', 'MusicController@Mp3');
 });

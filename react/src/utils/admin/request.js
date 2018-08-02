@@ -43,8 +43,8 @@ export default function request(opt) {
 
       // 打印错误提示
       if (response.data && response.data.error !== 0) {
-        //message.error(response.data.msg);
         const error = new Error();
+        error.message = response.data.msg;
         throw error;
       }
 

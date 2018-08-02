@@ -31,10 +31,14 @@ const columns = [
 
 class Songs extends React.Component {
   state = {
-    selected: [],
+    selectedRowKeys: [],
     modalVisible: false,
     row: null
   };
+
+  onSelectChange = selectedRowKeys => {
+    this.setState({ selectedRowKeys });
+  }
 
   editSong = row => {
     this.props.form.resetFields();
@@ -58,13 +62,27 @@ class Songs extends React.Component {
     this.setState({ modalVisible: false });
   };
 
-  handleDelete = id => {
+  handleDelete = (id, isDelete = false) => {
     const { dispatch } = this.props;
-    dispatch({ type: "songs/delete", payload: id });
+    if (isDelete) {
+      dispatch({ type: "songs/delete", payload: id });
+    } else {
+      dispatch({ type: "songs/trash", payload: id });
+    }
+  };
+
+  handleBatchDelete = (isDelete = false) => {
+    this.handleDelete(this.state.selectedRowKeys, isDelete);
+    this.setState({ selectedRowKeys: [] });
+  }
+
+  handleRestore = id => {
+    const { dispatch } = this.props;
+    dispatch({ type: "songs/restore", payload: id });
   };
 
   renderExpanded = row => {
-    const { songs } = this.props;
+    const { songs, loading } = this.props;
     const { type } = songs;
 
     return (
@@ -90,15 +108,30 @@ class Songs extends React.Component {
             </Button>
             {type === "trashed" ? (
               <span>
-                <Button type="secondary" icon="rollback">
+                <Button
+                  type="secondary"
+                  icon="rollback"
+                  onClick={() => this.handleRestore(row.id)}
+                  loading={loading.effects["songs/restore"]}
+                >
                   恢复
                 </Button>
-                <Button type="danger" icon="delete">
+                <Button
+                  type="danger"
+                  icon="delete"
+                  onClick={() => this.handleDelete(row.id, true)}
+                  loading={loading.effects["songs/delete"]}
+                >
                   彻底删除
                 </Button>
               </span>
             ) : (
-              <Button type="danger" icon="delete">
+              <Button
+                type="danger"
+                icon="delete"
+                onClick={() => this.handleDelete(row.id)}
+                loading={loading.effects["songs/trash"]}
+              >
                 删除
               </Button>
             )}
@@ -112,17 +145,22 @@ class Songs extends React.Component {
     const { songs, loading, form } = this.props;
     const { type, list } = songs;
     const { getFieldDecorator } = form;
-    const { selected, row, modalVisible } = this.state;
+    const { selectedRowKeys, row, modalVisible } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    };
 
     return (
       <div>
         <div style={{ fontSize: "14px", color: "#777" }}>
-          曲目总数: {list.length} 首 已选中: {selected.length} 首
+          曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
         </div>
         <br />
         <Table
           dataSource={list}
           columns={columns}
+          rowSelection={rowSelection}
           expandedRowRender={this.renderExpanded}
           loading={loading.effects["songs/fetch"]}
           rowKey="id"
@@ -163,9 +201,21 @@ class Songs extends React.Component {
           </Modal>
         )}
         {type === "trashed" ? (
-          <Button type="danger">彻底删除所选</Button>
+          <Button
+            type="danger"
+            onClick={() => this.handleBatchDelete(true)}
+            loading={loading.effects["songs/delete"]}
+          >
+            彻底删除所选
+          </Button>
         ) : (
-          <Button type="danger">删除所选</Button>
+          <Button
+            type="danger"
+            onClick={this.handleDelete}
+            loading={loading.effects["songs/trash"]}
+          >
+            删除所选
+          </Button>
         )}
       </div>
     );

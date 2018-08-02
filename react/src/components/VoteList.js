@@ -140,7 +140,7 @@ class VoteList extends React.Component {
           <span>
             <div>
               <YPlayer
-                src={"http://192.168.0.105:81" + song.url}
+                src={song.url}
                 onProgress={this.timeListener}
                 onEnded={() => this.handleVote(song)}
                 ref={"player" + key}

@@ -3,7 +3,8 @@ import {
   TrashedSongs,
   Save,
   Trash,
-  Restore
+  Restore,
+  Delete
 } from "services/admin/songs";
 import { message } from "antd";
 
@@ -61,25 +62,33 @@ export default {
       yield put({ type: "updateState", payload: { list: data.songs } });
     },
     *save({ payload }, { call, put }) {
-      //const response = yield call(Save, payload);
-      message.success("操作成功");
-      yield put({ type: "saveSong", payload });
-      return true;
+      const res = yield call(Save, payload);
+      if (res.error === 0) {
+        message.success("操作成功");
+        yield put({ type: "saveSong", payload });
+      }
+      return res.error;
     },
     *delete({ payload: id }, { call, put }) {
-      //const response = yield call(Delete, payload: id);
-      message.success("操作成功");
-      yield put({ type: "reduce", payload: id });
+      const res = yield call(Delete, id);
+      if (res.error === 0) {
+        message.success("操作成功");
+        yield put({ type: "reduce", payload: id });
+      }
     },
     *trash({ payload: id }, { call, put }) {
-      //const response = yield call(Trash, payload: id);
-      message.success("操作成功");
-      yield put({ type: "reduce", payload: id });
+      const res = yield call(Trash, id);
+      if (res.error === 0) {
+        message.success("操作成功");
+        yield put({ type: "reduce", payload: id });
+      }
     },
     *restore({ payload: id }, { call, put }) {
-      //const response = yield call(Restore, payload: id);
-      message.success("操作成功");
-      yield put({ type: "reduce", payload: id });
+      const res = yield call(Restore, id);
+      if (res.error === 0) {
+        message.success("操作成功");
+        yield put({ type: "reduce", payload: id });
+      }
     }
   },
 
