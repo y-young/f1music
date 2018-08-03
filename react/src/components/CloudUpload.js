@@ -12,10 +12,11 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
   const { getFieldDecorator, validateFieldsAndScroll } = form;
 
   const columns = [
-    { dataIndex: "name", title: "曲名" },
+    { dataIndex: "name", title: "曲名", width: 250 },
     {
       dataIndex: "artist",
       title: "歌手",
+      width: 150,
       render: (text, row) => {
         return { children: text.toString() };
       }
@@ -65,17 +66,18 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
             })(
               <AutoComplete
                 placeholder="请选择或输入曲名"
-                style={{ width: 160 }}
+                style={{ width: 250 }}
               >
                 <Option value={row.name}>{row.name}</Option>
               </AutoComplete>
             )}
           </FormItem>
+          <br />
           <FormItem label="来源">
             {getFieldDecorator("origin")(
               <AutoComplete
                 placeholder="请选择或输入来源"
-                style={{ width: 160 }}
+                style={{ width: 300 }}
               >
                 <Option value={row.artist.toString()}>
                   {row.artist.toString()}
@@ -114,7 +116,6 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         onPressEnter={e => search(e.target.value)}
         style={{ marginBottom: "10px" }}
         required
-        maxLength="30"
       />
       <Table
         dataSource={searchResult}
@@ -125,7 +126,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         loading={loading.effects["upload/search"]}
         rowKey="id"
         pagination={false}
-        scroll={{ x: 600 }}
+        scroll={{ x: 650 }}
         style={{ width: "100%" }}
       />
     </div>

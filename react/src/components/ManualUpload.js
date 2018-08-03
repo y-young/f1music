@@ -91,7 +91,7 @@ class ManualUpload extends React.Component {
         <FormItem {...formItemLayout} label="曲名" hasFeedback>
           {getFieldDecorator("name", {
             rules: [{ required: true, message: "请填写曲名" }]
-          })(<Input placeholder="歌曲名称" maxLength="30" />)}
+          })(<Input placeholder="歌曲名称" maxLength="50" />)}
         </FormItem>
         <FormItem {...formItemLayout} label="来源" hasFeedback>
           {getFieldDecorator("origin")(
