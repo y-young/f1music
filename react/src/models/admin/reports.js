@@ -1,4 +1,4 @@
-import { Reports } from "services/admin/reports";
+import { Reports, Delete } from "services/admin/reports";
 import { message } from "antd";
 
 export default {
@@ -29,9 +29,11 @@ export default {
       yield put({ type: "updateState", payload: { list: data.reports } });
     },
     *delete({ payload: id }, { call, put }) {
-      //const response = yield call(Delete, payload: id);
-      message.success("操作成功");
-      yield put({ type: "reduce", payload: id });
+      const res = yield call(Delete, id);
+      if (res.error === 0) {
+        message.success("操作成功");
+        yield put({ type: "reduce", payload: id });
+      }
     }
   },
 

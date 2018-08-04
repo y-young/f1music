@@ -2,21 +2,28 @@
 #
 # Author:  Googleplex <yyoung2001 AT gmail.com>
 # Description: Semi-auto Deploy Script for Laravel & Lumen
-# Version: 1.1.2
+# Version: 1.2.1
 #
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 ########################################################
-#                       Deploy                         #
+#                    Lumen Deployer                    #
 ########################################################
 "
-env="1"
+mode="initial"
+env="2"
 db_name=""
 db_user=""
 db_pass=""
 git_branch=""
+web_user="www"
+dev_group="musicdev"
+default_mode="570"
+writable_mode="770"
+composer_args=""
+yarn_args=""
 # set -x
 # set -e
 function success() {
@@ -61,15 +68,16 @@ function writeConfig() {
     success 'Done.'
 }
 function backendConfigure() {
+    info "Running migrations..."
     php artisan migrate
-
+    info "Creating symlink..."
+    cd public && ln -s ../storage/app/uploads uploads && cd ..
+    success "Done."
 }
 function installDependencies() {
-    composer_args=""
-    yarn_args=""
     if [[ "$env" == "1" ]]; then
-        composer_args="--no-dev"
-        yarn_args="--production"
+        composer_args=${composer_args}"--no-dev"
+        yarn_args=${yarn_args}"--production"
     fi
     info 'Installing backend dependencies...'
     composer install $composer_args
@@ -83,23 +91,46 @@ function buildAssets() {
     cd ./react && npm run build
     success 'Done.'
 }
+function setupPermissions() {
+    info 'Setting up permissions...'
+    chgrp -R $dev_group ./
+    chown -R $web_user ./
+    chmod -R $default_mode ./
+    chmod -R $writable_mode ./storage
+    success 'Done.'
+}
+function usage() {
+    info "Usage: $0 command ...[parameters]...
+    --help -h         Show this help message
+    --update -u       Set mode to [update](Non-interactive)
+    --prod            Indicate production environment(Default dev)
+    --branch          Specify git branch to checkout
+    --db_name         Set database name
+    --db_user         Set database username
+    --db_pass         Set database password
+    "
+}
 # Check if user is root
 #[ $(id -u) != '0' ] && { error "Error: You must be root to run this script"; exit 1; }
 ARG_SUM=$#
-TEMP=`getopt -o hv --long help,version,env:,branch:,db_name:,db_user:,db_pass: -- "$@" 2>/dev/null`
+TEMP=`getopt -o hu --long help,update,prod,branch:,db_name:,db_user:,db_pass: -- "$@" 2>/dev/null`
 [ $? != 0 ] && error "Unknown argument!" && exit 1
 eval set -- "${TEMP}"
 while :; do
     [[ "$1" == "--" ]] && break;
     case "$1" in
         -h|--help)
-            info "Usage:"; exit 0
+            usage && exit 0
             ;;
-        -v|--version)
-            info "Version: 1.1.2"; exit 0
+        -u|--update)
+            info "Set mode to [update]."
+            mode="update"
+            shift 1
             ;;
-        --env)
-            env=$2; shift $2
+        --prod)
+            info "Set environment to [production]"
+            env=1
+            shift 1
             ;;
         --branch)
             git_branch=$2; shift $2
@@ -120,7 +151,7 @@ while :; do
     esac
 done
 
-if [ $ARG_SUM == 0 ]; then
+if [ $ARG_SUM == 0 ]; then #Interactive mode
     while :; do echo
         echo "Specify current environment:"
         msg "\t1. Production"
@@ -152,11 +183,21 @@ if [ $ARG_SUM == 0 ]; then
     done
 fi
 
-if [[ "$git_branch" != "" ]]; then
-    info "Checking out git branch..."
-    git checkout $git_branch
-    success "Done."
-fi
-writeConfig
+case "$mode" in
+    initial)
+        if [[ "$git_branch" != "" ]]; then
+            info "Checking out git branch..."
+            git checkout $git_branch
+            success "Done."
+        fi
+        writeConfig
+        ;;
+    update)
+        info "Pulling latest code..."
+        git pull
+        success "Done."
+        ;;
+esac
+
 installDependencies
 buildAssets

@@ -67,7 +67,7 @@ export default {
         message.success("操作成功");
         yield put({ type: "saveSong", payload });
       }
-      return res.error;
+      return res.error === 0;
     },
     *delete({ payload: id }, { call, put }) {
       const res = yield call(Delete, id);

@@ -17,6 +17,7 @@ class CreateReports extends Migration
             $table->string('reason', 60)->comment('原因');
             $table->char('user_id', 11)->comment('举报者学号');
             $table->timestamp('time')->useCurrent();
+            $table->unique(['song_id', 'user_id']);
         });
     }
 

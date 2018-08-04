@@ -18,6 +18,7 @@ class CreateVotes extends Migration
             $table->string('origin', 50)->comment('来源');
             $table->char('user_id', 11)->comment('投票者学号');
             $table->timestamps();
+            $table->unique(['song_id', 'user_id']);
         });
     }
 

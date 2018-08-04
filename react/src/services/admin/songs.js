@@ -29,7 +29,7 @@ export async function Trash(id) {
   return request({
     url: trashSongs,
     method: "post",
-    data: id
+    data: { id: id }
   });
 }
 
@@ -37,7 +37,7 @@ export async function Restore(id) {
   return request({
     url: restoreSongs,
     method: "post",
-    data: id
+    data: { id: id }
   });
 }
 
@@ -45,6 +45,6 @@ export async function Delete(id) {
   return request({
     url: songs,
     method: "delete",
-    data: id
+    data: { id: id }
   });
 }

@@ -14,6 +14,6 @@ export async function Delete(id) {
   return request({
     url: reports,
     method: "delete",
-    data: id
+    data: { id: id }
   });
 }

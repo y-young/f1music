@@ -32,8 +32,7 @@ class VoteList extends React.Component {
       showReport: false,
     });
   };
-  redirect = time => {
-    const { dispatch } = this.props;
+  onRedirect = () => {
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
@@ -41,14 +40,12 @@ class VoteList extends React.Component {
       nowIndex: "",
       lastIndex: ""
     });
-    dispatch({ type: "vote/redirect", payload: time });
   };
   timeListener = offset => {
     /*if (!this.state.canVote && time >= 30) {
       this.setState({ canVote: true });
     }*/
-    //offset > 0: In case that currentTime didn't update in time
-    if (this.state.countDown > 0 && offset > 0) {
+    if (this.state.countDown > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
       });
@@ -72,7 +69,7 @@ class VoteList extends React.Component {
     }
     this.init();
     if (index && songs[index].vote !== 0) {
-      this.setState({ countDown: 0 });
+      this.setState({ countDown: 0, rate: songs[index].vote });
     } else {
       this.setState({ countDown: 31 });
     }
@@ -203,7 +200,7 @@ class VoteList extends React.Component {
                     placeholder="填写举报原因"
                     className={styles.reason}
                     onChange={e => this.setState({ reason: e.target.value })}
-                    maxLength="50"
+                    maxLength="60"
                   />
                   <Button
                     type="primary"

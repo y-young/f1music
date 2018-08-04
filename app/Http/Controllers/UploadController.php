@@ -18,8 +18,8 @@ class UploadController extends Controller
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
-        'name.size' => '歌曲名称不得超过30个字符',
-        'origin.size' => '歌曲来源不得超过50个字符',
+        'name.max' => '歌曲名称不得超过50个字符',
+        'origin.max' => '歌曲来源不得超过50个字符',
         'string' => ':attribute 应为文本',
         'id.required_without' => '参数错误,请重新搜索音乐',
         'file.required_without' => '请上传一个文件',
@@ -56,7 +56,7 @@ class UploadController extends Controller
                 'required',
                 Rule::in(['1', '2', '3', '4', '5', '6'])
             ],
-            'name' => 'required | string | max: 30',
+            'name' => 'required | string | max: 50',
             'origin' => 'nullable | string | max: 50',
             'id' => 'required_without:file',
             'file' => ['required_without:id', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']

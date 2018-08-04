@@ -9,10 +9,10 @@ const Option = AutoComplete.Option;
 
 const CloudUpload = ({ upload, loading, dispatch, form }) => {
   const { searchResult } = upload;
-  const { getFieldDecorator, validateFieldsAndScroll } = form;
+  const { getFieldDecorator, validateFieldsAndScroll, resetFields } = form;
 
   const columns = [
-    { dataIndex: "name", title: "曲名", width: 250 },
+    { dataIndex: "name", title: "曲名", width: 200 },
     {
       dataIndex: "artist",
       title: "歌手",
@@ -21,7 +21,14 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         return { children: text.toString() };
       }
     },
-    { dataIndex: "album", title: "专辑" }
+    { dataIndex: "album", title: "专辑", width: 200 },
+    /*{
+      title: "Listen",
+      key: "listen",
+      fixed: "right",
+      width: 70,
+      render: (row) => <YPlayer src={"https://music.163.com/song/media/outer/url?id=" + row.id + ".mp3"} mini={true} />
+    }*/
   ];
 
   const search = keyword => {
@@ -32,10 +39,13 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
     }
   };
 
-  const getMp3 = (expanded, row) => {
+  const onExpand = (expanded, row) => {
     // music.163.com/song/media/outer/url?id={id}.mp3
     if (expanded && row && !row.mp3) {
       dispatch({ type: "upload/fetchMp3", payload: row });
+    }
+    if (expanded && row) {
+      resetFields();
     }
   };
 
@@ -122,11 +132,11 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         columns={columns}
         expandedRowRender={renderExpanded}
         expandRowByClick={true}
-        onExpand={getMp3}
+        onExpand={onExpand}
         loading={loading.effects["upload/search"]}
         rowKey="id"
         pagination={false}
-        scroll={{ x: 650 }}
+        scroll={{ x: 500 }}
         style={{ width: "100%" }}
       />
     </div>

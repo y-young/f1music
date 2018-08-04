@@ -114,7 +114,11 @@ class YPlayer extends React.Component {
     }
     const offset = time - this.state.time;
     if (this.props.onProgress) {
-      this.props.onProgress(offset);
+      //offset > 0: In case that currentTime didn't update in time
+      //offset <= 1: To prevent cheating
+      if (offset > 0 && offset <= 1) {
+        this.props.onProgress(offset);
+      }
     }
   };
 
@@ -146,6 +150,10 @@ class YPlayer extends React.Component {
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
+    let mark = {};
+    if (this.state.duration > 0) {
+      mark[this.state.duration * 0.4] = "副歌";
+    }
     return (
       <div>
         <audio
@@ -170,6 +178,7 @@ class YPlayer extends React.Component {
               max={this.state.duration}
               onChange={this.onSeeking}
               onAfterChange={this.fastSeek}
+              marks={mark}
               tipFormatter={null}
             />
             <div className={styles.timeDetail}>
@@ -188,6 +197,7 @@ class YPlayer extends React.Component {
         </ButtonGroup>
         {!mini && (
           <div className={styles.bufferDetail}>
+            { loaded !== "100.00" && <Icon type="loading" style={{ marginRight: "2px" }} /> }
             {loaded === "100.00"
               ? "缓冲完毕"
               : loaded !== "0.00" && loaded + "%"}

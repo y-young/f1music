@@ -4,13 +4,21 @@ import { TimeSelector, VoteList } from "components";
 import { Alert, Switch } from "antd";
 
 class Vote extends React.Component {
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      this.voteList.getWrappedInstance().onRedirect();
+    }
+  }
+
   toggleAuto = () => {
     const { dispatch } = this.props;
     dispatch({ type: "vote/toggleAuto" });
   };
 
   handleRedirect = time => {
-    this.voteList.getWrappedInstance().redirect(time);
+    const { dispatch } = this.props;
+    this.voteList.getWrappedInstance().onRedirect();
+    dispatch({ type: "vote/redirect", payload: time });
   };
 
   render() {

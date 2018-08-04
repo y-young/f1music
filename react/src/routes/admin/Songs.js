@@ -111,7 +111,7 @@ class Songs extends React.Component {
                 <Button
                   type="secondary"
                   icon="rollback"
-                  onClick={() => this.handleRestore(row.id)}
+                  onClick={() => this.handleRestore([row.id])}
                   loading={loading.effects["songs/restore"]}
                 >
                   恢复
@@ -119,7 +119,7 @@ class Songs extends React.Component {
                 <Button
                   type="danger"
                   icon="delete"
-                  onClick={() => this.handleDelete(row.id, true)}
+                  onClick={() => this.handleDelete([row.id], true)}
                   loading={loading.effects["songs/delete"]}
                 >
                   彻底删除
@@ -129,7 +129,7 @@ class Songs extends React.Component {
               <Button
                 type="danger"
                 icon="delete"
-                onClick={() => this.handleDelete(row.id)}
+                onClick={() => this.handleDelete([row.id])}
                 loading={loading.effects["songs/trash"]}
               >
                 删除
