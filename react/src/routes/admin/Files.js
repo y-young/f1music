@@ -7,7 +7,12 @@ const FormItem = Form.Item;
 const Files = ({ files, loading }) => {
   const { list } = files;
   const columns = [
-    { dataIndex: "id", title: "#", width: "60px" },
+    {
+      dataIndex: "id",
+      title: "#",
+      width: "60px",
+      sorter: (a, b) => a.id - b.id
+    },
     { dataIndex: "md5", title: "MD5" },
     { dataIndex: "time", title: "时间" }
   ];

@@ -16,7 +16,7 @@ class SyncFile
 Log::info('OnDeletedSong'.$event->song->id);
         if ($event->song->isForceDeleting()) {
 Log::info('FDeleted'.$event->song->file_id);
-            if ($event->song->file->songs->count() == 0) {
+            if ($event->song->file->songs()->withTrashed()->count() == 0) {
             //文件无已关联的曲目,则彻底删除
 Log::info('FileNotexists'.$event->song->file_id);
                 File::destroy($event->song->file_id); //存储系统的文件同步由FileDeleting事件触发
@@ -27,7 +27,7 @@ Log::info('FileNotexists'.$event->song->file_id);
     public function onFileDeleting($event)
     {
 Log::info('OnDeletingFile');
-        if ($event->file->songs->count() == 0) { // 无关联的活跃曲目 TODO
+        if ($event->file->songs()->withTrashed()->count() == 0) { // 无关联的活跃曲目 TODO
             Log::info('ForceDeleted'.$event->file->id);
             Storage::disk('public')->delete($event->file->md5.'.mp3');
         } else {

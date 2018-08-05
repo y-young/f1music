@@ -4,7 +4,12 @@ import { Table, Form, Button } from "antd";
 
 const FormItem = Form.Item;
 const columns = [
-  { dataIndex: "id", title: "#", width: "50px" },
+  {
+    dataIndex: "id",
+    title: "#",
+    width: "50px",
+    sorter: (a, b) => a.id - b.id
+  },
   { dataIndex: "song.name", title: "曲目" },
   { dataIndex: "reason", title: "原因" },
   { dataIndex: "time", title: "时间" }

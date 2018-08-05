@@ -5,7 +5,12 @@ import { TimeSelector } from "components/admin";
 
 const FormItem = Form.Item;
 const columns = [
-  { dataIndex: "id", title: "#", width: "60px" },
+  {
+    dataIndex: "id",
+    title: "#",
+    width: "60px",
+    sorter: (a, b) => a.id - b.id
+  },
   {
     dataIndex: "playtime",
     title: "时段",
@@ -37,7 +42,7 @@ class Songs extends React.Component {
   };
 
   onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys });
+    this.setState({ selectedRowKeys: selectedRowKeys });
   }
 
   editSong = row => {
@@ -69,16 +74,23 @@ class Songs extends React.Component {
     } else {
       dispatch({ type: "songs/trash", payload: id });
     }
+    this.setState({ selectedRowKeys: [] });
   };
 
   handleBatchDelete = (isDelete = false) => {
+    console.log(this.state.selectedRowKeys);
+    console.log(isDelete);
     this.handleDelete(this.state.selectedRowKeys, isDelete);
-    this.setState({ selectedRowKeys: [] });
-  }
+  };
 
   handleRestore = id => {
     const { dispatch } = this.props;
     dispatch({ type: "songs/restore", payload: id });
+    this.setState({ selectedRowKeys: [] });
+  };
+
+  handleBatchRestore = () => {
+    this.handleRestore(this.state.selectedRowKeys);
   };
 
   renderExpanded = row => {
@@ -94,6 +106,7 @@ class Songs extends React.Component {
           <br />
           <FormItem label="创建时间">{row.created_at}</FormItem>
           <FormItem label="最后更新时间">{row.updated_at}</FormItem>
+          <FormItem label="删除时间">{row.deleted_at}</FormItem>
           <br />
           <FormItem label="试听">
             <audio src={row.file.url} controls="controls" />
@@ -201,17 +214,26 @@ class Songs extends React.Component {
           </Modal>
         )}
         {type === "trashed" ? (
-          <Button
-            type="danger"
-            onClick={() => this.handleBatchDelete(true)}
-            loading={loading.effects["songs/delete"]}
-          >
-            彻底删除所选
-          </Button>
+          <span>
+            <Button
+              type="secondary"
+              onClick={this.handleBatchRestore}
+              loading={loading.effects["songs/restore"]}
+            >
+              恢复所选
+            </Button>
+            <Button
+              type="danger"
+              onClick={() => this.handleBatchDelete(true)}
+              loading={loading.effects["songs/delete"]}
+            >
+              彻底删除所选
+            </Button>
+          </span>
         ) : (
           <Button
             type="danger"
-            onClick={this.handleDelete}
+            onClick={() => this.handleBatchDelete(false)}
             loading={loading.effects["songs/trash"]}
           >
             删除所选

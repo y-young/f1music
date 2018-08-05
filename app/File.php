@@ -11,6 +11,7 @@ class File extends Model
     protected $guarded = [];
     public $timestamps = false;
     protected $appends = ['url'];
+    protected $hidden = ['user_id'];
     protected $dispatchesEvents = [
         'deleting' => FileDeleting::class
     ];

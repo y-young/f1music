@@ -11,7 +11,6 @@ const { voteTexts } = config;
 
 class VoteList extends React.Component {
   state = {
-    currentTime: 0,
     rate: 0,
     reason: "",
     nowIndex: "",
@@ -24,7 +23,6 @@ class VoteList extends React.Component {
 
   init = () => {
     this.setState({
-      currentTime: 0,
       rate: 0,
       reason: "",
       canVote: false,
@@ -120,6 +118,10 @@ class VoteList extends React.Component {
     dispatch({
       type: "vote/report",
       payload: { id: id, reason: this.state.reason }
+    }).then(success => {
+      if (success) {
+        this.setState({ showReport: false })
+      }
     });
   };
 

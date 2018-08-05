@@ -60,8 +60,9 @@ export default {
       const res = yield call(Vote, { id: id, vote: rate });
       if (res.error === 0) {
         yield put({ type: "updateVoteText", payload: { id, rate } });
+        return true;
       }
-      return res.error === 0;
+      return false;
     },
     *redirect({ payload: time }, { put }) {
       yield put(routerRedux.push("/vote/" + time));
@@ -79,7 +80,9 @@ export default {
       const res = yield call(Report, { id: id, reason: reason });
       if (res.error === 0) {
         message.success("举报成功");
+        return true;
       }
+      return false;
     }
   },
 
