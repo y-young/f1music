@@ -188,7 +188,8 @@ class Songs extends React.Component {
             okText="保存"
             title="编辑曲目"
             onOk={this.handleSave}
-            style={{ top: "60px" }}
+            centered
+//            style={{ top: "60px" }}
           >
             <Form>
               {getFieldDecorator("id", { initialValue: row.id })(
