@@ -45,6 +45,7 @@ export default function request(opt) {
       if (response.data && response.data.error !== 0) {
         const error = new Error();
         error.message = response.data.msg;
+        error.type = "notice";
         throw error;
       }
 

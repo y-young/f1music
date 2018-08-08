@@ -8,7 +8,7 @@ export default {
   state: {
     time: 1,
     songs: [],
-    auto: true,
+    auto: window.localStorage.auto === "false" ? false : true,
     isDesktop: window.innerWidth > 993
   },
 
@@ -17,9 +17,12 @@ export default {
       return { ...state, ...payload };
     },
     toggleAuto(state, { payload }) {
+      if (typeof(window.localStorage) !== "undefined") {
+        window.localStorage.auto = !state.auto;
+      }
       return { ...state, auto: !state.auto };
     },
-    updateVoteText(
+    updateVote(
       state,
       {
         payload: { id, rate }
@@ -30,6 +33,22 @@ export default {
         if (item.id === id) {
           let record = item;
           record.vote = rate;
+          return record;
+        } else {
+          return item;
+        }
+      });
+      return {
+        ...state,
+        songs: [...newSongs]
+      };
+    },
+    markListened(state,{ payload: id }) {
+      const songs = state.songs;
+      const newSongs = songs.filter(item => {
+        if (item.id === id) {
+          let record = item;
+          record.listened = true;
           return record;
         } else {
           return item;
@@ -59,7 +78,7 @@ export default {
       }
       const res = yield call(Vote, { id: id, vote: rate });
       if (res.error === 0) {
-        yield put({ type: "updateVoteText", payload: { id, rate } });
+        yield put({ type: "updateVote", payload: { id, rate } });
         return true;
       }
       return false;

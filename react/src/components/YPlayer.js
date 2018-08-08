@@ -129,9 +129,10 @@ class YPlayer extends React.Component {
     }
   };
 
-  onError = () => {
+  onError = (e) => {
     this.stop();
-    message.error("播放出错了,请重试");
+    //message.error("播放出错了,请重试");
+    throw e;
   };
 
   onSeeking = time => {

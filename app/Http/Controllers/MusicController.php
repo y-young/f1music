@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +17,7 @@ class MusicController extends Controller
     {
         self::$API = new Meting('netease');
         // 网易常封cookies,必要时手动抓取music.163.com的cookies并更换
-        self::$API->cookie('***REMOVED***');
+        //self::$API->cookie('***REMOVED***');
     }
 
     public function Search(Request $request)
@@ -40,6 +41,7 @@ class MusicController extends Controller
         ], ['required' => '参数错误,请刷新重试'])->validate();
 
         $res = self::$API->format(true)->url($request->input('id'), 128);
+        Log::debug(var_export($res, true));
         $url = json_decode($res)->url;
         if(empty($url))
             return $this->error('暂无版权或歌曲未找到');

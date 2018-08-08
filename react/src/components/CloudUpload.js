@@ -49,11 +49,12 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = id => {
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
         return;
       }
+      values = { id: id, ...values };
       dispatch({ type: "upload/upload", payload: values });
     });
   };
@@ -62,9 +63,6 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
     return (
       <div>
         <Form layout="inline" hideRequiredMark={true}>
-          {getFieldDecorator("id", { initialValue: row.id })(
-            <Input type="hidden" />
-          )}
           <FormItem label="时段">
             {getFieldDecorator("time", {
               rules: [{ required: true, message: "请选择时段" }]
@@ -105,7 +103,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
           <FormItem label="上传">
             <Button
               type="primary"
-              onClick={handleUpload}
+              onClick={() => handleUpload(row.id)}
               loading={loading.effects["upload/upload"]}
               icon="upload"
             >

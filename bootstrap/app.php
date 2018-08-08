@@ -107,7 +107,8 @@ $app->routeMiddleware([
  $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 //Enable Session
  $app->register(Illuminate\Session\SessionServiceProvider::class);
-
+//Integrate Sentry
+ $app->register(Sentry\SentryLaravel\SentryLumenServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

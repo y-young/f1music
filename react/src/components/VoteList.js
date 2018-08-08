@@ -18,6 +18,7 @@ class VoteList extends React.Component {
     canVote: false,
     canSubmit: false,
     showReport: false,
+    triggerVote: true,
     countDown: 31
   };
 
@@ -28,25 +29,39 @@ class VoteList extends React.Component {
       canVote: false,
       canSubmit: false,
       showReport: false,
+      triggerVote: true
     });
   };
-  onRedirect = () => {
+  stopLast = () => {
     if (this.state.lastIndex) {
       this.refs["player" + this.state.lastIndex].stop();
     }
+  };
+  onRedirect = () => {
+    this.stopLast();
     this.setState({
       nowIndex: "",
       lastIndex: ""
     });
   };
-  timeListener = offset => {
+  timeListener = (offset, song) => {
     /*if (!this.state.canVote && time >= 30) {
       this.setState({ canVote: true });
     }*/
+    const { dispatch } = this.props;
     if (this.state.countDown > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
       });
+    } else {
+      if (!song.listened && song.vote === 0) {
+        dispatch({ type: "vote/markListened", payload: song.id });
+      }
+      //triggerVote: Only when first listen
+      if (this.state.triggerVote) {
+        this.setState({ triggerVote: false });
+        this.handleVote(song);
+      }
     }
   };
   triggerNext = nowIndex => {
@@ -55,19 +70,22 @@ class VoteList extends React.Component {
     let newIndex = String(Number(nowIndex) + 1);
     // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
     if (songs[newIndex] && auto) {
-      this.refs["player" + newIndex].audio.play();
-      this.refs["player" + newIndex].audio.pause();
+      const audio = this.refs["player" + newIndex].audio;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+          audio.pause();
+        });
+      }
     }
   };
   handleChange = index => {
     const { vote } = this.props;
     const { auto, songs } = vote;
-    if (this.state.lastIndex) {
-      this.refs["player" + this.state.lastIndex].stop();
-    }
+    this.stopLast();
     this.init();
-    if (index && songs[index].vote !== 0) {
-      this.setState({ countDown: 0, rate: songs[index].vote });
+    if (index && ( songs[index].vote !== 0 || songs[index].listened )) {
+      this.setState({ countDown: 0, rate: songs[index].vote, triggerVote: false });
     } else {
       this.setState({ countDown: 31 });
     }
@@ -84,34 +102,55 @@ class VoteList extends React.Component {
     }
     return index;
   };
-  handleVote = (song, index) => {
-    const { vote, dispatch } = this.props;
+  playNext = () => {
+    const { vote } = this.props;
     const { songs, auto } = vote;
+
+    let newIndex = String(Number(this.state.nowIndex) + 1);
+    if (songs[newIndex] && auto) {
+      this.setState({ nowIndex: newIndex });
+      this.handleChange(newIndex);
+    }
+  };
+  checkValidity = () => {
     if (this.state.countDown > 0) {
       message.warning("试听时长需达到30秒才能投票");
-      const player = this.refs["player" + index];
+      const player = this.refs["player" + this.state.nowIndex];
       player.audio.currentTime = 0;
       player.play();
-      return;
+      return false;
     }
     if (!this.state.canSubmit) {
-      message.error("选择或更改评价后才能提交");
+      message.warning("选择或更改评价后才能提交");
+      return false;
+    }
+    return true;
+  };
+  handleVote = (song, index = undefined) => {
+    const { dispatch } = this.props;
+    const validity = this.checkValidity();
+    if (!validity) {
       return;
     }
-    let newIndex = String(Number(this.state.nowIndex) + 1);
     //this.triggerNext(this.state.nowIndex);
     const id = song.id;
     const rate = this.state.rate;
     dispatch({ type: "vote/vote", payload: { id, rate } }).then(success => {
       if (success) {
-        message.success("投票成功!");
+        message.success("投票成功");
         this.setState({ canSubmit: false });
-        if (songs[newIndex] && auto) {
-          this.setState({ nowIndex: newIndex });
-          this.handleChange(newIndex);
+        if (index !== undefined) {
+          this.playNext();
         }
       }
     });
+  };
+  onEnded = (song, index) => {
+    if (song.vote === 0) {
+      this.checkValidity();
+    } else {
+      this.playNext();
+    }
   };
   handleReport = id => {
     const { dispatch } = this.props;
@@ -145,8 +184,8 @@ class VoteList extends React.Component {
             <div>
               <YPlayer
                 src={song.url}
-                onProgress={this.timeListener}
-                onEnded={() => this.handleVote(song, key)}
+                onProgress={offset => this.timeListener(offset, song)}
+                onEnded={() => this.onEnded(song, key)}
                 ref={"player" + key}
                 className={styles.yplayer}
               />
