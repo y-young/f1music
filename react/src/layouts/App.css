@@ -83,16 +83,12 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+.main::-webkit-scrollbar {
+  display: none;
+}
 .content {
   position: relative;
   max-width: 800px;
   margin: 0 auto;
   padding: 7px 15px 40px 15px;
-}
-.footer {
-  text-align: center;
-}
-.footer a {
-  color: inherit;
-  text-decoration: underline;
 }

@@ -3,22 +3,18 @@ import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter } from "dva/router";
 import { CSSTransitionGroup } from "react-transition-group";
-import { Sidebar } from "components/admin";
+import { Sidebar, Footer } from "components/admin";
 import { LocaleProvider, Layout, Icon } from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
 import styles from "./App.css";
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 const Admin = ({ children, dispatch, admin, location }) => {
   const { title, siderFolded, isDesktop } = admin;
 
   const toggle = () => {
     dispatch({ type: "admin/toggleSider" });
-  };
-  const Year = () => {
-    const date = new Date();
-    return date.getFullYear();
   };
 
   const appClass = classnames({
@@ -56,16 +52,7 @@ const Admin = ({ children, dispatch, admin, location }) => {
                   </CSSTransitionGroup>
                 </div>
               </Content>
-              <Footer className={styles.footer}>
-                Copyright © 2007-{Year()} FZYZ SCAN & 7HMakers. All rights
-                reserved.<br />
-                Author & Current Maintainer: Googleplex<br />
-                Past Maintainer: <a href="https://blog.robotshell.org">
-                  Robot
-                </a>{" "}
-                <a href="http://blog.miskcoo.com">Miskcoo</a>{" "}
-                <a href="https://www.upsuper.org">Upsuper</a>
-              </Footer>
+              <Footer />
             </div>
           </div>
         </div>

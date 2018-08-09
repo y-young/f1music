@@ -61,6 +61,9 @@
   -o-transition: left 250ms ease;
   transition: left 250ms ease;
 }
+.nav::-webkit-scrollbar {
+  display: none;
+}
 .nav a {
   text-decoration: none;
 }
