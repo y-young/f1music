@@ -5,19 +5,17 @@ const dsn = "***REMOVED***";
 function createSentry(props) {
   const { config, context } = props;
 
-  Raven.config(
-    dsn,
-    {
-      shouldSendCallback: (data) => {
-        if (data.extra.__serialized__) {
-          const { type } = data.extra.__serialized__;
-          return !type || type !== "notice";
-        } else {
-          return true;
-        }
-      },
-      ...config
-    }).install();
+  Raven.config(dsn, {
+    shouldSendCallback: data => {
+      if (data.extra.__serialized__) {
+        const { type } = data.extra.__serialized__;
+        return !type || type !== "notice";
+      } else {
+        return true;
+      }
+    },
+    ...config
+  }).install();
 
   if (context) {
     const { tags } = context;
@@ -27,7 +25,7 @@ function createSentry(props) {
   }
 
   return {
-    onAction: (store) => (next) => (action) => {
+    onAction: store => next => action => {
       try {
         const { type, ...others } = action;
         Raven.captureBreadcrumb({
@@ -41,7 +39,7 @@ function createSentry(props) {
           data: others,
           message: type
         });
-      } catch(e) {
+      } catch (e) {
         if (!e.type || e.type !== "notice") {
           Raven.captureException(e, {
             extra: {
@@ -53,17 +51,18 @@ function createSentry(props) {
         }
       }
     },
-    onEffect: (effect, _, model, action) => function* (...args) {
-      Raven.captureBreadcrumb({
-        category: "effect.start",
-        message: action
-      });
-      yield effect(...args);
-      Raven.captureBreadcrumb({
-        category: "effect.stop",
-        message: action
-      });
-    }
+    onEffect: (effect, _, model, action) =>
+      function*(...args) {
+        Raven.captureBreadcrumb({
+          category: "effect.start",
+          message: action
+        });
+        yield effect(...args);
+        Raven.captureBreadcrumb({
+          category: "effect.stop",
+          message: action
+        });
+      }
   };
 }
 

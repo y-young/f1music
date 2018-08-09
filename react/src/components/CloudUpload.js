@@ -21,7 +21,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         return { children: text.toString() };
       }
     },
-    { dataIndex: "album", title: "专辑", width: 200 },
+    { dataIndex: "album", title: "专辑", width: 200 }
     /*{
       title: "Listen",
       key: "listen",

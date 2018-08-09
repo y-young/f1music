@@ -129,7 +129,7 @@ class YPlayer extends React.Component {
     }
   };
 
-  onError = (e) => {
+  onError = e => {
     this.stop();
     //message.error("播放出错了,请重试");
     throw e;
@@ -198,7 +198,9 @@ class YPlayer extends React.Component {
         </ButtonGroup>
         {!mini && (
           <div className={styles.bufferDetail}>
-            { loaded !== "100.00" && <Icon type="loading" style={{ marginRight: "2px" }} /> }
+            {loaded !== "100.00" && (
+              <Icon type="loading" style={{ marginRight: "2px" }} />
+            )}
             {loaded === "100.00"
               ? "缓冲完毕"
               : loaded !== "0.00" && loaded + "%"}

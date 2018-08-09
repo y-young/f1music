@@ -22,7 +22,7 @@ const Login = ({
 
   const validatePassword = (rule, value, callback) => {
     if (value === "123456") {
-      callback("为保证投票质量目前禁止使用校网初始密码登录,请更改密码");
+      callback("为保证投票质量禁止使用校网初始密码登录,请更改密码");
     }
     callback();
   };

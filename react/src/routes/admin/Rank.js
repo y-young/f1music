@@ -51,11 +51,11 @@ class Rank extends React.Component {
     const { rank } = this.props;
     const { voteResult } = rank;
     let result = JSON.parse(JSON.stringify(voteResult)); //!important:  Copy Array
-      result.forEach(v => {
-        delete v.sum;
-        delete v.counts;
-      });
-      return JSON.stringify(result);
+    result.forEach(v => {
+      delete v.sum;
+      delete v.counts;
+    });
+    return JSON.stringify(result);
   };
 
   renderExpanded = row => {
@@ -108,7 +108,10 @@ class Rank extends React.Component {
             ]}
             style={{ top: "70px" }}
           >
-            <TextArea value={ this.result() } autosize={{ minRows: 6, maxRows: 10 }} />
+            <TextArea
+              value={this.result()}
+              autosize={{ minRows: 6, maxRows: 10 }}
+            />
           </Modal>
         )}
       </div>

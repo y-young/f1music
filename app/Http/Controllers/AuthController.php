@@ -13,7 +13,7 @@ class AuthController extends Controller
         'stuId.required' => '请输入学号',
         'stuId.between' => '学号应为10或11位',
         'password.required' => '请输入密码',
-        'password.not_in' => '为保证投票质量目前禁止使用校网初始密码登录,请更改密码'
+        'password.not_in' => '为保证投票质量禁止使用校园网初始密码登录,请更改密码'
     ];
 
     public static function campusAuth(AuthData $authData)

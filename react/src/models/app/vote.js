@@ -17,7 +17,7 @@ export default {
       return { ...state, ...payload };
     },
     toggleAuto(state, { payload }) {
-      if (typeof(window.localStorage) !== "undefined") {
+      if (typeof window.localStorage !== "undefined") {
         window.localStorage.auto = !state.auto;
       }
       return { ...state, auto: !state.auto };
@@ -43,7 +43,7 @@ export default {
         songs: [...newSongs]
       };
     },
-    markListened(state,{ payload: id }) {
+    markListened(state, { payload: id }) {
       const songs = state.songs;
       const newSongs = songs.filter(item => {
         if (item.id === id) {

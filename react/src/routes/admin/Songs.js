@@ -43,7 +43,7 @@ class Songs extends React.Component {
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys: selectedRowKeys });
-  }
+  };
 
   editSong = row => {
     this.props.form.resetFields();
@@ -189,7 +189,7 @@ class Songs extends React.Component {
             title="编辑曲目"
             onOk={this.handleSave}
             centered
-//            style={{ top: "60px" }}
+            //            style={{ top: "60px" }}
           >
             <Form>
               {getFieldDecorator("id", { initialValue: row.id })(

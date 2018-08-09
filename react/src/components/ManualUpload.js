@@ -35,15 +35,15 @@ class ManualUpload extends React.Component {
     const tooSmall = file.size / 1024 / 1024 < 1;
 
     if (!isMp3) {
-      message.error("只能上传mp3文件");
+      message.error("请上传mp3格式的文件");
       return false;
     }
     if (tooBig) {
-      message.error("上传歌曲大小不能超过 20MB!");
+      message.error("上传歌曲大小不得超过20MB");
       return false;
     }
     if (tooSmall) {
-      message.error("为保证音乐质量，请上传一个至少 1MB的文件!");
+      message.error("为保证音乐质量,请上传一个至少 1MB的文件");
       return false;
     }
     return true;
@@ -96,7 +96,7 @@ class ManualUpload extends React.Component {
         <FormItem {...formItemLayout} label="来源" hasFeedback>
           {getFieldDecorator("origin")(
             <Input
-              placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可以留空"
+              placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可留空"
               maxLength="50"
             />
           )}
@@ -116,7 +116,9 @@ class ManualUpload extends React.Component {
               <Icon type="inbox" />
             </p>
             <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
-            <p className="ant-upload-hint">只能上传mp3文件，且大小不超过20MB</p>
+            <p className="ant-upload-hint">
+              只能上传mp3格式的文件，且大小不超过20MB
+            </p>
           </Upload.Dragger>
         </FormItem>
       </Form>

@@ -84,8 +84,12 @@ class VoteList extends React.Component {
     const { auto, songs } = vote;
     this.stopLast();
     this.init();
-    if (index && ( songs[index].vote !== 0 || songs[index].listened )) {
-      this.setState({ countDown: 0, rate: songs[index].vote, triggerVote: false });
+    if (index && (songs[index].vote !== 0 || songs[index].listened)) {
+      this.setState({
+        countDown: 0,
+        rate: songs[index].vote,
+        triggerVote: false
+      });
     } else {
       this.setState({ countDown: 31 });
     }
@@ -159,7 +163,7 @@ class VoteList extends React.Component {
       payload: { id: id, reason: this.state.reason }
     }).then(success => {
       if (success) {
-        this.setState({ showReport: false })
+        this.setState({ showReport: false });
       }
     });
   };
@@ -238,7 +242,7 @@ class VoteList extends React.Component {
                 <div className={styles.reportArea} key="report">
                   <Input
                     value={this.state.reason}
-                    placeholder="填写举报原因"
+                    placeholder="举报原因"
                     className={styles.reason}
                     onChange={e => this.setState({ reason: e.target.value })}
                     maxLength="60"
