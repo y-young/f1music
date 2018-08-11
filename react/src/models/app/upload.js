@@ -1,10 +1,11 @@
 import { message } from "antd";
-import { Search, Mp3, Upload } from "services/upload";
+import { Search, Mp3, Upload, View } from "services/upload";
 
 export default {
   namespace: "upload",
   state: {
-    searchResult: []
+    searchResult: [],
+    songs: []
   },
 
   reducers: {
@@ -35,6 +36,10 @@ export default {
   },
 
   effects: {
+    *fetch(_, { call, put }) {
+      const data = yield call(View);
+      yield put({ type: "updateState", payload: { songs: data.songs } });
+    },
     *search({ payload: keyword }, { call, put }) {
       const data = yield call(Search, keyword);
       if (data.error === 0)
@@ -52,6 +57,16 @@ export default {
       if (data.error === 0) {
         message.success("上传成功");
       }
+    }
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen(({ pathname }) => {
+        if (pathname === "/upload") {
+          dispatch({ type: "fetch" });
+        }
+      });
     }
   }
 };

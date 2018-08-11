@@ -41,7 +41,6 @@ class ManageController extends Controller
         if (config('music.openVote')) {
 //            return $this->error('开放投票期间禁止删除曲目');
         }
-        Log::debug($request->input('id'));
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
         }

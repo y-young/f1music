@@ -82,6 +82,18 @@ class UploadController extends Controller
         return $this->success();
     }
 
+    public function Uploads()
+    {
+        if (! config('music.openUpload')) {
+            return $this->error(self::$errorMsg['stop_upload'], 2);
+        }
+        $songs = Song::withTrashed()->where('user_id', self::$stuId)->get();
+        $songs = $songs->map(function ($song) {
+            return $song->only(['playtime', 'name', 'origin']);
+        });
+        return $this->success('songs', $songs);
+    }
+
     public static function getFileFromRequest(Request $request)
     {
         $tmpDir = storage_path('app/tmp/');

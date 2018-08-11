@@ -7,7 +7,8 @@ module.exports = {
     vote: "/vote",
     search: "/music/search",
     mp3: "/music/mp3",
-    upload: "/upload"
+    upload: "/upload",
+    uploads: "/uploads"
   },
   voteTexts: ["未投票", "非常不合适", "不合适", "中立", "合适", "非常合适"]
 };

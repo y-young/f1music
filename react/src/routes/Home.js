@@ -60,7 +60,7 @@ const Home = () => {
         <TabPane tab="投票说明" key="vote">
           <p>
             为保证投票质量，目前禁止使用校园网默认密码(即123456)登录投票，使用默认密码的同学请先登录
-            <a href="http://www.fzyz.net/">福州一中官网</a>
+            <a href="http://www.fzyz.net/" target="_blank" rel="noopener noreferrer">福州一中官网</a>
             修改密码(官方推荐浏览器: Internet Explorer)。
           </p>
 

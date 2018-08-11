@@ -1,7 +1,7 @@
 import { request, config } from "utils";
 
 const { api } = config;
-const { search, mp3, upload } = api;
+const { search, mp3, upload, uploads } = api;
 
 export async function Search(keyword) {
   return request({
@@ -24,5 +24,12 @@ export async function Upload(params) {
     url: upload,
     method: "post",
     data: params
+  });
+}
+
+export async function View() {
+  return request({
+    url: uploads,
+    method: "get"
   });
 }

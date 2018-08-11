@@ -32,7 +32,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function songs()
     {
-        return $this->hasMany('App\Song', 'uploader');
+        return $this->hasMany('App\Song');
     }
 
     public function order()

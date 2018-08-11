@@ -47,6 +47,7 @@ export default function request(opt) {
       if (response.data && response.data.error !== 0) {
         const error = new Error();
         error.type = "notice"; //用户操作引起的错误而非程序错误
+        error.errno = response.data.error;
         error.message = response.data.msg;
         throw error;
       }

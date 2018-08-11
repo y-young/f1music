@@ -29,10 +29,15 @@ $router->post('/api/login', [
 ]);
 
 $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
+    $router->get('/uploads', [
+        'middleware' => 'throttle:40',
+        'uses' => 'UploadController@Uploads'
+    ]);
     $router->post('/upload', [
         'middleware' => 'throttle:20',
         'uses' => 'UploadController@Upload'
     ]);
+
     $router->post('/vote/list', [
         'middleware' => 'throttle:20',
         'uses' => 'VoteController@getSongs'
@@ -41,10 +46,12 @@ $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($ro
         'middleware' => 'throttle:30',
         'uses' => 'VoteController@Vote'
     ]);
+
     $router->post('/report', [
         'middleware' => 'throttle:30',
         'uses' => 'ReportController@Report'
     ]);
+
     $router->get('/download/{id:[0-9]+}', [
         'middleware' => ['throttle:30', 'can:download'],
         'uses' => 'ManageController@Download'
