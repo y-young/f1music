@@ -22,6 +22,10 @@ hr {
   color: inherit;
   text-decoration: underline;
 }
+:global(.redirect) {
+  font-size: 14px;
+  color: #777;
+}
 :global {
   .fade-enter .fade-leave-active {
     opacity: 0;

@@ -51,7 +51,8 @@ class MusicController extends Controller
 
     public function Playlist()
     {
-        $list = Cache::remember('playlist', 30, function() {
+        $list = Cache::remember('playlist', 10, function() {
+            //公布结果前建立网易云音乐歌单,并把歌单ID填写到此处
             $result = json_decode(self::$API->format(true)->playlist('2064024722'), true);
             $list = array_map(function ($song) {
                 return [

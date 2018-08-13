@@ -178,7 +178,6 @@ class Songs extends React.Component {
           loading={loading.effects["songs/fetch"]}
           rowKey="id"
           scroll={{ x: 600 }}
-          style={{ width: "100%" }}
         />
         {row && (
           <Modal

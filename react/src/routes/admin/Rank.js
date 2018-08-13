@@ -88,7 +88,6 @@ class Rank extends React.Component {
           expandedRowRender={this.renderExpanded}
           scroll={{ x: 600 }}
           rowKey="id"
-          style={{ width: "100%" }}
         />
         <Button
           type="primary"

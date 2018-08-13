@@ -6,26 +6,22 @@ import { Button, Slider, Icon, message } from "antd";
 const ButtonGroup = Button.Group;
 
 class YPlayer extends React.Component {
+  state = {
+    playing: false,
+    duration: 0,
+    time: 0,
+    displayTime: 0,
+    loaded: "0.00",
+    disableSliderUpdate: false
+  };
   constructor(props) {
     super(props);
-    this.state = {
-      playing: false,
-      duration: 0,
-      time: 0,
-      displayTime: 0,
-      loaded: "0.00",
-      disableSliderUpdate: false
-    };
     this.updateTime = throttle(this.updateTime, 200);
   }
 
   onTimeUpdate = event => {
     this.updateTime(event.target.currentTime);
-  };
-
-  audio = () => {
-    return this.audio;
-  };
+  }; 
 
   init = () => {
     this.setState({
@@ -102,9 +98,12 @@ class YPlayer extends React.Component {
     }
   };
 
-  updateDuration = e => {
-    e.persist();
-    this.setState({ duration: e.target.duration });
+  updateDuration = event => {
+    event.persist();
+    const duration = event.target.duration;
+    if (duration !== 1) {
+      this.setState({ duration });
+    }
   };
 
   updateTime = time => {
@@ -139,7 +138,7 @@ class YPlayer extends React.Component {
     this.setState({ disableSliderUpdate: true, displayTime: time });
   };
 
-  fastSeek = time => {
+  seek = time => {
     this.setState({
       disableSliderUpdate: false,
       displayTime: time,
@@ -151,18 +150,18 @@ class YPlayer extends React.Component {
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
-    let mark = {};
+    /*let mark = {};
     if (this.state.duration > 0) {
       mark[this.state.duration * 0.4] = "副歌";
-    }
+    }*/
     return (
       <div>
         <audio
           ref={audio => {
             this.audio = audio;
           }}
-          //controls="controls"
           src={this.props.src}
+          //controls="controls"
           onProgress={this.onLoad}
           onTimeUpdate={this.onTimeUpdate}
           onDurationChange={this.updateDuration}
@@ -178,8 +177,7 @@ class YPlayer extends React.Component {
               value={this.state.displayTime}
               max={this.state.duration}
               onChange={this.onSeeking}
-              onAfterChange={this.fastSeek}
-              marks={mark}
+              onAfterChange={this.seek}
               tipFormatter={null}
             />
             <div className={styles.timeDetail}>

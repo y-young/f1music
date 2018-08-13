@@ -97,7 +97,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
           <br />
           <FormItem label="试听">
             <Spin spinning={!row.mp3}>
-              <YPlayer src={row.mp3} mini={true} style={{ marginTop: "1px" }} />
+              <YPlayer src={row.mp3} mini style={{ marginTop: "1px" }} />
             </Spin>
           </FormItem>
           <FormItem label="上传">
@@ -135,7 +135,6 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         rowKey="id"
         pagination={false}
         scroll={{ x: 500 }}
-        style={{ width: "100%" }}
       />
     </div>
   );

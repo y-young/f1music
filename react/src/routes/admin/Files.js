@@ -36,7 +36,14 @@ const Files = ({ files, loading }) => {
         文件总数: {list.length}个
       </div>
       <br />
-      <Table dataSource={list} expandedRowRender={renderExpanded} columns={columns} loading={loading.effects["files/fetch"]} scroll={{x: 400 }} rowKey="id" style={{ width: "100%" }} />
+      <Table
+        dataSource={list}
+        expandedRowRender={renderExpanded}
+        columns={columns}
+        loading={loading.effects["files/fetch"]}
+        scroll={{ x: 400 }}
+        rowKey="id"
+      />
     </div>
   );
 };

@@ -56,6 +56,9 @@ export default {
         case "/logout":
           title = "登出";
           break;
+        case "/result":
+          title = "投票结果";
+          break;
         default:
           title = "404";
           break;

@@ -6,7 +6,7 @@ const ViewUploads = ({ upload, loading }) => {
   const { songs } = upload;
 
   const columns = [
-    { dataIndex: "playtime", title: "时段", width: 50 },
+    { dataIndex: "playtime", title: "时段", width: 70 },
     { dataIndex: "name", title: "曲名", width: 200 },
     {
       dataIndex: "origin",
@@ -22,8 +22,7 @@ const ViewUploads = ({ upload, loading }) => {
         columns={columns}
         loading={loading.effects["upload/fetch"]}
         pagination={false}
-        scroll={{ x: 400 }}
-        style={{ width: "100%" }}
+        scroll={{ x: 600 }}
       />
     </div>
   );

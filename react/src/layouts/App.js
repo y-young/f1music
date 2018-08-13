@@ -1,10 +1,8 @@
 import React from "react";
 import { connect } from "dva";
 import classnames from "classnames";
-import { withRouter, Switch, Route } from "dva/router";
-import { CSSTransitionGroup } from "react-transition-group";
+import { withRouter } from "dva/router";
 import { Sidebar, Footer } from "components";
-import { Home, Upload, Vote, NotFound } from "routes";
 import { LocaleProvider, Layout, Icon } from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
 import styles from "./App.css";
@@ -45,28 +43,7 @@ const App = ({ children, dispatch, app, location }) => {
             <div className={styles.main}>
               <Content>
                 <div className={styles.content}>
-                  <Switch>
-                    <CSSTransitionGroup
-                      transitionName="fade"
-                      transitionEnterTimeout={500}
-                      transitionLeaveTimeout={200}
-                    >
-                      <Route path="/" exact component={Home} key="Home" />
-                      <Route
-                        path="/upload"
-                        exact
-                        component={Upload}
-                        key="Upload"
-                      />
-                      <Route
-                        path="/vote/:time"
-                        exact
-                        component={Vote}
-                        key="Vote"
-                      />
-                    </CSSTransitionGroup>
-                    <Route path="*" component={NotFound} key="NotFound" />
-                  </Switch>
+                  { children }
                 </div>
               </Content>
               <Footer />

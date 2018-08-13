@@ -69,7 +69,8 @@ const Login = ({
                 type="primary"
                 onClick={handleSubmit}
                 loading={loading.effects["app/login"]}
-                style={{ width: "100%" }}
+//                style={{ width: "100%" }}
+                block
               >
                 登录
               </Button>
