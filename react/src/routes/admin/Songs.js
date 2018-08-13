@@ -106,7 +106,9 @@ class Songs extends React.Component {
           <br />
           <FormItem label="创建时间">{row.created_at}</FormItem>
           <FormItem label="最后更新时间">{row.updated_at}</FormItem>
-          <FormItem label="删除时间">{row.deleted_at}</FormItem>
+          {type === "trashed" && (
+            <FormItem label="删除时间">{row.deleted_at}</FormItem>
+          )}
           <br />
           <FormItem label="试听">
             <audio src={row.file.url} controls="controls" />
