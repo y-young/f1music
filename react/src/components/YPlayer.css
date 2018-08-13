@@ -2,13 +2,16 @@
   float: left;
   margin-right: 20px;
 }
-.controls Button Icon {
+.controls button Icon {
   margin: 0px;
 }
-.timeDetail {
+.miniTimeDetail {
   font-size: 12px;
   color: #777;
   display: inline;
+}
+.timeDetail {
+  composes: miniTimeDetail;
   float: right;
 }
 .bufferDetail {

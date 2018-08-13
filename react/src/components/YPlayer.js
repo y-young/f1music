@@ -21,7 +21,7 @@ class YPlayer extends React.Component {
 
   onTimeUpdate = event => {
     this.updateTime(event.target.currentTime);
-  }; 
+  };
 
   init = () => {
     this.setState({
@@ -150,28 +150,31 @@ class YPlayer extends React.Component {
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
+    const audio = (
+      <audio
+        ref={audio => {
+          this.audio = audio;
+        }}
+        src={this.props.src}
+        //controls="controls"
+        onProgress={this.onLoad}
+        onTimeUpdate={this.onTimeUpdate}
+        onDurationChange={this.updateDuration}
+        onPlay={this.onPlay}
+        onPause={this.onPause}
+        onEnded={this.onEnded}
+        onError={this.onError}
+        preload="none"
+      />
+    );
     /*let mark = {};
     if (this.state.duration > 0) {
       mark[this.state.duration * 0.4] = "副歌";
     }*/
-    return (
-      <div>
-        <audio
-          ref={audio => {
-            this.audio = audio;
-          }}
-          src={this.props.src}
-          //controls="controls"
-          onProgress={this.onLoad}
-          onTimeUpdate={this.onTimeUpdate}
-          onDurationChange={this.updateDuration}
-          onPlay={this.onPlay}
-          onPause={this.onPause}
-          onEnded={this.onEnded}
-          onError={this.onError}
-          preload="none"
-        />
-        {!mini && (
+    if (!mini) {
+      return (
+        <div>
+          {audio}
           <div>
             <Slider
               value={this.state.displayTime}
@@ -185,16 +188,14 @@ class YPlayer extends React.Component {
               {this.formatTime(this.state.duration)}
             </div>
           </div>
-        )}
-        <ButtonGroup className={styles.controls}>
-          <Button type="primary" onClick={this.toggle}>
-            <Icon type={this.state.playing ? "pause" : "caret-right"} />
-          </Button>
-          <Button type="primary" onClick={this.stop}>
-            <Icon type="step-backward" />
-          </Button>
-        </ButtonGroup>
-        {!mini && (
+          <ButtonGroup className={styles.controls}>
+            <Button type="primary" onClick={this.toggle}>
+              <Icon type={this.state.playing ? "pause" : "caret-right"} />
+            </Button>
+            <Button type="primary" onClick={this.stop}>
+              <Icon type="step-backward" />
+            </Button>
+          </ButtonGroup>
           <div className={styles.bufferDetail}>
             {loaded !== "100.00" && (
               <Icon type="loading" style={{ marginRight: "2px" }} />
@@ -203,9 +204,27 @@ class YPlayer extends React.Component {
               ? "缓冲完毕"
               : loaded !== "0.00" && loaded + "%"}
           </div>
-        )}
-      </div>
-    );
+        </div>
+      );
+    } else {
+      return (
+        <span style={{ width: 150 }}>
+          {audio}
+          <div className={styles.miniTimeDetail}>
+            {this.formatTime(this.state.displayTime)} /{" "}
+            {this.formatTime(this.state.duration)}
+          </div>
+          <ButtonGroup className={styles.controls}>
+            <Button type="primary" onClick={this.toggle}>
+              <Icon type={this.state.playing ? "pause" : "caret-right"} />
+            </Button>
+            <Button type="primary" onClick={this.stop}>
+              <Icon type="step-backward" />
+            </Button>
+          </ButtonGroup>
+        </span>
+      );
+    }
   }
 
   formatTime(seconds) {
