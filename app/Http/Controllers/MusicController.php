@@ -55,10 +55,12 @@ class MusicController extends Controller
             //公布结果前建立网易云音乐歌单,并把歌单ID填写到此处
             $result = json_decode(self::$API->format(true)->playlist('2064024722'), true);
             $list = array_map(function ($song) {
+                $url = json_decode(self::$API->format(true)->url($song['id']))->url;
+                $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1);
                 return [
                     'title' => $song['name'],
                     'author' => implode('', $song['artist']),
-                    'url' => json_decode(self::$API->format(true)->url($song['id']))->url,
+                    'url' => $url,
                     'pic' => json_decode(self::$API->format(true)->pic($song['pic_id']))->url
                 ];
             }, $result);
