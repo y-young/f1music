@@ -172,12 +172,13 @@ class VoteList extends React.Component {
     const { vote, loading } = this.props;
     const { isDesktop, songs } = vote;
     const listLoading = loading.effects["vote/fetch"];
-    const buttonProps = {
-      shape: !isDesktop ? "circle" : undefined,
-      icon: this.state.countDown <= 0 ? "check" : undefined,
-      disabled: this.state.countDown > 0
-    };
     const list = songs.map((song, key) => {
+      const buttonProps = {
+        type: song.vote !== 0 ? "secondary" : "primary",
+        shape: !isDesktop ? "circle" : undefined,
+        icon: this.state.countDown <= 0 ? "check" : undefined,
+        disabled: this.state.countDown > 0
+      };
       return (
         <Panel
           header={"#" + (key + 1) + " 您的投票: " + voteTexts[song.vote]}
@@ -222,7 +223,6 @@ class VoteList extends React.Component {
                 </div>
               )}
               <Button
-                type="primary"
                 loading={loading.effects["vote/vote"]}
                 className={styles.voteButton}
                 onClick={() => this.handleVote(song)}
