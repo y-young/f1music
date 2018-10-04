@@ -11,7 +11,7 @@
   <meta name="description" content="福州一中 校园音乐征集">
   <meta name="keywords" content="福州一中,校园音乐,FZYZ,FZYZ SCAN">
   <link rel="stylesheet" href="{{ mix('admin.css') }}">
-  <title>首页 - 福州一中 校园音乐征集管理系统</title>
+  <title>首页 - 福州一中校园音乐征集 管理系统</title>
 </head>
 <body>
   <div id="root"></div>

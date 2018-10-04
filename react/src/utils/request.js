@@ -58,6 +58,9 @@ export default function request(opt) {
       // >>>>>>>>>>>>>> 请求失败 <<<<<<<<<<<<<<
       // 请求配置发生的错误
       if (!error.response) {
+        if (error.code === "ECONNABORTED") {
+          return Promise.reject({ type: "notice", message: "请求超时,请重试" });
+        }
         return Promise.reject({ type: "notice", message: error.message });
       }
 
