@@ -82,16 +82,12 @@ export default {
       }
     },
     *logout({ payload }, { call, put }) {
-      /*const data = yield call(logout, parse(payload))
-      if (data.error == 0) {*/
       yield put({
         type: "updateState",
         payload: {
           loggedIn: false
         }
-      }); /*} else {
-        throw (data)
-      }*/
+      });
     },
     *mobileCollapse(action, { call, put }) {
       const isDesktop = window.innerWidth > 993;

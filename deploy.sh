@@ -51,7 +51,7 @@ function writeConfig() {
         app_debug="true"
     fi
     app_key=`cat /dev/urandom | head -n 32 | md5sum | head -c 32`
-    cp .env.example env
+    cp .env.example .env
     sed -i "s/{APP_ENV}/${app_env}/" env
     sed -i "s/{APP_DEBUG}/${app_debug}/" env
     sed -i "s/{APP_KEY}/${app_key}/" env

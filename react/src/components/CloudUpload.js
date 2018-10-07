@@ -22,13 +22,6 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
       }
     },
     { dataIndex: "album", title: "专辑", width: 200 }
-    /*{
-      title: "Listen",
-      key: "listen",
-      fixed: "right",
-      width: 70,
-      render: (row) => <YPlayer src={"https://music.163.com/song/media/outer/url?id=" + row.id + ".mp3"} mini={true} />
-    }*/
   ];
 
   const search = keyword => {

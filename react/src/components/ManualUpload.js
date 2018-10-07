@@ -30,14 +30,9 @@ class ManualUpload extends React.Component {
       return false;
     }
 
-    const isMp3 = file.type === "audio/mp3";
     const tooBig = file.size / 1024 / 1024 > 20;
     const tooSmall = file.size / 1024 / 1024 < 1;
 
-    if (!isMp3) {
-      message.error("请上传mp3格式的文件");
-      return false;
-    }
     if (tooBig) {
       message.error("上传歌曲大小不得超过20MB");
       return false;
@@ -52,12 +47,10 @@ class ManualUpload extends React.Component {
   onChange = info => {
     let { file } = info;
     const { response } = file;
-    if (file.status !== "uploading") {
-      console.log(file, info.fileList);
-    }
     if (file.status === "done") {
       if (response.error === 0) {
         message.success("上传成功");
+        window.location.reload();
       } else {
         message.error(response.msg);
         file.status = "error";
@@ -94,7 +87,7 @@ class ManualUpload extends React.Component {
           })(<Input placeholder="歌曲名称" maxLength="50" />)}
         </FormItem>
         <FormItem {...formItemLayout} label="来源" hasFeedback>
-          {getFieldDecorator("origin")(
+          {getFieldDecorator("origin", { initialValue: "" })(
             <Input
               placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可留空"
               maxLength="50"
@@ -102,7 +95,6 @@ class ManualUpload extends React.Component {
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="上传文件">
-          {/* {getFieldDecorator('file')( */}
           <Upload.Dragger
             fileList={this.state.fileList}
             action="/api/upload"
