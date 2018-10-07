@@ -45,6 +45,9 @@ export default {
         case "/rank":
           title = "投票结果";
           break;
+        case "/statistics":
+          title = "数据统计";
+          break;
         default:
           title = "404";
           break;

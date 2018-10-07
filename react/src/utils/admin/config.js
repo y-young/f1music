@@ -6,6 +6,7 @@ module.exports = {
     "restoreSongs": "/songs/restore",
     "files": "/files",
     "reports": "/reports",
-    "rank": "/votes/rank"
+    "rank": "/votes/rank",
+    "statistics": "/statistics"
   }
 };

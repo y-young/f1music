@@ -5,7 +5,6 @@ export default {
     "admin": resolve(__dirname, "./src/pages/admin.js")
   },
   outputPath: resolve(__dirname, "../public/assets/"),
-  publicPath: "./assets/",
   /*commons: [
     {
       name: "common",

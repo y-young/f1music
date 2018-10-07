@@ -15,7 +15,7 @@ const Sidebar = props => {
 
   return (
     <div className={sidebarClass}>
-      <Header className={styles.logo}>FZYZ 校园音乐征集管理系统</Header>
+      <Header className={styles.logo}>FZYZ校园音乐征集 管理系统</Header>
       <Menu
         className={styles.nav}
         mode="inline"
@@ -56,6 +56,11 @@ const Sidebar = props => {
         <Menu.Item key="/rank">
           <Link to="/rank">
             <Icon type="profile" />投票结果
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="/statistics">
+          <Link to="/statistics">
+            <Icon type="bar-chart" />数据统计
           </Link>
         </Menu.Item>
         <Menu.Item key="back">

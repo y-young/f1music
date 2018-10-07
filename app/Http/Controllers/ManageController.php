@@ -10,6 +10,7 @@ use App\Vote;
 use App\Report;
 use App\Option;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ManageController extends Controller
@@ -132,12 +133,28 @@ class ManageController extends Controller
         return response()->download('uploads/'.$song->file->md5.'.mp3', $song->name.'.mp3');
     }
 
-    public function Log()
+    public function Statistics()
     {
-        Log::debug('Test');
-        Log::info('User Login:***REMOVED***');
-        Log::error('Cannot connect to Database');
-        Log::notice('Notice');
-        return Storage::disk('log')->get('lumen.log');
+        date_default_timezone_set('Asia/Shanghai');
+        $time = date('m-d H:i:s');
+        $upload = config('music.openUpload');
+        $vote = config('music.openVote');
+        $songs = DB::table('songs')->count();
+        $files = DB::table('files')->count();
+        $uploaders = DB::table('songs')->select('user_id')->distinct()->get()->count();
+        $votes = DB::table('votes')->count();
+        $voters = DB::table('votes')->select('user_id')->distinct()->get()->count();
+        $viewers = DB::table('orders')->count();
+        return $this->success('data', [
+            'time' => $time,
+            'open_upload' => $upload,
+            'open_vote' => $vote,
+            'songs' => $songs,
+            'files' => $files,
+            'uploaders' => $uploaders,
+            'votes' => $votes,
+            'voters' => $voters,
+            'viewers' => $viewers
+        ]);
     }
 }

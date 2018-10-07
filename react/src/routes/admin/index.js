@@ -3,5 +3,6 @@ import Songs from "./Songs";
 import Files from "./Files";
 import Reports from "./Reports";
 import Rank from "./Rank";
+import Statistics from "./Statistics";
 
-export { Home, Songs, Files, Reports, Rank };
+export { Home, Songs, Files, Reports, Rank, Statistics };

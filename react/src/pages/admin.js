@@ -28,7 +28,7 @@ app.use(createSentry({
 }));
 
 // 3. Model
-const models = ["admin", "songs", "files", "reports", "rank"];
+const models = ["admin", "songs", "files", "reports", "rank", "statistics"];
 models.forEach(m => app.model(require("../models/admin/" + m).default));
 
 // 4. Router

@@ -70,20 +70,15 @@ $router->group(['prefix' => 'api', 'middleware' => 'admin'], function () use ($r
     $router->get('/files', 'ManageController@getFiles');
 
     $router->get('/reports', 'ManageController@getReports');
-    $router->delete('/reports', 'ManageController@deleteReports');
-
-    $router->get('/options', [
-        'middleware' => 'can:admin',
-        'uses' => 'ManageController@Options'
-    ]);
+    $router->delete('/reports', 'ManageController@deleteReports'); 
 
     $router->get('/votes/rank', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@getRank'
     ]);
-    $router->get('/log', [
+    $router->get('/statistics', [
         'middleware' => 'can:admin',
-        'uses' => 'ManageController@Log'
+        'uses' => 'ManageController@Statistics'
     ]);
 });
 
