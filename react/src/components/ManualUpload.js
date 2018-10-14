@@ -20,7 +20,7 @@ class ManualUpload extends React.Component {
     let error = false;
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
-        message.error("请修正所有错误后再上传");
+        message.error("请修正所有错误后再上传文件");
         error = true;
         return;
       }
@@ -109,7 +109,7 @@ class ManualUpload extends React.Component {
             </p>
             <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
             <p className="ant-upload-hint">
-              只能上传mp3格式的文件，且大小不超过20MB
+              上传文件前请先填写歌曲信息，只能上传mp3格式的文件，且大小不超过20MB
             </p>
           </Upload.Dragger>
         </FormItem>

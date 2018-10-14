@@ -3,7 +3,7 @@ import { connect } from "dva";
 import { TimeSelector, VoteList } from "components";
 import { Alert, Switch } from "antd";
 
-class Vote extends React.Component { 
+class Vote extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.location.pathname !== this.props.location.pathname) {
       this.voteList.getWrappedInstance().onRedirect();
@@ -30,7 +30,7 @@ class Vote extends React.Component {
         <Alert
           message="投票须知"
           type="info"
-          description="试听30秒后显示评分栏,建议试听1分钟以上,详见首页投票说明"
+          description="试听总时长达到30秒即可提交投票，建议试听1分钟以上，详见首页投票说明"
           showIcon
           closable
         />
