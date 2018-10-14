@@ -100,9 +100,7 @@ class VoteList extends React.Component {
     this.triggerNext(index);
     const player = this.refs["player" + index];
     if (auto && index) {
-      //this.init();
       player.play();
-      //player.audio.currentTime = 120;
     }
     return index;
   };
@@ -151,7 +149,9 @@ class VoteList extends React.Component {
   };
   onEnded = (song, index) => {
     if (song.vote === 0) {
-      this.checkValidity();
+      if (this.checkValidity()) {
+        this.handleVote(song, index);
+      }
     } else {
       this.playNext();
     }
