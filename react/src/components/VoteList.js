@@ -19,7 +19,8 @@ class VoteList extends React.Component {
     canSubmit: false,
     showReport: false,
     triggerVote: true,
-    countDown: 31
+    countDown: 31,
+    players: {}
   };
 
   init = () => {
@@ -34,7 +35,9 @@ class VoteList extends React.Component {
   };
   stopLast = () => {
     if (this.state.lastIndex) {
-      this.refs["player" + this.state.lastIndex].stop();
+      const player = this.refs["player" + this.state.lastIndex];
+      player.stop();
+      player.onProgress = undefined;
     }
   };
   onRedirect = () => {
@@ -45,9 +48,6 @@ class VoteList extends React.Component {
     });
   };
   timeListener = (offset, song) => {
-    /*if (!this.state.canVote && time >= 30) {
-      this.setState({ canVote: true });
-    }*/
     const { dispatch } = this.props;
     if (this.state.countDown > 0) {
       this.setState(prevState => {
@@ -64,32 +64,25 @@ class VoteList extends React.Component {
       }
     }
   };
-  triggerNext = nowIndex => {
-    const { vote } = this.props;
-    const { auto, songs } = vote;
-    let newIndex = String(Number(nowIndex) + 1);
-    // Try to solve the problem of 'play() can only be initiated by a user gesture by playing and immediately stoping it
-    if (songs[newIndex] && auto) {
-      const audio = this.refs["player" + newIndex].audio;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(_ => {
-          audio.pause();
-        });
-      }
-    }
-  };
   handleChange = index => {
     const { vote } = this.props;
     const { auto, songs } = vote;
     this.stopLast();
     this.init();
-    if (index && (songs[index].vote !== 0 || songs[index].listened)) {
-      this.setState({
-        countDown: 0,
-        rate: songs[index].vote,
-        triggerVote: false
-      });
+    const player = this.refs["player" + index];
+    if (index) {
+      this.setState({ players[index].onProgress: offset => {
+        this.timeListener(offset, songs[index]);
+      }});
+      console.log(player);
+      this.audio.src = songs[index].url;
+      if (songs[index].vote !== 0 || songs[index].listened) {
+        this.setState({
+          countDown: 0,
+          rate: songs[index].vote,
+          triggerVote: false
+        });
+      }
     } else {
       this.setState({ countDown: 31 });
     }
@@ -97,8 +90,6 @@ class VoteList extends React.Component {
       lastIndex: index,
       nowIndex: index
     });
-    this.triggerNext(index);
-    const player = this.refs["player" + index];
     if (auto && index) {
       player.play();
     }
@@ -134,7 +125,6 @@ class VoteList extends React.Component {
     if (!validity) {
       return;
     }
-    //this.triggerNext(this.state.nowIndex);
     const id = song.id;
     const rate = this.state.rate;
     dispatch({ type: "vote/vote", payload: { id, rate } }).then(success => {
@@ -188,8 +178,8 @@ class VoteList extends React.Component {
           <span>
             <div>
               <YPlayer
-                src={song.url}
-                onProgress={offset => this.timeListener(offset, song)}
+                audio={this.audio}
+                onProgress={this.state.players[key].onProgress}
                 onEnded={() => this.onEnded(song, key)}
                 ref={"player" + key}
                 className={styles.yplayer}
@@ -264,6 +254,7 @@ class VoteList extends React.Component {
     });
     return (
       <Spin spinning={listLoading}>
+        <audio controls="controls" ref={audio => (this.audio = audio)} />
         <Collapse
           accordion
           bordered={false}

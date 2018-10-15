@@ -16,7 +16,17 @@ class YPlayer extends React.Component {
   };
   constructor(props) {
     super(props);
-    this.updateTime = throttle(this.updateTime, 200);
+    if (props.audio) {
+      this.audio = props.audio;
+      this.audio.addEventListener("progress", this.onLoad);
+      this.audio.addEventListener("timeupdate", this.onTimeUpdate);
+      this.audio.addEventListener("durationchange", this.updateDuration);
+      this.audio.addEventListener("play", this.onPlay);
+      this.audio.addEventListener("pause", this.onPause);
+      this.audio.addEventListener("ended", this.onEnded);
+      this.audio.addEventListener("error", this.onError);
+    }
+    this.updateTime = throttle(this.updateTime, 300);
   }
 
   onTimeUpdate = event => {
@@ -33,7 +43,6 @@ class YPlayer extends React.Component {
   play = disableWarning => {
     if (!this.state.playing) {
       const promise = this.audio.play();
-      //this.audio.play();
       if (promise) {
         promise.catch(e => {
           console.warn(e);
@@ -99,15 +108,14 @@ class YPlayer extends React.Component {
   };
 
   updateDuration = event => {
-    event.persist();
+    //event.persist();
     const duration = event.target.duration;
-    if (duration !== 1) {
+    if (duration >= 120) {
       this.setState({ duration });
     }
   };
 
   updateTime = time => {
-    this.setState({ time: time });
     if (!this.state.disableSliderUpdate) {
       this.setState({ displayTime: time });
     }
@@ -115,10 +123,12 @@ class YPlayer extends React.Component {
     if (this.props.onProgress) {
       //offset > 0: In case that currentTime didn't update in time
       //offset <= 1: To prevent cheating
+      console.log(offset);
       if (offset > 0 && offset <= 1) {
         this.props.onProgress(offset);
       }
     }
+    this.setState({ time: time });
   };
 
   onEnded = () => {
@@ -150,27 +160,26 @@ class YPlayer extends React.Component {
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
-    const audio = (
-      <audio
-        ref={audio => {
-          this.audio = audio;
-        }}
-        src={this.props.src}
-        //controls="controls"
-        onProgress={this.onLoad}
-        onTimeUpdate={this.onTimeUpdate}
-        onDurationChange={this.updateDuration}
-        onPlay={this.onPlay}
-        onPause={this.onPause}
-        onEnded={this.onEnded}
-        onError={this.onError}
-        preload="none"
-      />
-    );
-    /*let mark = {};
-    if (this.state.duration > 0) {
-      mark[this.state.duration * 0.4] = "副歌";
-    }*/
+    let audio = null;
+    if (!this.props.audio) {
+      audio = (
+        <audio
+          ref={audio => {
+            this.audio = audio;
+          }}
+          src={this.props.src}
+          //controls="controls"
+          onProgress={this.onLoad}
+          onTimeUpdate={this.onTimeUpdate}
+          onDurationChange={this.updateDuration}
+          onPlay={this.onPlay}
+          onPause={this.onPause}
+          onEnded={this.onEnded}
+          onError={this.onError}
+          preload="none"
+        />
+      );
+    }
     if (!mini) {
       return (
         <div>
