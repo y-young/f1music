@@ -1,6 +1,15 @@
 import React from "react";
 import { connect } from "dva";
-import { AutoComplete, Input, Table, Form, Button, Spin, message } from "antd";
+import {
+  Icon,
+  AutoComplete,
+  Input,
+  Table,
+  Form,
+  Button,
+  Spin,
+  message
+} from "antd";
 import { YPlayer, TimeSelector } from "components";
 
 const Search = Input.Search;
@@ -129,6 +138,18 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         pagination={false}
         scroll={{ x: 500 }}
       />
+      {searchResult && (
+        <div
+          style={{
+            color: "#777",
+            marginTop: "10px",
+            width: "100%",
+            textAlign: "center"
+          }}
+        >
+          <Icon type="bulb" /> 没找到想要的音乐？试试手动上传吧
+        </div>
+      )}
     </div>
   );
 };
