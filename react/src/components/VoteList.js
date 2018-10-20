@@ -1,31 +1,30 @@
 import React from "react";
 import { connect } from "dva";
-import { Collapse, Spin, Input, Rate, Button, message } from "antd";
+import { Spin, Input, Rate, Button, message } from "antd";
 import { CSSTransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
 import { config } from "utils";
 
-const Panel = Collapse.Panel;
 const { voteTexts } = config;
 
 class VoteList extends React.Component {
   state = {
     rate: 0,
+    src: "",
     reason: "",
-    nowIndex: "",
-    lastIndex: "",
+    index: "",
     canVote: false,
     canSubmit: false,
     showReport: false,
     triggerVote: true,
-    countDown: 31,
-    players: {}
+    countDown: 31
   };
 
   init = () => {
     this.setState({
       rate: 0,
+      countDown: 31,
       reason: "",
       canVote: false,
       canSubmit: false,
@@ -34,21 +33,18 @@ class VoteList extends React.Component {
     });
   };
   stopLast = () => {
-    if (this.state.lastIndex) {
-      const player = this.refs["player" + this.state.lastIndex];
-      player.stop();
-      player.onProgress = undefined;
-    }
+    this.player.stop();
+    this.setState({ src: "" });
   };
   onRedirect = () => {
     this.stopLast();
-    this.setState({
-      nowIndex: "",
-      lastIndex: ""
-    });
+    this.setState({ index: "" });
+    this.init();
   };
-  timeListener = (offset, song) => {
-    const { dispatch } = this.props;
+  timeListener = offset => {
+    const { dispatch, vote } = this.props;
+    const { songs } = vote;
+    const song = songs[this.state.index];
     if (this.state.countDown > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
@@ -60,67 +56,67 @@ class VoteList extends React.Component {
       //triggerVote: Only when first listen
       if (this.state.triggerVote) {
         this.setState({ triggerVote: false });
-        this.handleVote(song);
+        this.handleVote();
       }
     }
   };
   handleChange = index => {
     const { vote } = this.props;
     const { auto, songs } = vote;
-    this.stopLast();
-    this.init();
-    const player = this.refs["player" + index];
-    if (index) {
-      this.setState({ players[index].onProgress: offset => {
-        this.timeListener(offset, songs[index]);
-      }});
-      console.log(player);
-      this.audio.src = songs[index].url;
+    const player = this.player;
+    if (index !== this.state.index) {
+      this.stopLast();
+      this.init();
+      this.setState({ src: songs[index].url }, () => {
+        if (auto) {
+          player.play();
+        }
+      });
       if (songs[index].vote !== 0 || songs[index].listened) {
         this.setState({
           countDown: 0,
           rate: songs[index].vote,
           triggerVote: false
         });
+      } else {
+        this.setState({ countDown: 31 });
       }
     } else {
-      this.setState({ countDown: 31 });
+      player.toggle();
     }
     this.setState({
-      lastIndex: index,
-      nowIndex: index
+      index: index
     });
-    if (auto && index) {
-      player.play();
-    }
     return index;
   };
   playNext = () => {
     const { vote } = this.props;
     const { songs, auto } = vote;
 
-    let newIndex = String(Number(this.state.nowIndex) + 1);
+    let newIndex = String(Number(this.state.index) + 1);
     if (songs[newIndex] && auto) {
-      this.setState({ nowIndex: newIndex });
+      //      this.setState({ index: newIndex });
       this.handleChange(newIndex);
     }
   };
   checkValidity = () => {
     if (this.state.countDown > 0) {
       message.warning("试听时长需达到30秒才能投票");
-      const player = this.refs["player" + this.state.nowIndex];
+      const player = this.player;
       player.audio.currentTime = 0;
       player.play();
       return false;
     }
     if (!this.state.canSubmit) {
-      message.warning("选择或更改评价后才能提交");
+      message.info("选择或更改评价后即可提交");
       return false;
     }
     return true;
   };
-  handleVote = (song, index = undefined) => {
-    const { dispatch } = this.props;
+  handleVote = ended => {
+    const { dispatch, vote } = this.props;
+    const { songs } = vote;
+    const song = songs[this.state.index];
     const validity = this.checkValidity();
     if (!validity) {
       return;
@@ -131,23 +127,28 @@ class VoteList extends React.Component {
       if (success) {
         message.success("投票成功");
         this.setState({ canSubmit: false });
-        if (index !== undefined) {
+        if (ended) {
           this.playNext();
         }
       }
     });
   };
-  onEnded = (song, index) => {
+  onEnded = () => {
+    const { vote } = this.props;
+    const { songs } = vote;
+    const song = songs[this.state.index];
     if (song.vote === 0) {
       if (this.checkValidity()) {
-        this.handleVote(song, index);
+        this.handleVote(true);
       }
     } else {
       this.playNext();
     }
   };
-  handleReport = id => {
-    const { dispatch } = this.props;
+  handleReport = () => {
+    const { dispatch, vote } = this.props;
+    const { songs } = vote;
+    const id = songs[this.state.index].id;
     dispatch({
       type: "vote/report",
       payload: { id: id, reason: this.state.reason }
@@ -161,109 +162,107 @@ class VoteList extends React.Component {
   render() {
     const { vote, loading } = this.props;
     const { isDesktop, songs } = vote;
+    const song = songs[this.state.index]
+      ? songs[this.state.index]
+      : { vote: 0 };
     const listLoading = loading.effects["vote/fetch"];
     const list = songs.map((song, key) => {
-      const buttonProps = {
-        type: song.vote !== 0 ? "secondary" : "primary",
-        shape: !isDesktop ? "circle" : undefined,
-        icon: this.state.countDown <= 0 ? "check" : undefined,
-        disabled: this.state.countDown > 0
-      };
+      const current = key === this.state.index;
       return (
-        <Panel
-          header={"#" + (key + 1) + " 您的投票: " + voteTexts[song.vote]}
+        <li
+          style={current ? { color: "#1890ff" } : {}}
+          className={styles.listItem}
+          onClick={() => this.handleChange(key)}
           key={key}
-          forceRender={true}
         >
-          <span>
-            <div>
-              <YPlayer
-                audio={this.audio}
-                onProgress={this.state.players[key].onProgress}
-                onEnded={() => this.onEnded(song, key)}
-                ref={"player" + key}
-                className={styles.yplayer}
-              />
-              <br />
-              <Button
-                size="small"
-                onClick={() =>
-                  this.setState({ showReport: !this.state.showReport })
-                }
-                className={styles.toggleReport}
-              >
-                举报
-              </Button>
-            </div>
-            <br />
-            <div className={styles.voteArea} key="vote">
-              <hr />
-              <Rate
-                value={this.state.rate}
-                onChange={value =>
-                  this.setState({ rate: value, canSubmit: true })
-                }
-                className={styles.rate}
-              />
-              {this.state.rate !== 0 && (
-                <div className={styles.voteText}>
-                  <span className="ant-rate-text">
-                    {voteTexts[this.state.rate]}
-                  </span>
-                </div>
-              )}
-              <Button
-                loading={loading.effects["vote/vote"]}
-                className={styles.voteButton}
-                onClick={() => this.handleVote(song)}
-                {...buttonProps}
-              >
-                {this.state.countDown > 0
-                  ? Math.floor(this.state.countDown)
-                  : isDesktop && "投票"}
-              </Button>
-            </div>
-            <CSSTransitionGroup
-              transitionName="fade"
-              transitionEnterTimeout={500}
-              transitionLeaveTimeout={200}
-            >
-              {this.state.showReport && (
-                <div className={styles.reportArea} key="report">
-                  <Input
-                    value={this.state.reason}
-                    placeholder="举报原因"
-                    className={styles.reason}
-                    onChange={e => this.setState({ reason: e.target.value })}
-                    maxLength="60"
-                  />
-                  <Button
-                    type="primary"
-                    onClick={() => this.handleReport(song.id)}
-                    loading={loading.effects["vote/report"]}
-                    className={styles.reportButton}
-                  >
-                    提交
-                  </Button>
-                </div>
-              )}
-            </CSSTransitionGroup>
-          </span>
-        </Panel>
+          <span className={styles.itemIndex}>{key + 1}</span>
+          {"您的投票: " + voteTexts[song.vote]}
+        </li>
       );
     });
+    const buttonProps = {
+      type: song.vote !== 0 ? "secondary" : "primary",
+      shape: !isDesktop ? "circle" : undefined,
+      icon: this.state.countDown <= 0 ? "check" : undefined,
+      disabled: this.state.countDown > 0
+    };
     return (
       <Spin spinning={listLoading}>
-        <audio controls="controls" ref={audio => (this.audio = audio)} />
-        <Collapse
-          accordion
-          bordered={false}
-          onChange={this.handleChange}
-          activeKey={this.state.nowIndex}
-          ref={list => (this.list = list)}
-        >
-          {list}
-        </Collapse>
+        <span>
+          <div>
+            <YPlayer
+              src={this.state.src}
+              onProgress={this.timeListener}
+              onEnded={this.onEnded}
+              ref={player => (this.player = player)}
+              className={styles.yplayer}
+            />
+            <br />
+            <Button
+              size="small"
+              onClick={() =>
+                this.setState({ showReport: !this.state.showReport })
+              }
+              className={styles.toggleReport}
+            >
+              举报
+            </Button>
+          </div>
+          <br />
+          <div className={styles.voteArea} key="vote">
+            <hr />
+            <Rate
+              value={this.state.rate}
+              onChange={value =>
+                this.setState({ rate: value, canSubmit: true })
+              }
+              className={styles.rate}
+            />
+            {this.state.rate !== 0 && (
+              <div className={styles.voteText}>
+                <span className="ant-rate-text">
+                  {voteTexts[this.state.rate]}
+                </span>
+              </div>
+            )}
+            <Button
+              loading={loading.effects["vote/vote"]}
+              className={styles.voteButton}
+              onClick={this.handleVote}
+              {...buttonProps}
+            >
+              {this.state.countDown > 0
+                ? Math.floor(this.state.countDown)
+                : isDesktop && "投票"}
+            </Button>
+          </div>
+          <CSSTransitionGroup
+            transitionName="fade"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={200}
+          >
+            {this.state.showReport && (
+              <div className={styles.reportArea} key="report">
+                <Input
+                  value={this.state.reason}
+                  placeholder="举报原因"
+                  className={styles.reason}
+                  onChange={e => this.setState({ reason: e.target.value })}
+                  maxLength="60"
+                />
+                <Button
+                  type="primary"
+                  onClick={this.handleReport}
+                  loading={loading.effects["vote/report"]}
+                  className={styles.reportButton}
+                >
+                  提交
+                </Button>
+              </div>
+            )}
+          </CSSTransitionGroup>
+        </span>
+        <ol className={styles.list}>{list}</ol>
       </Spin>
     );
   }

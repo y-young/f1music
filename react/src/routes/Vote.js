@@ -33,8 +33,8 @@ class Vote extends React.Component {
           description="试听总时长达到30秒即可提交投票，建议试听1分钟以上，详见首页投票说明"
           showIcon
           closable
+          style={{ marginBottom: "10px" }}
         />
-        <br />
         <TimeSelector
           onChange={this.handleRedirect}
           style={{ width: "90px", marginBottom: "10px" }}

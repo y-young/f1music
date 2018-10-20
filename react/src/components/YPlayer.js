@@ -16,16 +16,6 @@ class YPlayer extends React.Component {
   };
   constructor(props) {
     super(props);
-    if (props.audio) {
-      this.audio = props.audio;
-      this.audio.addEventListener("progress", this.onLoad);
-      this.audio.addEventListener("timeupdate", this.onTimeUpdate);
-      this.audio.addEventListener("durationchange", this.updateDuration);
-      this.audio.addEventListener("play", this.onPlay);
-      this.audio.addEventListener("pause", this.onPause);
-      this.audio.addEventListener("ended", this.onEnded);
-      this.audio.addEventListener("error", this.onError);
-    }
     this.updateTime = throttle(this.updateTime, 300);
   }
 
@@ -78,6 +68,7 @@ class YPlayer extends React.Component {
   stop = () => {
     this.pause();
     this.audio.currentTime = 0;
+    this.setState({ time: 0, displayTime: 0 });
   };
 
   onLoad = () => {
@@ -92,9 +83,6 @@ class YPlayer extends React.Component {
   onPlay = () => {
     if (!this.state.playing) {
       this.setState({ playing: true });
-    }
-    if (this.props.onPlay) {
-      this.props.onPlay();
     }
   };
 
@@ -123,7 +111,6 @@ class YPlayer extends React.Component {
     if (this.props.onProgress) {
       //offset > 0: In case that currentTime didn't update in time
       //offset <= 1: To prevent cheating
-      console.log(offset);
       if (offset > 0 && offset <= 1) {
         this.props.onProgress(offset);
       }
@@ -160,26 +147,23 @@ class YPlayer extends React.Component {
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
-    let audio = null;
-    if (!this.props.audio) {
-      audio = (
-        <audio
-          ref={audio => {
-            this.audio = audio;
-          }}
-          src={this.props.src}
-          //controls="controls"
-          onProgress={this.onLoad}
-          onTimeUpdate={this.onTimeUpdate}
-          onDurationChange={this.updateDuration}
-          onPlay={this.onPlay}
-          onPause={this.onPause}
-          onEnded={this.onEnded}
-          onError={this.onError}
-          preload="none"
-        />
-      );
-    }
+    const audio = (
+      <audio
+        ref={audio => {
+          this.audio = audio;
+        }}
+        src={this.props.src}
+        controls="controls"
+        onProgress={this.onLoad}
+        onTimeUpdate={this.onTimeUpdate}
+        onDurationChange={this.updateDuration}
+        onPlay={this.onPlay}
+        onPause={this.onPause}
+        onEnded={this.onEnded}
+        onError={this.onError}
+        preload="none"
+      />
+    );
     if (!mini) {
       return (
         <div>
@@ -198,14 +182,25 @@ class YPlayer extends React.Component {
             </div>
           </div>
           <ButtonGroup className={styles.controls}>
-            <Button type="primary" onClick={this.toggle}>
+            <Button
+              type="primary"
+              onClick={this.toggle}
+              disabled={this.props.src === ""}
+            >
               <Icon type={this.state.playing ? "pause" : "caret-right"} />
             </Button>
-            <Button type="primary" onClick={this.stop}>
+            <Button
+              type="primary"
+              onClick={this.stop}
+              disabled={this.props.src === ""}
+            >
               <Icon type="step-backward" />
             </Button>
           </ButtonGroup>
-          <div className={styles.bufferDetail}>
+          <div
+            className={styles.bufferDetail}
+            style={!this.props.src ? { display: "none" } : {}}
+          >
             {loaded !== "100.00" && (
               <Icon type="loading" style={{ marginRight: "2px" }} />
             )}
