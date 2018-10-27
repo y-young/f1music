@@ -34,11 +34,10 @@ class VoteList extends React.Component {
   };
   stopLast = () => {
     this.player.stop();
-    this.setState({ src: "" });
   };
   onRedirect = () => {
     this.stopLast();
-    this.setState({ index: "" });
+    this.setState({ index: "", src: "" });
     this.init();
   };
   timeListener = offset => {
@@ -62,15 +61,16 @@ class VoteList extends React.Component {
   };
   handleChange = index => {
     const { vote } = this.props;
-    const { auto, songs } = vote;
+    const { songs } = vote;
     const player = this.player;
     if (index !== this.state.index) {
+      this.setState({
+        index: index
+      });
       this.stopLast();
       this.init();
       this.setState({ src: songs[index].url }, () => {
-        if (auto) {
-          player.play();
-        }
+        player.play();
       });
       if (songs[index].vote !== 0 || songs[index].listened) {
         this.setState({
@@ -84,18 +84,14 @@ class VoteList extends React.Component {
     } else {
       player.toggle();
     }
-    this.setState({
-      index: index
-    });
     return index;
   };
   playNext = () => {
     const { vote } = this.props;
     const { songs, auto } = vote;
-
-    let newIndex = String(Number(this.state.index) + 1);
+    //this.player.stop();
+    const newIndex = Number(this.state.index) + 1;
     if (songs[newIndex] && auto) {
-      //      this.setState({ index: newIndex });
       this.handleChange(newIndex);
     }
   };
