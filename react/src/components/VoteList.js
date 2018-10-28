@@ -177,14 +177,62 @@ class VoteList extends React.Component {
       }
     });
   };
-
   render() {
     const { vote, loading } = this.props;
     const { isDesktop, songs } = vote;
     const song = songs[this.state.index]
       ? songs[this.state.index]
       : { vote: 0 };
-    const listLoading = loading.effects["vote/fetch"];
+    const buttonProps = {
+      type: song.vote !== 0 ? "secondary" : "primary",
+      shape: !isDesktop ? "circle" : undefined,
+      icon: this.state.countDown <= 0 ? "check" : undefined,
+      disabled: this.state.countDown > 0
+    };
+    const voteArea = (
+      <div className={styles.voteArea} key="vote">
+        <hr />
+        <Rate
+          value={this.state.rate}
+          onChange={value => this.setState({ rate: value, canSubmit: true })}
+          className={styles.rate}
+        />
+        {this.state.rate !== 0 && (
+          <div className={styles.voteText}>
+            <span className="ant-rate-text">{voteTexts[this.state.rate]}</span>
+          </div>
+        )}
+        <Button
+          loading={loading.effects["vote/vote"]}
+          className={styles.voteButton}
+          onClick={this.handleVote}
+          {...buttonProps}
+        >
+          {this.state.countDown > 0
+            ? Math.floor(this.state.countDown)
+            : isDesktop && "投票"}
+        </Button>
+      </div>
+    );
+    const reportArea = (
+      <div className={styles.reportArea} key="report">
+        <Input
+          value={this.state.reason}
+          placeholder="举报原因"
+          className={styles.reason}
+          onChange={e => this.setState({ reason: e.target.value })}
+          maxLength="60"
+        />
+        <Button
+          type="primary"
+          onClick={this.handleReport}
+          loading={loading.effects["vote/report"]}
+          className={styles.reportButton}
+        >
+          提交
+        </Button>
+      </div>
+    );
     const list = songs.map((song, key) => {
       const current = key === this.state.index;
       return (
@@ -199,14 +247,9 @@ class VoteList extends React.Component {
         </li>
       );
     });
-    const buttonProps = {
-      type: song.vote !== 0 ? "secondary" : "primary",
-      shape: !isDesktop ? "circle" : undefined,
-      icon: this.state.countDown <= 0 ? "check" : undefined,
-      disabled: this.state.countDown > 0
-    };
+
     return (
-      <Spin spinning={listLoading}>
+      <Spin spinning={loading.effects["vote/fetch"]}>
         <span>
           <div>
             <YPlayer
@@ -226,63 +269,20 @@ class VoteList extends React.Component {
               onClick={() =>
                 this.setState({ showReport: !this.state.showReport })
               }
+              disabled={this.state.index === ""}
               className={styles.toggleReport}
             >
               举报
             </Button>
           </div>
           <br />
-          <div className={styles.voteArea} key="vote">
-            <hr />
-            <Rate
-              value={this.state.rate}
-              onChange={value =>
-                this.setState({ rate: value, canSubmit: true })
-              }
-              className={styles.rate}
-            />
-            {this.state.rate !== 0 && (
-              <div className={styles.voteText}>
-                <span className="ant-rate-text">
-                  {voteTexts[this.state.rate]}
-                </span>
-              </div>
-            )}
-            <Button
-              loading={loading.effects["vote/vote"]}
-              className={styles.voteButton}
-              onClick={this.handleVote}
-              {...buttonProps}
-            >
-              {this.state.countDown > 0
-                ? Math.floor(this.state.countDown)
-                : isDesktop && "投票"}
-            </Button>
-          </div>
+          {voteArea}
           <CSSTransitionGroup
             transitionName="fade"
             transitionEnterTimeout={500}
             transitionLeaveTimeout={200}
           >
-            {this.state.showReport && (
-              <div className={styles.reportArea} key="report">
-                <Input
-                  value={this.state.reason}
-                  placeholder="举报原因"
-                  className={styles.reason}
-                  onChange={e => this.setState({ reason: e.target.value })}
-                  maxLength="60"
-                />
-                <Button
-                  type="primary"
-                  onClick={this.handleReport}
-                  loading={loading.effects["vote/report"]}
-                  className={styles.reportButton}
-                >
-                  提交
-                </Button>
-              </div>
-            )}
+            {this.state.showReport && reportArea}
           </CSSTransitionGroup>
         </span>
         <ol className={styles.list}>{list}</ol>
