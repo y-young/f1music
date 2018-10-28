@@ -18,7 +18,9 @@ class VoteList extends React.Component {
     canSubmit: false,
     showReport: false,
     triggerVote: true,
-    countDown: 31
+    countDown: 31,
+    canBackward: false,
+    canForward: false
   };
 
   init = () => {
@@ -29,7 +31,9 @@ class VoteList extends React.Component {
       canVote: false,
       canSubmit: false,
       showReport: false,
-      triggerVote: true
+      triggerVote: true,
+      canBackward: false,
+      canForward: false
     });
   };
   stopLast = () => {
@@ -59,13 +63,13 @@ class VoteList extends React.Component {
       }
     }
   };
-  handleChange = index => {
+  handleSwitch = index => {
     const { vote } = this.props;
     const { songs } = vote;
     const player = this.player;
     if (index !== this.state.index) {
-      this.setState({
-        index: index
+      this.setState({ index: index }, () => {
+        this.updateButtonStatus();
       });
       this.stopLast();
       this.init();
@@ -86,13 +90,30 @@ class VoteList extends React.Component {
     }
     return index;
   };
-  playNext = () => {
+  updateButtonStatus = () => {
     const { vote } = this.props;
-    const { songs, auto } = vote;
-    //this.player.stop();
+    const { songs } = vote;
+    const previous = Number(this.state.index) - 1;
+    const next = Number(this.state.index) + 1;
+    this.setState({
+      canBackward: songs[previous] !== undefined,
+      canForward: songs[next] !== undefined
+    });
+  };
+  forward = () => {
+    const { vote } = this.props;
+    const { songs } = vote;
     const newIndex = Number(this.state.index) + 1;
-    if (songs[newIndex] && auto) {
-      this.handleChange(newIndex);
+    if (songs[newIndex]) {
+      this.handleSwitch(newIndex);
+    }
+  };
+  backward = () => {
+    const { vote } = this.props;
+    const { songs } = vote;
+    const newIndex = Number(this.state.index) - 1;
+    if (songs[newIndex]) {
+      this.handleSwitch(newIndex);
     }
   };
   checkValidity = () => {
@@ -111,7 +132,7 @@ class VoteList extends React.Component {
   };
   handleVote = ended => {
     const { dispatch, vote } = this.props;
-    const { songs } = vote;
+    const { songs, auto } = vote;
     const song = songs[this.state.index];
     const validity = this.checkValidity();
     if (!validity) {
@@ -123,22 +144,24 @@ class VoteList extends React.Component {
       if (success) {
         message.success("投票成功");
         this.setState({ canSubmit: false });
-        if (ended) {
-          this.playNext();
+        if (ended && auto) {
+          this.forward();
         }
       }
     });
   };
   onEnded = () => {
     const { vote } = this.props;
-    const { songs } = vote;
+    const { songs, auto } = vote;
     const song = songs[this.state.index];
     if (song.vote === 0) {
       if (this.checkValidity()) {
         this.handleVote(true);
       }
     } else {
-      this.playNext();
+      if (auto) {
+        this.forward();
+      }
     }
   };
   handleReport = () => {
@@ -168,7 +191,7 @@ class VoteList extends React.Component {
         <li
           style={current ? { color: "#1890ff" } : {}}
           className={styles.listItem}
-          onClick={() => this.handleChange(key)}
+          onClick={() => this.handleSwitch(key)}
           key={key}
         >
           <span className={styles.itemIndex}>{key + 1}</span>
@@ -190,6 +213,10 @@ class VoteList extends React.Component {
               src={this.state.src}
               onProgress={this.timeListener}
               onEnded={this.onEnded}
+              canBackward={this.state.canBackward}
+              canForward={this.state.canForward}
+              onBackward={this.backward}
+              onForward={this.forward}
               ref={player => (this.player = player)}
               className={styles.yplayer}
             />

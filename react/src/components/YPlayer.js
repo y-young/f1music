@@ -11,8 +11,7 @@ class YPlayer extends React.Component {
     time: 0,
     displayTime: 0,
     loaded: "0.00",
-    disableSliderUpdate: false,
-    prevPropsSrc: this.props.src
+    disableSliderUpdate: false
   };
 
   componentDidUpdate(prevProps) {
@@ -100,7 +99,7 @@ class YPlayer extends React.Component {
   updateDuration = event => {
     //event.persist();
     const duration = event.target.duration;
-    if (duration >= 120) {
+    if (duration !== 1) {
       this.setState({ duration });
     }
   };
@@ -146,6 +145,18 @@ class YPlayer extends React.Component {
     this.audio.currentTime = time;
   };
 
+  onBackward = () => {
+    if (this.props.onBackward) {
+      this.props.onBackward();
+    }
+  };
+
+  onForward = () => {
+    if (this.props.onForward) {
+      this.props.onForward();
+    }
+  };
+
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
@@ -187,10 +198,11 @@ class YPlayer extends React.Component {
             <Button
               type="secondary"
               shape="circle"
+              onClick={this.onBackward}
+              disabled={!this.props.canBackward}
               style={{ marginRight: "10px" }}
             >
-              {this.state.disableSliderUpdate ? "1" : "0"}
-              <Icon type="backward" style={{ color: "#9f9f9f" }} />
+              <Icon type="step-backward" style={{ color: "#9f9f9f" }} />
             </Button>
             <Button
               type="primary"
@@ -204,10 +216,11 @@ class YPlayer extends React.Component {
             <Button
               type="secondary"
               shape="circle"
-              onClick={this.stop}
+              onClick={this.onForward}
+              disabled={!this.props.canForward}
               style={{ marginLeft: "10px" }}
             >
-              <Icon type="forward" style={{ color: "#9f9f9f" }} />
+              <Icon type="step-forward" style={{ color: "#9f9f9f" }} />
             </Button>
           </div>
           <div
