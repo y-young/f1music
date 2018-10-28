@@ -102,8 +102,13 @@ class VoteList extends React.Component {
   };
   forward = () => {
     const { vote } = this.props;
-    const { songs } = vote;
-    const newIndex = Number(this.state.index) + 1;
+    const { songs, skipVoted } = vote;
+    let newIndex = Number(this.state.index) + 1;
+    if (skipVoted) {
+      while (songs[newIndex] && songs[newIndex].vote !== 0) {
+        newIndex++;
+      }
+    }
     if (songs[newIndex]) {
       this.handleSwitch(newIndex);
     }
@@ -122,20 +127,20 @@ class VoteList extends React.Component {
       const player = this.player;
       player.audio.currentTime = 0;
       player.play();
-      return false;
+      return "time";
     }
-    if (!this.state.canSubmit) {
+    if (!this.state.canSubmit || this.state.rate === 0) {
       message.info("选择或更改评价后即可提交");
-      return false;
+      return "rate";
     }
-    return true;
+    return "valid";
   };
-  handleVote = ended => {
+  handleVote = (type = null) => {
     const { dispatch, vote } = this.props;
-    const { songs, auto } = vote;
+    const { songs, skipAfterSubmitted } = vote;
     const song = songs[this.state.index];
     const validity = this.checkValidity();
-    if (!validity) {
+    if (validity !== "valid") {
       return;
     }
     const id = song.id;
@@ -144,7 +149,7 @@ class VoteList extends React.Component {
       if (success) {
         message.success("投票成功");
         this.setState({ canSubmit: false });
-        if (ended && auto) {
+        if ((type === "manual" && skipAfterSubmitted) || type === "ended") {
           this.forward();
         }
       }
@@ -152,16 +157,17 @@ class VoteList extends React.Component {
   };
   onEnded = () => {
     const { vote } = this.props;
-    const { songs, auto } = vote;
+    const { songs, skipWhenEnded } = vote;
     const song = songs[this.state.index];
+    const validity = this.checkValidity();
     if (song.vote === 0) {
-      if (this.checkValidity()) {
-        this.handleVote(true);
-      }
-    } else {
-      if (auto) {
+      if (validity === "valid") {
+        this.handleVote("ended");
+      } else if (validity === "rate" && skipWhenEnded) {
         this.forward();
       }
+    } else {
+      this.forward();
     }
   };
   handleReport = () => {
@@ -205,7 +211,7 @@ class VoteList extends React.Component {
         <Button
           loading={loading.effects["vote/vote"]}
           className={styles.voteButton}
-          onClick={this.handleVote}
+          onClick={() => this.handleVote("manual")}
           {...buttonProps}
         >
           {this.state.countDown > 0
