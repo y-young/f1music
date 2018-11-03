@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Icon, Upload, message } from "antd";
+import { Divider, Form, Input, Icon, Upload, message } from "antd";
 import { TimeSelector } from "components";
 
 const FormItem = Form.Item;
@@ -94,6 +94,7 @@ class ManualUpload extends React.Component {
             />
           )}
         </FormItem>
+        <Divider>请先填写以上信息再上传文件</Divider>
         <FormItem {...formItemLayout} label="上传文件">
           <Upload.Dragger
             fileList={this.state.fileList}
@@ -109,7 +110,7 @@ class ManualUpload extends React.Component {
             </p>
             <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
             <p className="ant-upload-hint">
-              上传文件前请先填写歌曲信息，只能上传mp3格式的文件，且大小不超过20MB
+              只能上传mp3格式的文件，且文件大小须介于1-20MB之间
             </p>
           </Upload.Dragger>
         </FormItem>

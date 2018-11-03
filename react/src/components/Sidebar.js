@@ -20,7 +20,7 @@ const Sidebar = props => {
         className={styles.nav}
         mode="inline"
         selectedKeys={[props.location.pathname]}
-        defaultOpenKeys={props.desktop ? ["/vote"] : []}
+        defaultOpenKeys={["/vote"]}
       >
         <Menu.Item key="/">
           <Link to="/">

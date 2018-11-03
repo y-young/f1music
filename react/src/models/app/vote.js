@@ -8,7 +8,10 @@ export default {
   state: {
     time: 1,
     songs: [],
-    auto: window.localStorage.auto === "false" ? false : true,
+    skipVoted: window.localStorage.skipVoted === "false" ? false : true,
+    onSubmitted:
+      window.localStorage.onSubmitted === "forward" ? "forward" : "continue",
+    onEnded: window.localStorage.onEnded === "forward" ? "forward" : "pause",
     isDesktop: window.innerWidth > 993
   },
 
@@ -16,11 +19,23 @@ export default {
     updateState(state, { payload }) {
       return { ...state, ...payload };
     },
-    toggleAuto(state, { payload }) {
+    toggleSkipVoted(state, { payload }) {
       if (typeof window.localStorage !== "undefined") {
-        window.localStorage.auto = !state.auto;
+        window.localStorage.skipVoted = !state.skipVoted;
       }
-      return { ...state, auto: !state.auto };
+      return { ...state, skipVoted: !state.skipVoted };
+    },
+    saveOnSubmitted(state, { payload: value }) {
+      if (typeof window.localStorage !== "undefined") {
+        window.localStorage.onSubmitted = value;
+      }
+      return { ...state, onSubmitted: value };
+    },
+    saveOnEnded(state, { payload: value }) {
+      if (typeof window.localStorage !== "undefined") {
+        window.localStorage.onEnded = value;
+      }
+      return { ...state, onEnded: value };
     },
     updateVote(
       state,
@@ -72,10 +87,6 @@ export default {
       },
       { call, put }
     ) {
-      if (rate === 0) {
-        message.error("请选择您的评价");
-        return false;
-      }
       const res = yield call(Vote, { id: id, vote: rate });
       if (res.error === 0) {
         yield put({ type: "updateVote", payload: { id, rate } });

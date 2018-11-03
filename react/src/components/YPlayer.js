@@ -1,5 +1,4 @@
 import React from "react";
-import throttle from "lodash/throttle";
 import styles from "./YPlayer.css";
 import { Button, Slider, Icon, message } from "antd";
 
@@ -14,9 +13,12 @@ class YPlayer extends React.Component {
     loaded: "0.00",
     disableSliderUpdate: false
   };
-  constructor(props) {
-    super(props);
-    this.updateTime = throttle(this.updateTime, 200);
+
+  componentDidUpdate(prevProps) {
+    if (this.props.src !== prevProps.src) {
+      this.setState({ disableSliderUpdate: false, duration: 0 });
+      this.seek(0);
+    }
   }
 
   onTimeUpdate = event => {
@@ -24,16 +26,14 @@ class YPlayer extends React.Component {
   };
 
   init = () => {
-    this.setState({
-      time: 0,
-      playing: false
+    this.setState({ disableSliderUpdate: false }, () => {
+      this.stop();
     });
   };
 
   play = disableWarning => {
     if (!this.state.playing) {
       const promise = this.audio.play();
-      //this.audio.play();
       if (promise) {
         promise.catch(e => {
           console.warn(e);
@@ -69,6 +69,7 @@ class YPlayer extends React.Component {
   stop = () => {
     this.pause();
     this.audio.currentTime = 0;
+    this.setState({ time: 0, displayTime: 0, disableSliderUpdate: false });
   };
 
   onLoad = () => {
@@ -84,9 +85,6 @@ class YPlayer extends React.Component {
     if (!this.state.playing) {
       this.setState({ playing: true });
     }
-    if (this.props.onPlay) {
-      this.props.onPlay();
-    }
   };
 
   onPause = () => {
@@ -99,7 +97,7 @@ class YPlayer extends React.Component {
   };
 
   updateDuration = event => {
-    event.persist();
+    //event.persist();
     const duration = event.target.duration;
     if (duration !== 1) {
       this.setState({ duration });
@@ -107,7 +105,6 @@ class YPlayer extends React.Component {
   };
 
   updateTime = time => {
-    this.setState({ time: time });
     if (!this.state.disableSliderUpdate) {
       this.setState({ displayTime: time });
     }
@@ -119,10 +116,11 @@ class YPlayer extends React.Component {
         this.props.onProgress(offset);
       }
     }
+    this.setState({ time: time });
   };
 
   onEnded = () => {
-    this.setState({ playing: false });
+    //this.pause();
     if (this.props.onEnded) {
       this.props.onEnded();
     }
@@ -147,6 +145,18 @@ class YPlayer extends React.Component {
     this.audio.currentTime = time;
   };
 
+  onBackward = () => {
+    if (this.props.onBackward) {
+      this.props.onBackward();
+    }
+  };
+
+  onForward = () => {
+    if (this.props.onForward) {
+      this.props.onForward();
+    }
+  };
+
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
@@ -156,7 +166,7 @@ class YPlayer extends React.Component {
           this.audio = audio;
         }}
         src={this.props.src}
-        //controls="controls"
+        controls="controls"
         onProgress={this.onLoad}
         onTimeUpdate={this.onTimeUpdate}
         onDurationChange={this.updateDuration}
@@ -167,10 +177,6 @@ class YPlayer extends React.Component {
         preload="none"
       />
     );
-    /*let mark = {};
-    if (this.state.duration > 0) {
-      mark[this.state.duration * 0.4] = "副歌";
-    }*/
     if (!mini) {
       return (
         <div>
@@ -188,15 +194,39 @@ class YPlayer extends React.Component {
               {this.formatTime(this.state.duration)}
             </div>
           </div>
-          <ButtonGroup className={styles.controls}>
-            <Button type="primary" onClick={this.toggle}>
+          <div className={styles.controls}>
+            <Button
+              type="secondary"
+              shape="circle"
+              onClick={this.onBackward}
+              disabled={!this.props.canBackward}
+              style={{ marginRight: "10px" }}
+            >
+              <Icon type="step-backward" style={{ color: "#9f9f9f" }} />
+            </Button>
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              onClick={this.toggle}
+              disabled={this.props.src === ""}
+            >
               <Icon type={this.state.playing ? "pause" : "caret-right"} />
             </Button>
-            <Button type="primary" onClick={this.stop}>
-              <Icon type="step-backward" />
+            <Button
+              type="secondary"
+              shape="circle"
+              onClick={this.onForward}
+              disabled={!this.props.canForward}
+              style={{ marginLeft: "10px" }}
+            >
+              <Icon type="step-forward" style={{ color: "#9f9f9f" }} />
             </Button>
-          </ButtonGroup>
-          <div className={styles.bufferDetail}>
+          </div>
+          <div
+            className={styles.bufferDetail}
+            style={!this.props.src ? { display: "none" } : {}}
+          >
             {loaded !== "100.00" && (
               <Icon type="loading" style={{ marginRight: "2px" }} />
             )}
@@ -227,21 +257,19 @@ class YPlayer extends React.Component {
     }
   }
 
-  formatTime(seconds) {
-    if (isNaN(seconds)) return "00:00";
-    const min = parseInt(seconds / 60, 10);
-    const sec = parseInt(seconds - min * 60, 10);
-    const hours = parseInt(min / 60, 10);
-    const newMin = parseInt(
-      seconds / 60 - 60 * parseInt(seconds / 60 / 60, 10),
-      10
-    );
+  formatTime(duration) {
+    if (isNaN(duration)) {
+      return "00:00";
+    }
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration - hours * 3600) / 60);
+    const seconds = Math.floor(duration - hours * 3600 - minutes * 60);
     const add0 = num => {
       return num < 10 ? "0" + num : "" + num;
     };
-    return seconds >= 3600
-      ? add0(hours) + ":" + add0(newMin) + ":" + add0(sec)
-      : add0(min) + ":" + add0(sec);
+    return (hours > 0 ? [hours, minutes, seconds] : [minutes, seconds])
+      .map(add0)
+      .join(":");
   }
 }
 
