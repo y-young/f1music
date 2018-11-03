@@ -25,9 +25,6 @@ $app = new Laravel\Lumen\Application(
 
 // Enable Storage
 $app->configure('filesystems');
-if (! class_exists('Storage')) {
-    class_alias('Illuminate\Support\Facades\Storage', 'Storage');
-}
 
 // Enable Session
 $app->configure('session');
