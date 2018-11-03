@@ -43,12 +43,28 @@ const Login = ({
           <Form>
             <FormItem>
               {getFieldDecorator("stuId", {
-                rules: [
-                  { required: true, message: "请输入学号" },
-                  { min: 10, message: "学号应为10或11位" },
-                  { max: 11, message: "学号应为10或11位" }
+                validate: [
+                  {
+                    trigger: "onChange",
+                    rules: [{ required: true, message: "请输入学号" }]
+                  },
+                  {
+                    trigger: "onBlur",
+                    rules: [
+                      { min: 10, message: "学号应为10或11位" },
+                      { max: 11, message: "学号应为10或11位" }
+                    ]
+                  }
                 ]
-              })(<Input placeholder="学号" onPressEnter={handleSubmit} />)}
+              })(
+                <Input
+                  placeholder="学号"
+                  prefix={
+                    <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
+                  }
+                  onPressEnter={handleSubmit}
+                />
+              )}
             </FormItem>
             <FormItem>
               {getFieldDecorator("password", {
@@ -60,6 +76,9 @@ const Login = ({
                 <Input
                   type="password"
                   placeholder="校园网密码"
+                  prefix={
+                    <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+                  }
                   onPressEnter={handleSubmit}
                 />
               )}
