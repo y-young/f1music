@@ -138,7 +138,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         pagination={false}
         scroll={{ x: 500 }}
       />
-      {searchResult && (
+      {searchResult.length !== 0 && (
         <div
           style={{
             color: "#777",
