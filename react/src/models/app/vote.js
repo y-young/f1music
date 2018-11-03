@@ -9,9 +9,9 @@ export default {
     time: 1,
     songs: [],
     skipVoted: window.localStorage.skipVoted === "false" ? false : true,
-    skipAfterSubmitted:
-      window.localStorage.skipAfterSubmitted === "true" ? true : false,
-    skipWhenEnded: window.localStorage.skipWhenEnded === "true" ? true : false,
+    onSubmitted:
+      window.localStorage.onSubmitted === "forward" ? "forward" : "continue",
+    onEnded: window.localStorage.onEnded === "forward" ? "forward" : "pause",
     isDesktop: window.innerWidth > 993
   },
 
@@ -25,17 +25,17 @@ export default {
       }
       return { ...state, skipVoted: !state.skipVoted };
     },
-    toggleSkipAfterSubmitted(state, { payload }) {
+    saveOnSubmitted(state, { payload: value }) {
       if (typeof window.localStorage !== "undefined") {
-        window.localStorage.skipAfterSubmitted = !state.skipAfterSubmitted;
+        window.localStorage.onSubmitted = value;
       }
-      return { ...state, skipAfterSubmitted: !state.skipAfterSubmitted };
+      return { ...state, onSubmitted: value };
     },
-    toggleSkipWhenEnded(state, { payload }) {
+    saveOnEnded(state, { payload: value }) {
       if (typeof window.localStorage !== "undefined") {
-        window.localStorage.skipWhenEnded = !state.skipWhenEnded;
+        window.localStorage.onEnded = value;
       }
-      return { ...state, skipWhenEnded: !state.skipWhenEnded };
+      return { ...state, onEnded: value };
     },
     updateVote(
       state,

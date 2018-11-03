@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { TimeSelector, VoteList } from "components";
-import { Button, Modal, Alert, Switch } from "antd";
+import { Icon, Radio, Button, Modal, Alert, Switch } from "antd";
 
 class Vote extends React.Component {
   state = {
@@ -19,6 +19,11 @@ class Vote extends React.Component {
     dispatch({ type: "vote/toggle" + option });
   };
 
+  save = (option, value) => {
+    const { dispatch } = this.props;
+    dispatch({ type: "vote/save" + option, payload: value });
+  };
+
   handleRedirect = time => {
     const { dispatch } = this.props;
     this.voteList.getWrappedInstance().onRedirect();
@@ -27,7 +32,7 @@ class Vote extends React.Component {
 
   render() {
     const { vote } = this.props;
-    const { time, skipVoted, skipAfterSubmitted, skipWhenEnded } = vote;
+    const { time, skipVoted, onSubmitted, onEnded } = vote;
 
     return (
       <div>
@@ -46,10 +51,12 @@ class Vote extends React.Component {
         />
         <div style={{ float: "right" }}>
           <Button
-            icon="setting"
             type="secondary"
             onClick={() => this.setState({ modalVisible: true })}
-          />
+          >
+            <Icon type="setting" />
+            偏好设置
+          </Button>
           <Modal
             title="偏好设置"
             centered
@@ -65,20 +72,26 @@ class Vote extends React.Component {
               />
             </p>
             <p>
-              手动提交后: 继续播放{" "}
-              <Switch
-                checked={skipAfterSubmitted}
-                onChange={() => this.toggle("SkipAfterSubmitted")}
-              />{" "}
-              立即切换下一首
+              手动提交成功后:{" "}
+              <Radio.Group
+                defaultValue={onSubmitted}
+                onChange={e => this.save("OnSubmitted", e.target.value)}
+                buttonStyle="solid"
+              >
+                <Radio.Button value="continue">继续播放</Radio.Button>
+                <Radio.Button value="forward">切换下一首</Radio.Button>
+              </Radio.Group>
             </p>
             <p>
-              播放结束但未投票时 : 暂停{" "}
-              <Switch
-                checked={skipWhenEnded}
-                onChange={() => this.toggle("SkipWhenEnded")}
-              />{" "}
-              播放下一首
+              播放结束但未投票时:{" "}
+              <Radio.Group
+                defaultValue={onEnded}
+                onChange={e => this.save("OnEnded", e.target.value)}
+                buttonStyle="solid"
+              >
+                <Radio.Button value="pause">暂停</Radio.Button>
+                <Radio.Button value="forward">播放下一首</Radio.Button>
+              </Radio.Group>
             </p>
           </Modal>
         </div>

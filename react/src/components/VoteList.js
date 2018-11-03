@@ -115,8 +115,13 @@ class VoteList extends React.Component {
   };
   backward = () => {
     const { vote } = this.props;
-    const { songs } = vote;
-    const newIndex = Number(this.state.index) - 1;
+    const { songs, skipVoted } = vote;
+    let newIndex = Number(this.state.index) - 1;
+    if (skipVoted) {
+      while (songs[newIndex] && songs[newIndex].vote !== 0) {
+        newIndex--;
+      }
+    }
     if (songs[newIndex]) {
       this.handleSwitch(newIndex);
     }
@@ -137,7 +142,7 @@ class VoteList extends React.Component {
   };
   handleVote = (type = null) => {
     const { dispatch, vote } = this.props;
-    const { songs, skipAfterSubmitted } = vote;
+    const { songs, onSubmitted } = vote;
     const song = songs[this.state.index];
     const validity = this.checkValidity();
     if (validity !== "valid") {
@@ -149,7 +154,10 @@ class VoteList extends React.Component {
       if (success) {
         message.success("投票成功");
         this.setState({ canSubmit: false });
-        if ((type === "manual" && skipAfterSubmitted) || type === "ended") {
+        if (
+          (type === "manual" && onSubmitted === "forward") ||
+          type === "ended"
+        ) {
           this.forward();
         }
       }
@@ -157,13 +165,13 @@ class VoteList extends React.Component {
   };
   onEnded = () => {
     const { vote } = this.props;
-    const { songs, skipWhenEnded } = vote;
+    const { songs, onEnded } = vote;
     const song = songs[this.state.index];
     const validity = this.checkValidity();
     if (song.vote === 0) {
       if (validity === "valid") {
         this.handleVote("ended");
-      } else if (validity === "rate" && skipWhenEnded) {
+      } else if (validity === "rate" && onEnded === "forward") {
         this.forward();
       }
     } else {
