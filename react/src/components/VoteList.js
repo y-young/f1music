@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "dva";
-import { Spin, Input, Rate, Button, message } from "antd";
+import { Link } from "dva/router";
+import { Icon, Spin, Input, Rate, Button, message } from "antd";
 import { CSSTransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
@@ -37,7 +38,9 @@ class VoteList extends React.Component {
     });
   };
   stopLast = () => {
-    this.player.stop();
+    if (this.player) {
+      this.player.stop();
+    }
   };
   onRedirect = () => {
     this.stopLast();
@@ -111,6 +114,8 @@ class VoteList extends React.Component {
     }
     if (songs[newIndex]) {
       this.handleSwitch(newIndex);
+    } else if (skipVoted) {
+      message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
     }
   };
   backward = () => {
@@ -124,6 +129,8 @@ class VoteList extends React.Component {
     }
     if (songs[newIndex]) {
       this.handleSwitch(newIndex);
+    } else if (skipVoted) {
+      message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
     }
   };
   checkValidity = () => {
@@ -193,7 +200,7 @@ class VoteList extends React.Component {
   };
   render() {
     const { vote, loading } = this.props;
-    const { isDesktop, songs } = vote;
+    const { time, isDesktop, songs } = vote;
     const song = songs[this.state.index]
       ? songs[this.state.index]
       : { vote: 0 };
@@ -261,45 +268,101 @@ class VoteList extends React.Component {
         </li>
       );
     });
+    const notice = () => {
+      let voted = 0;
+      songs.forEach(song => {
+        if (song.vote !== 0) {
+          voted++;
+        }
+      });
+      if (voted === songs.length) {
+        let rndTime;
+        do {
+          rndTime = Math.floor(Math.random() * 5 + 1);
+        } while (rndTime === time);
+        return (
+          <div
+            style={{
+              color: "#777",
+              marginTop: "10px",
+              width: "100%",
+              textAlign: "center"
+            }}
+          >
+            <Icon type="bulb" /> 您已投完本时段所有曲目，到
+            <Link to={"/vote/" + rndTime}>其他时段</Link>
+            看看吧
+          </div>
+        );
+      } else {
+        return (
+          <div
+            style={{
+              color: "#777",
+              marginTop: "10px",
+              width: "100%",
+              textAlign: "center"
+            }}
+          >
+            <Icon type="bulb" /> 本时段您已投 {voted} 首曲目，还有{" "}
+            {songs.length - voted} 首未投票曲目
+          </div>
+        );
+      }
+    };
 
     return (
       <Spin spinning={loading.effects["vote/fetch"]}>
-        <span>
-          <div>
-            <YPlayer
-              src={this.state.src}
-              onProgress={this.timeListener}
-              onEnded={this.onEnded}
-              canBackward={this.state.canBackward}
-              canForward={this.state.canForward}
-              onBackward={this.backward}
-              onForward={this.forward}
-              ref={player => (this.player = player)}
-              className={styles.yplayer}
-            />
+        {songs.length !== 0 ? (
+          <span>
+            <div>
+              <YPlayer
+                src={this.state.src}
+                onProgress={this.timeListener}
+                onEnded={this.onEnded}
+                canBackward={this.state.canBackward}
+                canForward={this.state.canForward}
+                onBackward={this.backward}
+                onForward={this.forward}
+                ref={player => (this.player = player)}
+                className={styles.yplayer}
+              />
+              <br />
+              <Button
+                size="small"
+                onClick={() =>
+                  this.setState({ showReport: !this.state.showReport })
+                }
+                disabled={this.state.index === ""}
+                className={styles.toggleReport}
+              >
+                举报
+              </Button>
+            </div>
             <br />
-            <Button
-              size="small"
-              onClick={() =>
-                this.setState({ showReport: !this.state.showReport })
-              }
-              disabled={this.state.index === ""}
-              className={styles.toggleReport}
+            {voteArea}
+            <CSSTransitionGroup
+              transitionName="fade"
+              transitionEnterTimeout={500}
+              transitionLeaveTimeout={200}
             >
-              举报
-            </Button>
-          </div>
-          <br />
-          {voteArea}
-          <CSSTransitionGroup
-            transitionName="fade"
-            transitionEnterTimeout={500}
-            transitionLeaveTimeout={200}
+              {this.state.showReport && reportArea}
+            </CSSTransitionGroup>
+            <ol className={styles.list}>{list}</ol>
+            {notice()}
+          </span>
+        ) : (
+          <div
+            style={{
+              color: "#777",
+              marginTop: "10px",
+              width: "100%",
+              textAlign: "center"
+            }}
           >
-            {this.state.showReport && reportArea}
-          </CSSTransitionGroup>
-        </span>
-        <ol className={styles.list}>{list}</ol>
+            投票未开放或暂无数据
+          </div>
+        )}
       </Spin>
     );
   }
