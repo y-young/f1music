@@ -9,7 +9,7 @@ function createSentry(props) {
     shouldSendCallback: data => {
       if (data.extra.__serialized__) {
         const { type } = data.extra.__serialized__;
-        return !type || type !== "notice";
+        return type === undefined || (type !== undefined && type !== "notice" && type !== null);
       } else {
         return true;
       }
@@ -36,7 +36,6 @@ function createSentry(props) {
         next(action);
         Raven.captureBreadcrumb({
           category: "action.end",
-          data: others,
           message: type
         });
       } catch (e) {

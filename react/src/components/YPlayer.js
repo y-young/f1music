@@ -166,7 +166,7 @@ class YPlayer extends React.Component {
           this.audio = audio;
         }}
         src={this.props.src}
-        controls="controls"
+        //controls="controls"
         onProgress={this.onLoad}
         onTimeUpdate={this.onTimeUpdate}
         onDurationChange={this.updateDuration}

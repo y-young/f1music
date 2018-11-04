@@ -37,13 +37,6 @@ export default function request(opt) {
   // 调用 axios api，统一拦截
   return axios(opt)
     .then(response => {
-      // >>>>>>>>>>>>>> 请求成功 <<<<<<<<<<<<<<
-      console.log(
-        `【${opt.method} ${opt.url}】请求成功，响应数据：%o`,
-        response
-      );
-
-      // 打印错误提示
       if (response.data && response.data.error !== 0) {
         const error = new Error();
         error.type = "notice"; //用户操作引起的错误而非程序错误
@@ -55,8 +48,6 @@ export default function request(opt) {
       return { ...response.data };
     })
     .catch(error => {
-      // >>>>>>>>>>>>>> 请求失败 <<<<<<<<<<<<<<
-      // 请求配置发生的错误
       if (!error.response) {
         if (error.code === "ECONNABORTED") {
           return Promise.reject({ type: "notice", message: "请求超时,请重试" });
@@ -64,11 +55,9 @@ export default function request(opt) {
         return Promise.reject({ type: "notice", message: error.message });
       }
 
-      // 响应时状态码处理
       const status = error.response.status;
       const errortext = errorMsg[status] || "加载失败了╭(╯ε╰)╮";
 
-      // 存在请求，但是服务器的返回一个状态码，它们都在2xx之外
       const { dispatch } = store;
 
       if (status === 401) {
@@ -81,12 +70,6 @@ export default function request(opt) {
       } else if (status >= 404 && status < 422) {
         dispatch(routerRedux.push("/404"));
       }
-
-      // 开发时使用
-      console.log(
-        `【${opt.method} ${opt.url}】请求失败，响应数据：%o`,
-        error.response
-      );
 
       return Promise.reject({
         type: "notice",

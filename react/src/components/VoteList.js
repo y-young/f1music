@@ -216,6 +216,7 @@ class VoteList extends React.Component {
         <Rate
           value={this.state.rate}
           onChange={value => this.setState({ rate: value, canSubmit: true })}
+          allowClear={false}
           className={styles.rate}
         />
         {this.state.rate !== 0 && (
