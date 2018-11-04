@@ -19,7 +19,7 @@ class VoteList extends React.Component {
     canSubmit: false,
     showReport: false,
     triggerVote: true,
-    countDown: 31,
+    countDown: 30,
     canBackward: false,
     canForward: false
   };
@@ -27,7 +27,7 @@ class VoteList extends React.Component {
   init = () => {
     this.setState({
       rate: 0,
-      countDown: 31,
+      countDown: 30,
       reason: "",
       canVote: false,
       canSubmit: false,
@@ -51,6 +51,7 @@ class VoteList extends React.Component {
     const { dispatch, vote } = this.props;
     const { songs } = vote;
     const song = songs[this.state.index];
+    console.log(offset);
     if (this.state.countDown > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
@@ -86,7 +87,7 @@ class VoteList extends React.Component {
           triggerVote: false
         });
       } else {
-        this.setState({ countDown: 31 });
+        this.setState({ countDown: 30 });
       }
     } else {
       player.toggle();
@@ -230,7 +231,7 @@ class VoteList extends React.Component {
           {...buttonProps}
         >
           {this.state.countDown > 0
-            ? Math.floor(this.state.countDown)
+            ? Math.ceil(this.state.countDown)
             : isDesktop && "投票"}
         </Button>
       </div>
