@@ -51,7 +51,6 @@ class VoteList extends React.Component {
     const { dispatch, vote } = this.props;
     const { songs } = vote;
     const song = songs[this.state.index];
-    console.log(offset);
     if (this.state.countDown > 0) {
       this.setState(prevState => {
         return { countDown: prevState.countDown - offset };
