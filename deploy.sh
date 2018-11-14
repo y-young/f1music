@@ -52,12 +52,12 @@ function writeConfig() {
     fi
     app_key=`cat /dev/urandom | head -n 32 | md5sum | head -c 32`
     cp .env.example .env
-    sed -i "s/{APP_ENV}/${app_env}/" env
-    sed -i "s/{APP_DEBUG}/${app_debug}/" env
-    sed -i "s/{APP_KEY}/${app_key}/" env
-    sed -i "s/{DB_NAME}/${db_name}/" env
-    sed -i "s/{DB_USER}/${db_user}/" env
-    sed -i "s/{DB_PASS}/${db_pass}/" env
+    sed -i "s/{APP_ENV}/${app_env}/" .env
+    sed -i "s/{APP_DEBUG}/${app_debug}/" .env
+    sed -i "s/{APP_KEY}/${app_key}/" .env
+    sed -i "s/{DB_NAME}/${db_name}/" .env
+    sed -i "s/{DB_USER}/${db_user}/" .env
+    sed -i "s/{DB_PASS}/${db_pass}/" .env
     success 'Done.'
 
     info 'Writing to config...'
