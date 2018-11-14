@@ -44,10 +44,10 @@ function error() {
 function writeConfig() {
     info 'Writing to .env...'
     if [[ "$env" == "1" ]]; then
-        app_env="PRODUCTION"
+        app_env="production"
         app_debug="false"
     else
-        app_env="LOCAL"
+        app_env="local"
         app_debug="true"
     fi
     app_key=`cat /dev/urandom | head -n 32 | md5sum | head -c 32`

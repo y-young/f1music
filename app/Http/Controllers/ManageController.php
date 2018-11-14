@@ -39,8 +39,8 @@ class ManageController extends Controller
 
     public function trashSongs(Request $request)
     {
-        if (config('music.openVote')) {
-//            return $this->error('开放投票期间禁止删除曲目');
+        if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+            return $this->error('开放投票期间禁止删除曲目');
         }
         foreach ($request->input('id') as $id) {
            Song::destroy($id);
@@ -63,8 +63,8 @@ class ManageController extends Controller
 
     public function deleteSongs(Request $request)
     {
-        if (config('music.openVote')) {
-//            return $this->error('开放投票期间禁止删除曲目');
+        if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+            return $this->error('开放投票期间禁止删除曲目');
         }
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);

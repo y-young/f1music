@@ -30,7 +30,7 @@ const Upload = ({ upload, loading }) => {
           description={
             <div>
               文件格式：MP3；时长：2.5-6分钟; 大小：2MB-15MB为宜;
-              不得出现非伴奏人声
+              不得出现明显人声
               <br />
               上传前请先查看首页上传说明
               <br />
