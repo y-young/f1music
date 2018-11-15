@@ -5,7 +5,7 @@
 # Version: 1.2.1
 #
 
-export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+#export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 ########################################################
@@ -77,12 +77,12 @@ function backendConfigure() {
 function installDependencies() {
     if [[ "$env" == "1" ]]; then
         composer_args=${composer_args}"--no-dev"
-        yarn_args=${yarn_args}"--production"
+        #yarn_args=${yarn_args}"--production"
     fi
     info 'Installing backend dependencies...'
     composer install $composer_args
     success 'Done.'
-    info 'Installing frontend depencies...'
+    info 'Installing frontend dependencies...'
     cd ./react && yarn $yarn_args && cd ..
     success 'Done.'
 }
@@ -96,7 +96,7 @@ function setupPermissions() {
     chgrp -R $dev_group ./
     chown -R $web_user ./
     chmod -R $default_mode ./
-    chmod -R $writable_mode ./storage
+    chmod -R $writable_mode ./storage/
     success 'Done.'
 }
 function usage() {
@@ -201,3 +201,5 @@ esac
 
 installDependencies
 buildAssets
+setupPermissions
+backendConfigure

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Log;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -41,7 +40,6 @@ class MusicController extends Controller
         ], ['required' => '参数错误,请刷新重试'])->validate();
 
         $res = self::$API->format(true)->url($request->input('id'), 128);
-        Log::debug(var_export($res, true));
         $url = json_decode($res)->url;
         if(empty($url))
             return $this->error('暂无版权或歌曲未找到');
