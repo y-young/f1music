@@ -8,7 +8,7 @@ const errorMsg = {
 
 // 设置全局参数
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = "/api";
 axios.defaults.withCredentials = true;
 
 // 添加请求拦截器
@@ -36,7 +36,7 @@ export default function request(opt) {
   return axios(opt)
     .then(response => {
       if (response.data && response.data.error !== 0) {
-        const error = new Error();
+        let error = new Error();
         error.message = response.data.msg;
         error.type = "notice";
         throw error;
@@ -55,6 +55,10 @@ export default function request(opt) {
       const status = error.response.status;
       const errortext = errorMsg[status] || status;
 
-      return Promise.reject({ code: status, message: errortext });
+      return Promise.reject({
+        type: "notice",
+        code: status,
+        message: errortext
+      });
     });
 }

@@ -31,7 +31,6 @@ class UploadController extends Controller
 
     private static $errorMsg = [
         'stop_upload' => '上传已关闭',
-        'upload_not_open' => '上传未开放',
         'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
         'time_too_short' => '歌曲时长还不足2分半钟,请选择长一些的曲目',
@@ -86,11 +85,7 @@ class UploadController extends Controller
     public function Uploads()
     {
         if (! config('music.openUpload')) {
-            if (config('music.openVote')) {
-                return $this->error(self::$errorMsg['stop_upload'], 2);
-            } else {
-                return $this->error(self::$errorMsg['upload_not_open'], 2);
-            }
+            return $this->error(self::$errorMsg['stop_upload'], 2);
         }
         $songs = Song::withTrashed()->where('user_id', self::$stuId)->get();
         $songs = $songs->map(function ($song) {

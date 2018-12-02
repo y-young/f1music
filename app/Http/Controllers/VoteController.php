@@ -34,11 +34,7 @@ class VoteController extends Controller
     public function Vote(Request $request)
     {
         if (! config('music.openVote')) {
-            if (config('music.openUpload')) {
-                return $this->error('投票未开放', 2);
-            } else {
-                return $this->error('投票已关闭', 2);
-            }
+            return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
             'id' => 'required | exists:songs',
@@ -60,7 +56,7 @@ class VoteController extends Controller
     public function getSongs(Request $request)
     {
         if (! config('music.openVote')) {
-            return $this->error('投票已关闭');
+            return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
             'time' => [

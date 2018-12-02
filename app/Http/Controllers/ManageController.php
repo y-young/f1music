@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Auth;
 use Validator;
 use App\File;
 use App\Song;
@@ -42,8 +43,10 @@ class ManageController extends Controller
         if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
             return $this->error('开放投票期间禁止删除曲目');
         }
+        $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
-           Song::destroy($id);
+            Song::destroy($id);
+            Log::info('Song '.$id.' trashed by '.$operator);
         }
         return $this->success();
     }
@@ -55,17 +58,23 @@ class ManageController extends Controller
 
     public function restoreSongs(Request $request)
     {
+        $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
             Song::withTrashed()->where('id', $id)->restore();
+            Log::info('Song '.$id.' restored by '.$operator);
         }
         return $this->success();
     }
 
     public function deleteSongs(Request $request)
     {
+        if (config('music.openUpload') && env('APP_ENV', 'production') == 'production') {
+            return $this->error('开放上传期间禁止彻底删除曲目');
+        }
         if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
             return $this->error('开放投票期间禁止删除曲目');
         }
+        $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
             if (! empty($song) && $song->trashed()) {
@@ -74,6 +83,7 @@ class ManageController extends Controller
                     $report->delete();
                 }
                 $song->forceDelete();
+                Log::info('Song '.$id.' deleted by '.$operator);
             }
         }
         return $this->success();
@@ -101,6 +111,9 @@ class ManageController extends Controller
 
     public function getRank(Request $request)
     {
+        if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
+          return $this->error('开放上传或投票期间无法查看投票数据');
+        }
         $songs = Song::with('votes', 'file')->withCount('votes')->get();
         foreach ($songs as $song) {
             $song->vote_sum = $song->votes->sum->vote;
