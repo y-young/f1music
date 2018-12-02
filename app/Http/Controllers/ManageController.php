@@ -30,11 +30,16 @@ class ManageController extends Controller
 
     public function editSong(Request $request)
     {
-        $song = Song::find($request->input('id'));
+        $song = Song::withTrashed()->find($request->input('id'));
+        $file = $song->file_id;
         $song->name = $request->input('name');
         $song->playtime = $request->input('playtime');
         $song->origin = $request->input('origin');
-        $song->save();
+        if (Song::withTrashed()->ofTime($request->input('playtime'))->where('file_id', $file)->exists()) {
+            return $this->error('曲目已存在于目标时段');
+        } else {
+            $song->save();
+        }
         return $this->success();
     }
 
