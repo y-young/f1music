@@ -8,10 +8,9 @@ export default {
   state: {
     time: 1,
     songs: [],
-    skipVoted: window.localStorage.skipVoted === "false" ? false : true,
-    onSubmitted:
-      window.localStorage.onSubmitted === "forward" ? "forward" : "continue",
-    onEnded: window.localStorage.onEnded === "forward" ? "forward" : "pause",
+    skipVoted: true,
+    onSubmitted: "continue",
+    onEnded: "pause",
     isDesktop: window.innerWidth > 993
   },
 
@@ -104,12 +103,12 @@ export default {
       { call, put }
     ) {
       if (!reason) {
-        message.error("请填写举报原因");
+        message.error("请填写反馈内容");
         return false;
       }
       const res = yield call(Report, { id: id, reason: reason });
       if (res.error === 0) {
-        message.success("举报成功");
+        message.success("提交成功");
         return true;
       }
       return false;
@@ -124,6 +123,17 @@ export default {
           const time = match[1];
           dispatch({ type: "updateState", payload: { time: time } });
           dispatch({ type: "fetch", payload: time });
+          const storage = window.localStorage;
+          if (typeof storage !== "undefined") {
+            const skipVoted = storage.skipVoted === "false" ? false : true;
+            const onSubmitted =
+              storage.onSubmitted === "forward" ? "forward" : "continue";
+            const onEnded = storage.onEnded === "forward" ? "forward" : "pause";
+            dispatch({
+              type: "updateState",
+              payload: { skipVoted, onSubmitted, onEnded }
+            });
+          }
         }
       });
     }

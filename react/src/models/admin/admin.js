@@ -40,7 +40,7 @@ export default {
           title = "文件";
           break;
         case "/reports":
-          title = "举报";
+          title = "反馈";
           break;
         case "/rank":
           title = "投票结果";

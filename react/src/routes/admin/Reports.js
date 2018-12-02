@@ -11,7 +11,7 @@ const columns = [
     sorter: (a, b) => a.id - b.id
   },
   { dataIndex: "song.name", title: "曲目" },
-  { dataIndex: "reason", title: "原因" },
+  { dataIndex: "reason", title: "内容" },
   { dataIndex: "time", title: "时间" }
 ];
 
@@ -40,7 +40,7 @@ class Reports extends React.Component {
       <div>
         <Form layout="inline">
           <FormItem label="曲目ID">{row.song_id}</FormItem>
-          <FormItem label="原因">{row.reason}</FormItem>
+          <FormItem label="内容">{row.reason}</FormItem>
           <FormItem label="时间">{row.time}</FormItem>
           <br />
           <FormItem label="试听">
@@ -73,7 +73,7 @@ class Reports extends React.Component {
     return (
       <div>
         <div style={{ fontSize: "14px", color: "#777" }}>
-          举报总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
+          反馈总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
         </div>
         <br />
         <Table

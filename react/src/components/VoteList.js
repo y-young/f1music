@@ -19,7 +19,7 @@ class VoteList extends React.Component {
     canSubmit: false,
     showReport: false,
     triggerVote: true,
-    countDown: 30,
+    countdown: 30,
     canBackward: false,
     canForward: false
   };
@@ -27,7 +27,7 @@ class VoteList extends React.Component {
   init = () => {
     this.setState({
       rate: 0,
-      countDown: 30,
+      countdown: 30,
       reason: "",
       canVote: false,
       canSubmit: false,
@@ -51,9 +51,9 @@ class VoteList extends React.Component {
     const { dispatch, vote } = this.props;
     const { songs } = vote;
     const song = songs[this.state.index];
-    if (this.state.countDown > 0) {
+    if (this.state.countdown > 0) {
       this.setState(prevState => {
-        return { countDown: prevState.countDown - offset };
+        return { countdown: prevState.countdown - offset };
       });
     } else {
       if (!song.listened && song.vote === 0) {
@@ -81,12 +81,12 @@ class VoteList extends React.Component {
       });
       if (songs[index].vote !== 0 || songs[index].listened) {
         this.setState({
-          countDown: 0,
+          countdown: 0,
           rate: songs[index].vote,
           triggerVote: false
         });
       } else {
-        this.setState({ countDown: 30 });
+        this.setState({ countdown: 30 });
       }
     } else {
       player.toggle();
@@ -134,7 +134,7 @@ class VoteList extends React.Component {
     }
   };
   checkValidity = () => {
-    if (this.state.countDown > 0) {
+    if (this.state.countdown > 0) {
       message.warning("试听时长需达到30秒才能投票");
       const player = this.player;
       player.audio.currentTime = 0;
@@ -207,21 +207,35 @@ class VoteList extends React.Component {
     const buttonProps = {
       type: song.vote !== 0 ? "secondary" : "primary",
       shape: !isDesktop ? "circle" : undefined,
-      icon: this.state.countDown <= 0 ? "check" : undefined,
-      disabled: this.state.countDown > 0
+      icon: this.state.countdown <= 0 ? "check" : undefined,
+      disabled: this.state.countdown > 0
     };
     const voteArea = (
       <div className={styles.voteArea} key="vote">
         <hr />
-        <Rate
-          value={this.state.rate}
-          onChange={value => this.setState({ rate: value, canSubmit: true })}
-          allowClear={false}
-          className={styles.rate}
-        />
-        {this.state.rate !== 0 && (
+        {this.state.countdown <= 15 ? (
+          <div>
+            <Rate
+              value={this.state.rate}
+              onChange={value =>
+                this.setState({ rate: value, canSubmit: true })
+              }
+              allowClear={false}
+              className={styles.rate}
+            />
+            {this.state.rate !== 0 && (
+              <div className={styles.voteText}>
+                <span className="ant-rate-text">
+                  {voteTexts[this.state.rate]}
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
           <div className={styles.voteText}>
-            <span className="ant-rate-text">{voteTexts[this.state.rate]}</span>
+            <span className="ant-rate-text" style={{ color: "#777" }}>
+              试听15秒后显示评分栏
+            </span>
           </div>
         )}
         <Button
@@ -230,8 +244,8 @@ class VoteList extends React.Component {
           onClick={() => this.handleVote("manual")}
           {...buttonProps}
         >
-          {this.state.countDown > 0
-            ? Math.ceil(this.state.countDown)
+          {this.state.countdown > 0
+            ? Math.ceil(this.state.countdown)
             : isDesktop && "投票"}
         </Button>
       </div>
@@ -240,7 +254,7 @@ class VoteList extends React.Component {
       <div className={styles.reportArea} key="report">
         <Input
           value={this.state.reason}
-          placeholder="举报原因"
+          placeholder="反馈内容"
           className={styles.reason}
           onChange={e => this.setState({ reason: e.target.value })}
           maxLength="60"
@@ -265,7 +279,7 @@ class VoteList extends React.Component {
           key={key}
         >
           <span className={styles.itemIndex}>{key + 1}</span>
-          {"您的投票: " + voteTexts[song.vote]}
+          {"您的评价: " + voteTexts[song.vote]}
         </li>
       );
     });
@@ -337,7 +351,7 @@ class VoteList extends React.Component {
                 disabled={this.state.index === ""}
                 className={styles.toggleReport}
               >
-                举报
+                反馈
               </Button>
             </div>
             <br />

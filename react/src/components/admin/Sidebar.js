@@ -50,7 +50,7 @@ const Sidebar = props => {
         </Menu.Item>
         <Menu.Item key="/reports">
           <Link to="/reports">
-            <Icon type="exception" />举报
+            <Icon type="exception" />反馈
           </Link>
         </Menu.Item>
         <Menu.Item key="/rank">

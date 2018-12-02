@@ -13,8 +13,8 @@ class ReportController extends Controller
     private static $messages = [
         'id.required' => '参数错误,请刷新重试',
         'id.exists' => '曲目不存在,请刷新重试',
-        'reason.required' => '请填写举报原因',
-        'reason.max' => '举报原因不得超过50个字符'
+        'reason.required' => '请填写反馈内容',
+        'reason.max' => '反馈内容不得超过50个字符'
     ];
 
     public function __construct()
