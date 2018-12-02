@@ -32,12 +32,13 @@ class ManageController extends Controller
     {
         $song = Song::withTrashed()->find($request->input('id'));
         $file = $song->file_id;
+        $time = $request->input('playtime');
         $song->name = $request->input('name');
-        $song->playtime = $request->input('playtime');
         $song->origin = $request->input('origin');
-        if (Song::withTrashed()->ofTime($request->input('playtime'))->where('file_id', $file)->exists()) {
+        if ($time != $song->playtime && Song::withTrashed()->ofTime($time)->where('file_id', $file)->exists()) {
             return $this->error('曲目已存在于目标时段');
         } else {
+            $song->playtime = $time;
             $song->save();
         }
         return $this->success();

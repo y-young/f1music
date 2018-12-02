@@ -7,25 +7,27 @@ import "./admin.css";
 // 1. Initialize
 const app = dva({
   onError(e, dispatch) {
+    message.error(e.message);
     if (!e.type || e.type !== "notice") {
       Raven.captureException(e, {
         logger: "javascript.effect"
       });
+      console.log(e);
     }
-    console.log(e);
-    message.error(e.message);
   }
 });
 
 // 2. Plugins
 app.use(createLoading());
-app.use(createSentry({
-  context: {
-    tags: {
-      page: "admin"
+app.use(
+  createSentry({
+    context: {
+      tags: {
+        page: "admin"
+      }
     }
-  }
-}));
+  })
+);
 
 // 3. Model
 const models = ["admin", "songs", "files", "reports", "rank", "statistics"];

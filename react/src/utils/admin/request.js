@@ -49,7 +49,7 @@ export default function request(opt) {
         if (error.code === "ECONNABORTED") {
           return Promise.reject({ type: "notice", message: "请求超时,请重试" });
         }
-        return Promise.reject({ message: error.message });
+        return Promise.reject({ type: "notice", message: error.message });
       }
 
       const status = error.response.status;
