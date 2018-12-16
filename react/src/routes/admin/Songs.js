@@ -111,7 +111,7 @@ class Songs extends React.Component {
           )}
           <br />
           <FormItem label="试听">
-            <audio src={row.file.url} controls="controls" />
+            <audio src={row.file.url} controls="controls" preload="none" />
           </FormItem>
           <FormItem label="操作">
             <Button

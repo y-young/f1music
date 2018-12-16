@@ -23,7 +23,7 @@ const Files = ({ files, loading }) => {
         <Form layout="inline">
           <FormItem label="时间">{row.time}</FormItem>
           <FormItem label="试听">
-            <audio controls="controls" src={row.url} />
+            <audio controls="controls" src={row.url} preload="none" />
           </FormItem>
         </Form>
       </div>
