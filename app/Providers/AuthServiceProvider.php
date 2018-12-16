@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\User;
-use App\Option;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\ServiceProvider;
@@ -52,24 +51,24 @@ class AuthServiceProvider extends ServiceProvider
 
     public function campusAuth(AuthData $authData)
     {
-		    $post_data = [
-				    "staffCode" => $authData->stuId,
-				    "password" => $authData->password,
-				    "loginRole" => '2'
-		    ];
+        $post_data = [
+            "staffCode" => $authData->stuId,
+            "password" => $authData->password,
+            "loginRole" => '2'
+        ];
         if (! config('music.debugauth')) {
             $ch = curl_init();
-			      curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
-			      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			      curl_setopt($ch, CURLOPT_POST, 1);
-			      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-			      $output = curl_exec($ch);
-			      $rinfo = curl_getinfo($ch);
+            curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+            $output = curl_exec($ch);
+            $rinfo = curl_getinfo($ch);
             if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
-	          $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
+            $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
         } else {
             $result = 1;
         }
@@ -80,13 +79,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $stuId = $request->session()->get('stuId');
         $authData = Cookie::get();
-		    if (! empty($authData)) {
+        if (! empty($authData)) {
             if ($stuId == $authData->stuId) {
-			          return $stuId;
+                return $stuId;
             } elseif ($this->campusAuth($authData) == 1) {
                 $request->session()->put('stuId', $authData->stuId);
                 return $authData->stuId;
-		        } else {
+		    } else {
                 return false;
             }
         }
@@ -104,14 +103,14 @@ class Cookie
 {
     public static function get()
     {
-		    if ((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))) {
-			      return null;
-		    }
-		    $cookieData = $_COOKIE['MusicAuth'];
-	    	$data = json_decode(Crypt::decrypt($cookieData));
-		    $authData = new AuthData();
-		    $authData->stuId = $data[0];
-		    $authData->password = $data[1];
-		    return $authData;
+        if ((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))) {
+		    return null;
+        }
+        $cookieData = $_COOKIE['MusicAuth'];
+        $data = json_decode(Crypt::decrypt($cookieData));
+        $authData = new AuthData();
+	    $authData->stuId = $data[0];
+		$authData->password = $data[1];
+		return $authData;
 	  }
 }

@@ -102,18 +102,18 @@ class Cookie
 {
     public static function set(AuthData $authData)
     {
-	      $cookieData = Crypt::encrypt(
-	          json_encode([
+	    $cookieData = Crypt::encrypt(
+	        json_encode([
                 $authData->stuId,
                 $authData->password
             ])
         );
-	     	setcookie('MusicAuth', $cookieData, time()+24*60*60, '/'); //Set path to '/' to fix Cross-Origin problems
-	      $_COOKIE['MusicAuth'] = $cookieData;
+	    setcookie('MusicAuth', $cookieData, time() + 24*60*60, '/'); //Set path to '/' to fix Cross-Origin problems
+	    $_COOKIE['MusicAuth'] = $cookieData;
     }
 
     public static function forget()
     {
-	 	    setcookie('MusicAuth',' ', time() - 3600);
-	  }
+	 	setcookie('MusicAuth',' ', time() - 3600);
+    }
 }
