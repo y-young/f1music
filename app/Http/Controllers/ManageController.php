@@ -35,8 +35,13 @@ class ManageController extends Controller
         $time = $request->input('playtime');
         $song->name = $request->input('name');
         $song->origin = $request->input('origin');
-        if ($time != $song->playtime && Song::withTrashed()->ofTime($time)->where('file_id', $file)->exists()) {
-            return $this->error('曲目已存在于目标时段');
+        if ($time != $song->playtime) {
+            if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+                return $this->error('开放投票期间禁止修改曲目所在时段');
+            }
+            if (Song::withTrashed()->ofTime($time)->where('file_id', $file)->exists()) {
+                return $this->error('曲目已存在于目标时段');
+            }
         } else {
             $song->playtime = $time;
             $song->save();
@@ -118,7 +123,7 @@ class ManageController extends Controller
     public function getRank(Request $request)
     {
         if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
-          return $this->error('开放上传或投票期间无法查看投票数据');
+            return $this->error('开放上传或投票期间无法查看投票数据');
         }
         $songs = Song::with('votes', 'file')->withCount('votes')->get();
         foreach ($songs as $song) {
@@ -141,6 +146,31 @@ class ManageController extends Controller
             ];
         });
         return $this->success('rank', $songs->values());
+    }
+
+    public function Analyze(Request $request)
+    {
+        if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
+            return $this->error('开放上传或投票期间无法查看投票数据');
+        }
+        $songs = Song::with('votes')->withCount('votes')->get();
+        foreach ($songs as $song) {
+            $song->awful = $song->votes->where('vote', -10)->count();
+            $song->bad = $song->votes->where('vote', -5)->count();
+            $song->neutral = $song->votes->where('vote', 0)->count();
+            $song->good = $song->votes->where('vote', 5)->count();
+            $song->awesome = $song->votes->where('vote', 10)->count();
+            $song->vote_sum = $song->votes->sum->vote;
+            $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
+        }
+        $songs = $songs->sortBy(function($song) {
+            return $song->playtime.'-'.(1 - 0.1 * $song->score);
+        });
+        $result = "";
+        foreach ($songs as $song) {
+            $result .= "<tr><td>".$song->id."</td><td>".$song->playtime."</td><td>".$song->name."</td><td>".$song->origin."</td><td>".$song->awful."</td><td>".$song->bad."</td><td>".$song->neutral."</td><td>".$song->good."</td><td>".$song->awesome."</td><td>".$song->score."</td><td>".$song->vote_sum."</td><td>".$song->votes_count."</td></tr>";
+        };
+        return "<html><body><table border=\"1\"><tbody><tr><td>#</td><td>Time</td><td>Name</td><td>Origin</td><td>-10</td><td>-5</td><td>0</td><td>5</td><td>10</td><td>Score</td><td>Sum</td><td>Count</td></tr>$result</tbody></table></body></html>";
     }
 
     public function Download($id)
