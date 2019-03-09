@@ -82,6 +82,7 @@ $app->middleware([
 $app->routeMiddleware([
      'can' => \Illuminate\Auth\Middleware\Authorize::class,
      'throttle' => App\Http\Middleware\ThrottleRequests::class,
+     'download' => App\Http\Middleware\DownloadAuth::class,
      'auth' => App\Http\Middleware\Authenticate::class,
      'admin' => App\Http\Middleware\AdminAuth::class,
      'redirect' => App\Http\Middleware\RedirectIfLogged::class,

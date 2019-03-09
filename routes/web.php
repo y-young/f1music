@@ -17,8 +17,12 @@ $router->get('/', function () {
 $router->get('/manage', ['middleware' => 'admin', function() {
     return view('admin');
 }]);
-$router->get('/check', 'AuthController@checkLogin');
 $router->get('/logout', 'AuthController@Logout');
+
+$router->get('/api/download/{id:[0-9]+}', [
+    'middleware' => ['throttle:30', 'download'],
+    'uses' => 'ManageController@Download'
+]);
 
 //Since Lumen does not support nested route groups, we will use parallel ones instead
 $router->get('/api/playlist', 'MusicController@Playlist');
@@ -50,12 +54,7 @@ $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($ro
     $router->post('/report', [
         'middleware' => 'throttle:30',
         'uses' => 'ReportController@Report'
-    ]);
-
-    $router->get('/download/{id:[0-9]+}', [
-        'middleware' => ['throttle:30', 'can:download'],
-        'uses' => 'ManageController@Download'
-    ]);
+    ]); 
 });
 
 $router->group(['prefix' => 'api', 'middleware' => 'admin'], function () use ($router) {
@@ -75,6 +74,10 @@ $router->group(['prefix' => 'api', 'middleware' => 'admin'], function () use ($r
     $router->get('/votes/rank', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@getRank'
+    ]);
+    $router->get('/votes/analyze', [
+        'middleware' => 'can:admin',
+        'uses' => 'ManageController@Analyze'
     ]);
     $router->get('/statistics', [
         'middleware' => 'can:admin',

@@ -37,6 +37,7 @@ export default {
       let title;
       switch (pathname) {
         case "/":
+        case "/home":
           title = "首页";
           break;
         case "/upload":

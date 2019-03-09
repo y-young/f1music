@@ -40,13 +40,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('censor', function ($user) {
             return in_array($user->stuId, config('music.censor')); 
         });
-
-        Gate::define('download', function () {
-            if (Gate::allows('admin') || Gate::allows('censor') || config('music.openDownload')) {
-                return true;
-            }
-            return false;
-        });
     }
 
     public function campusAuth(AuthData $authData)
