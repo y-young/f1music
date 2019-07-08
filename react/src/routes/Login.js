@@ -31,13 +31,7 @@ const Login = ({
     <div>
       <div className={styles.login}>
         <div style={{ width: "300px", margin: "auto" }}>
-          <div
-            style={{
-              fontSize: "30px",
-              textAlign: "center",
-              marginBottom: "20px"
-            }}
-          >
+          <div className={styles.title}>
             <b>登录</b>
           </div>
           <Form>
