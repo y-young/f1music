@@ -24,11 +24,22 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
-    protected $messages = [
-        403 => 'Permission Denied',
+    protected $titles = [
+        401 => 'Unauthorized',
+        403 => 'Forbidden',
         404 => 'Page Not Found',
-        429 => 'Please Try Later',
-        503 => 'Be Right Back'
+        429 => 'Too Many Requests',
+        500 => 'Error',
+        503 => 'Service Unavailable'
+    ];
+
+    protected $messages = [
+        401 => 'Sorry, you are not authorized to access this page.',
+        403 => 'Sorry, you are forbidden from accessing this page.',
+        404 => 'Sorry, the page you are looking for could not be found.',
+        429 => 'Sorry, you are making too many requests. Please try back later.',
+        500 => 'Whoops, something went wrong on our servers.',
+        503 => 'Sorry, we are doing some maintenance. Please check back soon.'
     ];
 
     /**
@@ -58,9 +69,13 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof HttpException) {
             $code = $e->getStatusCode();
-            if (in_array($code, [403, 404, 429, 503])) {
+            if (in_array($code, [401, 403, 404, 429, 500, 503])) {
                 $message = $e->getMessage();
-                return response(view('errors.http', ['message' => $this->messages[$code]]), $code);
+                return response(view('errors.http', [
+                    'code' => $code,
+                    'title' => $this->titles[$code],
+                    'message' => $this->messages[$code]
+                ]), $code);
             }
         }
         if ($e instanceof ValidationException) {
