@@ -8,5 +8,6 @@ return [
         '***REMOVED***',
     ],
     'censor' => [],
-    'debugauth' => env('APP_DEBUG', false)
+    'debugauth' => env('APP_DEBUG', false),
+    'playlist' => '2064024722'
 ];
