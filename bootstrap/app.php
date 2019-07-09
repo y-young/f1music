@@ -1,12 +1,9 @@
 <?php
 
 require_once __DIR__.'/../vendor/autoload.php';
-
-try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    //
-}
+(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+    dirname(__DIR__)
+))->bootstrap();
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +17,11 @@ try {
 */
 
 $app = new Laravel\Lumen\Application(
-    realpath(__DIR__.'/../')
+    realpath(dirname(__DIR__))
 );
 
 // Enable Storage
 $app->configure('filesystems');
-if (! class_exists('Storage')) {
-    class_alias('Illuminate\Support\Facades\Storage', 'Storage');
-}
 
 // Enable Session
 $app->configure('session');
@@ -85,6 +79,7 @@ $app->middleware([
 $app->routeMiddleware([
      'can' => \Illuminate\Auth\Middleware\Authorize::class,
      'throttle' => App\Http\Middleware\ThrottleRequests::class,
+     'download' => App\Http\Middleware\DownloadAuth::class,
      'auth' => App\Http\Middleware\Authenticate::class,
      'admin' => App\Http\Middleware\AdminAuth::class,
      'redirect' => App\Http\Middleware\RedirectIfLogged::class,
@@ -107,7 +102,8 @@ $app->routeMiddleware([
  $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 //Enable Session
  $app->register(Illuminate\Session\SessionServiceProvider::class);
-
+//Integrate Sentry
+ $app->register(Sentry\Laravel\ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

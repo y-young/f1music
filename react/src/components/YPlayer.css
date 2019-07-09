@@ -1,0 +1,23 @@
+.controls {
+  float: left;
+  margin-right: 20px;
+}
+.controls button Icon {
+  margin: 0px;
+}
+.miniTimeDetail {
+  font-size: 12px;
+  color: #777;
+  display: inline;
+}
+.timeDetail {
+  composes: miniTimeDetail;
+  float: right;
+}
+.bufferDetail {
+  width: 5px;
+  font-size: 12px;
+  color: #777;
+  float: left;
+  white-space: nowrap;
+}

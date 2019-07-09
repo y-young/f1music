@@ -15,8 +15,8 @@ class Controller extends BaseController
         }
     }
 
-    protected function error($msg)
+    protected function error($msg, $error = 1)
     {
-        return response()->json(['error' => 1, 'msg' => $msg]);
+        return response()->json(['error' => $error, 'msg' => $msg]);
     }
 }

@@ -17,7 +17,7 @@ class VoteController extends Controller
 {
 
     private static $stuId;
-    private $texts = [-10 => '非常不合适', -5 => '不合适', 0 => '中立', 5 => '合适', 10 => '非常合适'];
+    private $stars = [-10 => 1, -5 => 2, 0 => 3, 5 => 4, 10 => 5];
     private $points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
     private static $messages = [
         'id.required' => '参数错误,请刷新页面',
@@ -34,7 +34,7 @@ class VoteController extends Controller
     public function Vote(Request $request)
     {
         if (! config('music.openVote')) {
-            return $this->error('投票已关闭');
+            return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
             'id' => 'required | exists:songs',
@@ -44,18 +44,19 @@ class VoteController extends Controller
             ]
         ], self::$messages)->validate();
 
+        $rate = $this->points[$request->input('vote')];
         $vote = Vote::updateOrCreate(
-            ['song_id' => $request->input('id'), 'voter' => self::$stuId],
-            ['vote' => $this->points[$request->input('vote')]]
+            ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
+            ['vote' => $rate]
         );
-        Log::info('Vote: ', ['voter' => self::$stuId, 'song' => $request->input('id'), 'vote' => $request->input('vote')]);
+        Log::info('Vote: ', ['user_id' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);
         return $this->success();
     }
 
     public function getSongs(Request $request)
     {
         if (! config('music.openVote')) {
-            return $this->error('投票已关闭');
+            return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
             'time' => [
@@ -73,7 +74,7 @@ class VoteController extends Controller
             $order->save();
         }
         $songs = Song::with(['votes' => function($query) {
-            $query->where('voter', self::$stuId);
+            $query->where('user_id', self::$stuId);
         }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
 
         $order = array_flip($order->order); // 翻转数组以便使用sortBy
@@ -86,9 +87,9 @@ class VoteController extends Controller
         $songs = $songs->mapWithKeys(function ($song, $id) {
             $vote = $song->votes->first();
             if (empty($vote)) {
-                $vote = '未投票';
+                $vote = 0;
             } else {
-                $vote = $this->texts[$vote->vote];
+                $vote = $this->stars[$vote->vote];
             }
             $id++;
             return [
@@ -99,6 +100,6 @@ class VoteController extends Controller
                 ]
             ];
         });
-        return $this->success('songs', $songs);
+        return $this->success('songs', $songs->values());
     }
 }

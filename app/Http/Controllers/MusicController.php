@@ -16,7 +16,7 @@ class MusicController extends Controller
     {
         self::$API = new Meting('netease');
         // 网易常封cookies,必要时手动抓取music.163.com的cookies并更换
-        self::$API->cookie('***REMOVED***');
+        //self::$API->cookie('***REMOVED***');
     }
 
     public function Search(Request $request)
@@ -29,7 +29,7 @@ class MusicController extends Controller
         if ($result == '[]') {
             return $this->error('未能找到相关搜索结果');
         } else {
-            return response($result);
+            return $this->success('result', $result);
         }
     }
 
@@ -41,21 +41,25 @@ class MusicController extends Controller
 
         $res = self::$API->format(true)->url($request->input('id'), 128);
         $url = json_decode($res)->url;
-        if(empty($url))
-            return $this->error('歌曲未找到');
+        if (empty($url)) {
+            return $this->error('暂无版权或歌曲未找到');
+        }
         $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
-        return $url;
+        return $this->success('url', $url);
     }
 
     public function Playlist()
     {
-        $list = Cache::remember('playlist', 30, function() {
-            $result = json_decode(self::$API->format(true)->playlist('2064024722'), true);
+        $list = Cache::remember('playlist', 600, function () {
+            //公布结果前建立网易云音乐歌单,并把歌单ID填写到此处
+            $result = json_decode(self::$API->format(true)->playlist(config('music.playlist')), true);
             $list = array_map(function ($song) {
+                $url = json_decode(self::$API->format(true)->url($song['id']))->url;
+                $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1);
                 return [
                     'title' => $song['name'],
                     'author' => implode('', $song['artist']),
-                    'url' => json_decode(self::$API->format(true)->url($song['id']))->url,
+                    'url' => $url,
                     'pic' => json_decode(self::$API->format(true)->pic($song['pic_id']))->url
                 ];
             }, $result);

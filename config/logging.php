@@ -1,5 +1,8 @@
 <?php
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogUdpHandler;
+
 return [
 
     /*
@@ -13,7 +16,7 @@ return [
     |
     */
 
-    'default' => 'stack',
+    'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +28,8 @@ return [
     | you a variety of powerful log handlers / formatters to utilize.
     |
     | Available Drivers: "single", "daily", "slack", "syslog",
-    |                    "errorlog", "custom", "stack"
+    |                    "errorlog", "monolog",
+    |                    "custom", "stack"
     |
     */
 
@@ -38,7 +42,38 @@ return [
         'custom' => [
             'driver' => 'custom',
             'via' => App\Logging\CustomLogger::class
-        ]
+        ],
+
+        'single' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/lumen.log'),
+            'level' => 'debug',
+        ],
+
+        'daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/lumen.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'stderr' => [
+            'driver' => 'monolog',
+            'handler' => StreamHandler::class,
+            'with' => [
+                'stream' => 'php://stderr',
+            ],
+        ],
+
+        'syslog' => [
+            'driver' => 'syslog',
+            'level' => 'debug',
+        ],
+
+        'errorlog' => [
+            'driver' => 'errorlog',
+            'level' => 'debug',
+        ],
     ],
 
 ];

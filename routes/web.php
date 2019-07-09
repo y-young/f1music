@@ -11,86 +11,81 @@
 |
 */
 
-$router->get('/', function () use ($router) {
+$router->get('/', function () {
     return view('index');
 });
-$router->get('/Check', 'AuthController@checkLogin');
-$router->get('/Logout', 'AuthController@Logout');
-$router->get('/Result', function () use ($router) {
-    return view('result');
-});
-$router->get('/Playlist', 'MusicController@Playlist');
+$router->get('/manage', ['middleware' => 'admin', function() {
+    return view('admin');
+}]);
+$router->get('/logout', 'AuthController@Logout');
 
-$router->post('/Login', [
+$router->get('/api/download/{id:[0-9]+}', [
+    'middleware' => ['throttle:30', 'download'],
+    'uses' => 'ManageController@Download'
+]);
+
+//Since Lumen does not support nested route groups, we will use parallel ones instead
+$router->get('/api/playlist', 'MusicController@Playlist');
+
+$router->post('/api/login', [
     'middleware' => 'throttle:20',
     'uses' => 'AuthController@Login'
 ]);
 
-$router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->post('/Upload', [
-        'middleware' => ['throttle:20', 'can:upload'],
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
+    $router->get('/uploads', [
+        'middleware' => 'throttle:40',
+        'uses' => 'UploadController@Uploads'
+    ]);
+    $router->post('/upload', [
+        'middleware' => 'throttle:20',
         'uses' => 'UploadController@Upload'
     ]);
-    $router->post('/List', [
+
+    $router->post('/vote/list', [
         'middleware' => 'throttle:20',
         'uses' => 'VoteController@getSongs'
     ]);
-    $router->post('/Vote', [
-        'middleware' => ['throttle:30', 'can:vote'],
+    $router->post('/vote', [
+        'middleware' => 'throttle:30',
         'uses' => 'VoteController@Vote'
     ]);
-    $router->post('/Report', [
+
+    $router->post('/report', [
         'middleware' => 'throttle:30',
         'uses' => 'ReportController@Report'
-    ]);
-    $router->get('/Download/{id:[0-9]+}', [
-        'middleware' => ['throttle:30', 'can:download'],
-        'uses' => 'ManageController@Download'
-    ]);
+    ]); 
 });
 
-$router->group(['prefix' => 'Manage', 'middleware' => 'admin'], function () use ($router) {
-    $router->get('/', function() {
-        return view('admin');
-    });
+$router->group(['prefix' => 'api', 'middleware' => 'admin'], function () use ($router) {
+    $router->get('/songs', 'ManageController@getSongs');
+    $router->get('/songs/{id:[0-9]+}', 'ManageController@viewSong');
+    $router->put('/songs', 'ManageController@editSong');
+    $router->post('/songs/trash', 'ManageController@trashSongs');
+    $router->get('/songs/trashed', 'ManageController@getTrashedSongs');
+    $router->post('/songs/restore', 'ManageController@restoreSongs');
+    $router->delete('/songs', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
 
-    $router->get('/Songs', 'ManageController@getSongs');
-    $router->post('/Song/View', 'ManageController@viewSong');
-    $router->post('/Song/Edit', 'ManageController@editSong');
-    $router->post('/Song/Trash', 'ManageController@trashSongs');
-    $router->get('/Songs/Trashed', 'ManageController@getTrashedSongs');
-    $router->post('/Song/Restore', 'ManageController@restoreSongs');
-    $router->post('/Song/Delete', ['middleware' => 'can:admin', 'uses' => 'ManageController@deleteSongs']);
+    $router->get('/files', 'ManageController@getFiles');
 
-    $router->get('/Files', 'ManageController@getFiles');
+    $router->get('/reports', 'ManageController@getReports');
+    $router->delete('/reports', 'ManageController@deleteReports'); 
 
-    $router->get('/Reports', 'ManageController@getReports');
-    $router->post('/Report/Delete', 'ManageController@deleteReports');
-
-    $router->get('/Options', [
-        'middleware' => 'can:admin',
-        'uses' => 'ManageController@Options'
-    ]);
-    $router->post('/Option/Edit', [
-        'middleware' => 'can:admin',
-        'uses' => 'ManageController@editOption'
-    ]);
-
-    $router->get('/Votes', [
-        'middleware' => 'can:admin',
-        'uses' => 'ManageController@getVotes'
-    ]);
-    $router->get('/Rank', [
+    $router->get('/votes/rank', [
         'middleware' => 'can:admin',
         'uses' => 'ManageController@getRank'
     ]);
-    $router->get('/Log', [
+    $router->get('/votes/analyze', [
         'middleware' => 'can:admin',
-        'uses' => 'ManageController@Log'
+        'uses' => 'ManageController@Analyze'
+    ]);
+    $router->get('/statistics', [
+        'middleware' => 'can:admin',
+        'uses' => 'ManageController@Statistics'
     ]);
 });
 
-$router->group(['prefix' => 'Music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
-    $router->post('/Search', 'MusicController@Search');
-    $router->post('/Mp3', 'MusicController@Mp3');
+$router->group(['prefix' => 'api/music', 'middleware' => ['auth', 'throttle:40']], function () use ($router) {
+    $router->post('/search', 'MusicController@Search');
+    $router->post('/mp3', 'MusicController@Mp3');
 });

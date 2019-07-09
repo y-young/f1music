@@ -13,7 +13,7 @@ class AuthController extends Controller
         'stuId.required' => '请输入学号',
         'stuId.between' => '学号应为10或11位',
         'password.required' => '请输入密码',
-        'password.not_in' => '为保证投票质量目前禁止使用校网初始密码登录,请更改密码'
+        'password.not_in' => '为保证投票质量禁止使用校园网初始密码登录,请更改密码'
     ];
 
     public static function campusAuth(AuthData $authData)
@@ -27,7 +27,7 @@ class AuthController extends Controller
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 7);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
             $output = curl_exec($ch);
@@ -88,7 +88,7 @@ class AuthController extends Controller
     {
         Cookie::forget();
         $request->session()->forget('stuId');
-        return redirect('/#/Login');
+        return redirect('/#/login');
     }
 }
 
@@ -102,18 +102,18 @@ class Cookie
 {
     public static function set(AuthData $authData)
     {
-	      $cookieData = Crypt::encrypt(
-	          json_encode([
+	    $cookieData = Crypt::encrypt(
+	        json_encode([
                 $authData->stuId,
                 $authData->password
             ])
         );
-	     	setcookie('MusicAuth', $cookieData, time()+24*60*60);
-	      $_COOKIE['MusicAuth'] = $cookieData;
+	    setcookie('MusicAuth', $cookieData, time() + 24*60*60, '/'); //Set path to '/' to fix Cross-Origin problems
+	    $_COOKIE['MusicAuth'] = $cookieData;
     }
 
     public static function forget()
     {
-	 	    setcookie('MusicAuth',' ', time() - 3600);
-	  }
+	 	setcookie('MusicAuth',' ', time() - 3600);
+    }
 }

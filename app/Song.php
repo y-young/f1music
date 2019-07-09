@@ -13,7 +13,7 @@ class Song extends Model
     protected $table = 'songs';
     protected $guarded = [];
     protected $dates = ['deleted_at'];
-    protected $hidden = ['deleted_at'];
+    protected $hidden = ['user_id'];
     protected $dispatchesEvents = [
         'deleted' => SongDeleted::class
     ];

@@ -28,14 +28,15 @@ class CustomLogger
         // INFO -> info.log, Daily Log
         $info = new RotatingFileHandler(storage_path('logs/info.log'), 30, Logger::INFO, false);
         $info->setFormatter(new LineFormatter(null, null, true, true));
+        $info->pushProcessor(new WebProcessor());
         $monolog->pushHandler($info);
 
         // NOTICE, WARNING, ERROR, ALERT -> Daily Log, Saved for 30 days
         $error = new RotatingFileHandler(storage_path('/logs/lumen.log'), 30, Logger::NOTICE, false);
         $error->setFormatter(new LineFormatter(null, null, true, true));
+        $error->pushProcessor(new WebProcessor());
         $monolog->pushHandler($error);
 
-        $monolog->pushProcessor(new WebProcessor());
         return $monolog;
     }
 

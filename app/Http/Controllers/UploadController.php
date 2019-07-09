@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Metowolf\Meting;
-require_once(app_path('Http/Controllers/getid3/getid3.php'));
-require_once(app_path('Http/Controllers/getid3/write.php'));
 
 class UploadController extends Controller
 {
@@ -20,8 +18,8 @@ class UploadController extends Controller
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
-        'name.size' => '歌曲名称不得超过30个字符',
-        'origin.size' => '歌曲来源不得超过50个字符',
+        'name.max' => '歌曲名称不得超过50个字符',
+        'origin.max' => '歌曲来源不得超过50个字符',
         'string' => ':attribute 应为文本',
         'id.required_without' => '参数错误,请重新搜索音乐',
         'file.required_without' => '请上传一个文件',
@@ -32,10 +30,10 @@ class UploadController extends Controller
     ];
 
     private static $errorMsg = [
-        'stop_upload' => '文件上传已关闭',
+        'stop_upload' => '上传已关闭',
         'max_upload_num' => '上传数目已达到限定数目,感谢您对校园音乐的支持',
         'time_too_long' => '歌曲时长超过了6分钟,请选择短一些的曲目',
-        'time_too_short' => '歌曲时长还不足2分钟,请选择长一些的曲目',
+        'time_too_short' => '歌曲时长还不足2分半钟,请选择长一些的曲目',
         'already_exists' => '所上传的音乐在该时段已经有人推荐'
     ];
     private static $stuId;
@@ -49,8 +47,8 @@ class UploadController extends Controller
     {
         Log::info('Requests: '.var_export($request->all(),true));
         if (! config('music.openUpload')) {
-            return $this->error(self::$errorMsg['stop_upload']);
-        } elseif (Song::withTrashed()->where('uploader', self::$stuId)->count() >= 10) {
+            return $this->error(self::$errorMsg['stop_upload'], 2);
+        } elseif (Song::withTrashed()->where('user_id', self::$stuId)->count() >= 12) {
             return $this->error(self::$errorMsg['max_upload_num']);
         }
         Validator::make($request->all(), [
@@ -58,7 +56,7 @@ class UploadController extends Controller
                 'required',
                 Rule::in(['1', '2', '3', '4', '5', '6'])
             ],
-            'name' => 'required | string | max: 30',
+            'name' => 'required | string | max: 50',
             'origin' => 'nullable | string | max: 50',
             'id' => 'required_without:file',
             'file' => ['required_without:id', 'file', 'mimetypes:audio/mpeg', 'min: 1024', 'max: 20480']
@@ -84,6 +82,18 @@ class UploadController extends Controller
         return $this->success();
     }
 
+    public function Uploads()
+    {
+        if (! config('music.openUpload')) {
+            return $this->error(self::$errorMsg['stop_upload'], 2);
+        }
+        $songs = Song::withTrashed()->where('user_id', self::$stuId)->get();
+        $songs = $songs->map(function ($song) {
+            return $song->only(['playtime', 'name', 'origin']);
+        });
+        return $this->success('songs', $songs);
+    }
+
     public static function getFileFromRequest(Request $request)
     {
         $tmpDir = storage_path('app/tmp/');
@@ -101,7 +111,7 @@ class UploadController extends Controller
         } else { //Cloud Music Upload
             $url = self::getMp3($request->input('id'));
             if (empty($url)) {
-                throw new \Exception('网易云音乐ID无效,请重新输入');
+                throw new \Exception('暂不支持无版权或付费歌曲,请手动上传');
             }
             $file->name = explode('/', $url)[9];
             $file->md5 = substr($file->name, 0, -4);
@@ -126,7 +136,7 @@ class UploadController extends Controller
             }
         } else { //文件未上传过,则进行验证
             $file->duration = self::getDuration($file);
-            if ($file->duration < 2 * 60) {
+            if ($file->duration < 2.5 * 60) {
                 $file->error = self::$errorMsg['time_too_short'];
             } elseif ($file->duration > 6 * 60) {
                 $file->error = self::$errorMsg['time_too_long'];
@@ -153,7 +163,7 @@ class UploadController extends Controller
             'playtime' => $file->time,
             'name' => $file->songName,
             'origin' => $file->songOrigin,
-            'uploader' => self::$stuId,
+            'user_id' => self::$stuId,
             'file_id' => $file->id
         ]);
         $song->save();
@@ -166,7 +176,7 @@ class UploadController extends Controller
             Storage::move('tmp/'.$vFile->name, 'uploads/'.$vFile->storageName);
             $file = File::create([
                 'md5' => $vFile->md5,
-                'uploader' => self::$stuId
+                'user_id' => self::$stuId
             ]);
             $file->save();
             $vFile->id = $file->id;

@@ -12,9 +12,9 @@ class ReportController extends Controller
     private static $stuId;
     private static $messages = [
         'id.required' => '参数错误,请刷新重试',
-        'id.exists' => '歌曲不存在,请刷新重试',
-        'reason.required' => '请填写举报原因',
-        'reason.max' => '举报原因不得超过50个字符'
+        'id.exists' => '曲目不存在,请刷新重试',
+        'reason.required' => '请填写反馈内容',
+        'reason.max' => '反馈内容不得超过50个字符'
     ];
 
     public function __construct()
@@ -30,7 +30,7 @@ class ReportController extends Controller
         ], self::$messages)->validate();
 
         $report = Report::updateOrCreate(
-            ['song_id' => $request->input('id'), 'reporter' => self::$stuId],
+            ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
             ['reason' => $request->input('reason')]
         );
         $report->save();

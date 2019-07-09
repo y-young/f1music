@@ -1,0 +1,39 @@
+html,
+body,
+:global(#root) {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+hr {
+  display: block;
+  padding: 0;
+  border: 0;
+  height: 0;
+  border-top: 1px solid #eee;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+:global(.footer) {
+  text-align: center;
+}
+:global(.footer a) {
+  color: inherit;
+  text-decoration: underline;
+}
+:global(.redirect) {
+  font-size: 14px;
+  color: #777;
+}
+:global {
+  .fade-enter .fade-leave-active {
+    opacity: 0;
+  }
+  .fade-enter-active .fade-leave-active {
+    -webkit-transition: opacity 200ms ease;
+    -moz-transition: opacity 200ms ease;
+    -o-transition: opacity 200ms ease;
+    transition: opacity 200ms ease;
+  }
+}
