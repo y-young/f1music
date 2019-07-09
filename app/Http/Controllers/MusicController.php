@@ -41,15 +41,16 @@ class MusicController extends Controller
 
         $res = self::$API->format(true)->url($request->input('id'), 128);
         $url = json_decode($res)->url;
-        if(empty($url))
+        if (empty($url)) {
             return $this->error('暂无版权或歌曲未找到');
+        }
         $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
         return $this->success('url', $url);
     }
 
     public function Playlist()
     {
-        $list = Cache::remember('playlist', 10, function() {
+        $list = Cache::remember('playlist', 600, function () {
             //公布结果前建立网易云音乐歌单,并把歌单ID填写到此处
             $result = json_decode(self::$API->format(true)->playlist(config('music.playlist')), true);
             $list = array_map(function ($song) {

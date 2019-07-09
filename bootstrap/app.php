@@ -1,12 +1,9 @@
 <?php
 
 require_once __DIR__.'/../vendor/autoload.php';
-
-try {
-    (new Dotenv\Dotenv(dirname(__DIR__)))->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    //
-}
+(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+    dirname(__DIR__)
+))->bootstrap();
 
 /*
 |--------------------------------------------------------------------------
@@ -106,7 +103,7 @@ $app->routeMiddleware([
 //Enable Session
  $app->register(Illuminate\Session\SessionServiceProvider::class);
 //Integrate Sentry
- $app->register(Sentry\SentryLaravel\SentryLumenServiceProvider::class);
+ $app->register(Sentry\Laravel\ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
