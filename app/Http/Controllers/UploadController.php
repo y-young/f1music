@@ -111,7 +111,7 @@ class UploadController extends Controller
         } else { //Cloud Music Upload
             $url = self::getMp3($request->input('id'));
             if (empty($url)) {
-                throw new \Exception('网易云音乐ID无效,请重新输入');
+                throw new \Exception('暂不支持无版权或付费歌曲,请手动上传');
             }
             $file->name = explode('/', $url)[9];
             $file->md5 = substr($file->name, 0, -4);
