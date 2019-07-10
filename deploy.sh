@@ -89,7 +89,7 @@ function installDependencies() {
 }
 function buildAssets() {
     info 'Building frontend assets...'
-    cd ./react && npm run build
+    cd ./react && npm run build && cd ..
     success 'Done.'
 }
 function setupPermissions() {
