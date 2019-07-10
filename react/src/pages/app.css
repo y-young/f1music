@@ -26,14 +26,18 @@ hr {
   font-size: 14px;
   color: #777;
 }
-:global {
-  .fade-enter .fade-leave-active {
-    opacity: 0;
-  }
-  .fade-enter-active .fade-leave-active {
-    -webkit-transition: opacity 200ms ease;
-    -moz-transition: opacity 200ms ease;
-    -o-transition: opacity 200ms ease;
-    transition: opacity 200ms ease;
-  }
+:global(.tips) {
+  color: #777;
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+:global(.fade-enter .fade-leave-active) {
+  opacity: 0;
+}
+:global(.fade-enter-active .fade-leave-active) {
+  -webkit-transition: opacity 200ms ease;
+  -moz-transition: opacity 200ms ease;
+  -o-transition: opacity 200ms ease;
+  transition: opacity 200ms ease;
 }

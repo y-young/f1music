@@ -139,15 +139,8 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
         scroll={{ x: 500 }}
       />
       {searchResult.length !== 0 && (
-        <div
-          style={{
-            color: "#777",
-            marginTop: "10px",
-            width: "100%",
-            textAlign: "center"
-          }}
-        >
-          <Icon type="bulb" /> 没找到想要的音乐？试试手动上传吧
+        <div className="tips">
+          <Icon type="bulb" /> 遇到了问题？试试手动上传吧
         </div>
       )}
     </div>

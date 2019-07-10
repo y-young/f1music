@@ -296,14 +296,7 @@ class VoteList extends React.Component {
           rndTime = Math.floor(Math.random() * 5 + 1);
         } while (rndTime === time);
         return (
-          <div
-            style={{
-              color: "#777",
-              marginTop: "10px",
-              width: "100%",
-              textAlign: "center"
-            }}
-          >
+          <div className="tips">
             <Icon type="bulb" /> 您已投完本时段所有曲目，到
             <Link to={"/vote/" + rndTime}>其他时段</Link>
             看看吧
@@ -311,14 +304,7 @@ class VoteList extends React.Component {
         );
       } else {
         return (
-          <div
-            style={{
-              color: "#777",
-              marginTop: "10px",
-              width: "100%",
-              textAlign: "center"
-            }}
-          >
+          <div className="tips">
             <Icon type="bulb" /> 本时段您已投 {voted} 首曲目，还有{" "}
             {songs.length - voted} 首未投票曲目
           </div>
@@ -367,16 +353,7 @@ class VoteList extends React.Component {
             {notice()}
           </span>
         ) : (
-          <div
-            style={{
-              color: "#777",
-              marginTop: "10px",
-              width: "100%",
-              textAlign: "center"
-            }}
-          >
-            投票未开放或暂无数据
-          </div>
+          <div className="tips">投票未开放或暂无数据</div>
         )}
       </Spin>
     );
