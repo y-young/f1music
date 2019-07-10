@@ -44,7 +44,7 @@ class Reports extends React.Component {
           <FormItem label="时间">{row.time}</FormItem>
           <br />
           <FormItem label="试听">
-            <audio src={row.song.file.url} controls="controls" />
+            <audio src={row.song.file.url} controls="controls" preload="none" />
           </FormItem>
           <FormItem label="操作">
             <Button

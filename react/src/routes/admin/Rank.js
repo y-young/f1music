@@ -69,7 +69,7 @@ class Rank extends React.Component {
           <FormItem label="总分">{row.sum}</FormItem>
           <FormItem label="票数">{row.counts}</FormItem>
           <FormItem label="试听">
-            <audio src={row.url} controls="controls" />
+            <audio src={row.url} controls="controls" preload="none" />
           </FormItem>
         </Form>
       </div>
