@@ -8,8 +8,14 @@ class Vote extends React.Component {
     modalVisible: false
   };
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.location.pathname !== this.props.location.pathname) {
+  // Deprecated:
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   if (nextProps.location.pathname !== this.props.location.pathname) {
+  //     this.voteList.getWrappedInstance().onRedirect();
+  //   }
+  // }
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
       this.voteList.getWrappedInstance().onRedirect();
     }
   }
