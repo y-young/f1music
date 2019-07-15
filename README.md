@@ -1,21 +1,43 @@
-# Lumen PHP Framework
+# 福州一中校园音乐征集投票系统
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+![Author](https://img.shields.io/badge/Author-Googleplex-green.svg?style=for-the-badge "Author")
+![Backend](https://img.shields.io/badge/Backend-Lumen-orange.svg?style=for-the-badge "Backend")
+![Frontend](https://img.shields.io/badge/Frontend-React-blue.svg?style=for-the-badge "Author")
+![UI](https://img.shields.io/badge/UI-Ant%20Design-blue.svg?style=for-the-badge "UI")
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## 简介及活动概况
 
-## Official Documentation
+福州一中每年进行校园音乐征集和投票使用的系统，有据可查的活动开始时间为 2007 年。  
+1.x 版本(据考证的最早开始使用日期为 2009 年)由 [@upsuper](mailto:quanxunzhen@gmail.com)开发, @Robot, [@miskcoo](https://blog.miskcoo.com/) 等前辈维护(未考证，仅参考了页脚版权信息)，活动由 SCAN 计算机社策划和组织；  
+2.x 版本由 [@Googleplex](mailto:yyoung2001@gmail.com) 于 2016 年起借鉴上一版本逻辑重新开发，于 2017 年 11 月第一次使用，鉴于 SCAN 计算机社已于 2017 年与创客七户社合并，此次活动由创客七户社内原 SCAN 计算机社社员组织，后续活动将交由创客七户社各届社员组织。
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+## 部署
 
-## Security Vulnerabilities
+服务器推荐硬件配置及环境：
+- 操作系统：Linux 各大发行版
+- 内存： 512MB 及以上
+- 环境： PHP 7.2+ (with Composer), Nginx, MySQL 5.6+
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+生产及开发环境部署：
+见 DEPLOY.md
 
-## License
+## 技术栈
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+后端：  
+[Lumen](http://lumen.laravel.com/) with Filesystem & Session (PHP 框架)  
+前端：  
+2.1.x:
+[Vue](http://cn.vuejs.org/) (JS 框架), [ElementUI](http://element.eleme.io/) 1.x (UI库)  
+2.2.x:
+[React](http://reactjs.org/) (JS框架),
+[dva](http://dvajs.com/) (数据流前端框架),
+[Ant Design](https://ant.design/) (UI库)
+
+
+## 更新日志
+见 CHANGELOG.md
+
+## 版权及协议
+
+- 1.x 版本版权归 [@upsuper](mailto:quanxunzhen@gmail.com) 所有；
+- 2.x 版本核心代码版权归 [@Googleplex](mailto:yyoung2001@gmail.com) 所有，授权创客七户社各届社员在不改变原有目的的情况下使用，未经许可不得将源码向外发布；引用的框架及依赖库版权归其原作者所有。
