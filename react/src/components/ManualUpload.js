@@ -34,11 +34,11 @@ class ManualUpload extends React.Component {
     const tooSmall = file.size / 1024 / 1024 < 1;
 
     if (tooBig) {
-      message.error("上传歌曲大小不得超过20MB");
+      message.error("上传文件大小不得超过20MB");
       return false;
     }
     if (tooSmall) {
-      message.error("为保证音乐质量,请上传一个至少 1MB的文件");
+      message.error("为保证音乐质量,请上传一个至少1MB的文件");
       return false;
     }
     return true;
