@@ -43,7 +43,9 @@
  生产环境：`APP_ENV=production APP_DEBUG=false`  
  开发环境：`APP_ENV=local APP_DEBUG=true`
 8. `php artisan migrate` 自动创建必要的数据表
-9.  `cd ../public && ln -s ../storage/app/uploads uploads` 创建软链接
+9. 创建软链接：  
+ Linux: `cd ../public && ln -s ../storage/app/uploads uploads && cd ..`  
+ Windows: `cd ../public && mklink /D uploads ..\storage\app\uploads && cd ..` （以管理员身份运行）
 10. `cd react && npm run build` 编译前端 JS & CSS 文件
 11. 权限配置：  
  对于源码根目录（如 `f1music`），将用户组更改为`musicdev`，所有者更改为 `www` (`Nginx` 使用的用户)，权限更改为 570  
