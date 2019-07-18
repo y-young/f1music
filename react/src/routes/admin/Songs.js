@@ -38,11 +38,18 @@ class Songs extends React.Component {
   state = {
     selectedRowKeys: [],
     modalVisible: false,
-    row: null
+    row: null,
+    page: 1
   };
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys: selectedRowKeys });
+  };
+
+  onPageChange = page => {
+    const { dispatch } = this.props;
+    dispatch({ type: "songs/fetch", payload: page });
+    this.setState({ page: page });
   };
 
   editSong = row => {
@@ -78,8 +85,6 @@ class Songs extends React.Component {
   };
 
   handleBatchDelete = (isDelete = false) => {
-    console.log(this.state.selectedRowKeys);
-    console.log(isDelete);
     this.handleDelete(this.state.selectedRowKeys, isDelete);
   };
 
@@ -158,7 +163,7 @@ class Songs extends React.Component {
 
   render() {
     const { songs, loading, form } = this.props;
-    const { type, list } = songs;
+    const { type, list, total } = songs;
     const { getFieldDecorator } = form;
     const { selectedRowKeys, row, modalVisible } = this.state;
     const rowSelection = {
@@ -180,6 +185,11 @@ class Songs extends React.Component {
           loading={loading.effects["songs/fetch"]}
           rowKey="id"
           scroll={{ x: 600 }}
+          pagination={{
+            current: this.state.page,
+            total: total,
+            onChange: this.onPageChange
+          }}
         />
         {row && (
           <Modal

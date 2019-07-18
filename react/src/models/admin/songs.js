@@ -12,7 +12,8 @@ export default {
   namespace: "songs",
   state: {
     type: "",
-    list: []
+    list: [],
+    total: 0
   },
 
   reducers: {
@@ -51,15 +52,18 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put, select }) {
+    *fetch({ payload: page = 1 }, { call, put, select }) {
       const type = yield select(state => state.songs.type);
       let data;
       if (type === "trashed") {
-        data = yield call(TrashedSongs);
+        data = yield call(TrashedSongs, page);
       } else {
-        data = yield call(Songs);
+        data = yield call(Songs, page);
       }
-      yield put({ type: "updateState", payload: { list: data.songs } });
+      yield put({
+        type: "updateState",
+        payload: { list: data.songs.data, total: data.songs.total }
+      });
     },
     *save({ payload }, { call, put }) {
       const res = yield call(Save, payload);

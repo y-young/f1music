@@ -3,7 +3,9 @@ import { Files } from "services/admin/files";
 export default {
   namespace: "files",
   state: {
-    list: []
+    list: [],
+    page: 1,
+    total: 0
   },
 
   reducers: {
@@ -13,9 +15,12 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const data = yield call(Files);
-      yield put({ type: "updateState", payload: { list: data.files } });
+    *fetch({ payload: page = 1 }, { call, put }) {
+      const data = yield call(Files, page);
+      yield put({
+        type: "updateState",
+        payload: { list: data.files.data, page: page, total: data.files.total }
+      });
     }
   },
 

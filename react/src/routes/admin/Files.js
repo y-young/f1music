@@ -4,8 +4,8 @@ import { Table, Form } from "antd";
 
 const FormItem = Form.Item;
 
-const Files = ({ files, loading }) => {
-  const { list } = files;
+const Files = ({ files, loading, dispatch }) => {
+  const { list, page, total } = files;
   const columns = [
     {
       dataIndex: "id",
@@ -17,11 +17,17 @@ const Files = ({ files, loading }) => {
     { dataIndex: "time", title: "时间" }
   ];
 
+  const onPageChange = page => {
+    dispatch({ type: "files/fetch", payload: page });
+  };
+
   const renderExpanded = row => {
     return (
       <div>
         <Form layout="inline">
           <FormItem label="时间">{row.time}</FormItem>
+          <FormItem label="时长">{row.duration} 秒</FormItem>
+          <br />
           <FormItem label="试听">
             <audio controls="controls" src={row.url} preload="none" />
           </FormItem>
@@ -43,6 +49,11 @@ const Files = ({ files, loading }) => {
         loading={loading.effects["files/fetch"]}
         scroll={{ x: 400 }}
         rowKey="id"
+        pagination={{
+          current: page,
+          total: total,
+          onChange: onPageChange
+        }}
       />
     </div>
   );

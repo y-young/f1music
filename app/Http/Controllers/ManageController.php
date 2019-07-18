@@ -18,7 +18,7 @@ class ManageController extends Controller
 {
     public function getSongs()
     {
-        $songs = Song::with('file')->withCount('reports')->get();
+        $songs = Song::with('file')->withCount('reports')->paginate(10);
         return $this->success('songs', $songs);
     }
 
@@ -57,14 +57,15 @@ class ManageController extends Controller
         $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
             Song::destroy($id);
-            Log::info('Song '.$id.' trashed by '.$operator);
+            Log::info('Song ' . $id . ' trashed by ' . $operator);
         }
         return $this->success();
     }
 
     public function getTrashedSongs()
     {
-        return $this->success('songs', Song::onlyTrashed()->with('file')->withCount('reports')->get());
+        $songs =  Song::onlyTrashed()->with('file')->withCount('reports')->paginate(10);
+        return $this->success('songs', $songs);
     }
 
     public function restoreSongs(Request $request)
@@ -72,7 +73,7 @@ class ManageController extends Controller
         $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
             Song::withTrashed()->where('id', $id)->restore();
-            Log::info('Song '.$id.' restored by '.$operator);
+            Log::info('Song ' . $id . ' restored by ' . $operator);
         }
         return $this->success();
     }
@@ -88,13 +89,13 @@ class ManageController extends Controller
         $operator = Auth::user()->stuId;
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
-            if (! empty($song) && $song->trashed()) {
+            if (!empty($song) && $song->trashed()) {
                 //必须用find而不能用where,否则无法触发事件,见文档
                 foreach ($song->reports as $report) {
                     $report->delete();
                 }
                 $song->forceDelete();
-                Log::info('Song '.$id.' deleted by '.$operator);
+                Log::info('Song ' . $id . ' deleted by ' . $operator);
             }
         }
         return $this->success();
@@ -102,7 +103,7 @@ class ManageController extends Controller
 
     public function getFiles()
     {
-        $files = File::all();
+        $files = File::paginate(10);
         return $this->success('files', $files);
     }
 
@@ -130,8 +131,8 @@ class ManageController extends Controller
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
-        $songs = $songs->sortBy(function($song) {
-            return $song->playtime.'-'.(1 - 0.1 * $song->score);
+        $songs = $songs->sortBy(function ($song) {
+            return $song->playtime . '-' . (1 - 0.1 * $song->score);
         }); // Ugly Solution
         $songs = $songs->map(function ($song) {
             return [
@@ -163,12 +164,12 @@ class ManageController extends Controller
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
-        $songs = $songs->sortBy(function($song) {
-            return $song->playtime.'-'.(1 - 0.1 * $song->score);
+        $songs = $songs->sortBy(function ($song) {
+            return $song->playtime . '-' . (1 - 0.1 * $song->score);
         });
         $result = "";
         foreach ($songs as $song) {
-            $result .= "<tr><td>".$song->id."</td><td>".$song->playtime."</td><td>".$song->name."</td><td>".$song->origin."</td><td>".$song->awful."</td><td>".$song->bad."</td><td>".$song->neutral."</td><td>".$song->good."</td><td>".$song->awesome."</td><td>".$song->score."</td><td>".$song->vote_sum."</td><td>".$song->votes_count."</td></tr>";
+            $result .= "<tr><td>" . $song->id . "</td><td>" . $song->playtime . "</td><td>" . $song->name . "</td><td>" . $song->origin . "</td><td>" . $song->awful . "</td><td>" . $song->bad . "</td><td>" . $song->neutral . "</td><td>" . $song->good . "</td><td>" . $song->awesome . "</td><td>" . $song->score . "</td><td>" . $song->vote_sum . "</td><td>" . $song->votes_count . "</td></tr>";
         };
         return "<html><body><table border=\"1\"><tbody><tr><td>#</td><td>Time</td><td>Name</td><td>Origin</td><td>-10</td><td>-5</td><td>0</td><td>5</td><td>10</td><td>Score</td><td>Sum</td><td>Count</td></tr>$result</tbody></table></body></html>";
     }
@@ -179,7 +180,7 @@ class ManageController extends Controller
         if (empty($song)) {
             abort(404);
         }
-        return response()->download('uploads/'.$song->file->md5.'.mp3', $song->name.'.mp3');
+        return response()->download('uploads/' . $song->file->md5 . '.mp3', $song->name . '.mp3');
     }
 
     public function Statistics()
