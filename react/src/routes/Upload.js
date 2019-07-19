@@ -11,7 +11,7 @@ const Upload = ({ upload, loading }) => {
   const remaining = 12 - uploaded;
   const RemainingNotice = () => {
     if (uploaded === 12) {
-      return "您所上传的曲目已经达到最大限制12首,感谢您对校园音乐更换活动的支持，请耐心等待投票开放";
+      return "您所上传的曲目已经达到最大限制12首，感谢您对校园音乐更换活动的支持，请耐心等待投票开放";
     } else {
       return (
         "您已上传 " + uploaded + " 首曲目，还可再上传 " + remaining + " 首曲目"
