@@ -155,6 +155,13 @@ class Songs extends React.Component {
                 删除
               </Button>
             )}
+            <Button
+              type="secondary"
+              icon="download"
+              href={"/api/download/" + row.id}
+            >
+              下载
+            </Button>
           </FormItem>
         </Form>
       </div>
@@ -174,7 +181,7 @@ class Songs extends React.Component {
     return (
       <div>
         <div style={{ fontSize: "14px", color: "#777" }}>
-          曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
+          曲目总数: {total} 首 已选中: {selectedRowKeys.length} 首
         </div>
         <br />
         <Table

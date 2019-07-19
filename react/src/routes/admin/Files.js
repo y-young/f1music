@@ -39,7 +39,7 @@ const Files = ({ files, loading, dispatch }) => {
   return (
     <div>
       <div style={{ fontSize: "14px", color: "#777" }}>
-        文件总数: {list.length}个
+        文件总数: {total}个
       </div>
       <br />
       <Table
