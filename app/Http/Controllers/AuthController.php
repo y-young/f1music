@@ -23,27 +23,27 @@ class AuthController extends Controller
             "password" => $authData->password,
             "loginRole" => '2'
         ];
-        if (! config('music.debugauth')) {
+        if (!config('music.debugAuth')) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-            $output = curl_exec($ch);
-            $rinfo = curl_getinfo($ch);
+            $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
             if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
-            $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
+            $result = (($response == "") && $info['http_code'] == 302) ? 1 : 0;
         } else {
             $result = 1;
         }
         return $result;
     }
 
-    public static function checkLogin(Request $request)
+    public static function checkLogin()
     {
         if (Auth::check()) { //TODO
             var_export(Auth::user()->stuId);
@@ -57,7 +57,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->success();
         }
-        
+
         Validator::make($request->all(), [
             'stuId' => 'required | between: 10,11', // 寄读生学号为10位,如GJ16010001
             'password' => 'required | not_in:123456'
@@ -72,7 +72,7 @@ class AuthController extends Controller
                 $request->session()->put('stuId', $authData->stuId);
                 return $this->success();
                 break;
-           case 0:
+            case 0:
                 return $this->error('用户名或密码错误');
                 break;
             case -1:
@@ -102,18 +102,18 @@ class Cookie
 {
     public static function set(AuthData $authData)
     {
-	    $cookieData = Crypt::encrypt(
-	        json_encode([
+        $cookieData = Crypt::encrypt(
+            json_encode([
                 $authData->stuId,
                 $authData->password
             ])
         );
-	    setcookie('MusicAuth', $cookieData, time() + 24*60*60, '/'); //Set path to '/' to fix Cross-Origin problems
-	    $_COOKIE['MusicAuth'] = $cookieData;
+        setcookie('MusicAuth', $cookieData, time() + 24 * 60 * 60, '/'); //Set path to '/' to fix Cross-Origin problems
+        $_COOKIE['MusicAuth'] = $cookieData;
     }
 
     public static function forget()
     {
-	 	setcookie('MusicAuth',' ', time() - 3600);
+        setcookie('MusicAuth', ' ', time() - 3600);
     }
 }

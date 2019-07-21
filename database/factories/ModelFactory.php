@@ -13,20 +13,20 @@
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
-        'stuId' => rand(315, 318).'01010'.rand(100,800)
+        'stuId' => rand(315, 318) . '01010' . rand(100, 800)
     ];
 });
-$factory->define(App\Song::class, function(Faker\Generator $faker) use ($factory) {
+$factory->define(App\Song::class, function (Faker\Generator $faker) use ($factory) {
     return [
         'playtime' => $faker->numberBetween(1, 6),
-	      'name' => $faker->words(rand(1, 4), true),
-	      'origin' => $faker->words(rand(1, 3), true),
-	      'user_id' => $factory->raw('App\User')['stuId']	
+        'name' => $faker->words(rand(1, 4), true),
+        'origin' => $faker->words(rand(1, 3), true),
+        'user_id' => $factory->raw('App\User')['stuId']
     ];
 });
 $factory->define(App\File::class, function (Faker\Generator $faker) use ($factory) {
     return [
-	      'md5' => $faker->md5,
-	      'user_id' => $factory->raw('App\User')['stuId']
+        'md5' => $faker->md5,
+        'user_id' => $factory->raw('App\User')['stuId']
     ];
 });

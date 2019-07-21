@@ -20,15 +20,6 @@ class ExampleTest extends TestCase
     {
         $this->json('POST', '/Login')
              ->seeJson(['error' => 1]);
-        $this->json('POST', '/Login', ['stuId' => '31601010'])
-             ->seeJson(['error' => 1]);
-        $this->json('POST', '/Login', ['stuId' => '***REMOVED***'])
-             ->seeJson(['error' => 1]);
-        $this->json('POST', '/Login', [
-                   'stuId' => '***REMOVED***',
-                   'password' => '123456'
-               ])
-             ->seeJson(['error' => 1]);
     }
 
     public function testPermission()

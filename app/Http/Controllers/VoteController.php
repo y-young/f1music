@@ -10,8 +10,6 @@ use App\Vote;
 use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class VoteController extends Controller
 {
@@ -26,14 +24,14 @@ class VoteController extends Controller
         'vote.in' => '参数错误,请重试'
     ];
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         self::$stuId = Auth::user()->stuId;
     }
 
     public function Vote(Request $request)
     {
-        if (! config('music.openVote')) {
+        if (!config('music.openVote')) {
             return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
@@ -55,7 +53,7 @@ class VoteController extends Controller
 
     public function getSongs(Request $request)
     {
-        if (! config('music.openVote')) {
+        if (!config('music.openVote')) {
             return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
@@ -70,10 +68,11 @@ class VoteController extends Controller
         if (empty($order)) {
             $order = Order::create([
                 'user_id' => self::$stuId,
-                'order' => Song::select('id')->inRandomOrder()->get()]);
+                'order' => Song::select('id')->inRandomOrder()->get()
+            ]);
             $order->save();
         }
-        $songs = Song::with(['votes' => function($query) {
+        $songs = Song::with(['votes' => function ($query) {
             $query->where('user_id', self::$stuId);
         }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
 

@@ -42,7 +42,7 @@ class UploadController extends Controller
     ];
     private static $stuId;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         self::$stuId = Auth::user()->stuId;
     }
@@ -80,7 +80,6 @@ class UploadController extends Controller
         if (empty($vFile->error)) {
             $vFile = self::storeFile($vFile);
             self::insertSong($vFile);
-            // Storage::disk('tmp')->delete($vFile->name); //remove
         } else {
             Storage::disk('tmp')->delete($vFile->name);
             return $this->error($vFile->error);

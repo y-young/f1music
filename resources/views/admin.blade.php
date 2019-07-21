@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,8 +14,10 @@
   <link rel="stylesheet" href="{{ mix('admin.css') }}">
   <title>首页 - 福州一中校园音乐征集 管理系统</title>
 </head>
+
 <body>
   <div id="root"></div>
   <script src="{{ mix('admin.js') }}"></script>
 </body>
+
 </html>

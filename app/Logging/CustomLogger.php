@@ -12,10 +12,10 @@ class CustomLogger
 {
 
     /**
-      * Create a custom Monolog instance.
-      *
-      * @return \Monolog\Logger
-      */
+     * Create a custom Monolog instance.
+     *
+     * @return \Monolog\Logger
+     */
 
     public function __invoke()
     {
@@ -39,5 +39,4 @@ class CustomLogger
 
         return $monolog;
     }
-
 }

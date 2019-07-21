@@ -4,15 +4,11 @@ namespace App\Http\Controllers;
 
 use Log;
 use Auth;
-use Validator;
 use App\File;
 use App\Song;
-use App\Vote;
 use App\Report;
-use App\Option;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class ManageController extends Controller
 {
@@ -131,7 +127,7 @@ class ManageController extends Controller
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
-        $songs = $songs->sortBy(function ($song) {
+        $songs = $songs->sortBy(function ($song) { //先按时段再按得分排序
             return $song->playtime . '-' . (1 - 0.1 * $song->score);
         }); // Ugly Solution
         $songs = $songs->map(function ($song) {
@@ -149,7 +145,7 @@ class ManageController extends Controller
         return $this->success('rank', $songs->values());
     }
 
-    public function Analyze(Request $request)
+    public function Analyze()
     {
         if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
             return $this->error('开放上传或投票期间无法查看投票数据');
@@ -171,7 +167,30 @@ class ManageController extends Controller
         foreach ($songs as $song) {
             $result .= "<tr><td>" . $song->id . "</td><td>" . $song->playtime . "</td><td>" . $song->name . "</td><td>" . $song->origin . "</td><td>" . $song->awful . "</td><td>" . $song->bad . "</td><td>" . $song->neutral . "</td><td>" . $song->good . "</td><td>" . $song->awesome . "</td><td>" . $song->score . "</td><td>" . $song->vote_sum . "</td><td>" . $song->votes_count . "</td></tr>";
         };
-        return "<html><body><table border=\"1\"><tbody><tr><td>#</td><td>Time</td><td>Name</td><td>Origin</td><td>-10</td><td>-5</td><td>0</td><td>5</td><td>10</td><td>Score</td><td>Sum</td><td>Count</td></tr>$result</tbody></table></body></html>";
+        return "
+        <html>
+            <body>
+                <table border=\"1\">
+                    <tbody>
+                        <tr>
+                            <td>#</td>
+                            <td>Time</td>
+                            <td>Name</td>
+                            <td>Origin</td>
+                            <td>-10</td>
+                            <td>-5</td>
+                            <td>0</td>
+                            <td>5</td>
+                            <td>10</td>
+                            <td>Score</td>
+                            <td>Sum</td>
+                            <td>Count</td>
+                        </tr>
+                        $result
+                    </tbody>
+                </table>
+            </body>
+        </html>";
     }
 
     public function Download($id)

@@ -35,10 +35,10 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('admin', function ($user) {
-            return in_array($user->stuId, config('music.admin')); 
+            return in_array($user->stuId, config('music.admin'));
         });
         Gate::define('censor', function ($user) {
-            return in_array($user->stuId, config('music.censor')); 
+            return in_array($user->stuId, config('music.censor'));
         });
     }
 
@@ -49,19 +49,19 @@ class AuthServiceProvider extends ServiceProvider
             "password" => $authData->password,
             "loginRole" => '2'
         ];
-        if (! config('music.debugauth')) {
+        if (!config('music.debugAuth')) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-            $output = curl_exec($ch);
-            $rinfo = curl_getinfo($ch);
+            $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
             if (curl_errno($ch)) {
                 return -1;
             }
             curl_close($ch);
-            $result = (($output=="") && $rinfo['http_code'] == 302) ? 1 : 0;
+            $result = (($response == "") && $info['http_code'] == 302) ? 1 : 0;
         } else {
             $result = 1;
         }
@@ -72,13 +72,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $stuId = $request->session()->get('stuId');
         $authData = Cookie::get();
-        if (! empty($authData)) {
+        if (!empty($authData)) {
             if ($stuId == $authData->stuId) {
                 return $stuId;
             } elseif ($this->campusAuth($authData) == 1) {
                 $request->session()->put('stuId', $authData->stuId);
                 return $authData->stuId;
-		    } else {
+            } else {
                 return false;
             }
         }
@@ -96,14 +96,14 @@ class Cookie
 {
     public static function get()
     {
-        if ((!isset($_COOKIE)) || (!isset($_COOKIE['MusicAuth']))) {
-		    return null;
+        if (!isset($_COOKIE) || !isset($_COOKIE['MusicAuth'])) {
+            return null;
         }
         $cookieData = $_COOKIE['MusicAuth'];
         $data = json_decode(Crypt::decrypt($cookieData));
         $authData = new AuthData();
-	    $authData->stuId = $data[0];
-		$authData->password = $data[1];
-		return $authData;
-	  }
+        $authData->stuId = $data[0];
+        $authData->password = $data[1];
+        return $authData;
+    }
 }

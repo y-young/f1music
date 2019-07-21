@@ -6,6 +6,6 @@ return [
     'openDownload' => false,
     'admin' => [],
     'censor' => [],
-    'debugauth' => env('APP_DEBUG', false),
+    'debugAuth' => env('APP_DEBUG', false),
     'playlist' => '2064024722'
 ];
