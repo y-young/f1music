@@ -4,14 +4,7 @@ export default {
     "app": resolve(__dirname, "./src/pages/app.js"),
     "admin": resolve(__dirname, "./src/pages/admin.js")
   },
-  publicPath: "./assets/",
   outputPath: resolve(__dirname, "../public/assets/"),
-  /*commons: [
-    {
-      name: "common",
-      chunks: ["app", "admin"]
-    }
-  ],*/
   hash: true,
   manifest: {
     publicPath: "./assets/"
@@ -29,12 +22,12 @@ export default {
   },
   proxy: {
     "/api": {
-      target: "http://localhost:81/api/",
+      target: "http://localhost/api/",
       changeOrigin: true,
       pathRewrite: { "^/api": "" }
     },
     "/uploads": {
-      target: "http://localhost:81/uploads/",
+      target: "http://localhost/uploads/",
       changeOrigin: true,
       pathRewrite: { "^/uploads": "" }
     },
