@@ -8,16 +8,21 @@ export default {
     title: "首页",
     siderFolded: false,
     isDesktop: window.innerWidth > 993,
+    width: 0,
     loggedIn: false
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatch({ type: "updateState", payload: window.innerWidth });
       let tid;
       window.onresize = () => {
         clearTimeout(tid);
         tid = setTimeout(() => {
-          dispatch({ type: "mobileCollapse" });
+          dispatch({
+            type: "mobileCollapse",
+            payload: window.innerWidth
+          });
         }, 300);
       };
       history.listen(({ pathname }) => {
@@ -26,7 +31,10 @@ export default {
         }
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
-        dispatch({ type: "mobileCollapse" });
+        dispatch({
+          type: "mobileCollapse",
+          payload: window.innerWidth
+        });
         dispatch({ type: "updateState", payload: { loggedIn: checkLogin() } });
       });
     }
@@ -89,15 +97,6 @@ export default {
           loggedIn: false
         }
       });
-    },
-    *mobileCollapse(action, { call, put }) {
-      const isDesktop = window.innerWidth > 993;
-      yield put({
-        type: "updateState",
-        payload: {
-          siderFolded: !isDesktop
-        }
-      });
     }
   },
 
@@ -110,6 +109,19 @@ export default {
         ...state,
         siderFolded: !state.siderFolded
       };
+    },
+    mobileCollapse(state, { payload: width }) {
+      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
+      if (width !== state.width) {
+        const isDesktop = width > 993;
+        return {
+          ...state,
+          width: width,
+          siderFolded: !isDesktop
+        };
+      } else {
+        return { ...state };
+      }
     }
   }
 };

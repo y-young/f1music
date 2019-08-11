@@ -15,15 +15,6 @@
   background: #1890ff;
 }
 .title {
-  /*display: block;*/
-  height: 64px;
-  /*padding: 0 20px;
-  border-bottom: none;
-  color: #fff;*/
-  line-height: 60px;
-  /*-webkit-box-shadow: none!important;
-  box-shadow: none!important;
-  position: relative;*/
   font-size: 18px;
 }
 .container {
@@ -31,7 +22,7 @@
   top: 0;
   right: 0;
   left: 0;
-  bottom: 0;
+  min-height: 100vh;
   height: 100%;
   /*overflow-y: auto;*/
   -webkit-transition: all 250ms ease;
@@ -46,15 +37,9 @@
   left: 0;
   bottom: 0;
 }
-@media (min-width: 500px) {
-  .app.withSidebar .container {
-    left: 300px;
-  }
-  .containerInner {
-    min-height: 50vw;
-  }
-}
+
 @media (max-width: 500px) {
+  /*Hack:禁止右侧内容在侧边栏展开时滚动*/
   .app.withSidebar {
     overflow: hidden;
   }
@@ -66,6 +51,17 @@
     transform: translateX(70%);
   }
 }
+@media (min-width: 501px) and (max-width: 768px) {
+  .app.withSidebar .container {
+    left: 256px;
+  }
+}
+@media (min-width: 769px) {
+  .app.withSidebar .container {
+    left: 300px;
+  }
+}
+
 .trigger {
   color: #fff;
   font-size: 18px;
@@ -74,21 +70,17 @@
   cursor: pointer;
   transition: color 0.3s;
 }
-.main {
-  top: 64px;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  outline: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.main::-webkit-scrollbar {
-  display: none;
-}
 .content {
+  margin-top: 64px;
+  padding: 7px 15px 40px 15px;
+}
+.contentInner {
   position: relative;
   max-width: 800px;
   margin: 0 auto;
-  padding: 7px 15px 40px 15px;
+}
+@media (min-width: 2560px) {
+  .contentInner {
+    max-width: 2000px;
+  }
 }

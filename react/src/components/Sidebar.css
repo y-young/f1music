@@ -1,11 +1,10 @@
 .sidebar {
-  position: absolute;
+  position: fixed;
   width: 300px;
   top: 0;
   left: -300px;
-  bottom: 0;
-  z-index: 1;
-  /*overflow-y: auto;*/
+  height: 100%;
+  min-height: 100vh;
   -webkit-transition: left 250ms ease;
   -moz-transition: left 250ms ease;
   -o-transition: left 250ms ease;
@@ -16,10 +15,18 @@
   .sidebar {
     width: 70%;
     left: -70%;
-    bottom: 0;
   }
   .logo {
     width: 70%;
+  }
+}
+@media (min-width: 501px) and (max-width: 768px) {
+  .sidebar {
+    width: 256px;
+    left: -256px;
+  }
+  .logo {
+    width: 256px;
   }
 }
 
@@ -32,14 +39,11 @@
   top: 0;
   width: 70%;
   padding: 0 15px;
-  transition: all 250ms ease;
+  /* transition: all 250ms ease; */
   font-size: 1.3rem;
   line-height: 64px;
   z-index: 2;
   color: #fff;
-  /*border-color: rgba(238,241,146,0.3);
-    border-right-width: 1px;
-    border-right-style: solid;*/
   background: #1890ff;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -56,14 +60,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  -webkit-transition: left 250ms ease;
-  -moz-transition: left 250ms ease;
-  -o-transition: left 250ms ease;
-  transition: left 250ms ease;
 }
-.nav::-webkit-scrollbar {
+/* .nav::-webkit-scrollbar {
   display: none;
-}
-.nav a {
-  text-decoration: none;
-}
+} */

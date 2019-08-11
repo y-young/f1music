@@ -40,14 +40,10 @@ const App = ({ children, dispatch, app, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
-            <div className={styles.main}>
-              <Content>
-                <div className={styles.content}>
-                  { children }
-                </div>
-              </Content>
-              <Footer />
-            </div>
+            <Content className={styles.content}>
+              <div className={styles.contentInner}>{children}</div>
+            </Content>
+            <Footer />
           </div>
         </div>
       </div>
