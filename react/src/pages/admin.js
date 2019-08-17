@@ -1,6 +1,6 @@
 import dva from "dva";
 import createLoading from "dva-loading";
-import { createSentry, Raven } from "utils/admin";
+// import { createSentry, Raven } from "utils/admin";
 import { message } from "antd";
 import "./admin.css";
 
@@ -9,9 +9,9 @@ const app = dva({
   onError(e, dispatch) {
     message.error(e.message);
     if (!e.type || e.type !== "notice") {
-      Raven.captureException(e, {
-        logger: "javascript.effect"
-      });
+      // Raven.captureException(e, {
+      //   logger: "javascript.effect"
+      // });
       console.log(e);
     }
   }
@@ -19,15 +19,15 @@ const app = dva({
 
 // 2. Plugins
 app.use(createLoading());
-app.use(
-  createSentry({
-    context: {
-      tags: {
-        page: "admin"
-      }
-    }
-  })
-);
+// app.use(
+//   createSentry({
+//     context: {
+//       tags: {
+//         page: "admin"
+//       }
+//     }
+//   })
+// );
 
 // 3. Model
 const models = ["admin", "songs", "files", "reports", "rank", "statistics"];

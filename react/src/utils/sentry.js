@@ -1,6 +1,6 @@
 import * as Raven from "raven-js";
 
-const dsn = "***REMOVED***";
+const dsn = "";
 
 function createSentry(props) {
   const { config, context } = props;

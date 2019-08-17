@@ -1,6 +1,6 @@
 import dva from "dva";
 import createLoading from "dva-loading";
-import { createSentry, Raven } from "utils";
+// import { createSentry, Raven } from "utils";
 import { message } from "antd";
 import "./app.css";
 
@@ -11,9 +11,9 @@ const app = dva({
       message.error(e.message);
     } else { // 程序错误不提示
       message.error("出错了,请刷新重试");
-      Raven.captureException(e, {
-        logger: "javascript.effect"
-      });
+      // Raven.captureException(e, {
+      //   logger: "javascript.effect"
+      // });
       console.log(e);
     }
   }
@@ -21,13 +21,13 @@ const app = dva({
 
 // 2. Plugins
 app.use(createLoading());
-app.use(createSentry({
-  context: {
-    tags: {
-      page: "app"
-    }
-  }
-}));
+// app.use(createSentry({
+//   context: {
+//     tags: {
+//       page: "app"
+//     }
+//   }
+// }));
 
 // 3. Model
 const models = ["app", "upload", "vote"];
