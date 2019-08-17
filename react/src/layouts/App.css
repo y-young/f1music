@@ -70,6 +70,44 @@
   cursor: pointer;
   transition: color 0.3s;
 }
+.overlay {
+  position: fixed;
+  top: 64px;
+  width: 100%;
+  height: calc(100% - 64px);
+  z-index: 9999;
+  display: none;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.75);
+  transition: all 100ms ease;
+  animation-duration: 0.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@media (max-width: 500px) {
+  .app.withSidebar .overlay {
+    display: block;
+  }
+}
 .content {
   margin-top: 64px;
   padding: 7px 15px 40px 15px;

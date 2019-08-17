@@ -7,7 +7,7 @@ export default {
   state: {
     title: "首页",
     siderFolded: false,
-    isDesktop: window.innerWidth > 993,
+    isDesktop: window.innerWidth >= 768,
     width: 0,
     loggedIn: false
   },
@@ -21,7 +21,10 @@ export default {
         tid = setTimeout(() => {
           dispatch({
             type: "mobileCollapse",
-            payload: window.innerWidth
+            payload: {
+              width: window.innerWidth,
+              isResize: true
+            }
           });
         }, 300);
       };
@@ -33,7 +36,10 @@ export default {
         window.scrollTo(0, 0);
         dispatch({
           type: "mobileCollapse",
-          payload: window.innerWidth
+          payload: {
+            width: window.innerWidth,
+            isResize: false
+          }
         });
         dispatch({ type: "updateState", payload: { loggedIn: checkLogin() } });
       });
@@ -110,10 +116,11 @@ export default {
         siderFolded: !state.siderFolded
       };
     },
-    mobileCollapse(state, { payload: width }) {
+    mobileCollapse(state, { payload }) {
+      const { width, isResize } = payload;
       //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
-      if (width !== state.width) {
-        const isDesktop = width > 993;
+      if (!isResize || width !== state.width) {
+        const isDesktop = width >= 768;
         return {
           ...state,
           width: width,

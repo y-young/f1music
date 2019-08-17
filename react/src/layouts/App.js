@@ -40,6 +40,10 @@ const App = ({ children, dispatch, app, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
+            <span
+              className={styles.overlay}
+              onClick={toggle}
+            />
             <Content className={styles.content}>
               <div className={styles.contentInner}>{children}</div>
             </Content>
