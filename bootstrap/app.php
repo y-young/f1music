@@ -102,7 +102,7 @@ $app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 //Enable Session
 $app->register(Illuminate\Session\SessionServiceProvider::class);
 //Integrate Sentry
-$app->register(Sentry\Laravel\ServiceProvider::class);
+// $app->register(Sentry\Laravel\ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
