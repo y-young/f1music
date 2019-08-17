@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter } from "dva/router";
-import { CSSTransitionGroup } from "react-transition-group";
 import { Sidebar, Footer } from "components/admin";
 import { LocaleProvider, Layout, Icon } from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
@@ -40,20 +39,11 @@ const Admin = ({ children, dispatch, admin, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
-            <div className={styles.main}>
-              <Content>
-                <div className={styles.content}>
-                  <CSSTransitionGroup
-                    transitionName="fade"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={200}
-                  >
-                    {children}
-                  </CSSTransitionGroup>
-                </div>
-              </Content>
-              <Footer />
-            </div>
+            <span className={styles.overlay} onClick={toggle} />
+            <Content className={styles.content}>
+              <div className={styles.contentInner}>{children}</div>
+            </Content>
+            <Footer />
           </div>
         </div>
       </div>

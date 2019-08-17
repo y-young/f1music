@@ -8,17 +8,30 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatch({ type: "updateState", payload: window.innerWidth });
       let tid;
       window.onresize = () => {
         clearTimeout(tid);
         tid = setTimeout(() => {
-          dispatch({ type: "mobileCollapse" });
+          dispatch({
+            type: "mobileCollapse",
+            payload: {
+              width: window.innerWidth,
+              isResize: true
+            }
+          });
         }, 300);
       };
       history.listen(({ pathname }) => {
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
-        dispatch({ type: "mobileCollapse" });
+        dispatch({
+          type: "mobileCollapse",
+          payload: {
+            width: window.innerWidth,
+            isResize: false
+          }
+        });
       });
     }
   },
@@ -54,15 +67,6 @@ export default {
       }
       yield put({ type: "updateState", payload: { title: title } });
       document.title = title + " - 福州一中校园音乐征集 管理系统 ";
-    },
-    *mobileCollapse(action, { call, put }) {
-      const isDesktop = window.innerWidth > 993;
-      yield put({
-        type: "updateState",
-        payload: {
-          siderFolded: !isDesktop
-        }
-      });
     }
   },
 
@@ -75,6 +79,20 @@ export default {
         ...state,
         siderFolded: !state.siderFolded
       };
+    },
+    mobileCollapse(state, { payload }) {
+      const { width, isResize } = payload;
+      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
+      if (!isResize || width !== state.width) {
+        const isDesktop = width >= 768;
+        return {
+          ...state,
+          width: width,
+          siderFolded: !isDesktop
+        };
+      } else {
+        return { ...state };
+      }
     }
   }
 };
