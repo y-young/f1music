@@ -16,7 +16,7 @@ class MusicController extends Controller
     {
         self::$API = new Meting('netease');
         // 网易常封cookies,必要时手动抓取music.163.com的cookies并更换
-        //self::$API->cookie('***REMOVED***');
+        //self::$API->cookie('');
     }
 
     public function Search(Request $request)
