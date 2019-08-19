@@ -2,7 +2,7 @@
 #
 # Author:  Googleplex <yyoung2001 AT gmail.com>
 # Description: Semi-auto Deploy Script for Laravel & Lumen
-# Version: 1.2.1
+# Version: 1.3.0
 #
 
 #export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
@@ -25,6 +25,7 @@ default_mode="570"
 writable_mode="770"
 composer_args=""
 yarn_args=""
+group_flag='y'
 # set -x
 # set -e
 function success() {
@@ -42,16 +43,29 @@ function warning() {
 function error() {
     echo -e "\033[31m$1\033[0m"
 }
+function checkEnv() {
+    info 'Checking requirements...'
+    hash git >/dev/null 2>&1 || { echo >&2 "Git is required but not found."; exit 1; }
+    hash php >/dev/null 2>&1 || { echo >&2 "PHP is required but not found."; exit 1; }
+    hash composer >/dev/null 2>&1 || { echo >&2 "Composer is required but not found."; exit 1; }
+    hash npm >/dev/null 2>&1 || { echo >&2 "NPM is required but not found."; exit 1; }
+    hash yarn >/dev/null 2>&1 || { echo >&2 "Yarn is required but not found."; exit 1; }
+    success 'Done.'
+}
 function writeConfig() {
     info 'Writing to .env...'
     if [[ "$env" == "1" ]]; then
         app_env="production"
         app_debug="false"
-    else
-        app_env="local"
+    else 
         app_debug="true"
+        if [[ "$env" == "2" ]]; then
+            app_env="local"
+        else
+            app_env="staging"
+        fi
     fi
-    app_key=`cat /dev/urandom | head -n 32 | md5sum | head -c 32`
+    app_key=$(cat /dev/urandom | head -n 32 | md5sum | head -c 32)
     cp .env.example .env
     sed -i "s/{APP_ENV}/${app_env}/" .env
     sed -i "s/{APP_DEBUG}/${app_debug}/" .env
@@ -71,9 +85,11 @@ function writeConfig() {
 function backendConfigure() {
     info "Running migrations..."
     php artisan migrate
-    info "Creating symlink..."
-    cd public && ln -s ../storage/app/uploads uploads && cd ..
-    success "Done."
+    if [[ "$mode" == "initial" ]]; then
+        info "Creating symlink..."
+        cd public && ln -s ../storage/app/uploads uploads && cd ..
+        success "Done."
+    fi
 }
 function installDependencies() {
     if [[ "$env" == "1" ]]; then
@@ -84,20 +100,27 @@ function installDependencies() {
     composer install $composer_args
     success 'Done.'
     info 'Installing frontend dependencies...'
-    cd ./react && yarn $yarn_args && cd ..
+    cd ./react || exit 1
+    yarn $yarn_args
+    cd ..
     success 'Done.'
 }
 function buildAssets() {
     info 'Building frontend assets...'
-    cd ./react && npm run build && cd ..
+    cd ./react || exit 1
+    npm run build
+    cd ..
     success 'Done.'
 }
 function setupPermissions() {
     info 'Setting up permissions...'
-    chgrp -R $dev_group ./
-    chown -R $web_user ./
     chmod -R $default_mode ./
     chmod -R $writable_mode ./storage/
+    chown -R $web_user ./
+
+    if [ "${group_flag}" == 'y' ]; then
+        chgrp -R $dev_group ./
+    fi
     success 'Done.'
 }
 function usage() {
@@ -112,9 +135,10 @@ function usage() {
     "
 }
 # Check if user is root
-#[ $(id -u) != '0' ] && { error "Error: You must be root to run this script"; exit 1; }
+[ $(id -u) != '0' ] && { error "Error: You must be root to run this script"; exit 1; }
+checkEnv
 ARG_SUM=$#
-TEMP=`getopt -o hu --long help,update,prod,branch:,db_name:,db_user:,db_pass: -- "$@" 2>/dev/null`
+TEMP=$(getopt -o hu --long help,update,prod,branch:,db_name:,db_user:,db_pass: -- "$@" 2>/dev/null)
 [ $? != 0 ] && error "Unknown argument!" && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -157,6 +181,7 @@ if [ $ARG_SUM == 0 ]; then #Interactive mode
         echo "Specify current environment:"
         msg "\t1. Production"
         msg "\t2. Development"
+        msg "\t3. Staging"
         read -p "Please input a number:(Default 1 press Enter) " env
         [ -z "${env}" ] && env=1
         if [[ ! ${env} =~ ^[1-3]$ ]]; then
@@ -182,6 +207,22 @@ if [ $ARG_SUM == 0 ]; then #Interactive mode
             break
         fi
     done
+
+    read -p "Enter web server user name:(Default www press Enter) " web_user
+    [ -z "${web_user}" ] && web_user='www'
+
+    read -p "Do you want to setup file owner group? [y/n]: " group_flag
+    while :; do echo
+        if [[ ! ${group_flag} =~ ^[y,n]$ ]]; then
+            warning "input error! Please only input 'y' or 'n'"
+        else
+            break
+        fi
+    done
+    if [ "${group_flag}" == 'y' ]; then
+        read -p "Enter developer group name:(Default musicdev press Enter) " dev_group
+        [ -z "${dev_group}" ] && db_name='musicdev'
+    fi
 fi
 
 case "$mode" in
@@ -204,3 +245,4 @@ installDependencies
 buildAssets
 setupPermissions
 backendConfigure
+success "All done."
