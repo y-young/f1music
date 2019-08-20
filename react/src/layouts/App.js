@@ -30,6 +30,7 @@ const App = ({ children, dispatch, app, location }) => {
           desktop={isDesktop}
           loggedIn={loggedIn}
         />
+        <span className={styles.overlay} onClick={toggle} />
         <div className={styles.container}>
           <div className={styles.containerInner}>
             <Header className={styles.header}>
@@ -40,7 +41,6 @@ const App = ({ children, dispatch, app, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
-            <span className={styles.overlay} onClick={toggle} />
             <Content className={styles.content}>
               <div className={styles.contentInner}>{children}</div>
             </Content>
