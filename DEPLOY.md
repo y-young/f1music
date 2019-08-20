@@ -39,9 +39,7 @@
 2. 安装后端依赖库：  
  生产环境： `composer install --no-dev`  
  开发环境：`composer install`
-3. `cd react` 进入前端资源目录，安装前端编译环境依赖库：
- 生产环境：`yarn --production`  
- 开发环境：`yarn`
+3. `cd react` 进入前端资源目录，安装前端编译环境依赖库：`yarn`
 4. 建立数据库及数据库专用用户（命令行工具或 `phpMyAdmin`），专用用户仅对本数据库有基本操作权限，且只允许本地访问
 5. 生成 32 字符随机密钥用作 `APP_KEY`
 6. 修改 `.env` 和 `config/database.php` 中的 `APP_KEY` 和数据库信息

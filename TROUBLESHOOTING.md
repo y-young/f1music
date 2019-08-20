@@ -1,5 +1,8 @@
 # 问题排查
 
+## Git 出现大量已修改文件
+执行 `git config core.filemode false`
+
 ## Nginx 返回 403
 1. 未在虚拟主机配置文件中将网站根目录设置为 `f1music/public`
 2. 文件权限配置不正确，`nginx` 用户无足够权限
