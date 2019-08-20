@@ -2,7 +2,7 @@
 #
 # Author:  Googleplex <yyoung2001 AT gmail.com>
 # Description: Semi-auto Deploy Script for Laravel & Lumen
-# Version: 1.3.0
+# Version: 1.3.1
 #
 
 #export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
@@ -121,6 +121,8 @@ function setupPermissions() {
     if [ "${group_flag}" == 'y' ]; then
         chgrp -R $dev_group ./
     fi
+
+    git config core.filemode false
     success 'Done.'
 }
 function usage() {
@@ -221,7 +223,7 @@ if [ $ARG_SUM == 0 ]; then #Interactive mode
     done
     if [ "${group_flag}" == 'y' ]; then
         read -p "Enter developer group name:(Default musicdev press Enter) " dev_group
-        [ -z "${dev_group}" ] && db_name='musicdev'
+        [ -z "${dev_group}" ] && dev_group='musicdev'
     fi
 fi
 
