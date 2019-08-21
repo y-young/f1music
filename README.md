@@ -5,6 +5,8 @@
 ![Frontend](https://img.shields.io/badge/Frontend-React-blue.svg?style=for-the-badge "Author")
 ![UI](https://img.shields.io/badge/UI-Ant%20Design-blue.svg?style=for-the-badge "UI")
 
+[中文](README.md) | [English](README-en.md)
+
 ## 简介及活动概况
 
 福州一中每年进行校园音乐征集和投票使用的系统，有据可查的活动开始时间为 2007 年。  
