@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Author:  Googleplex <yyoung2001 AT gmail.com>
+# Author:  Googleplex <i AT gpx.moe>
 # Description: Semi-auto Deploy Script for Laravel & Lumen
-# Version: 1.3.1
+# Version: 1.3.2
 #
 
 #export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
@@ -76,6 +76,8 @@ function writeConfig() {
     success 'Done.'
 
     info 'Writing to config...'
+    git checkout -- ./config/app.php
+    git checkout -- ./config/database.php
     sed -i "s/{APP_KEY}/${app_key}/" ./config/app.php
     sed -i "s/{DB_NAME}/${db_name}/" ./config/database.php
     sed -i "s/{DB_USER}/${db_user}/" ./config/database.php

@@ -32,8 +32,6 @@
 
 赋予 `deploy.sh` 执行权限：`sudo chmod +x deploy.sh`，执行命令 `sudo env PATH="$PATH" ./deploy.sh` （防止环境变量不同），按提示操作（可能存在bug）
 
-注意：避免重复运行自动部署，如重复运行请手动同步 `.env` 和 `config/app.php` 中的 `app_key` ！
-
 ### 手动部署
 1. 从 `Git` 仓库克隆项目核心代码到网站根目录
 2. 安装后端依赖库：  
