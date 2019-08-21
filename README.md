@@ -19,7 +19,7 @@
 - 环境： PHP 7.2+ (with Composer), Nginx, MySQL 5.6+
 
 生产及开发环境部署：
-见 DEPLOY.md
+见 [DEPLOY.md](DEPLOY.md)
 
 ## 技术栈
 
@@ -35,7 +35,7 @@
 
 
 ## 更新日志
-见 CHANGELOG.md
+见 [CHANGELOG.md](CHANGELOG.md)
 
 ## 协议
 
