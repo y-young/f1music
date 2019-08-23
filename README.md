@@ -5,7 +5,7 @@
 ![Frontend](https://img.shields.io/badge/Frontend-React-blue.svg?style=for-the-badge "Author")
 ![UI](https://img.shields.io/badge/UI-Ant%20Design-blue.svg?style=for-the-badge "UI")
 
-[中文](README.md) | [English](README-en.md)
+中文 | [English](README-en.md)
 
 ## 简介及活动概况
 
