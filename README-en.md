@@ -5,6 +5,8 @@
 ![Frontend](https://img.shields.io/badge/Frontend-React-blue.svg?style=for-the-badge "Author")
 ![UI](https://img.shields.io/badge/UI-Ant%20Design-blue.svg?style=for-the-badge "UI")
 
+[中文](README.md) | English
+
 ## Introduction & Events Overview
 
 The system used for electing annual school music in Fuzhou No.1 High School(FZYZ), the events can trace back to year 2007.  
