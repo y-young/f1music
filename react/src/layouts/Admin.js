@@ -29,6 +29,7 @@ const Admin = ({ children, dispatch, admin, location }) => {
           location={location}
           desktop={isDesktop}
         />
+        <div className={styles.overlay} onClick={toggle} />
         <div className={styles.container}>
           <div className={styles.containerInner}>
             <Header className={styles.header}>
@@ -39,7 +40,6 @@ const Admin = ({ children, dispatch, admin, location }) => {
               />
               <span className={styles.title}>{title}</span>
             </Header>
-            <span className={styles.overlay} onClick={toggle} />
             <Content className={styles.content}>
               <div className={styles.contentInner}>{children}</div>
             </Content>
