@@ -9,6 +9,7 @@ class Order extends Model
     protected $table = 'orders';
     protected $guarded = [];
     public $primaryKey = 'user_id';
+    protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
 

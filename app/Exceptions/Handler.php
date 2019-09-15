@@ -3,9 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -47,30 +47,30 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $e)
+    public function report(Exception $exception)
     {
-        if (app()->bound('sentry') && $this->shouldReport($e)) {
-            app('sentry')->captureException($e);
+        if (app()->bound('sentry') && $this->shouldReport($exception)) {
+            app('sentry')->captureException($exception);
         }
-        parent::report($e);
+        parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Exception  $exception
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exception)
     {
-        if ($e instanceof HttpException) {
-            $code = $e->getStatusCode();
+        if ($exception instanceof HttpException) {
+            $code = $exception->getStatusCode();
             if (in_array($code, [401, 403, 404, 429, 500, 503])) {
-                $message = $e->getMessage();
+                $message = $exception->getMessage();
                 return response(view('errors.http', [
                     'code' => $code,
                     'title' => $this->titles[$code],
@@ -78,10 +78,10 @@ class Handler extends ExceptionHandler
                 ]), $code);
             }
         }
-        if ($e instanceof ValidationException) {
-            $message = $e->validator->errors()->first();
+        if ($exception instanceof ValidationException) {
+            $message = $exception->validator->errors()->first();
             return response()->json(['error' => 1, 'msg' => $message]);
         }
-        return parent::render($request, $e);
+        return parent::render($request, $exception);
     }
 }
