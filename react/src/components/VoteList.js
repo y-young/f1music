@@ -258,6 +258,7 @@ class VoteList extends React.Component {
           className={styles.reason}
           onChange={e => this.setState({ reason: e.target.value })}
           maxLength="60"
+          onPressEnter={this.handleReport}
         />
         <Button
           type="primary"

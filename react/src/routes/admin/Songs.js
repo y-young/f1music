@@ -221,11 +221,11 @@ class Songs extends React.Component {
                 {getFieldDecorator("name", {
                   initialValue: row.name,
                   rules: [{ required: true, message: "请填写曲名" }]
-                })(<Input placeholder="曲名" />)}
+                })(<Input placeholder="曲名" onPressEnter={this.handleSave} />)}
               </FormItem>
               <FormItem label="来源">
                 {getFieldDecorator("origin", { initialValue: row.origin })(
-                  <Input placeholder="来源" />
+                  <Input placeholder="来源" onPressEnter={this.handleSave} />
                 )}
               </FormItem>
             </Form>
