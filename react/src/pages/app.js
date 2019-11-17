@@ -8,8 +8,10 @@ import "./app.css";
 const app = dva({
   onError(e, dispatch) {
     if (e.type && e.type === "notice") {
+      e.preventDefault();
       message.error(e.message);
-    } else { // 程序错误不提示
+    } else {
+      // 程序错误不提示
       message.error("出错了,请刷新重试");
       // Raven.captureException(e, {
       //   logger: "javascript.effect"
