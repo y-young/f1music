@@ -44,8 +44,8 @@ class MusicController extends Controller
         if (empty($url)) {
             return $this->error('暂无版权或歌曲未找到');
         }
-        $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
-        return $this->success('url', $url);
+        //$url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1); //m3c此类开头无法外链,故无法试听,改为m3即可
+        return $this->success();
     }
 
     public function Playlist()

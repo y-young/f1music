@@ -12,12 +12,7 @@ export default {
     updateState(state, { payload }) {
       return { ...state, ...payload };
     },
-    updateMp3(
-      state,
-      {
-        payload: { row, url }
-      }
-    ) {
+    updateMp3(state, { payload: { row, url } }) {
       const result = state.searchResult;
       const records = result.filter(item => {
         if (item.id === row.id) {
@@ -49,8 +44,10 @@ export default {
         });
     },
     *fetchMp3({ payload: row }, { call, put }) {
-      const data = yield call(Mp3, row.id);
-      yield put({ type: "updateMp3", payload: { row, url: data.url } });
+      yield call(Mp3, row.id);
+      const url =
+        "https://music.163.com/song/media/outer/url?id=" + row.id + ".mp3";
+      yield put({ type: "updateMp3", payload: { row, url } });
     },
     *upload({ payload }, { call, put }) {
       const data = yield call(Upload, payload);
