@@ -67,8 +67,7 @@ const Login = ({
                   { validator: validatePassword }
                 ]
               })(
-                <Input
-                  type="password"
+                <Input.Password
                   placeholder="校园网密码"
                   prefix={
                     <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
