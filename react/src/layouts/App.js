@@ -3,8 +3,8 @@ import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter } from "dva/router";
 import { Sidebar, Footer } from "components";
-import { LocaleProvider, Layout, Icon } from "antd";
-import zhCN from "antd/lib/locale-provider/zh_CN";
+import { ConfigProvider, Layout, Icon } from "antd";
+import zhCN from "antd/es/locale/zh_CN";
 import styles from "./App.css";
 
 const { Header, Content } = Layout;
@@ -22,7 +22,7 @@ const App = ({ children, dispatch, app, location }) => {
   });
 
   return (
-    <LocaleProvider locale={zhCN}>
+    <ConfigProvider locale={zhCN}>
       <div className={appClass}>
         <Sidebar
           collapsed={siderFolded}
@@ -48,7 +48,7 @@ const App = ({ children, dispatch, app, location }) => {
           </div>
         </div>
       </div>
-    </LocaleProvider>
+    </ConfigProvider>
   );
 };
 
