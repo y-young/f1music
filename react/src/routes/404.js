@@ -1,14 +1,19 @@
 import React from "react";
-import { Link } from "dva/router";
-import { Icon } from "antd";
+import { Result, Button } from "antd";
 
 const NotFound = () => {
   return (
     <div>
-      <h1 style={{ color: "#777" }}>404 Page Not Found</h1>
-      <Link to="/" style={{ fontSize: "13px", color: "#777" }}>
-        <Icon type="arrow-left" /> 返回首页
-      </Link>
+      <Result
+        status="404"
+        title="404"
+        subTitle="抱歉，您访问的页面不存在"
+        extra={
+          <Button type="primary" href="#/">
+            返回首页
+          </Button>
+        }
+      />
     </div>
   );
 };
