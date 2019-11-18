@@ -120,12 +120,13 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
   return (
     <div>
       <Search
-        placeholder="搜索音乐"
+        placeholder="输入关键词"
         enterButton
         onSearch={search}
         onPressEnter={e => search(e.target.value)}
         style={{ marginBottom: "10px" }}
         required
+        loading={loading.effects["upload/search"]}
       />
       <Table
         dataSource={searchResult}
