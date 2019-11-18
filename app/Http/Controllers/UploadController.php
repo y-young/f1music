@@ -33,8 +33,8 @@ class UploadController extends Controller
     private static $errorMsg = [
         'stop_upload' => '上传已关闭',
         'max_upload_num' => '上传曲目数已达到限定数目,感谢您的支持',
-        'time_too_long' => '歌曲时长太长,请选择短一些的曲目',
-        'time_too_long_3' => '午出门铃声时长不得长于5分钟',
+        'time_too_long' => '歌曲时长超过6分钟,请选择短一些的曲目',
+        'time_too_long_3' => '午出门铃声时长不得大于5分钟',
         'time_too_short' => '歌曲时长不足2分半,请选择长一些的曲目',
         'already_exists' => '曲目在该时段已经有人推荐',
         'mp1_or_mp2' => '文件为mp1或mp2格式,请上传mp3格式的文件',
