@@ -115,6 +115,7 @@ class UploadController extends Controller
             $file->md5 = md5_file($file->url);
         } else { //Cloud Music Upload
             $url = self::getMp3($request->input('id'));
+            $file->cloudId = $request->input('id');
             if (empty($url)) {
                 throw new \Exception('暂不支持无版权或付费歌曲,请手动上传');
             }
@@ -187,6 +188,7 @@ class UploadController extends Controller
             $file = File::create([
                 'md5' => $vFile->md5,
                 'duration' => $vFile->duration,
+                'cloud_id' => $vFile->cloudId,
                 'user_id' => self::$stuId
             ]);
             $file->save();
