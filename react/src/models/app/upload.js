@@ -58,7 +58,7 @@ export default {
       const data = yield call(Upload, payload);
       if (data.error === 0) {
         message.success("上传成功");
-        yield put({ type: "fetch" });
+        yield put({ type: "fetchUploads" });
       }
     }
   },
