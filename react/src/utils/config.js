@@ -1,5 +1,6 @@
 module.exports = {
   api: {
+    status: "/status",
     login: "/login",
     logout: "/logout",
     list: "/vote/list",

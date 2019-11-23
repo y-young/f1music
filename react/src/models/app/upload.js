@@ -1,11 +1,12 @@
 import { message } from "antd";
-import { Search, Mp3, Upload, View } from "services/upload";
+import { Search, Mp3, Upload, View, Status } from "services/upload";
 
 export default {
   namespace: "upload",
   state: {
     searchResult: [],
-    songs: []
+    songs: [],
+    status: {}
   },
 
   reducers: {
@@ -31,7 +32,11 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
+    *fetchStatus(_, { call, put }) {
+      const data = yield call(Status);
+      yield put({ type: "updateState", payload: { status: data.status } });
+    },
+    *fetchUploads(_, { call, put }) {
       const data = yield call(View);
       yield put({ type: "updateState", payload: { songs: data.songs } });
     },
@@ -62,7 +67,8 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === "/upload") {
-          dispatch({ type: "fetch" });
+          dispatch({ type: "fetchStatus" });
+          dispatch({ type: "fetchUploads" });
         }
       });
     }

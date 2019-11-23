@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "dva";
 import { Divider, Form, Input, Icon, Upload, message } from "antd";
 import { TimeSelector } from "components";
 
@@ -45,12 +46,17 @@ class ManualUpload extends React.Component {
   };
 
   onChange = info => {
+    const { resetFields } = this.props.form;
     let { file } = info;
     const { response } = file;
+    const { dispatch } = this.props;
+
     if (file.status === "done") {
       if (response.error === 0) {
         message.success("上传成功");
-        window.location.reload();
+        resetFields();
+        this.setState({ fileList: [] });
+        dispatch({ type: "upload/fetchUploads" });
       } else {
         message.error(response.msg);
         file.status = "error";
@@ -84,13 +90,13 @@ class ManualUpload extends React.Component {
         <FormItem {...formItemLayout} label="曲名" hasFeedback>
           {getFieldDecorator("name", {
             rules: [{ required: true, message: "请填写曲名" }]
-          })(<Input placeholder="歌曲名称" maxLength="50" />)}
+          })(<Input placeholder="歌曲名称" maxLength={50} />)}
         </FormItem>
         <FormItem {...formItemLayout} label="来源" hasFeedback>
           {getFieldDecorator("origin", { initialValue: "" })(
             <Input
               placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可留空"
-              maxLength="50"
+              maxLength={50}
             />
           )}
         </FormItem>
@@ -104,6 +110,7 @@ class ManualUpload extends React.Component {
             beforeUpload={this.beforeUpload}
             onChange={this.onChange}
             with-credentials={true}
+            showUploadList={{ showRemoveIcon: false, showDownloadIcon: false }}
           >
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
@@ -119,4 +126,6 @@ class ManualUpload extends React.Component {
   }
 }
 
-export default Form.create()(ManualUpload);
+export default connect(({ upload, loading }) => ({ upload, loading }))(
+  Form.create()(ManualUpload)
+);

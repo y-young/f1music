@@ -36,8 +36,11 @@ const ViewUploads = ({ upload, loading }) => {
       <Table
         dataSource={songs}
         columns={columns}
-        loading={loading.effects["upload/fetch"]}
+        loading={loading.effects["upload/fetchUploads"]}
         pagination={false}
+        rowKey={record => {
+          return record.playtime + record.name;
+        }}
         scroll={{ x: 600 }}
       />
     </div>

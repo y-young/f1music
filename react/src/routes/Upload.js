@@ -1,56 +1,106 @@
 import React from "react";
+import moment from "moment";
 import { connect } from "dva";
-import { Alert, Tabs, Spin } from "antd";
+import {
+  Alert,
+  Row,
+  Col,
+  Button,
+  Tabs,
+  Spin,
+  Statistic,
+  Result,
+  Icon
+} from "antd";
 import { CloudUpload, ManualUpload, ViewUploads } from "components";
 
 const TabPane = Tabs.TabPane;
+const { Countdown } = Statistic;
 
 const Upload = ({ upload, loading }) => {
-  const { songs } = upload;
+  const { songs, status } = upload;
   const uploaded = songs.length;
-  const remaining = 12 - uploaded;
-  const RemainingNotice = () => {
-    if (uploaded === 12) {
-      return "您所上传的曲目已经达到最大限制12首，感谢您对校园音乐更换活动的支持，请耐心等待投票开放";
-    } else {
-      return (
-        "您已上传 " + uploaded + " 首曲目，还可再上传 " + remaining + " 首曲目"
-      );
-    }
-  };
+  const AllDone = (
+    <Result
+      icon={<Icon type="smile" theme="twoTone" />}
+      title="上传曲目数已达到限额，感谢您对校园音乐活动的支持"
+      subTitle="请耐心等待投票开放"
+    />
+  );
 
   return (
-    <div>
-      <Spin spinning={loading.effects["upload/fetch"]}>
-        <Alert
-          message="温馨提示"
-          type="info"
-          showIcon
-          closable
-          description={
-            <div>
-              文件格式：MP3；时长：2.5-6分钟; 大小：2MB-15MB为宜;
-              不得出现明显人声
-              <br />
-              上传前请先查看首页上传说明
-              <br />
-              <RemainingNotice />
-            </div>
+    <Spin
+      spinning={
+        loading.effects["upload/fetchUploads"] ||
+        loading.effects["upload/fetchStatus"]
+      }
+    >
+      {moment().isBefore(status.start) ? (
+        <Result
+          icon={<Icon type="clock-circle" theme="twoTone" />}
+          title="抱歉，上传尚未开始，距离上传开始还有"
+          subTitle={
+            <Countdown
+              value={moment(status.start)}
+              format="D 天 H 时 m 分 s 秒"
+              onFinish={() => window.location.reload()}
+            />
+          }
+          extra={
+            <Button type="primary" href="#/">
+              查看上传说明
+            </Button>
           }
         />
-      </Spin>
-      <Tabs defaultActiveKey="netease">
-        <TabPane tab="网易云音乐" key="netease">
-          <CloudUpload />
-        </TabPane>
-        <TabPane tab="手动上传" key="manual">
-          <ManualUpload />
-        </TabPane>
-        <TabPane tab="我的推荐" key="uploads">
-          <ViewUploads />
-        </TabPane>
-      </Tabs>
-    </div>
+      ) : moment().isAfter(status.end) ? (
+        <Result
+          status="error"
+          title="抱歉，上传已结束"
+          extra={
+            <Button type="primary" href="#/vote/1">
+              前往投票
+            </Button>
+          }
+        />
+      ) : (
+        <div>
+          <Alert
+            type="info"
+            closable
+            description={
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Countdown
+                    title={"距离上传结束"}
+                    value={moment(status.end)}
+                    format="D 天 H 时 m 分 s 秒"
+                    onFinish={() => window.location.reload()}
+                  />
+                </Col>
+                <Col span={12}>
+                  <Statistic
+                    title="已上传曲目数"
+                    value={uploaded}
+                    suffix="/ 12"
+                  />
+                </Col>
+              </Row>
+            }
+          />
+          <Tabs defaultActiveKey="netease">
+            <TabPane tab="网易云音乐" key="netease">
+              {uploaded < 12 ? <CloudUpload /> : AllDone}
+            </TabPane>
+            <TabPane tab="手动上传" key="manual">
+              {uploaded < 12 ? <ManualUpload /> : AllDone}
+            </TabPane>
+            <TabPane tab="我的推荐" key="uploads">
+              <ViewUploads />
+            </TabPane>
+          </Tabs>
+        </div>
+      )}
+    </Spin>
   );
 };
 
