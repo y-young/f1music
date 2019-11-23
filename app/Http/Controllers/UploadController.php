@@ -269,4 +269,5 @@ class UnvalidatedFile
     public $songName = null;
     public $songOrigin = null;
     public $url = null;
+    public $cloudId = null;
 }
