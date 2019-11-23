@@ -9,17 +9,19 @@ const { Countdown } = Statistic;
 
 const Home = ({ app, loading }) => {
   const { status } = app;
-  let title = "正在进行",
-    statusText = "...",
-    countdownText = "结束",
-    icon = "loading",
-    time = null;
+  let tabActiveKey = "upload";
   const StatusNotice = () => {
+    let title = "正在进行",
+      statusText = "...",
+      countdownText = "结束",
+      icon = "loading",
+      time = null;
     if (moment().isBetween(status.upload.start, status.upload.end)) {
       statusText = "上传";
       icon = "upload";
       time = status.upload.end;
     } else if (moment().isBetween(status.vote.start, status.vote.end)) {
+      tabActiveKey = "vote";
       statusText = "投票";
       icon = "form";
       time = status.vote.end;
@@ -69,7 +71,7 @@ const Home = ({ app, loading }) => {
       <Spin spinning={loading.effects["app/fetchStatus"]}>
         {StatusNotice()}
       </Spin>
-      <Tabs defaultActiveKey="upload">
+      <Tabs activeKey={tabActiveKey}>
         <TabPane tab="上传说明" key="upload">
           <p>
             每位同学最多提交12首推荐曲目(歌曲数*时段数，如某一歌曲被推荐到两个时段计为两首曲目)。一首歌曲在一个时段只能被推荐一次，因此如果同一时段内已有同学推荐此歌曲，系统将予以提示，但仍可推荐到其他时段或提交另一版本。
