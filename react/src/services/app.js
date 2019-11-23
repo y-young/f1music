@@ -1,7 +1,7 @@
 import { request, config } from "utils";
 
 const { api } = config;
-const { login } = api;
+const { login, status } = api;
 
 export async function Login(data) {
   return request({
@@ -11,10 +11,15 @@ export async function Login(data) {
   });
 }
 
+export async function Status() {
+  return request({
+    url: status + "/home",
+    method: "get"
+  });
+}
+
 export function getCookie() {
-  var match = document.cookie.match(
-    new RegExp("(^| )MusicAuth=([^;]+)")
-  );
+  var match = document.cookie.match(new RegExp("(^| )MusicAuth=([^;]+)"));
   if (match) return match[2];
   else return null;
 }

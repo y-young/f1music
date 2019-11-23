@@ -1,5 +1,5 @@
 import { routerRedux } from "dva/router";
-import { checkLogin, Login } from "services/app";
+import { checkLogin, Login, Status } from "services/app";
 import { getPageQuery } from "utils/utils";
 
 export default {
@@ -9,7 +9,11 @@ export default {
     siderFolded: false,
     isDesktop: window.innerWidth >= 768,
     width: 0,
-    loggedIn: false
+    loggedIn: false,
+    status: {
+      upload: {},
+      vote: {}
+    }
   },
 
   subscriptions: {
@@ -31,6 +35,9 @@ export default {
       history.listen(({ pathname }) => {
         if (pathname === "/logout") {
           window.location.href = "/logout";
+        }
+        if (pathname === "/") {
+          dispatch({ type: "fetchStatus" });
         }
         dispatch({ type: "updateTitle", payload: pathname });
         window.scrollTo(0, 0);
@@ -80,6 +87,10 @@ export default {
       }
       yield put({ type: "updateState", payload: { title: title } });
       document.title = title + " - 福州一中 校园音乐征集";
+    },
+    *fetchStatus(_, { call, put }) {
+      const data = yield call(Status);
+      yield put({ type: "updateState", payload: { status: data.status } });
     },
     *login({ payload }, { put, call }) {
       const res = yield call(Login, payload);

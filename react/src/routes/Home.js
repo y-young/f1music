@@ -1,12 +1,72 @@
 import React from "react";
+import moment from "moment";
+import { connect } from "dva";
 import { Link } from "dva/router";
-import { Tabs, Icon } from "antd";
+import { Alert, Row, Col, Spin, Tabs, Icon, Statistic } from "antd";
 
 const TabPane = Tabs.TabPane;
+const { Countdown } = Statistic;
 
-const Home = () => {
+const Home = ({ app, loading }) => {
+  const { status } = app;
+  let title = "正在进行",
+    statusText = "...",
+    countdownText = "结束",
+    icon = "loading",
+    time;
+  const StatusNotice = () => {
+    if (moment().isBetween(status.upload.start, status.upload.end)) {
+      statusText = "上传";
+      icon = "upload";
+      time = status.upload.end;
+    } else if (moment().isBetween(status.vote.start, status.vote.end)) {
+      statusText = "投票";
+      icon = "form";
+      time = status.vote.end;
+    } else if (moment().isBefore(status.upload.start)) {
+      title = "即将开始";
+      statusText = "上传";
+      countdownText = "开始";
+      icon = "clock-circle";
+      time = status.upload.start;
+    } else if (moment().isBefore(status.vote.start)) {
+      title = "即将开始";
+      statusText = "投票";
+      countdownText = "开始";
+      icon = "clock-circle";
+      time = status.vote.start;
+    }
+    return (
+      <Alert
+        type="info"
+        closable
+        description={
+          <Row gutter={16}>
+            <Col span={12}>
+              <Statistic
+                title={title}
+                value={statusText}
+                prefix={<Icon type={icon} />}
+              />
+            </Col>
+            <Col span={12}>
+              <Countdown
+                title={"距离" + statusText + countdownText}
+                value={moment(time)}
+                format="D 天 H 时 m 分 s 秒"
+                onFinish={() => window.location.reload()}
+              />
+            </Col>
+          </Row>
+        }
+      />
+    );
+  };
   return (
     <div>
+      <Spin spinning={loading.effects["app/fetchStatus"]}>
+        {StatusNotice()}
+      </Spin>
       <Tabs defaultActiveKey="upload">
         <TabPane tab="上传说明" key="upload">
           <p>
@@ -173,4 +233,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default connect(({ app, loading }) => ({ app, loading }))(Home);
