@@ -26,6 +26,7 @@ $router->get('/api/download/{id:[0-9]+}', [
 
 //Since Lumen does not support nested route groups, we will use parallel ones instead
 $router->get('/api/music/playlist', 'MusicController@Playlist');
+$router->get('/api/status/{type:[A-Za-z]+}', 'ManageController@getStatus');
 
 $router->post('/api/login', [
     'middleware' => 'throttle:20',

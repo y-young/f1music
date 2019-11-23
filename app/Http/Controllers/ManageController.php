@@ -12,6 +12,18 @@ use Illuminate\Support\Facades\DB;
 
 class ManageController extends Controller
 {
+    public function getStatus($type) {
+        switch($type) {
+            case 'home':
+                return $this->success('status', config('music.status'));
+            case 'upload':
+                return $this->success('status', config('music.status.upload'));
+            case 'vote':
+                return $this->success('status', config('music.status.vote'));
+            default:
+                return $this->error("参数错误");
+        }
+    }
     public function getSongs()
     {
         $songs = Song::with('file')->withCount('reports')->paginate(10);
@@ -37,6 +49,9 @@ class ManageController extends Controller
             }
             if (Song::withTrashed()->ofTime($time)->where('file_id', $file)->exists()) {
                 return $this->error('曲目已存在于目标时段');
+            }
+            if($time == '3' && $song->file->duration > 5 * 60) {
+                return $this->error('午出门铃声时长不得超过5分钟');
             }
         } else {
             $song->playtime = $time;
