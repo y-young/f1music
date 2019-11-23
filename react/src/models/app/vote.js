@@ -1,7 +1,7 @@
 import pathToRegexp from "path-to-regexp";
 import { routerRedux } from "dva/router";
 import { message } from "antd";
-import { Songs, Vote, Report } from "services/vote";
+import { Songs, Vote, Report, Status } from "services/vote";
 
 export default {
   namespace: "vote",
@@ -11,7 +11,8 @@ export default {
     skipVoted: true,
     onSubmitted: "continue",
     onEnded: "pause",
-    isDesktop: window.innerWidth > 993
+    isDesktop: window.innerWidth > 993,
+    status: {}
   },
 
   reducers: {
@@ -36,12 +37,7 @@ export default {
       }
       return { ...state, onEnded: value };
     },
-    updateVote(
-      state,
-      {
-        payload: { id, rate }
-      }
-    ) {
+    updateVote(state, { payload: { id, rate } }) {
       const songs = state.songs;
       const newSongs = songs.filter(item => {
         if (item.id === id) {
@@ -76,16 +72,15 @@ export default {
   },
 
   effects: {
-    *fetch({ payload: time }, { call, put }) {
+    *fetchList({ payload: time }, { call, put }) {
       const data = yield call(Songs, time);
       yield put({ type: "updateState", payload: { songs: data.songs } });
     },
-    *vote(
-      {
-        payload: { id, rate }
-      },
-      { call, put }
-    ) {
+    *fetchStatus(_, { call, put }) {
+      const data = yield call(Status);
+      yield put({ type: "updateState", payload: { status: data.status } });
+    },
+    *vote({ payload: { id, rate } }, { call, put }) {
       const res = yield call(Vote, { id: id, vote: rate });
       if (res.error === 0) {
         yield put({ type: "updateVote", payload: { id, rate } });
@@ -96,12 +91,7 @@ export default {
     *redirect({ payload: time }, { put }) {
       yield put(routerRedux.push("/vote/" + time));
     },
-    *report(
-      {
-        payload: { id, reason }
-      },
-      { call, put }
-    ) {
+    *report({ payload: { id, reason } }, { call, put }) {
       if (!reason) {
         message.error("请填写反馈内容");
         return false;
@@ -122,7 +112,8 @@ export default {
         if (match) {
           const time = match[1];
           dispatch({ type: "updateState", payload: { time: time } });
-          dispatch({ type: "fetch", payload: time });
+          dispatch({ type: "fetchList", payload: time });
+          dispatch({ type: "fetchStatus" });
           const storage = window.localStorage;
           if (typeof storage !== "undefined") {
             const skipVoted = storage.skipVoted === "false" ? false : true;

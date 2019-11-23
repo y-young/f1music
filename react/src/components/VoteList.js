@@ -257,7 +257,7 @@ class VoteList extends React.Component {
           placeholder="反馈内容"
           className={styles.reason}
           onChange={e => this.setState({ reason: e.target.value })}
-          maxLength="60"
+          maxLength={60}
           onPressEnter={this.handleReport}
         />
         <Button
@@ -314,7 +314,7 @@ class VoteList extends React.Component {
     };
 
     return (
-      <Spin spinning={loading.effects["vote/fetch"]}>
+      <Spin spinning={loading.effects["vote/fetchList"]}>
         {songs.length !== 0 ? (
           <span>
             <div>
@@ -361,9 +361,6 @@ class VoteList extends React.Component {
   }
 }
 
-export default connect(
-  ({ vote, loading }) => ({ vote, loading }),
-  null,
-  null,
-  { withRef: true }
-)(VoteList);
+export default connect(({ vote, loading }) => ({ vote, loading }), null, null, {
+  withRef: true
+})(VoteList);

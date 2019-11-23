@@ -1,7 +1,7 @@
 import { request, config } from "utils";
 
 const { api } = config;
-const { list, report, vote } = api;
+const { list, report, vote, status } = api;
 
 export async function Songs(time) {
   return request({
@@ -24,5 +24,12 @@ export async function Vote(params) {
     url: vote,
     method: "post",
     data: params
+  });
+}
+
+export async function Status() {
+  return request({
+    url: status + "/vote",
+    method: "get"
   });
 }
