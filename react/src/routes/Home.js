@@ -13,7 +13,7 @@ const Home = ({ app, loading }) => {
     statusText = "...",
     countdownText = "结束",
     icon = "loading",
-    time;
+    time = null;
   const StatusNotice = () => {
     if (moment().isBetween(status.upload.start, status.upload.end)) {
       statusText = "上传";
@@ -36,31 +36,33 @@ const Home = ({ app, loading }) => {
       icon = "clock-circle";
       time = status.vote.start;
     }
-    return (
-      <Alert
-        type="info"
-        closable
-        description={
-          <Row gutter={16}>
-            <Col span={12}>
-              <Statistic
-                title={title}
-                value={statusText}
-                prefix={<Icon type={icon} />}
-              />
-            </Col>
-            <Col span={12}>
-              <Countdown
-                title={"距离" + statusText + countdownText}
-                value={moment(time)}
-                format="D 天 H 时 m 分 s 秒"
-                onFinish={() => window.location.reload()}
-              />
-            </Col>
-          </Row>
-        }
-      />
-    );
+    if (time != null) {
+      return (
+        <Alert
+          type="info"
+          closable
+          description={
+            <Row gutter={16}>
+              <Col span={12}>
+                <Statistic
+                  title={title}
+                  value={statusText}
+                  prefix={<Icon type={icon} />}
+                />
+              </Col>
+              <Col span={12}>
+                <Countdown
+                  title={"距离" + statusText + countdownText}
+                  value={moment(time)}
+                  format="D 天 H 时 m 分 s 秒"
+                  onFinish={() => window.location.reload()}
+                />
+              </Col>
+            </Row>
+          }
+        />
+      );
+    } else return "";
   };
   return (
     <div>
