@@ -5,7 +5,7 @@ import { Table, Form } from "antd";
 const FormItem = Form.Item;
 
 const Files = ({ files, loading, dispatch }) => {
-  const { list, page, total } = files;
+  const { list } = files;
   const columns = [
     {
       dataIndex: "id",
@@ -16,10 +16,6 @@ const Files = ({ files, loading, dispatch }) => {
     { dataIndex: "md5", title: "MD5" },
     { dataIndex: "time", title: "时间" }
   ];
-
-  const onPageChange = page => {
-    dispatch({ type: "files/fetch", payload: page });
-  };
 
   const renderExpanded = row => {
     return (
@@ -39,7 +35,7 @@ const Files = ({ files, loading, dispatch }) => {
   return (
     <div>
       <div style={{ fontSize: "14px", color: "#777" }}>
-        文件总数: {total}个
+        文件总数: {list.length}个
       </div>
       <br />
       <Table
@@ -49,11 +45,6 @@ const Files = ({ files, loading, dispatch }) => {
         loading={loading.effects["files/fetch"]}
         scroll={{ x: 400 }}
         rowKey="id"
-        pagination={{
-          current: page,
-          total: total,
-          onChange: onPageChange
-        }}
       />
     </div>
   );

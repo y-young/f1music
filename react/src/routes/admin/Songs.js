@@ -38,18 +38,16 @@ class Songs extends React.Component {
   state = {
     selectedRowKeys: [],
     modalVisible: false,
-    row: null,
-    page: 1
+    row: null
   };
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys: selectedRowKeys });
   };
 
-  onPageChange = page => {
+  handleRefresh = () => {
     const { dispatch } = this.props;
-    dispatch({ type: "songs/fetch", payload: page });
-    this.setState({ page: page });
+    dispatch({ type: "songs/fetch" });
   };
 
   editSong = row => {
@@ -170,7 +168,7 @@ class Songs extends React.Component {
 
   render() {
     const { songs, loading, form } = this.props;
-    const { type, list, total } = songs;
+    const { type, list } = songs;
     const { getFieldDecorator } = form;
     const { selectedRowKeys, row, modalVisible } = this.state;
     const rowSelection = {
@@ -180,9 +178,17 @@ class Songs extends React.Component {
 
     return (
       <div>
-        <div style={{ fontSize: "14px", color: "#777" }}>
-          曲目总数: {total} 首 已选中: {selectedRowKeys.length} 首
+        <div
+          style={{ fontSize: "14px", color: "#777", display: "inline-block" }}
+        >
+          曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
         </div>
+        <Button
+          type="secondary"
+          icon="reload"
+          onClick={this.handleRefresh}
+          style={{ float: "right" }}
+        />
         <br />
         <Table
           dataSource={list}
@@ -192,11 +198,6 @@ class Songs extends React.Component {
           loading={loading.effects["songs/fetch"]}
           rowKey="id"
           scroll={{ x: 600 }}
-          pagination={{
-            current: this.state.page,
-            total: total,
-            onChange: this.onPageChange
-          }}
         />
         {row && (
           <Modal

@@ -26,7 +26,7 @@ class ManageController extends Controller
     }
     public function getSongs()
     {
-        $songs = Song::with('file')->withCount('reports')->paginate(10);
+        $songs = Song::with('file')->withCount('reports')->get();
         return $this->success('songs', $songs);
     }
 
@@ -75,7 +75,7 @@ class ManageController extends Controller
 
     public function getTrashedSongs()
     {
-        $songs =  Song::onlyTrashed()->with('file')->withCount('reports')->paginate(10);
+        $songs =  Song::onlyTrashed()->with('file')->withCount('reports')->get();
         return $this->success('songs', $songs);
     }
 
@@ -114,7 +114,7 @@ class ManageController extends Controller
 
     public function getFiles()
     {
-        $files = File::paginate(10);
+        $files = File::all();
         return $this->success('files', $files);
     }
 

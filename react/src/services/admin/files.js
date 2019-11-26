@@ -3,9 +3,9 @@ import { request, config } from "utils/admin";
 const { api } = config;
 const { files } = api;
 
-export async function Files(page) {
+export async function Files() {
   return request({
-    url: files + '?page=' + page,
+    url: files,
     method: "get"
   });
 }

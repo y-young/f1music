@@ -3,16 +3,16 @@ import { request, config } from "utils/admin";
 const { api } = config;
 const { songs, trashedSongs, trashSongs, restoreSongs } = api;
 
-export async function Songs(page) {
+export async function Songs() {
   return request({
-    url: songs + "?page=" + page,
+    url: songs,
     method: "get"
   });
 }
 
-export async function TrashedSongs(page) {
+export async function TrashedSongs() {
   return request({
-    url: trashedSongs + "?page=" + page,
+    url: trashedSongs,
     method: "get"
   });
 }
