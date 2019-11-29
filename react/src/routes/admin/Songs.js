@@ -1,37 +1,21 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Button, Input, Form, Modal } from "antd";
+import { Table, Button, Input, Form, Tag, Select, Modal } from "antd";
 import { TimeSelector } from "components/admin";
 
 const FormItem = Form.Item;
-const columns = [
-  {
-    dataIndex: "id",
-    title: "#",
-    width: "60px",
-    sorter: (a, b) => a.id - b.id
-  },
-  {
-    dataIndex: "playtime",
-    title: "时段",
-    width: "70px",
-    filters: [
-      { text: "6:30", value: "1" },
-      { text: "7:00", value: "2" },
-      { text: "13:45", value: "3" },
-      { text: "18:40", value: "4" },
-      { text: "21:35", value: "5" },
-      { text: "22:30", value: "6" }
-    ],
-    onFilter: (value, record) => record.playtime === value
-  },
-  { dataIndex: "name", title: "曲名" },
-  {
-    dataIndex: "reports_count",
-    title: "举报数",
-    sorter: (a, b) => a.reports_count - b.reports_count
-  },
-  { dataIndex: "created_at", title: "时间" }
+const colors = [
+  "magenta",
+  "red",
+  "volcano",
+  "orange",
+  "gold",
+  "lime",
+  "green",
+  "cyan",
+  "blue",
+  "geekblue",
+  "purple"
 ];
 
 class Songs extends React.Component {
@@ -40,6 +24,57 @@ class Songs extends React.Component {
     modalVisible: false,
     row: null
   };
+  tagColors = new Map();
+  columns = [
+    {
+      dataIndex: "id",
+      title: "#",
+      width: "60px",
+      sorter: (a, b) => a.id - b.id
+    },
+    {
+      dataIndex: "playtime",
+      title: "时段",
+      width: "70px",
+      filters: [
+        { text: "6:30", value: "1" },
+        { text: "7:00", value: "2" },
+        { text: "13:45", value: "3" },
+        { text: "18:40", value: "4" },
+        { text: "21:35", value: "5" },
+        { text: "22:30", value: "6" }
+      ],
+      onFilter: (value, record) => record.playtime === value
+    },
+    { dataIndex: "name", title: "曲名" },
+    {
+      title: "标签",
+      key: "tags",
+      dataIndex: "tags",
+      render: tags => (
+        <span>
+          {tags.map(tag => {
+            if (tag !== "") {
+              let color = this.getTagColor(tag);
+              return (
+                <Tag color={color} key={tag}>
+                  {tag}
+                </Tag>
+              );
+            } else {
+              return null;
+            }
+          })}
+        </span>
+      )
+    },
+    { dataIndex: "created_at", title: "时间" },
+    {
+      dataIndex: "reports_count",
+      title: "反馈数",
+      sorter: (a, b) => a.reports_count - b.reports_count
+    }
+  ];
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys: selectedRowKeys });
@@ -94,6 +129,19 @@ class Songs extends React.Component {
 
   handleBatchRestore = () => {
     this.handleRestore(this.state.selectedRowKeys);
+  };
+
+  getTagColor = tagName => {
+    let tagColors = this.tagColors,
+      color;
+    if (!tagColors.has(tagName)) {
+      color = colors[Math.floor(Math.random() * 11)];
+      tagColors.set(tagName, color);
+      this.tagColors = tagColors;
+    } else {
+      color = tagColors.get(tagName);
+    }
+    return color;
   };
 
   renderExpanded = row => {
@@ -192,7 +240,7 @@ class Songs extends React.Component {
         <br />
         <Table
           dataSource={list}
-          columns={columns}
+          columns={this.columns}
           rowSelection={rowSelection}
           expandedRowRender={this.renderExpanded}
           loading={loading.effects["songs/fetch"]}
@@ -222,11 +270,36 @@ class Songs extends React.Component {
                 {getFieldDecorator("name", {
                   initialValue: row.name,
                   rules: [{ required: true, message: "请填写曲名" }]
-                })(<Input placeholder="曲名" onPressEnter={this.handleSave} />)}
+                })(
+                  <Input
+                    placeholder="曲名"
+                    onPressEnter={this.handleSave}
+                    maxLength={50}
+                  />
+                )}
               </FormItem>
               <FormItem label="来源">
                 {getFieldDecorator("origin", { initialValue: row.origin })(
-                  <Input placeholder="来源" onPressEnter={this.handleSave} />
+                  <Input
+                    placeholder="来源"
+                    onPressEnter={this.handleSave}
+                    maxLength={50}
+                  />
+                )}
+              </FormItem>
+              <FormItem label="标签">
+                {getFieldDecorator("tags", {
+                  initialValue: row.tags,
+                  rules: [
+                    { transform: value => value.toString() },
+                    { max: 50, message: "标签总长度不得超过50" }
+                  ]
+                })(
+                  <Select
+                    mode="tags"
+                    open={false}
+                    tokenSeparators={[","]}
+                  ></Select>
                 )}
               </FormItem>
             </Form>

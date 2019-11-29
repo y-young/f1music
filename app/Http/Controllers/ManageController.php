@@ -43,6 +43,7 @@ class ManageController extends Controller
         $time = $request->input('playtime');
         $song->name = $request->input('name');
         $song->origin = $request->input('origin');
+        $song->tags = $request->input('tags');
         if ($time != $song->playtime) {
             if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
                 return $this->error('开放投票期间禁止修改曲目所在时段');

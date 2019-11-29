@@ -38,6 +38,22 @@ class Song extends Model
         return $this->file->url;
     }
     
+    public function getTagsAttribute($value) {
+        if(! empty($value)) {
+            return explode(',', $value);
+        } else {
+            return [];
+        }
+    }
+
+    public function setTagsAttribute($value) {
+        if(! empty($value)) {
+            $this->attributes['tags'] = implode(',', $value);
+        } else {
+            $this->attributes['tags'] = null;
+        }
+    }
+
     public function scopeOfTime($query, $time)
     {
         return $query->where('playtime', $time); 

@@ -21,13 +21,14 @@ export default {
     },
     saveSong(state, { payload }) {
       const list = state.list;
-      const { id, playtime, name, origin } = payload;
+      const { id, playtime, name, origin, tags } = payload;
       const songs = list.filter(item => {
         if (item.id === id) {
           let song = item;
           song.playtime = playtime;
           song.name = name;
           song.origin = origin;
+          song.tags = tags;
           return payload;
         } else {
           return item;
