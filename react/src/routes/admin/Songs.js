@@ -297,8 +297,9 @@ class Songs extends React.Component {
                 })(
                   <Select
                     mode="tags"
+                    placeholder="曲目标签"
                     open={false}
-                    tokenSeparators={[","]}
+                    tokenSeparators={[",", "，"]}
                   ></Select>
                 )}
               </FormItem>
