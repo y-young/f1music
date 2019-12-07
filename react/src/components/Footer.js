@@ -12,12 +12,13 @@ const Footer = () => {
       Copyright © 2009-
       {Year()} FZYZ SCAN & 7HMakers. All rights reserved.
       <br />
-      Author & Current Maintainer: Googleplex
+      Author: <a href="https://github.com/y-young/f1music">Googleplex</a>
       <br />
-      v1.x Author: <a href="https://www.upsuper.org">Upsuper</a>
+      v1.x(2009-2016) Author: <a href="https://www.upsuper.org">Upsuper</a>
       <br />
-      Past Maintainers: <a href="https://blog.robotshell.org">Robot</a>{" "}
-      <a href="http://blog.miskcoo.com">Miskcoo</a>
+      Past Maintainers: <a href="https://blog.robotshell.org">Robot</a>&nbsp;
+      <a href="http://blog.miskcoo.com">Miskcoo</a>&nbsp;
+      <a href="https://mengxiaolin.me/">linmx0130</a>
     </Layout.Footer>
   );
 };
