@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Button, Input, Form, Tag, Select, Modal } from "antd";
+import { Table, Icon, Button, Input, Form, Tag, Select, Modal } from "antd";
 import { TimeSelector } from "components/admin";
 
 const FormItem = Form.Item;
@@ -21,60 +21,80 @@ const colors = [
 class Songs extends React.Component {
   state = {
     selectedRowKeys: [],
+    searchText: "",
+    searchColumn: "",
     modalVisible: false,
     row: null
   };
   tagColors = new Map();
-  columns = [
-    {
-      dataIndex: "id",
-      title: "#",
-      width: "60px",
-      sorter: (a, b) => a.id - b.id
-    },
-    {
-      dataIndex: "playtime",
-      title: "时段",
-      width: "70px",
-      filters: [
-        { text: "6:30", value: "1" },
-        { text: "7:00", value: "2" },
-        { text: "13:45", value: "3" },
-        { text: "18:40", value: "4" },
-        { text: "21:35", value: "5" },
-        { text: "22:30", value: "6" }
-      ],
-      onFilter: (value, record) => record.playtime === value
-    },
-    { dataIndex: "name", title: "曲名" },
-    {
-      title: "标签",
-      key: "tags",
-      dataIndex: "tags",
-      render: tags => (
-        <span>
-          {tags.map(tag => {
-            if (tag !== "") {
-              let color = this.getTagColor(tag);
-              return (
-                <Tag color={color} key={tag}>
-                  {tag}
-                </Tag>
-              );
-            } else {
-              return null;
-            }
-          })}
-        </span>
-      )
-    },
-    { dataIndex: "created_at", title: "时间" },
-    {
-      dataIndex: "reports_count",
-      title: "反馈数",
-      sorter: (a, b) => a.reports_count - b.reports_count
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder="输入关键词"
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
+          style={{ width: 188, marginBottom: 8, display: "block" }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          搜索
+        </Button>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          重置
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
     }
-  ];
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: "" });
+  };
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys: selectedRowKeys });
@@ -223,6 +243,61 @@ class Songs extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange
     };
+    const columns = [
+      {
+        dataIndex: "id",
+        title: "#",
+        width: "60px",
+        sorter: (a, b) => a.id - b.id
+      },
+      {
+        dataIndex: "playtime",
+        title: "时段",
+        width: "70px",
+        filters: [
+          { text: "6:30", value: "1" },
+          { text: "7:00", value: "2" },
+          { text: "13:45", value: "3" },
+          { text: "18:40", value: "4" },
+          { text: "21:35", value: "5" },
+          { text: "22:30", value: "6" }
+        ],
+        onFilter: (value, record) => record.playtime === value
+      },
+      {
+        dataIndex: "name",
+        title: "曲名",
+        ...this.getColumnSearchProps("name")
+      },
+      {
+        title: "标签",
+        key: "tags",
+        dataIndex: "tags",
+        render: tags => (
+          <span>
+            {tags.map(tag => {
+              if (tag !== "") {
+                let color = this.getTagColor(tag);
+                return (
+                  <Tag color={color} key={tag}>
+                    {tag}
+                  </Tag>
+                );
+              } else {
+                return null;
+              }
+            })}
+          </span>
+        ),
+        ...this.getColumnSearchProps("tags")
+      },
+      { dataIndex: "created_at", title: "时间" },
+      {
+        dataIndex: "reports_count",
+        title: "反馈数",
+        sorter: (a, b) => a.reports_count - b.reports_count
+      }
+    ];
 
     return (
       <div>
@@ -240,7 +315,7 @@ class Songs extends React.Component {
         <br />
         <Table
           dataSource={list}
-          columns={this.columns}
+          columns={columns}
           rowSelection={rowSelection}
           expandedRowRender={this.renderExpanded}
           loading={loading.effects["songs/fetch"]}
