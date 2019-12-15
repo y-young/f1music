@@ -54,10 +54,9 @@ class ManageController extends Controller
             if($time == '3' && $song->file->duration > 5 * 60) {
                 return $this->error('午出门铃声时长不得超过5分钟');
             }
-        } else {
-            $song->playtime = $time;
-            $song->save();
         }
+        $song->playtime = $time;
+        $song->save();
         return $this->success();
     }
 
