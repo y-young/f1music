@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use DB;
-use Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SqlLogger
 {

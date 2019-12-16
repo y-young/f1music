@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use Log;
 use App\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SyncFile

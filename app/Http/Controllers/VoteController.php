@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
-use Log;
-use Validator;
 use App\Song;
 use App\Vote;
 use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class VoteController extends Controller
 {

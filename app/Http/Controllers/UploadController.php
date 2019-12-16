@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Log;
-use Auth;
-use Validator;
 use App\File;
 use App\Song;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use getID3;
 use Metowolf\Meting;
 use getid3_writetags;

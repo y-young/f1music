@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Log;
-use Auth;
 use App\File;
 use App\Song;
 use App\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ManageController extends Controller
 {
