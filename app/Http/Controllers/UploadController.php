@@ -16,7 +16,7 @@ use getid3_writetags;
 
 class UploadController extends Controller
 {
-    private static $messages = [
+    private const messages = [
         'time.required' => '请选择时段',
         'time.in' => '参数错误,请重新选择时段',
         'name.required' => '请填写曲名',
@@ -30,7 +30,7 @@ class UploadController extends Controller
         'file.mimetypes' => '文件非mp3格式,请上传mp3格式的文件'
     ];
 
-    private static $errorMsg = [
+    private const errorMsg = [
         'stop_upload' => '上传已关闭',
         'max_upload_num' => '上传曲目数已达到限定数目,感谢您的支持',
         'time_too_long' => '歌曲时长超过6分钟,请选择短一些的曲目',
@@ -51,9 +51,9 @@ class UploadController extends Controller
     {
         Log::info('Requests: ' . var_export($request->all(), true));
         if (!config('music.openUpload')) {
-            return $this->error(self::$errorMsg['stop_upload'], 2);
+            return $this->error(self::errorMsg['stop_upload'], 2);
         } elseif (Song::withTrashed()->where('user_id', self::$stuId)->count() >= 12) {
-            return $this->error(self::$errorMsg['max_upload_num']);
+            return $this->error(self::errorMsg['max_upload_num']);
         }
         Validator::make($request->all(), [
             'time' => [
@@ -66,7 +66,7 @@ class UploadController extends Controller
             'file' => ['required_without:id', 'file', 'mimetypes:application/octet-stream,audio/mpeg', 'min: 1024', 'max: 20480']
             //某些mp3文件的mimetype会被识别为application/octet-stream,此处临时放行,后面交由getID3验证
             //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
-        ], self::$messages)->validate();
+        ], self::messages)->validate();
 
         try {
             // $uFile => Unvalidated File
@@ -90,7 +90,7 @@ class UploadController extends Controller
     public function Uploads()
     {
         if (!config('music.openUpload')) {
-            return $this->error(self::$errorMsg['stop_upload'], 2);
+            return $this->error(self::errorMsg['stop_upload'], 2);
         }
         $songs = Song::withTrashed()->where('user_id', self::$stuId)->get();
         $songs = $songs->map(function ($song) {
@@ -99,7 +99,7 @@ class UploadController extends Controller
         return $this->success('songs', $songs);
     }
 
-    public static function getFileFromRequest(Request $request)
+    private static function getFileFromRequest(Request $request)
     {
         $tmpDir = storage_path('app/tmp/');
         $file = new UnvalidatedFile();
@@ -127,7 +127,7 @@ class UploadController extends Controller
         return $file;
     }
 
-    public static function validateFile($file)
+    private static function validateFile($file)
     {
         $file->error = null;
         $file->storageName = $file->md5 . '.mp3';
@@ -138,7 +138,7 @@ class UploadController extends Controller
             $file->duration = $eFile->first()->duration;
 
             if (Song::withTrashed()->ofTime($file->time)->where('file_id', $file->id)->exists()) {
-                $file->error = self::$errorMsg['already_exists']; //音乐在该时段已经有人推荐
+                $file->error = self::errorMsg['already_exists']; //音乐在该时段已经有人推荐
             } else {
                 //文件已经上传该时段但还未有人推荐,则只需验证时长
                 if ($file->time == '3') {
@@ -157,18 +157,18 @@ class UploadController extends Controller
             $file->duration = $duration;
 
             if (in_array($format, ['mp1', 'mp2'])) {
-                $file->error = self::$errorMsg['mp1_or_mp2'];
+                $file->error = self::errorMsg['mp1_or_mp2'];
             } elseif ($format != 'mp3') {
-                $file->error = self::$messages['file.mimetypes'];
+                $file->error = self::messages['file.mimetypes'];
             } elseif ($info['bitrate'] < 128000) {
-                $file->error = self::$errorMsg['bitrate_too_low'];
+                $file->error = self::errorMsg['bitrate_too_low'];
             }
             $file = self::checkDuration($file);
         }
         return $file;
     }
 
-    public static function insertSong($file)
+    private static function insertSong($file)
     {
         $song = Song::create([
             'playtime' => $file->time,
@@ -180,7 +180,7 @@ class UploadController extends Controller
         $song->save();
     }
 
-    public static function storeFile($vFile)
+    private static function storeFile($vFile)
     {
         if (empty($vFile->id)) { //未上传过则存储
             self::removeTags($vFile);
@@ -197,7 +197,7 @@ class UploadController extends Controller
         return $vFile;
     }
 
-    public static function getInfo($file)
+    private static function getInfo($file)
     {
         $getID3 = new getID3;
         $getID3->setOption([
@@ -224,26 +224,26 @@ class UploadController extends Controller
         return $info;
     }
 
-    public static function checkDuration($file)
+    private static function checkDuration($file)
     {
         if (!empty($file->error)) { //不覆盖已有错误信息
             return $file;
         }
         if ($file->duration < 2.5 * 60) {
-            $file->error = self::$errorMsg['time_too_short'];
+            $file->error = self::errorMsg['time_too_short'];
             return $file;
         }
         if ($file->time == '3') {
             if ($file->duration > 5 * 60) {
-                $file->error = self::$errorMsg['time_too_long_3'];
+                $file->error = self::errorMsg['time_too_long_3'];
             }
         } elseif ($file->duration > 6 * 60) {
-            $file->error = self::$errorMsg['time_too_long'];
+            $file->error = self::errorMsg['time_too_long'];
         }
         return $file;
     }
 
-    public static function removeTags($file)
+    private static function removeTags($file)
     {
         $writer = new getid3_writetags;
         $writer->filename = $file->url;
@@ -252,7 +252,7 @@ class UploadController extends Controller
         $writer->WriteTags();
     }
 
-    public static function getMp3($id)
+    private static function getMp3($id)
     {
         $api = new Meting('netease');
         $res = $api->format(true)->url($id, 128);

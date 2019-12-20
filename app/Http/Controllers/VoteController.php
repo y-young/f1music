@@ -15,9 +15,9 @@ class VoteController extends Controller
 {
 
     private static $stuId;
-    private $stars = [-10 => 1, -5 => 2, 0 => 3, 5 => 4, 10 => 5];
-    private $points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
-    private static $messages = [
+    private const stars = [-10 => 1, -5 => 2, 0 => 3, 5 => 4, 10 => 5];
+    private const points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
+    private const messages = [
         'id.required' => '参数错误,请刷新页面',
         'id.exists' => '参数错误,请刷新页面',
         'vote.required' => '请选择您的评价',
@@ -40,10 +40,10 @@ class VoteController extends Controller
                 'required',
                 Rule::in([1, 2, 3, 4, 5])
             ]
-        ], self::$messages)->validate();
+        ], self::messages)->validate();
 
-        $rate = $this->points[$request->input('vote')];
-        $vote = Vote::updateOrCreate(
+        $rate = self::points[$request->input('vote')];
+        Vote::updateOrCreate(
             ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
             ['vote' => $rate]
         );
@@ -82,13 +82,13 @@ class VoteController extends Controller
             return $order[$song['id']];
         });
         // Ugly Solution
-        $id = 0;
-        $songs = $songs->mapWithKeys(function ($song, $id) {
+        $songs = $songs->mapWithKeys(function ($song) {
+            static $id = 0;
             $vote = $song->votes->first();
             if (empty($vote)) {
                 $vote = 0;
             } else {
-                $vote = $this->stars[$vote->vote];
+                $vote = self::stars[$vote->vote];
             }
             $id++;
             return [
