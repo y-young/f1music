@@ -9,7 +9,7 @@ const errorMsg = {
 };
 
 // 设置全局参数
-axios.defaults.timeout = 7000;
+axios.defaults.timeout = 10000;
 axios.defaults.baseURL = "/api";
 axios.defaults.withCredentials = true;
 
