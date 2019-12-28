@@ -169,7 +169,7 @@ class ManageController extends Controller
         foreach ($songs as $song) {
             $song->awful = $song->votes->where('vote', -10)->count();
             $song->bad = $song->votes->where('vote', -5)->count();
-            $song->neutral = $song->votes->where('vote', 0)->count();
+            $song->neutral = $song->votes->where('vote', 1)->count();
             $song->good = $song->votes->where('vote', 5)->count();
             $song->awesome = $song->votes->where('vote', 10)->count();
             $song->vote_sum = $song->votes->sum->vote;
@@ -194,7 +194,7 @@ class ManageController extends Controller
                             <td>Origin</td>
                             <td>-10</td>
                             <td>-5</td>
-                            <td>0</td>
+                            <td>1</td>
                             <td>5</td>
                             <td>10</td>
                             <td>Score</td>

@@ -15,8 +15,8 @@ class VoteController extends Controller
 {
 
     private static $stuId;
-    private const stars = [-10 => 1, -5 => 2, 0 => 3, 5 => 4, 10 => 5];
-    private const points = [1 => -10, 2 => -5, 3 => 0, 4 => 5, 5 => 10];
+    private const stars = [-10 => 1, -5 => 2, 1 => 3, 5 => 4, 10 => 5];
+    private const points = [1 => -10, 2 => -5, 3 => 1, 4 => 5, 5 => 10];
     private const messages = [
         'id.required' => '参数错误,请刷新页面',
         'id.exists' => '参数错误,请刷新页面',
