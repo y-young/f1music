@@ -1,17 +1,19 @@
 import { resolve } from "path";
 export default {
   entry: {
-    "app": resolve(__dirname, "./src/pages/app.js"),
-    "admin": resolve(__dirname, "./src/pages/admin.js")
+    app: resolve(__dirname, "./src/pages/app.js"),
+    admin: resolve(__dirname, "./src/pages/admin.js")
   },
   outputPath: resolve(__dirname, "../public/assets/"),
+  //Configure output.publicPath according to environment
+  publicPath: process.env.NODE_ENV === "production" ? "/assets/" : "/",
   hash: true,
   manifest: {
     publicPath: "./assets/"
   },
   extraBabelPlugins: [
     ["import", { libraryName: "antd", libraryDirectory: "es", style: "css" }]
-  ],  
+  ],
   alias: {
     components: resolve(__dirname, "./src/components"),
     utils: resolve(__dirname, "./src/utils"),
@@ -30,7 +32,7 @@ export default {
       target: "http://localhost/uploads/",
       changeOrigin: true,
       pathRewrite: { "^/uploads": "" }
-    },
+    }
   },
   ignoreMomentLocale: true
 };
