@@ -1,15 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { Table } from "antd";
-
-const time = {
-  "1": "6:30",
-  "2": "7:00",
-  "3": "13:45",
-  "4": "18:40",
-  "5": "21:35",
-  "6": "22:30"
-};
+import { timeIdToText, timeFilters } from "config";
 
 const ViewUploads = ({ upload, loading }) => {
   const { songs } = upload;
@@ -20,8 +12,10 @@ const ViewUploads = ({ upload, loading }) => {
       title: "时段",
       width: 70,
       render: text => {
-        return time[text];
-      }
+        return timeIdToText[text];
+      },
+      filters: timeFilters,
+      onFilter: (value, record) => record.playtime === value
     },
     { dataIndex: "name", title: "曲名", width: 200 },
     {

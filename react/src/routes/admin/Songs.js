@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import { Table, Icon, Button, Input, Form, Tag, Select, Modal } from "antd";
 import { TimeSelector } from "components/admin";
+import { timeFilters } from "config";
 
 const FormItem = Form.Item;
 const colors = [
@@ -254,14 +255,7 @@ class Songs extends React.Component {
         dataIndex: "playtime",
         title: "时段",
         width: "70px",
-        filters: [
-          { text: "6:30", value: "1" },
-          { text: "7:00", value: "2" },
-          { text: "13:45", value: "3" },
-          { text: "18:40", value: "4" },
-          { text: "21:35", value: "5" },
-          { text: "22:30", value: "6" }
-        ],
+        filters: timeFilters,
         onFilter: (value, record) => record.playtime === value
       },
       {

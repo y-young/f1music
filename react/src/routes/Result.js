@@ -5,6 +5,7 @@ import { Icon, Tabs, Table, Button } from "antd";
 import "aplayer/dist/APlayer.min.css";
 import APlayer from "aplayer";
 import YPlayer from "components/YPlayer";
+import { timeIdToText, timeFilters } from "config";
 
 const TabPane = Tabs.TabPane;
 const columns = [
@@ -12,14 +13,10 @@ const columns = [
     dataIndex: "playtime",
     title: "时段",
     width: 90,
-    filters: [
-      { text: "6:30", value: "1" },
-      { text: "7:00", value: "2" },
-      { text: "13:45", value: "3" },
-      { text: "18:40", value: "4" },
-      { text: "21:35", value: "5" },
-      { text: "22:30", value: "6" }
-    ],
+    render: text => {
+      return timeIdToText[text];
+    },
+    filters: timeFilters,
     onFilter: (value, record) => record.playtime === value
   },
   { dataIndex: "name", title: "曲名", width: 200 },
@@ -32,7 +29,7 @@ const columns = [
   },
   {
     title: "试听",
-    width: 180,
+    width: 150,
     render: (text, record) => {
       return <YPlayer src={record.url} mini />;
     }
@@ -50,7 +47,7 @@ const columns = [
     }
   }
 ];
-const rank = []; //此处填写投票结果
+const rank = []; //Replace [] with results generated on admin/rank
 
 class Result extends React.Component {
   state = {
@@ -92,10 +89,7 @@ class Result extends React.Component {
           </TabPane>
         </Tabs>
         <br />
-        <a
-          href="http://music.163.com/playlist/2621168336"
-          className="redirect"
-        >
+        <a href="http://music.163.com/playlist/2621168336" className="redirect">
           前往网易云歌单
           <Icon type="arrow-right" />
         </a>
