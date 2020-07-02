@@ -1,7 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 import { Link } from "dva/router";
-import { Menu, Layout } from "antd";
+import { Menu } from "antd";
 import {
   HomeOutlined,
   LoginOutlined,
@@ -12,7 +12,6 @@ import {
 import styles from "./Sidebar.css";
 
 const SubMenu = Menu.SubMenu;
-const { Header } = Layout;
 
 const Sidebar = props => {
   const sidebarClass = classnames({
@@ -22,7 +21,7 @@ const Sidebar = props => {
 
   return (
     <div className={sidebarClass}>
-      <Header className={styles.logo}>福州一中 校园音乐征集</Header>
+      <header className={styles.logo}>福州一中 校园音乐征集</header>
       <Menu
         className={styles.nav}
         mode="inline"
@@ -37,9 +36,17 @@ const Sidebar = props => {
         </Menu.Item>
         <Menu.Item key="/login">
           <Link to={props.loggedIn ? "/logout" : "/login"}>
-            {props.loggedIn
-              ? <LogoutOutlined /> + "登出"
-              : <LoginOutlined /> + "登录"}
+            {props.loggedIn ? (
+              <span>
+                <LogoutOutlined />
+                登出
+              </span>
+            ) : (
+              <span>
+                <LoginOutlined />
+                登录
+              </span>
+            )}
           </Link>
         </Menu.Item>
         <Menu.Item key="/upload">

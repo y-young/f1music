@@ -1,20 +1,19 @@
 import React from "react";
 import classnames from "classnames";
 import { Link } from "dva/router";
-import { Menu, Layout } from "antd";
+import { Menu } from "antd";
 import {
   HomeOutlined,
   PlayCircleOutlined,
   FileOutlined,
   ExceptionOutlined,
   ProfileOutlined,
-  BarCharOutlined,
+  BarChartOutlined,
   ArrowLeftOutlined
 } from "@ant-design/icons";
 import styles from "../Sidebar.css";
 
 const SubMenu = Menu.SubMenu;
-const { Header } = Layout;
 
 const Sidebar = props => {
   const sidebarClass = classnames({
@@ -24,7 +23,7 @@ const Sidebar = props => {
 
   return (
     <div className={sidebarClass}>
-      <Header className={styles.logo}>FZYZ校园音乐征集 管理系统</Header>
+      <header className={styles.logo}>FZYZ校园音乐征集 管理系统</header>
       <Menu
         className={styles.nav}
         mode="inline"
@@ -73,7 +72,7 @@ const Sidebar = props => {
         </Menu.Item>
         <Menu.Item key="/statistics">
           <Link to="/statistics">
-            <BarCharOutlined />
+            <BarChartOutlined />
             数据统计
           </Link>
         </Menu.Item>
