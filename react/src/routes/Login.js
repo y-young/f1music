@@ -12,7 +12,7 @@ import {
 const FormItem = Form.Item;
 
 const Login = ({ app, loading, dispatch }) => {
-  const handleSubmit = () => {
+  const handleSubmit = values => {
     dispatch({ type: "app/login", payload: values });
   };
 
@@ -72,6 +72,7 @@ const Login = ({ app, loading, dispatch }) => {
               <Button
                 type="primary"
                 loading={loading.effects["app/login"]}
+                htmlType="submit"
                 block
               >
                 登录

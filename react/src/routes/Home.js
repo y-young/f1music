@@ -7,7 +7,8 @@ import {
   UploadOutlined,
   FormOutlined,
   ClockCircleOutlined,
-  ArrowRightOutlined
+  ArrowRightOutlined,
+  LoadingOutlined
 } from "@ant-design/icons";
 
 const TabPane = Tabs.TabPane;
