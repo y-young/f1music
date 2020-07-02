@@ -11,9 +11,6 @@ export default {
   manifest: {
     publicPath: "./assets/"
   },
-  extraBabelPlugins: [
-    ["import", { libraryName: "antd", libraryDirectory: "es", style: "css" }]
-  ],
   alias: {
     components: resolve(__dirname, "./src/components"),
     utils: resolve(__dirname, "./src/utils"),

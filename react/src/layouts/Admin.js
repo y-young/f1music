@@ -6,6 +6,7 @@ import { Sidebar, Footer } from "components/admin";
 import { ConfigProvider, Layout } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import zhCN from "antd/es/locale/zh_CN";
+import "antd/dist/antd.css";
 import styles from "./App.css";
 
 const { Header, Content } = Layout;
