@@ -1,23 +1,26 @@
 import React from "react";
 import { connect } from "dva";
-import { Col, Row, Card, Icon } from "antd";
+import { Col, Row, Card } from "antd";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "./Statistics.css";
 
 const Statistics = ({ statistics, loading }) => {
   const { data } = statistics;
 
   const statusIcon = open => {
-    return (
-      <Icon
-        type={open ? "check" : "close"}
-        style={{ color: open ? "green" : "red" }}
-      />
-    );
+    if (open) {
+      return <CheckOutlined style={{ color: "green" }} />;
+    } else {
+      return <CloseOutlined style={{ color: "red" }} />;
+    }
   };
 
   const DataCard = ({ title, children }) => {
     return (
-      <Card loading={loading.effects["statistics/fetch"]} bodyStyle={{ padding: "20px 24px 8px 24px" }}>
+      <Card
+        loading={loading.effects["statistics/fetch"]}
+        bodyStyle={{ padding: "20px 24px 8px 24px" }}
+      >
         <div className={styles.card}>
           <div className={styles.cardTop}>
             <div className={styles.metaWrap}>
@@ -46,7 +49,8 @@ const Statistics = ({ statistics, loading }) => {
         </Col>
         <Col {...colProps}>
           <DataCard title="状态">
-            上传 {statusIcon(data.open_upload)} 投票 {statusIcon(data.open_vote)}
+            上传 {statusIcon(data.open_upload)} 投票{" "}
+            {statusIcon(data.open_vote)}
           </DataCard>
         </Col>
         <Col {...colProps}>

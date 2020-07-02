@@ -1,7 +1,14 @@
 import React from "react";
 import classnames from "classnames";
 import { Link } from "dva/router";
-import { Menu, Icon, Layout } from "antd";
+import { Menu, Layout } from "antd";
+import {
+  HomeOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  UploadOutlined,
+  FormOutlined
+} from "@ant-design/icons";
 import styles from "./Sidebar.css";
 
 const SubMenu = Menu.SubMenu;
@@ -24,25 +31,28 @@ const Sidebar = props => {
       >
         <Menu.Item key="/">
           <Link to="/">
-            <Icon type="home" />首页
+            <HomeOutlined />
+            首页
           </Link>
         </Menu.Item>
         <Menu.Item key="/login">
           <Link to={props.loggedIn ? "/logout" : "/login"}>
-            <Icon type={props.loggedIn ? "logout" : "login"} />
-            {props.loggedIn ? "登出" : "登录"}
+            {props.loggedIn
+              ? <LogoutOutlined /> + "登出"
+              : <LoginOutlined /> + "登录"}
           </Link>
         </Menu.Item>
         <Menu.Item key="/upload">
           <Link to="/upload">
-            <Icon type="upload" />上传
+            <UploadOutlined />
+            上传
           </Link>
         </Menu.Item>
         <SubMenu
           key="/vote"
           title={
             <span>
-              <Icon type="form" />
+              <FormOutlined />
               <span>投票</span>
             </span>
           }

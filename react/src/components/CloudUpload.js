@@ -1,15 +1,9 @@
 import React from "react";
 import { connect } from "dva";
-import {
-  Icon,
-  AutoComplete,
-  Input,
-  Table,
-  Form,
-  Button,
-  Spin,
-  message
-} from "antd";
+import { Form } from "@ant-design/compatible";
+import "@ant-design/compatible/assets/index.css";
+import { AutoComplete, Input, Table, Button, Spin, message } from "antd";
+import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
 import { YPlayer, TimeSelector } from "components";
 
 const Search = Input.Search;
@@ -107,7 +101,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
               type="primary"
               onClick={() => handleUpload(row.id)}
               loading={loading.effects["upload/upload"]}
-              icon="upload"
+              icon={<UploadOutlined />}
             >
               上传
             </Button>
@@ -141,7 +135,7 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
       />
       {searchResult.length !== 0 && (
         <div className="tips">
-          <Icon type="bulb" /> 遇到了问题？试试手动上传吧
+          <BulbOutlined /> 遇到了问题？试试手动上传吧
         </div>
       )}
     </div>

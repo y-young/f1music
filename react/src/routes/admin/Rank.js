@@ -1,6 +1,8 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Button, Input, Form, Modal } from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Button, Input, Modal } from "antd";
 import { timeFilters } from "config";
 
 const { TextArea } = Input;

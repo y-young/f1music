@@ -6,13 +6,13 @@ import {
   Spin,
   Alert,
   Statistic,
-  Icon,
   Radio,
   Button,
   Modal,
   Switch,
   Result
 } from "antd";
+import { ClockCircleTwoTone, SettingOutlined } from "@ant-design/icons";
 
 const { Countdown } = Statistic;
 
@@ -54,7 +54,7 @@ class Vote extends React.Component {
       <Spin spinning={loading.effects["vote/fetchStatus"]}>
         {moment().isBefore(status.start) ? (
           <Result
-            icon={<Icon type="clock-circle" theme="twoTone" />}
+            icon={<ClockCircleTwoTone />}
             title="抱歉，投票尚未开始，距离投票开始还有"
             subTitle={
               <Countdown
@@ -104,7 +104,7 @@ class Vote extends React.Component {
                 type="secondary"
                 onClick={() => this.setState({ modalVisible: true })}
               >
-                <Icon type="setting" />
+                <SettingOutlined />
                 偏好设置
               </Button>
               <Modal

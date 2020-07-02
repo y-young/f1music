@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "dva/router";
 import axios from "axios";
-import { Icon, Tabs, Table, Button } from "antd";
+import { Tabs, Table, Button } from "antd";
 import "aplayer/dist/APlayer.min.css";
 import APlayer from "aplayer";
 import YPlayer from "components/YPlayer";
 import { timeIdToText, timeFilters } from "config";
+import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
 const TabPane = Tabs.TabPane;
 const columns = [
@@ -40,7 +41,7 @@ const columns = [
       return (
         <Button
           type="secondary"
-          icon="download"
+          icon={<DownloadOutlined />}
           href={"/api/download/" + record.id}
         />
       );
@@ -91,11 +92,11 @@ class Result extends React.Component {
         <br />
         <a href="http://music.163.com/playlist/2621168336" className="redirect">
           前往网易云歌单
-          <Icon type="arrow-right" />
+          <ArrowRightOutlined />
         </a>
         <Link to="/home" className="redirect">
           进入首页
-          <Icon type="arrow-right" />
+          <ArrowRightOutlined />
         </Link>
       </div>
     );

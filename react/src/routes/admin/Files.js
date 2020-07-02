@@ -1,6 +1,8 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Form } from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table } from "antd";
 
 const FormItem = Form.Item;
 

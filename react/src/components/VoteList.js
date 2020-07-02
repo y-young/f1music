@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "dva";
 import { Link } from "dva/router";
-import { Icon, Spin, Input, Rate, Button, message } from "antd";
+import { Spin, Input, Rate, Button, message } from "antd";
+import { BulbOutlined } from "@ant-design/icons";
 import { CSSTransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
@@ -298,7 +299,7 @@ class VoteList extends React.Component {
         } while (rndTime === time);
         return (
           <div className="tips">
-            <Icon type="bulb" /> 您已投完本时段所有曲目，到
+            <BulbOutlined /> 您已投完本时段所有曲目，到
             <Link to={"/vote/" + rndTime}>其他时段</Link>
             看看吧
           </div>
@@ -306,7 +307,7 @@ class VoteList extends React.Component {
       } else {
         return (
           <div className="tips">
-            <Icon type="bulb" /> 本时段您已投 {voted} 首曲目，还有{" "}
+            <BulbOutlined /> 本时段您已投 {voted} 首曲目，还有{" "}
             {songs.length - voted} 首未投票曲目
           </div>
         );

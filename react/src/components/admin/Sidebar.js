@@ -1,7 +1,16 @@
 import React from "react";
 import classnames from "classnames";
 import { Link } from "dva/router";
-import { Menu, Icon, Layout } from "antd";
+import { Menu, Layout } from "antd";
+import {
+  HomeOutlined,
+  PlayCircleOutlined,
+  FileOutlined,
+  ExceptionOutlined,
+  ProfileOutlined,
+  BarCharOutlined,
+  ArrowLeftOutlined
+} from "@ant-design/icons";
 import styles from "../Sidebar.css";
 
 const SubMenu = Menu.SubMenu;
@@ -24,14 +33,15 @@ const Sidebar = props => {
       >
         <Menu.Item key="/">
           <Link to="/">
-            <Icon type="home" />首页
+            <HomeOutlined />
+            首页
           </Link>
         </Menu.Item>
         <SubMenu
           key="/song"
           title={
             <span>
-              <Icon type="play-circle-o" />
+              <PlayCircleOutlined />
               <span>曲目</span>
             </span>
           }
@@ -45,26 +55,33 @@ const Sidebar = props => {
         </SubMenu>
         <Menu.Item key="/files">
           <Link to="/files">
-            <Icon type="file" />文件
+            <FileOutlined />
+            文件
           </Link>
         </Menu.Item>
         <Menu.Item key="/reports">
           <Link to="/reports">
-            <Icon type="exception" />反馈
+            <ExceptionOutlined />
+            反馈
           </Link>
         </Menu.Item>
         <Menu.Item key="/rank">
           <Link to="/rank">
-            <Icon type="profile" />投票结果
+            <ProfileOutlined />
+            投票结果
           </Link>
         </Menu.Item>
         <Menu.Item key="/statistics">
           <Link to="/statistics">
-            <Icon type="bar-chart" />数据统计
+            <BarCharOutlined />
+            数据统计
           </Link>
         </Menu.Item>
         <Menu.Item key="back">
-          <a href="/"><Icon type="arrow-left" />返回前台</a>
+          <a href="/">
+            <ArrowLeftOutlined />
+            返回前台
+          </a>
         </Menu.Item>
       </Menu>
     </div>

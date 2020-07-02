@@ -1,6 +1,16 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Icon, Button, Input, Form, Tag, Select, Modal } from "antd";
+import { Form } from "@ant-design/compatible";
+import "@ant-design/compatible/assets/index.css";
+import { Table, Button, Input, Tag, Select, Modal, Space } from "antd";
+import {
+  SearchOutlined,
+  EditOutlined,
+  RollbackOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  ReloadOutlined
+} from "@ant-design/icons";
 import { TimeSelector } from "components/admin";
 import { timeFilters } from "config";
 
@@ -51,26 +61,28 @@ class Songs extends React.Component {
           }
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
-        <Button
-          type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-          icon="search"
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          搜索
-        </Button>
-        <Button
-          onClick={() => this.handleReset(clearFilters)}
-          size="small"
-          style={{ width: 90 }}
-        >
-          重置
-        </Button>
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            搜索
+          </Button>
+          <Button
+            onClick={() => this.handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            重置
+          </Button>
+        </Space>
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -188,7 +200,7 @@ class Songs extends React.Component {
           <FormItem label="操作">
             <Button
               type="primary"
-              icon="edit"
+              icon={<EditOutlined />}
               onClick={() => this.editSong(row)}
             >
               编辑
@@ -197,7 +209,7 @@ class Songs extends React.Component {
               <span>
                 <Button
                   type="secondary"
-                  icon="rollback"
+                  icon={<RollbackOutlined />}
                   onClick={() => this.handleRestore([row.id])}
                   loading={loading.effects["songs/restore"]}
                 >
@@ -205,7 +217,7 @@ class Songs extends React.Component {
                 </Button>
                 <Button
                   type="danger"
-                  icon="delete"
+                  icon={<DeleteOutlined />}
                   onClick={() => this.handleDelete([row.id], true)}
                   loading={loading.effects["songs/delete"]}
                 >
@@ -215,7 +227,7 @@ class Songs extends React.Component {
             ) : (
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 onClick={() => this.handleDelete([row.id])}
                 loading={loading.effects["songs/trash"]}
               >
@@ -224,7 +236,7 @@ class Songs extends React.Component {
             )}
             <Button
               type="secondary"
-              icon="download"
+              icon={<DownloadOutlined />}
               href={"/api/download/" + row.id}
             >
               下载
@@ -302,7 +314,7 @@ class Songs extends React.Component {
         </div>
         <Button
           type="secondary"
-          icon="reload"
+          icon={<ReloadOutlined />}
           onClick={this.handleRefresh}
           style={{ float: "right" }}
         />
@@ -406,6 +418,4 @@ class Songs extends React.Component {
   }
 }
 
-export default connect(({ songs, loading }) => ({ songs, loading }))(
-  Form.create()(Songs)
-);
+export default connect(({ songs, loading }) => ({ songs, loading }))(Songs);

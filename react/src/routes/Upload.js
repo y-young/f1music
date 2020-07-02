@@ -1,17 +1,8 @@
 import React from "react";
 import moment from "moment";
 import { connect } from "dva";
-import {
-  Alert,
-  Row,
-  Col,
-  Button,
-  Tabs,
-  Spin,
-  Statistic,
-  Result,
-  Icon
-} from "antd";
+import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
+import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
 import { CloudUpload, ManualUpload, ViewUploads } from "components";
 
 const TabPane = Tabs.TabPane;
@@ -22,7 +13,7 @@ const Upload = ({ upload, loading }) => {
   const uploaded = songs.length;
   const AllDone = (
     <Result
-      icon={<Icon type="smile" theme="twoTone" />}
+      icon={<SmileTwoTone />}
       title="上传曲目数已达到限额，感谢您对校园音乐活动的支持"
       subTitle="请耐心等待投票开放"
     />
@@ -37,7 +28,7 @@ const Upload = ({ upload, loading }) => {
     >
       {moment().isBefore(status.start) ? (
         <Result
-          icon={<Icon type="clock-circle" theme="twoTone" />}
+          icon={<ClockCircleTwoTone />}
           title="抱歉，上传尚未开始，距离上传开始还有"
           subTitle={
             <Countdown

@@ -2,7 +2,13 @@ import React from "react";
 import moment from "moment";
 import { connect } from "dva";
 import { Link } from "dva/router";
-import { Alert, Row, Col, Spin, Tabs, Icon, Statistic } from "antd";
+import { Alert, Row, Col, Spin, Tabs, Statistic } from "antd";
+import {
+  UploadOutlined,
+  FormOutlined,
+  ClockCircleOutlined,
+  ArrowRightOutlined
+} from "@ant-design/icons";
 
 const TabPane = Tabs.TabPane;
 const { Countdown } = Statistic;
@@ -13,27 +19,27 @@ const Home = ({ app, loading }) => {
     let title = "正在进行",
       statusText = "...",
       countdownText = "结束",
-      icon = "loading",
+      icon = <LoadingOutlined />,
       time = null;
     if (moment().isBetween(status.upload.start, status.upload.end)) {
       statusText = "上传";
-      icon = "upload";
+      icon = <UploadOutlined />;
       time = status.upload.end;
     } else if (moment().isBetween(status.vote.start, status.vote.end)) {
       statusText = "投票";
-      icon = "form";
+      icon = <FormOutlined />;
       time = status.vote.end;
     } else if (moment().isBefore(status.upload.start)) {
       title = "即将开始";
       statusText = "上传";
       countdownText = "开始";
-      icon = "clock-circle";
+      icon = <ClockCircleOutlined />;
       time = status.upload.start;
     } else if (moment().isBefore(status.vote.start)) {
       title = "即将开始";
       statusText = "投票";
       countdownText = "开始";
-      icon = "clock-circle";
+      icon = <ClockCircleOutlined />;
       time = status.vote.start;
     }
     if (time != null) {
@@ -44,11 +50,7 @@ const Home = ({ app, loading }) => {
           description={
             <Row gutter={16}>
               <Col span={12}>
-                <Statistic
-                  title={title}
-                  value={statusText}
-                  prefix={<Icon type={icon} />}
-                />
+                <Statistic title={title} value={statusText} prefix={icon} />
               </Col>
               <Col span={12}>
                 <Countdown
@@ -130,7 +132,7 @@ const Home = ({ app, loading }) => {
             <strong>应德育处要求，鼓励同学们上传优秀的国产歌曲。</strong>
           </p>
           <Link to="/upload" className="redirect">
-            <Icon type="arrow-right" /> 前往上传
+            <ArrowRightOutlined /> 前往上传
           </Link>
         </TabPane>
         <TabPane tab="投票说明" key="vote">
@@ -202,7 +204,7 @@ const Home = ({ app, loading }) => {
             ，一经发现将采取相应措施。
           </p>
           <Link to="/vote/1" className="redirect">
-            <Icon type="arrow-right" /> 前往投票
+            <ArrowRightOutlined /> 前往投票
           </Link>
         </TabPane>
         <TabPane tab="各时段音乐要求" key="requirements">

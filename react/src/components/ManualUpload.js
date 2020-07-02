@@ -1,6 +1,9 @@
 import React from "react";
 import { connect } from "dva";
-import { Divider, Form, Input, Icon, Upload, message } from "antd";
+import { Form } from "@ant-design/compatible";
+import "@ant-design/compatible/assets/index.css";
+import { Divider, Input, Upload, message } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
 import { TimeSelector } from "components";
 
 const FormItem = Form.Item;
@@ -113,7 +116,7 @@ class ManualUpload extends React.Component {
             showUploadList={{ showRemoveIcon: false, showDownloadIcon: false }}
           >
             <p className="ant-upload-drag-icon">
-              <Icon type="inbox" />
+              <InboxOutlined />
             </p>
             <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
             <p className="ant-upload-hint">

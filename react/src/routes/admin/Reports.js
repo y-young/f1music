@@ -1,6 +1,9 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Form, Button } from "antd";
+import { Form } from "@ant-design/compatible";
+import "@ant-design/compatible/assets/index.css";
+import { Table, Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const FormItem = Form.Item;
 const columns = [
@@ -49,7 +52,7 @@ class Reports extends React.Component {
           <FormItem label="操作">
             <Button
               type="danger"
-              icon="delete"
+              icon={<DeleteOutlined />}
               loading={loading.effects["reports/delete"]}
               onClick={() => this.handleDelete([row.id])}
             >
