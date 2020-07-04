@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "dva";
-import { Form } from "@ant-design/compatible";
-import "@ant-design/compatible/assets/index.css";
-import { AutoComplete, Input, Table, Button, Spin, message } from "antd";
+import {
+  Form,
+  Modal,
+  AutoComplete,
+  Input,
+  Table,
+  Button,
+  Spin,
+  message
+} from "antd";
 import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
 import { YPlayer, TimeSelector } from "components";
 
@@ -10,11 +17,27 @@ const Search = Input.Search;
 const FormItem = Form.Item;
 const Option = AutoComplete.Option;
 
-const CloudUpload = ({ upload, loading, dispatch, form }) => {
+const CloudUpload = ({ upload, loading, dispatch }) => {
   const { searchResult } = upload;
-  const { getFieldDecorator, validateFieldsAndScroll, resetFields } = form;
+  const [visible, setVisible] = useState(false);
+  const [row, setRow] = useState(null);
+  const [form] = Form.useForm();
 
   const columns = [
+    {
+      title: "上传",
+      render: row => (
+        <Button
+          icon={<UploadOutlined />}
+          loading={loading.effects["upload/fetchMp3"]}
+          onClick={() => {
+            openModal(row);
+          }}
+        />
+      ),
+      fixed: "left",
+      width: 60
+    },
     { dataIndex: "name", title: "曲名", width: 200 },
     {
       dataIndex: "artist",
@@ -35,80 +58,33 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
     }
   };
 
-  const onExpand = (expanded, row) => {
+  const openModal = row => {
     // music.163.com/song/media/outer/url?id={id}.mp3
-    if (expanded && row && !row.mp3) {
-      dispatch({ type: "upload/fetchMp3", payload: row });
-    }
-    if (expanded && row) {
-      resetFields();
+    setRow(row);
+    form.setFieldsValue({ name: row.name, origin: row.album });
+    if (!row.mp3) {
+      dispatch({ type: "upload/fetchMp3", payload: row }).then(success => {
+        if (success) {
+          setVisible(true);
+        }
+      });
+    } else {
+      setVisible(true);
     }
   };
 
   const handleUpload = id => {
-    validateFieldsAndScroll((errors, values) => {
-      if (errors) {
-        return;
-      }
-      values = { id: id, ...values };
-      dispatch({ type: "upload/upload", payload: values });
-    });
-  };
-
-  const renderExpanded = row => {
-    return (
-      <div>
-        <Form layout="inline" hideRequiredMark={true}>
-          <FormItem label="时段">
-            {getFieldDecorator("time", {
-              rules: [{ required: true, message: "请选择时段" }]
-            })(<TimeSelector style={{ width: "110px" }} />)}
-          </FormItem>
-          <FormItem label="曲名">
-            {getFieldDecorator("name", {
-              rules: [{ required: true, message: "请选择或填写曲名" }]
-            })(
-              <AutoComplete
-                placeholder="请选择或输入曲名"
-                style={{ width: 250 }}
-              >
-                <Option value={row.name}>{row.name}</Option>
-              </AutoComplete>
-            )}
-          </FormItem>
-          <br />
-          <FormItem label="来源">
-            {getFieldDecorator("origin")(
-              <AutoComplete
-                placeholder="请选择或输入来源"
-                style={{ width: 300 }}
-              >
-                <Option value={row.artist.toString()}>
-                  {row.artist.toString()}
-                </Option>
-                <Option value={row.album}>{row.album}</Option>
-              </AutoComplete>
-            )}
-          </FormItem>
-          <br />
-          <FormItem label="试听">
-            <Spin spinning={!row.mp3}>
-              <YPlayer src={row.mp3} mini style={{ marginTop: "1px" }} />
-            </Spin>
-          </FormItem>
-          <FormItem label="上传">
-            <Button
-              type="primary"
-              onClick={() => handleUpload(row.id)}
-              loading={loading.effects["upload/upload"]}
-              icon={<UploadOutlined />}
-            >
-              上传
-            </Button>
-          </FormItem>
-        </Form>
-      </div>
-    );
+    form
+      .validateFields()
+      .then(values => {
+        values = { id: id, ...values };
+        dispatch({ type: "upload/upload", payload: values }).then(success => {
+          if (success) {
+            setVisible(false);
+          }
+        });
+      })
+      .catch(error => {});
   };
 
   return (
@@ -125,14 +101,55 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
       <Table
         dataSource={searchResult}
         columns={columns}
-        expandedRowRender={renderExpanded}
-        expandRowByClick={true}
-        onExpand={onExpand}
         loading={loading.effects["upload/search"]}
         rowKey="id"
         pagination={false}
         scroll={{ x: 500 }}
       />
+      {row && (
+        <Modal
+          visible={visible}
+          onCancel={() => setVisible(false)}
+          confirmLoading={loading.effects["upload/upload"]}
+          okText="上传"
+          title="上传歌曲"
+          onOk={() => handleUpload(row.id)}
+          forceRender
+          centered
+        >
+          <Form form={form} hideRequiredMark={true}>
+            <FormItem
+              label="时段"
+              name="time"
+              rules={[{ required: true, message: "请选择时段" }]}
+            >
+              <TimeSelector style={{ width: "110px" }} />
+            </FormItem>
+            <FormItem
+              label="曲名"
+              name="name"
+              rules={[{ required: true, message: "请选择或填写曲名" }]}
+            >
+              <AutoComplete placeholder="请选择或输入曲名">
+                <Option value={row.name}>{row.name}</Option>
+              </AutoComplete>
+            </FormItem>
+            <FormItem label="来源" name="origin">
+              <AutoComplete placeholder="请选择或输入来源">
+                <Option value={row.artist.toString()}>
+                  {row.artist.toString()}
+                </Option>
+                <Option value={row.album}>{row.album}</Option>
+              </AutoComplete>
+            </FormItem>
+            <FormItem label="试听">
+              <Spin spinning={!row.mp3}>
+                <YPlayer src={row.mp3} mini style={{ marginTop: "1px" }} />
+              </Spin>
+            </FormItem>
+          </Form>
+        </Modal>
+      )}
       {searchResult.length !== 0 && (
         <div className="tips">
           <BulbOutlined /> 遇到了问题？试试手动上传吧
@@ -143,5 +160,5 @@ const CloudUpload = ({ upload, loading, dispatch, form }) => {
 };
 
 export default connect(({ upload, loading }) => ({ upload, loading }))(
-  Form.create()(CloudUpload)
+  CloudUpload
 );
