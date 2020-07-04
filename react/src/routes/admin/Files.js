@@ -1,12 +1,10 @@
 import React from "react";
 import { connect } from "dva";
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Table } from "antd";
+import { Form, Table } from "antd";
 
 const FormItem = Form.Item;
 
-const Files = ({ files, loading, dispatch }) => {
+const Files = ({ files, loading }) => {
   const { list } = files;
   const columns = [
     {

@@ -1,8 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import { Form } from "@ant-design/compatible";
-import "@ant-design/compatible/assets/index.css";
-import { Table, Button } from "antd";
+import { Form, Table, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
 const FormItem = Form.Item;
@@ -13,7 +11,7 @@ const columns = [
     width: "50px",
     sorter: (a, b) => a.id - b.id
   },
-  { dataIndex: "song.name", title: "曲目" },
+  { dataIndex: ["song", "name"], title: "曲目" },
   { dataIndex: "reason", title: "内容" },
   { dataIndex: "time", title: "时间" }
 ];
