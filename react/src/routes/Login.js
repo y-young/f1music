@@ -43,7 +43,6 @@ const Login = ({ app, loading, dispatch }) => {
               <Input
                 placeholder="学号"
                 prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-                onPressEnter={handleSubmit}
               />
             </FormItem>
             <FormItem
@@ -65,7 +64,6 @@ const Login = ({ app, loading, dispatch }) => {
               <Input.Password
                 placeholder="校园网密码"
                 prefix={<LockOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-                onPressEnter={handleSubmit}
               />
             </FormItem>
             <FormItem>
