@@ -1,8 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Table, Button, Input, Modal } from "antd";
+import { Form, Table, Button, Input, Modal } from "antd";
 import { timeFilters } from "config";
 
 const { TextArea } = Input;
@@ -105,7 +103,7 @@ class Rank extends React.Component {
           >
             <TextArea
               value={this.result()}
-              autosize={{ minRows: 6, maxRows: 10 }}
+              autoSize={{ minRows: 6, maxRows: 10 }}
             />
           </Modal>
         )}
