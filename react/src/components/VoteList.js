@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import { Link } from "dva/router";
 import { Spin, Input, Rate, Button, message } from "antd";
-import { BulbOutlined } from "@ant-design/icons";
+import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
 import { CSSTransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
@@ -208,7 +208,7 @@ class VoteList extends React.Component {
     const buttonProps = {
       type: song.vote !== 0 ? "secondary" : "primary",
       shape: !isDesktop ? "circle" : undefined,
-      icon: this.state.countdown <= 0 ? "check" : undefined,
+      icon: this.state.countdown <= 0 ? <CheckOutlined /> : undefined,
       disabled: this.state.countdown > 0
     };
     const voteArea = (
@@ -253,14 +253,15 @@ class VoteList extends React.Component {
     );
     const reportArea = (
       <div className={styles.reportArea} key="report">
-        <Input
-          value={this.state.reason}
-          placeholder="反馈内容"
-          className={styles.reason}
-          onChange={e => this.setState({ reason: e.target.value })}
-          maxLength={60}
-          onPressEnter={this.handleReport}
-        />
+        <div className={styles.reason}>
+          <Input
+            value={this.state.reason}
+            placeholder="反馈内容"
+            onChange={e => this.setState({ reason: e.target.value })}
+            maxLength={60}
+            onPressEnter={this.handleReport}
+          />
+        </div>
         <Button
           type="primary"
           onClick={this.handleReport}
