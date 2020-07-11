@@ -3,6 +3,7 @@ import moment from "moment";
 import { connect } from "dva";
 import { TimeSelector, VoteList } from "components";
 import {
+  Form,
   Spin,
   Alert,
   Statistic,
@@ -14,6 +15,7 @@ import {
 } from "antd";
 import { ClockCircleTwoTone, SettingOutlined } from "@ant-design/icons";
 
+const FormItem = Form.Item;
 const { Countdown } = Statistic;
 
 class Vote extends React.Component {
@@ -114,35 +116,34 @@ class Vote extends React.Component {
                 onCancel={() => this.setState({ modalVisible: false })}
                 footer={null}
               >
-                <p>
-                  自动跳过已投票曲目:{" "}
-                  <Switch
-                    checked={skipVoted}
-                    onChange={() => this.toggle("SkipVoted")}
-                  />
-                </p>
-                <p>
-                  手动提交成功后:{" "}
-                  <Radio.Group
-                    defaultValue={onSubmitted}
-                    onChange={e => this.save("OnSubmitted", e.target.value)}
-                    buttonStyle="solid"
-                  >
-                    <Radio.Button value="continue">继续播放</Radio.Button>
-                    <Radio.Button value="forward">切换下一首</Radio.Button>
-                  </Radio.Group>
-                </p>
-                <p>
-                  播放结束但未投票时:{" "}
-                  <Radio.Group
-                    defaultValue={onEnded}
-                    onChange={e => this.save("OnEnded", e.target.value)}
-                    buttonStyle="solid"
-                  >
-                    <Radio.Button value="pause">暂停</Radio.Button>
-                    <Radio.Button value="forward">播放下一首</Radio.Button>
-                  </Radio.Group>
-                </p>
+                <Form>
+                  <FormItem label="自动跳过已投票曲目">
+                    <Switch
+                      checked={skipVoted}
+                      onChange={() => this.toggle("SkipVoted")}
+                    />
+                  </FormItem>
+                  <FormItem label="手动提交成功后">
+                    <Radio.Group
+                      defaultValue={onSubmitted}
+                      onChange={e => this.save("OnSubmitted", e.target.value)}
+                      buttonStyle="solid"
+                    >
+                      <Radio.Button value="continue">继续播放</Radio.Button>
+                      <Radio.Button value="forward">切换下一首</Radio.Button>
+                    </Radio.Group>
+                  </FormItem>
+                  <FormItem label="播放结束但未投票时:">
+                    <Radio.Group
+                      defaultValue={onEnded}
+                      onChange={e => this.save("OnEnded", e.target.value)}
+                      buttonStyle="solid"
+                    >
+                      <Radio.Button value="pause">暂停</Radio.Button>
+                      <Radio.Button value="forward">播放下一首</Radio.Button>
+                    </Radio.Group>
+                  </FormItem>
+                </Form>
               </Modal>
             </div>
             <VoteList ref={list => (this.voteList = list)} />
