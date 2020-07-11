@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "dva/router";
 import axios from "axios";
-import { Tabs, Table, Button } from "antd";
+import { Tabs, Table, Button, Space } from "antd";
 import "aplayer/dist/APlayer.min.css";
 import APlayer from "aplayer";
 import YPlayer from "components/YPlayer";
@@ -90,14 +90,19 @@ class Result extends React.Component {
           </TabPane>
         </Tabs>
         <br />
-        <a href="http://music.163.com/playlist/2621168336" className="redirect">
-          前往网易云歌单
-          <ArrowRightOutlined />
-        </a>
-        <Link to="/home" className="redirect">
-          进入首页
-          <ArrowRightOutlined />
-        </Link>
+        <Space>
+          <a
+            href="http://music.163.com/playlist/" //Put playlist link here
+            className="redirect"
+          >
+            前往网易云歌单
+            <ArrowRightOutlined />
+          </a>
+          <Link to="/home" className="redirect">
+            进入首页
+            <ArrowRightOutlined />
+          </Link>
+        </Space>
       </div>
     );
   }
