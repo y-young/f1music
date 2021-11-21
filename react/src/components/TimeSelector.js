@@ -7,10 +7,10 @@ class TimeSelector extends React.Component {
   render() {
     return (
       <Select placeholder="选择时段" {...this.props}>
-        <Option value="1">6:30</Option>
-        <Option value="2">7:00</Option>
+        <Option value="1">6:40</Option>
+        <Option value="2">7:10</Option>
         <Option value="3">13:45</Option>
-        <Option value="4">18:40</Option>
+        <Option value="4">18:10</Option>
         <Option value="5">21:35</Option>
         <Option value="6">22:30</Option>
       </Select>
