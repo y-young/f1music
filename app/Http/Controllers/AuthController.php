@@ -29,7 +29,7 @@ class AuthController extends Controller
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
             $response = curl_exec($ch);
             $info = curl_getinfo($ch);
             if (curl_errno($ch)) {
