@@ -39,8 +39,14 @@ class MusicController extends Controller
             'id' => 'required'
         ], ['required' => '参数错误,请刷新重试'])->validate();
 
-        $res = self::$API->format(true)->url($request->input('id'), 128);
-        $url = json_decode($res)->url;
+        $res = self::$API->format(false)->url($request->input('id'), 128);
+        $res = json_decode($res, true);
+        $res = $res["data"][0];
+        if ($res["freeTrialInfo"] == null) {
+            $url = $res["url"];
+        } else {
+            $url = "";
+        }
         if (empty($url)) {
             return $this->error('暂无版权或歌曲未找到');
         }
