@@ -54,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
             curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
             $response = curl_exec($ch);
             $info = curl_getinfo($ch);
             if (curl_errno($ch)) {
