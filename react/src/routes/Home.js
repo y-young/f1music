@@ -137,7 +137,7 @@ const Home = ({ app, loading }) => {
           <p>
             为保证投票质量，目前禁止使用校园网默认密码(即123456)登录投票，使用默认密码的同学请先登录
             <a
-              href="http://www.fzyz.net/"
+              href="http://old.fzyz.net/"
               target="_blank"
               rel="noopener noreferrer"
             >
