@@ -255,8 +255,14 @@ class UploadController extends Controller
     private static function getMp3($id)
     {
         $api = new Meting('netease');
-        $res = $api->format(true)->url($id, 128);
-        $url = json_decode($res)->url;
+        $res = $api->format(false)->url($id, 128);
+        $res = json_decode($res, true);
+        $res = $res["data"][0];
+        if ($res["freeTrialInfo"] == null) {
+            $url = $res["url"];
+        } else {
+            $url = "";
+        }
         return $url;
     }
 }
