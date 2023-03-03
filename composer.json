@@ -10,7 +10,7 @@
         "laravel/lumen-framework": "^6.0",
         "league/flysystem": "^1.0",
         "metowolf/meting": "^1.5.0",
-        "sentry/sentry-laravel": "1.2.0"
+        "sentry/sentry-laravel": "^1.2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",
@@ -42,7 +42,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
