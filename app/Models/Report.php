@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Report extends Model
 {
@@ -10,7 +11,8 @@ class Report extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    public function song() {
-        return $this->belongsTo('App\Song');
+    public function song(): BelongsTo
+    {
+        return $this->belongsTo(Song::class);
     }
 }

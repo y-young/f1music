@@ -12,7 +12,7 @@ class CreateVotes extends Migration
             $table->charset = 'utf8';
             $table->engine = 'InnoDB';
             $table->collation = 'utf8_general_ci';
-            $table->smallIncrements('id', 5)->comment('ID');
+            $table->smallIncrements('id')->comment('ID');
             $table->unsignedSmallInteger('song_id')->comment('曲目ID');
             $table->tinyInteger('vote')->comment('投票');
             $table->char('user_id', 11)->comment('投票者学号');
@@ -23,6 +23,6 @@ class CreateVotes extends Migration
 
     public function down()
     {
-        Schema::drop('votes');
+        Schema::dropIfExists('votes');
     }
 }

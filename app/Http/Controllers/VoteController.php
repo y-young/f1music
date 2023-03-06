@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Song;
-use App\Vote;
-use App\Order;
+use App\Models\Song;
+use App\Models\Vote;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Validator;
 
 class VoteController extends Controller
 {
-
-    private static $stuId;
     private const stars = [-10 => 1, -5 => 2, 1 => 3, 5 => 4, 10 => 5];
     private const points = [1 => -10, 2 => -5, 3 => 1, 4 => 5, 5 => 10];
     private const messages = [
@@ -24,12 +22,7 @@ class VoteController extends Controller
         'vote.in' => '参数错误,请重试'
     ];
 
-    public function __construct()
-    {
-        self::$stuId = Auth::user()->stuId;
-    }
-
-    public function Vote(Request $request)
+    public function vote(Request $request)
     {
         if (!config('music.openVote')) {
             return $this->error('投票未开放', 2);
@@ -44,10 +37,10 @@ class VoteController extends Controller
 
         $rate = self::points[$request->input('vote')];
         Vote::updateOrCreate(
-            ['song_id' => $request->input('id'), 'user_id' => self::$stuId],
+            ['song_id' => $request->input('id'), 'user_id' => Auth::id()],
             ['vote' => $rate]
         );
-        Log::info('Vote: ', ['user_id' => self::$stuId, 'song' => $request->input('id'), 'vote' => $rate]);
+        Log::info('Vote: ', ['user_id' => Auth::id(), 'song' => $request->input('id'), 'vote' => $rate]);
         return $this->success();
     }
 
@@ -64,19 +57,22 @@ class VoteController extends Controller
         ], ['required' => '请选择时段', 'in' => '参数错误，请刷新重试'])->validate();
 
         // 为减少一条SQL查询所以不用firstOrCreate
-        $order = Order::find(self::$stuId);
+        $order = Order::find(Auth::id());
         if (empty($order)) {
             $order = Order::create([
-                'user_id' => self::$stuId,
-                'order' => Song::select('id')->inRandomOrder()->get()
+                'user_id' => Auth::id(),
+                'order' => Song::select('id')->inRandomOrder()->get()->pluck('id')
             ]);
             $order->save();
         }
-        $songs = Song::with(['votes' => function ($query) {
-            $query->where('user_id', self::$stuId);
-        }, 'file'])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
+        $songs = Song::with([
+            'votes' => function ($query) {
+                $query->where('user_id', Auth::id());
+            },
+            'file'
+        ])->select('id', 'file_id')->ofTime($request->input('time'))->whereIn('id', $order->order)->get();
 
-        $order = array_flip($order->order); // 翻转数组以便使用sortBy
+        $order = $order->order->flip(); // 翻转数组以便使用sortBy
         // 由于数据库返回是按id递增排序,故需要重新按固定顺序排序
         $songs = $songs->sortBy(function ($song) use ($order) {
             return $order[$song['id']];

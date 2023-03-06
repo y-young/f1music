@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
-use App\Song;
-use App\Report;
+use App\Models\File;
+use App\Models\Song;
+use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ManageController extends Controller
 {
-    public function getStatus($type) {
-        switch($type) {
+    public function getStatus($type)
+    {
+        switch ($type) {
             case 'home':
                 return $this->success('status', config('music.status'));
             case 'upload':
@@ -38,20 +39,23 @@ class ManageController extends Controller
 
     public function editSong(Request $request)
     {
-        $song = Song::withTrashed()->find($request->input('id'));
+        $song = Song::withTrashed()->findOrFail($request->input('id'));
+        /**
+         * @var Song $song
+         */
         $file = $song->file_id;
         $time = $request->input('playtime');
         $song->name = $request->input('name');
         $song->origin = $request->input('origin');
         $song->tags = $request->input('tags');
         if ($time != $song->playtime) {
-            if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+            if (config('music.openVote') && config('app.env', 'production') == 'production') {
                 return $this->error('开放投票期间禁止修改曲目所在时段');
             }
             if (Song::withTrashed()->ofTime($time)->where('file_id', $file)->exists()) {
                 return $this->error('曲目已存在于目标时段');
             }
-            if($time == '3' && $song->file->duration > 5 * 60) {
+            if ($time == '3' && $song->file->duration > 5 * 60) {
                 return $this->error('午出门铃声时长不得超过5分钟');
             }
         }
@@ -62,10 +66,10 @@ class ManageController extends Controller
 
     public function trashSongs(Request $request)
     {
-        if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+        if (config('music.openVote') && config('app.env', 'production') == 'production') {
             return $this->error('开放投票期间禁止删除曲目');
         }
-        $operator = Auth::user()->stuId;
+        $operator = Auth::id();
         foreach ($request->input('id') as $id) {
             Song::destroy($id);
             Log::info('Song ' . $id . ' trashed by ' . $operator);
@@ -75,13 +79,13 @@ class ManageController extends Controller
 
     public function getTrashedSongs()
     {
-        $songs =  Song::onlyTrashed()->with('file')->withCount('reports')->get();
+        $songs = Song::onlyTrashed()->with('file')->withCount('reports')->get();
         return $this->success('songs', $songs);
     }
 
     public function restoreSongs(Request $request)
     {
-        $operator = Auth::user()->stuId;
+        $operator = Auth::id();
         foreach ($request->input('id') as $id) {
             Song::withTrashed()->where('id', $id)->restore();
             Log::info('Song ' . $id . ' restored by ' . $operator);
@@ -91,16 +95,19 @@ class ManageController extends Controller
 
     public function deleteSongs(Request $request)
     {
-        if (config('music.openUpload') && env('APP_ENV', 'production') == 'production') {
+        if (config('music.openUpload') && config('app.env', 'production') == 'production') {
             return $this->error('开放上传期间禁止彻底删除曲目');
         }
-        if (config('music.openVote') && env('APP_ENV', 'production') == 'production') {
+        if (config('music.openVote') && config('app.env', 'production') == 'production') {
             return $this->error('开放投票期间禁止删除曲目');
         }
-        $operator = Auth::user()->stuId;
+        $operator = Auth::id();
         foreach ($request->input('id') as $id) {
             $song = Song::withTrashed()->find($id);
             if (!empty($song) && $song->trashed()) {
+                /**
+                 * @var Song $song
+                 */
                 //必须用find而不能用where,否则无法触发事件,见文档
                 foreach ($song->reports as $report) {
                     $report->delete();
@@ -134,11 +141,14 @@ class ManageController extends Controller
 
     public function getRank(Request $request)
     {
-        if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
+        if (config('app.env', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
             return $this->error('开放上传或投票期间无法查看投票数据');
         }
         $songs = Song::with('votes', 'file')->withCount('votes')->get();
         foreach ($songs as $song) {
+            /**
+             * @var Song $song
+             */
             $song->vote_sum = $song->votes->sum->vote;
             $song->score = $song->votes_count == 0 ? 0 : $song->vote_sum / $song->votes_count;
         }
@@ -160,13 +170,16 @@ class ManageController extends Controller
         return $this->success('rank', $songs->values());
     }
 
-    public function Analyze()
+    public function analyze()
     {
-        if (env('APP_ENV', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
+        if (config('app.env', 'production') == 'production' && (config('music.openUpload') || config('music.openVote'))) {
             return $this->error('开放上传或投票期间无法查看投票数据');
         }
         $songs = Song::with('votes')->withCount('votes')->get();
         foreach ($songs as $song) {
+            /**
+             * @var Song $song
+             */
             $song->awful = $song->votes->where('vote', -10)->count();
             $song->bad = $song->votes->where('vote', -5)->count();
             $song->neutral = $song->votes->where('vote', 1)->count();
@@ -181,7 +194,8 @@ class ManageController extends Controller
         $result = "";
         foreach ($songs as $song) {
             $result .= "<tr><td>" . $song->id . "</td><td>" . $song->playtime . "</td><td>" . $song->name . "</td><td>" . $song->origin . "</td><td>" . $song->awful . "</td><td>" . $song->bad . "</td><td>" . $song->neutral . "</td><td>" . $song->good . "</td><td>" . $song->awesome . "</td><td>" . $song->score . "</td><td>" . $song->vote_sum . "</td><td>" . $song->votes_count . "</td></tr>";
-        };
+        }
+        ;
         return "
         <html>
             <body>
@@ -208,7 +222,7 @@ class ManageController extends Controller
         </html>";
     }
 
-    public function Download($id)
+    public function download($id)
     {
         $song = Song::find($id);
         if (empty($song)) {
@@ -217,7 +231,7 @@ class ManageController extends Controller
         return response()->download('uploads/' . $song->file->md5 . '.mp3', $song->name . '.mp3');
     }
 
-    public function Statistics()
+    public function statistics()
     {
         date_default_timezone_set('Asia/Shanghai');
         $time = date('m-d H:i:s');

@@ -22,23 +22,13 @@ class ClearOrders extends Command
     protected $description = 'Clear orders table to refresh vote list';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        if (env('APP_ENV') == 'production') {
+        if (config('app.env') == 'production') {
             $this->error('In Production Environment!');
             if ($this->confirm('Are you sure to clear all orders?')) {
                 DB::table('orders')->truncate();
