@@ -3,7 +3,7 @@
 use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
 
-if (! function_exists('mix')) {
+if (!function_exists('mix_old')) {
     /**
      * Get the path to a versioned Mix file.
      *
@@ -13,18 +13,18 @@ if (! function_exists('mix')) {
      *
      * @throws \Exception
      */
-    function mix($path, $manifestDirectory = 'assets/')
+    function mix_old($path, $manifestDirectory = 'assets/')
     {
-        static $manifests = []; 
+        static $manifests = [];
 
-        if ($manifestDirectory && ! Str::startsWith($manifestDirectory, '/')) {
+        if ($manifestDirectory && !Str::startsWith($manifestDirectory, '/')) {
             $manifestDirectory = "/{$manifestDirectory}";
         }
 
-        $manifestPath = base_path('public'.$manifestDirectory.'/manifest.json');
+        $manifestPath = base_path('public' . $manifestDirectory . '/manifest.json');
 
-        if (! isset($manifests[$manifestPath])) {
-            if (! file_exists($manifestPath)) {
+        if (!isset($manifests[$manifestPath])) {
+            if (!file_exists($manifestPath)) {
                 throw new Exception('The Webpack manifest does not exist.');
             }
 
@@ -33,15 +33,18 @@ if (! function_exists('mix')) {
 
         $manifest = $manifests[$manifestPath];
 
-        if (! isset($manifest[$path])) {
-            throw new Exception("Unable to locate Mix file: {$path}.");
+        if (!isset($manifest[$path])) {
+            $exception = new Exception("Unable to locate Mix file: {$path}.");
 
-            if (! app('config')->get('app.debug')) {
+            if (!app('config')->get('app.debug')) {
+                report($exception);
+
                 return $path;
+            } else {
+                throw $exception;
             }
         }
 
         return new HtmlString($manifest[$path]);
     }
 }
-

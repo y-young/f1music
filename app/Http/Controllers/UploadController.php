@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
-use App\Song;
+use App\Models\File;
+use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
@@ -40,19 +40,13 @@ class UploadController extends Controller
         'mp1_or_mp2' => '文件为mp1或mp2格式,请上传mp3格式的文件',
         'bitrate_too_low' => '音频比特率低于128kbps,请上传音质较高的文件'
     ];
-    private static $stuId;
 
-    public function __construct()
-    {
-        self::$stuId = Auth::user()->stuId;
-    }
-
-    public function Upload(Request $request)
+    public function upload(Request $request)
     {
         Log::info('Requests: ' . var_export($request->all(), true));
         if (!config('music.openUpload')) {
             return $this->error(self::errorMsg['stop_upload'], 2);
-        } elseif (Song::withTrashed()->where('user_id', self::$stuId)->count() >= 12) {
+        } elseif (Song::withTrashed()->where('user_id', Auth::id())->count() >= 12) {
             return $this->error(self::errorMsg['max_upload_num']);
         }
         Validator::make($request->all(), [
@@ -87,12 +81,12 @@ class UploadController extends Controller
         return $this->success();
     }
 
-    public function Uploads()
+    public function uploads()
     {
         if (!config('music.openUpload')) {
             return $this->error(self::errorMsg['stop_upload'], 2);
         }
-        $songs = Song::withTrashed()->where('user_id', self::$stuId)->get();
+        $songs = Song::withTrashed()->where('user_id', Auth::id())->get();
         $songs = $songs->map(function ($song) {
             return $song->only(['playtime', 'name', 'origin']);
         });
@@ -175,7 +169,7 @@ class UploadController extends Controller
             'playtime' => $file->time,
             'name' => $file->songName,
             'origin' => $file->songOrigin,
-            'user_id' => self::$stuId,
+            'user_id' => Auth::id(),
             'file_id' => $file->id
         ]);
         $song->save();
@@ -190,7 +184,7 @@ class UploadController extends Controller
                 'md5' => $vFile->md5,
                 'duration' => $vFile->duration,
                 'cloud_id' => $vFile->cloudId,
-                'user_id' => self::$stuId
+                'user_id' => Auth::id()
             ]);
             $file->save();
             $vFile->id = $file->id;
@@ -277,4 +271,5 @@ class UnvalidatedFile
     public $songOrigin = null;
     public $url = null;
     public $cloudId = null;
+    public $md5 = null;
 }

@@ -1,9 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Events\FileDeleting;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class File extends Model
 {
@@ -16,13 +18,15 @@ class File extends Model
         'deleting' => FileDeleting::class
     ];
 
-    public function getUrlAttribute()
+    protected function url(): Attribute
     {
-       return '/uploads/'.$this->md5.'.mp3';
+        return Attribute::make(
+        get: fn() => '/uploads/' . $this->md5 . '.mp3',
+        );
     }
 
-    public function songs()
+    public function songs(): HasMany
     {
-        return $this->hasMany('App\Song');
+        return $this->hasMany(Song::class);
     }
 }

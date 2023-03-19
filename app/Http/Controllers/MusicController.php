@@ -10,22 +10,22 @@ use Metowolf\Meting;
 class MusicController extends Controller
 {
 
-    private static $API;
+    private static $api;
 
     public function __construct()
     {
-        self::$API = new Meting('netease');
+        self::$api = new Meting('netease');
         // 网易常封cookies,必要时手动抓取music.163.com的cookies并更换
-        //self::$API->cookie('');
+        //self::$api->cookie('');
     }
 
-    public function Search(Request $request)
+    public function search(Request $request)
     {
         Validator::make($request->all(), [
             'keyword' => 'required'
         ], ['required' => '请输入搜索词'])->validate();
 
-        $result = self::$API->format(true)->search($request->input('keyword'));
+        $result = self::$api->format(true)->search($request->input('keyword'));
         if ($result == '[]') {
             return $this->error('未能找到相关搜索结果');
         } else {
@@ -33,13 +33,13 @@ class MusicController extends Controller
         }
     }
 
-    public function Mp3(Request $request)
+    public function mp3(Request $request)
     {
         Validator::make($request->all(), [
             'id' => 'required'
         ], ['required' => '参数错误,请刷新重试'])->validate();
 
-        $res = self::$API->format(false)->url($request->input('id'), 128);
+        $res = self::$api->format(false)->url($request->input('id'), 128);
         $res = json_decode($res, true);
         $res = $res["data"][0];
         if ($res["freeTrialInfo"] == null) {
@@ -54,20 +54,24 @@ class MusicController extends Controller
         return $this->success();
     }
 
-    public function Playlist()
+    public function playlist()
     {
         $list = Cache::remember('playlist', 600, function () {
-            $result = json_decode(self::$API->format(true)->playlist(config('music.playlist')), true);
-            $list = array_map(function ($song) {
-                $url = json_decode(self::$API->format(true)->url($song['id']))->url;
-                $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1);
-                return [
-                    'title' => $song['name'],
-                    'author' => implode('', $song['artist']),
-                    'url' => $url,
-                    'pic' => json_decode(self::$API->format(true)->pic($song['pic_id']))->url
-                ];
-            }, $result);
+            $result = json_decode(self::$api->format(true)->playlist(config('music.playlist')), true);
+            $list = array_map(
+                function ($song) {
+                    $url = json_decode(self::$api->format(true)->url($song['id']))->url;
+                    $url = preg_replace('/(m\\d{1})c.music.126.net/', '$1.music.126.net', $url, 1);
+                    return [
+                        'title' => $song['name'],
+                        'author' => implode('', $song['artist']),
+                        'url' => $url,
+                        'pic' => json_decode(self::$api->format(true)->pic($song['pic_id']))->url
+                    ];
+                }
+                ,
+                $result
+            );
             return $list;
         });
         return response()->json($list);

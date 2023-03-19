@@ -19,7 +19,7 @@ export async function Status() {
 }
 
 export function getCookie() {
-  var match = document.cookie.match(new RegExp("(^| )MusicAuth=([^;]+)"));
+  var match = document.cookie.match(new RegExp("(^| )f1music_auth=([^;]+)"));
   if (match) return match[2];
   else return null;
 }

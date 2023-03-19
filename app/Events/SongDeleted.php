@@ -2,20 +2,18 @@
 
 namespace App\Events;
 
-use App\Song;
+use App\Models\Song;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class SongDeleted extends Event
+class SongDeleted
 {
-
-    public $song;
+    use Dispatchable, SerializesModels;
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(Song $song)
+    public function __construct(public Song $song)
     {
-        $this->song = $song;
     }
 }
