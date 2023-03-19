@@ -2,3 +2,5 @@
 .github
 .env
 storage
+vendor
+react/node_modules
