@@ -119,8 +119,9 @@ class UploadController extends Controller
             if (empty($url)) {
                 throw new \Exception('暂不支持无版权或付费歌曲,请手动上传');
             }
-            $file->name = explode('/', $url)[9];
-            $file->md5 = substr($file->name, 0, -4);
+            $pathInfo = pathinfo($url);
+            $file->name = $pathInfo['basename'];
+            $file->md5 = $pathInfo['filename'];
             Storage::disk('tmp')->put($file->name, file_get_contents($url));
             $file->url = $tmpDir . $file->name;
         }
