@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { TimeSelector } from "components/admin";
 import { timeFilters } from "config";
+import { renderDateTime } from "utils/utils";
 
 const FormItem = Form.Item;
 const colors = [
@@ -193,10 +194,10 @@ class Songs extends React.Component {
           <FormItem label="曲名">{row.name}</FormItem>
           <FormItem label="来源">{row.origin}</FormItem>
           <br />
-          <FormItem label="创建时间">{row.created_at}</FormItem>
-          <FormItem label="最后更新时间">{row.updated_at}</FormItem>
+          <FormItem label="创建时间">{renderDateTime(row.created_at)}</FormItem>
+          <FormItem label="最后更新时间">{renderDateTime(row.updated_at)}</FormItem>
           {type === "trashed" && (
-            <FormItem label="删除时间">{row.deleted_at}</FormItem>
+            <FormItem label="删除时间">{renderDateTime(row.deleted_at)}</FormItem>
           )}
           <br />
           <FormItem label="试听">
@@ -272,7 +273,7 @@ class Songs extends React.Component {
       {
         dataIndex: "playtime",
         title: "时段",
-        width: "70px",
+        width: "75px",
         filters: timeFilters,
         onFilter: (value, record) => record.playtime === value
       },
@@ -303,10 +304,15 @@ class Songs extends React.Component {
         ),
         ...this.getColumnSearchProps("tags")
       },
-      { dataIndex: "created_at", title: "时间" },
+      {
+        dataIndex: "created_at",
+        title: "时间",
+        render: renderDateTime
+      },
       {
         dataIndex: "reports_count",
         title: "反馈数",
+        width: "100px",
         sorter: (a, b) => a.reports_count - b.reports_count
       }
     ];

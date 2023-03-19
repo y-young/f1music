@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  app:
+    image: yyoung01/f1music
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: production
+    volumes:
+      - ./config:/var/www/html/config
+      - storage:/var/www/html/storage
+    ports:
+      - 80:80
+    restart: unless-stopped
+    secrets:
+      - source: env
+        target: /var/www/html/.env
+    networks:
+      - f1music
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "f1music"
+      MYSQL_PASSWORD: "f1music"
+      MYSQL_DATABASE: "f1music"
+    # ports:
+    #   - 3306:3306
+    healthcheck:
+      test: mysqladmin version -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - f1music
+
+networks:
+  f1music:
+    # driver_opts:
+    #   com.docker.network.driver.mtu: 1450
+
+volumes:
+  mysql:
+  storage:
+
+secrets:
+  env:
+    file: .env

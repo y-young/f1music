@@ -23,6 +23,6 @@ class CreateReports extends Migration
 
     public function down()
     {
-        Schema::drop('reports');
+        Schema::dropIfExists('reports');
     }
 }

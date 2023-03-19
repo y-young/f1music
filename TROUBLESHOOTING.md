@@ -15,3 +15,6 @@
 
 ## 文件上传总是失败
 查看 `nginx` 和 `php` 的错误日志，可能是 `php.ini` 中 `post_max_size`, `file_uploads` 或 `upload_max_filesize` 设置有误
+
+## PHP 报错 UploadedFile error 6
+`php.ini` 中 `upload_tmp_dir` 未设置

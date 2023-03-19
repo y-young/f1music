@@ -21,6 +21,6 @@ class CreateFiles extends Migration
 
     public function down()
     {
-        Schema::drop('files');
+        Schema::dropIfExists('files');
     }
 }

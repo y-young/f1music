@@ -17,8 +17,8 @@ class SqlLogger
     public function terminate($request, $response)
     {
         $logs = DB::getQueryLog();
-        foreach ($logs as $sql)  {
-            Log::info('Query: '.var_export($sql, true));
+        foreach ($logs as $sql) {
+            Log::info('Query: ' . var_export($sql, true));
         }
     }
 }

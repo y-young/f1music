@@ -2,20 +2,18 @@
 
 namespace App\Events;
 
-use App\File;
+use App\Models\File;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class FileDeleting extends Event
+class FileDeleting
 {
-
-    public $file;
+    use Dispatchable, SerializesModels;
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(File $file)
+    public function __construct(public File $file)
     {
-        $this->file = $file;
     }
 }

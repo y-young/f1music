@@ -2,108 +2,59 @@
 
 namespace App\Providers;
 
-use App\User;
+use App\Common\AuthResult;
+use App\Common\CampusAuth;
+use App\Common\Cookie;
+use App\Models\User;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * The model to policy mappings for the application.
      *
-     * @return void
+     * @var array<class-string, class-string>
      */
-    public function register()
-    {
-        //
-    }
+    protected $policies = [];
 
     /**
-     * Boot the authentication services for the application.
-     *
-     * @return void
+     * Register any authentication / authorization services.
      */
-    public function boot()
+    public function boot(): void
     {
-        $this->app['auth']->viaRequest('api', function ($request) {
+        Auth::viaRequest('api', function (Request $request) {
             $stuId = $this->checkLogin($request);
             if ($stuId) {
-                return new User(['stuId' => $stuId]);
+                return new User(['id' => $stuId]);
             }
             return null;
         });
 
-        Gate::define('admin', function ($user) {
-            return in_array($user->stuId, config('music.admin'));
+        Gate::define('admin', function (User $user) {
+            return in_array($user->id, config('music.admin'));
         });
-        Gate::define('censor', function ($user) {
-            return in_array($user->stuId, config('music.censor'));
+        Gate::define('censor', function (User $user) {
+            return in_array($user->id, config('music.censor'));
         });
     }
 
-    public function campusAuth(AuthData $authData)
+    public function checkLogin(Request $request): string|null
     {
-        $post_data = [
-            "staffCode" => $authData->stuId,
-            "password" => $authData->password,
-            "loginRole" => '2'
-        ];
-        if (!config('music.debugAuth')) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, config('music.loginUrl'));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-            $response = curl_exec($ch);
-            $info = curl_getinfo($ch);
-            if (curl_errno($ch)) {
-                return -1;
-            }
-            curl_close($ch);
-            $result = (($response == "") && $info['http_code'] == 302) ? 1 : 0;
-        } else {
-            $result = 1;
-        }
-        return $result;
-    }
-
-    public function checkLogin($request)
-    {
-        $stuId = $request->session()->get('stuId');
-        $authData = Cookie::get();
+        $id = $request->session()->get('id');
+        $authData = Cookie::get($request);
         if (!empty($authData)) {
-            if ($stuId == $authData->stuId) {
-                return $stuId;
-            } elseif ($this->campusAuth($authData) == 1) {
-                $request->session()->put('stuId', $authData->stuId);
+            if ($id === $authData->stuId) {
+                return $id;
+            } elseif (CampusAuth::login($authData) == AuthResult::Success) {
+                $request->session()->put('id', $authData->stuId);
                 return $authData->stuId;
             } else {
-                return false;
+                return null;
             }
         }
-        return false;
-    }
-}
-
-class AuthData
-{
-    public $stuId = null;
-    public $password = null;
-}
-
-class Cookie
-{
-    public static function get()
-    {
-        if (!isset($_COOKIE) || !isset($_COOKIE['MusicAuth'])) {
-            return null;
-        }
-        $cookieData = $_COOKIE['MusicAuth'];
-        $data = json_decode(Crypt::decrypt($cookieData));
-        $authData = new AuthData();
-        $authData->stuId = $data[0];
-        $authData->password = $data[1];
-        return $authData;
+        return null;
     }
 }

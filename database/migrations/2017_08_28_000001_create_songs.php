@@ -26,6 +26,6 @@ class CreateSongs extends Migration
 
     public function down()
     {
-        Schema::drop('songs');
+        Schema::dropIfExists('songs');
     }
 }
