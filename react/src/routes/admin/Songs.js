@@ -224,7 +224,8 @@ class Songs extends React.Component {
                     恢复
                   </Button>
                   <Button
-                    type="danger"
+                    type="primary"
+                    danger
                     icon={<DeleteOutlined />}
                     onClick={() => this.handleDelete([row.id], true)}
                     loading={loading.effects["songs/delete"]}
@@ -234,7 +235,8 @@ class Songs extends React.Component {
                 </Space>
               ) : (
                 <Button
-                  type="danger"
+                  type="primary"
+                  danger
                   icon={<DeleteOutlined />}
                   onClick={() => this.handleDelete([row.id])}
                   loading={loading.effects["songs/trash"]}
@@ -351,7 +353,8 @@ class Songs extends React.Component {
               恢复所选
             </Button>
             <Button
-              type="danger"
+              type="primary"
+              danger
               onClick={() => this.handleBatchDelete(true)}
               loading={loading.effects["songs/delete"]}
             >
@@ -360,7 +363,8 @@ class Songs extends React.Component {
           </Space>
         ) : (
           <Button
-            type="danger"
+            type="primary"
+            danger
             onClick={() => this.handleBatchDelete(false)}
             loading={loading.effects["songs/trash"]}
           >

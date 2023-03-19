@@ -49,7 +49,8 @@ class Reports extends React.Component {
           </FormItem>
           <FormItem label="操作">
             <Button
-              type="danger"
+              type="primary"
+              danger
               icon={<DeleteOutlined />}
               loading={loading.effects["reports/delete"]}
               onClick={() => this.handleDelete([row.id])}
@@ -88,7 +89,8 @@ class Reports extends React.Component {
           style={{ width: "100%" }}
         />
         <Button
-          type="danger"
+          type="primary"
+          danger
           loading={loading.effects["reports/delete"]}
           onClick={this.handleBatchDelete}
         >
