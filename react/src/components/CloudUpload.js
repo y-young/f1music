@@ -117,7 +117,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
           forceRender
           centered
         >
-          <Form form={form} hideRequiredMark={true}>
+          <Form form={form} requiredMark={false}>
             <FormItem
               label="时段"
               name="time"
