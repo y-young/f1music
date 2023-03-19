@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./YPlayer.css";
-import { Button, Slider, message } from "antd";
+import { Button, Slider, message, Space } from "antd";
 import {
   StepForwardOutlined,
   PauseOutlined,
@@ -8,8 +8,6 @@ import {
   StepBackwardOutlined,
   LoadingOutlined
 } from "@ant-design/icons";
-
-const ButtonGroup = Button.Group;
 
 class YPlayer extends React.Component {
   state = {
@@ -251,14 +249,14 @@ class YPlayer extends React.Component {
             {this.formatTime(this.state.displayTime)} /{" "}
             {this.formatTime(this.state.duration)}
           </div>
-          <ButtonGroup className={styles.controls}>
+          <Space className={styles.controls}>
             <Button type="primary" onClick={this.toggle}>
               {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
             </Button>
             <Button type="primary" onClick={this.stop}>
               <StepBackwardOutlined />
             </Button>
-          </ButtonGroup>
+          </Space>
         </span>
       );
     }
