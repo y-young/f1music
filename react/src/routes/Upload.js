@@ -5,7 +5,6 @@ import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
 import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
 import { CloudUpload, ManualUpload, ViewUploads } from "components";
 
-const TabPane = Tabs.TabPane;
 const { Countdown } = Statistic;
 
 const Upload = ({ upload, loading }) => {
@@ -78,17 +77,22 @@ const Upload = ({ upload, loading }) => {
               </Row>
             }
           />
-          <Tabs defaultActiveKey="netease">
-            <TabPane tab="网易云音乐" key="netease">
-              {uploaded < 12 ? <CloudUpload /> : AllDone}
-            </TabPane>
-            <TabPane tab="手动上传" key="manual">
-              {uploaded < 12 ? <ManualUpload /> : AllDone}
-            </TabPane>
-            <TabPane tab="我的推荐" key="uploads">
-              <ViewUploads />
-            </TabPane>
-          </Tabs>
+          <Tabs
+            defaultActiveKey="netease"
+            items={[
+              {
+                key: "netease",
+                label: "网易云音乐",
+                children: uploaded < 12 ? <CloudUpload /> : AllDone
+              },
+              {
+                key: "manual",
+                label: "手动上传",
+                children: uploaded < 12 ? <ManualUpload /> : AllDone
+              },
+              { key: "uploads", label: "我的推荐", children: <ViewUploads /> }
+            ]}
+          />
         </div>
       )}
     </Spin>

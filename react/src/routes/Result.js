@@ -8,7 +8,6 @@ import YPlayer from "components/YPlayer";
 import { timeIdToText, timeFilters } from "config";
 import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
-const TabPane = Tabs.TabPane;
 const columns = [
   {
     dataIndex: "playtime",
@@ -76,19 +75,28 @@ class Result extends React.Component {
   render() {
     return (
       <div>
-        <Tabs defaultActiveKey="songs">
-          <TabPane tab="当选歌曲" key="songs">
-            <div ref={el => (this.container = el)} />
-          </TabPane>
-          <TabPane tab="投票结果" key="rank">
-            <Table
-              dataSource={rank}
-              columns={columns}
-              rowKey="id"
-              scroll={{ x: 700 }}
-            />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          defaultActiveKey="songs"
+          items={[
+            {
+              key: "songs",
+              label: "当选歌曲",
+              children: <div ref={el => (this.container = el)} />
+            },
+            {
+              key: "rank",
+              label: "投票结果",
+              children: (
+                <Table
+                  dataSource={rank}
+                  columns={columns}
+                  rowKey="id"
+                  scroll={{ x: 700 }}
+                />
+              )
+            }
+          ]}
+        />
         <br />
         <Space>
           <a
