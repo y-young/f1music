@@ -21,7 +21,10 @@ class CampusAuth
             "loginRole" => '2'
         ];
         try {
-            $response = Http::timeout(5)->post(config('music.loginUrl'), $postData);
+            $response = Http::timeout(5)
+                ->asForm()
+                ->withoutRedirecting()
+                ->post(config('music.loginUrl'), $postData);
 
             if ($response->failed()) {
                 return AuthResult::ConnectionError;
