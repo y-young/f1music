@@ -54,9 +54,9 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::forgetUser();
         Cookie::forget();
         $request->session()->forget('id');
-        return $this->success();
+        return redirect('/#/login');
     }
 }
