@@ -84,10 +84,7 @@ class Songs extends React.Component {
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
@@ -195,9 +192,13 @@ class Songs extends React.Component {
           <FormItem label="来源">{row.origin}</FormItem>
           <br />
           <FormItem label="创建时间">{renderDateTime(row.created_at)}</FormItem>
-          <FormItem label="最后更新时间">{renderDateTime(row.updated_at)}</FormItem>
+          <FormItem label="最后更新时间">
+            {renderDateTime(row.updated_at)}
+          </FormItem>
           {type === "trashed" && (
-            <FormItem label="删除时间">{renderDateTime(row.deleted_at)}</FormItem>
+            <FormItem label="删除时间">
+              {renderDateTime(row.deleted_at)}
+            </FormItem>
           )}
           <br />
           <FormItem label="试听">
@@ -367,7 +368,7 @@ class Songs extends React.Component {
           </Button>
         )}
         <Modal
-          visible={modalVisible}
+          open={modalVisible}
           onCancel={this.handleCancel}
           confirmLoading={loading.effects["songs/save"]}
           okText="保存"

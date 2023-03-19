@@ -112,7 +112,7 @@ class Vote extends React.Component {
               <Modal
                 title="偏好设置"
                 centered
-                visible={this.state.modalVisible}
+                open={this.state.modalVisible}
                 onCancel={() => this.setState({ modalVisible: false })}
                 footer={null}
               >

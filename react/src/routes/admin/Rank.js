@@ -91,7 +91,7 @@ class Rank extends React.Component {
         </Button>
         {this.state.showResult && (
           <Modal
-            visible={this.state.showResult}
+            open={this.state.showResult}
             onCancel={this.handleCancel}
             title="生成投票结果"
             footer={[

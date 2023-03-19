@@ -108,7 +108,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
       />
       {row && (
         <Modal
-          visible={visible}
+          open={visible}
           onCancel={() => setVisible(false)}
           confirmLoading={loading.effects["upload/upload"]}
           okText="上传"
