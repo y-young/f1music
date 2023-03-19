@@ -18,7 +18,7 @@ class Order extends Model
     protected function order(): Attribute
     {
         return Attribute::make(
-        get: fn(string $value) => empty($value) ? [] : collect(explode(',', $value)),
+        get: fn(string $value) => collect(empty($value) ? [] : explode(',', $value)),
         set: fn(Collection $value) => $value->implode(','),
         );
     }
