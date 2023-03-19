@@ -192,7 +192,7 @@ class YPlayer extends React.Component {
               max={this.state.duration}
               onChange={this.onSeeking}
               onAfterChange={this.seek}
-              tipFormatter={null}
+              tooltip={{ formatter: null }}
             />
             <div className={styles.timeDetail}>
               {this.formatTime(this.state.displayTime)} /{" "}
