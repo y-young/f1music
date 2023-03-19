@@ -5,7 +5,7 @@ services:
     image: yyoung01/f1music
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./Dockerfile
       target: production
     volumes:
       - ./config:/var/www/html/config
