@@ -75,21 +75,23 @@ function writeConfig() {
     sed -i "s/{DB_PASS}/${db_pass}/" .env
     success 'Done.'
 
-    info 'Writing to config...'
-    git checkout -- ./config/app.php
-    git checkout -- ./config/database.php
-    sed -i "s/{APP_KEY}/${app_key}/" ./config/app.php
-    sed -i "s/{DB_NAME}/${db_name}/" ./config/database.php
-    sed -i "s/{DB_USER}/${db_user}/" ./config/database.php
-    sed -i "s/{DB_PASS}/${db_pass}/" ./config/database.php
+    info 'Caching config files...'
+    php artisan config:cache
     success 'Done.'
 }
 function backendConfigure() {
+    info 'Caching routes and templates...'
+    php artisan route:cache
+    php artisan view:cache
+    success 'Done.'
+
     info "Running migrations..."
     php artisan migrate
+    success 'Done.'
+
     if [[ "$mode" == "initial" ]]; then
         info "Creating symlink..."
-        cd public && ln -s ../storage/app/uploads uploads && cd ..
+        php artisan storage:link
         success "Done."
     fi
 }
