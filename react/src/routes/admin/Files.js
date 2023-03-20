@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { Form, Table } from "antd";
+import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 
 const FormItem = Form.Item;
 
@@ -19,16 +20,17 @@ const Files = ({ files, loading }) => {
 
   const renderExpanded = row => {
     return (
-      <div>
-        <Form layout="inline">
+      <InlineForm>
+        <InlineFormRow>
           <FormItem label="时间">{row.time}</FormItem>
           <FormItem label="时长">{row.duration} 秒</FormItem>
-          <br />
+        </InlineFormRow>
+        <InlineFormRow>
           <FormItem label="试听">
             <audio controls="controls" src={row.url} preload="none" />
           </FormItem>
-        </Form>
-      </div>
+        </InlineFormRow>
+      </InlineForm>
     );
   };
 

@@ -12,6 +12,7 @@ import {
 import { TimeSelector } from "components/admin";
 import { timeFilters } from "config";
 import { renderDateTime } from "utils/utils";
+import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 
 const FormItem = Form.Item;
 const colors = [
@@ -185,12 +186,13 @@ class Songs extends React.Component {
     const { type } = songs;
 
     return (
-      <div>
-        <Form layout="inline">
+      <InlineForm>
+        <InlineFormRow>
           <FormItem label="时段">{row.playtime}</FormItem>
           <FormItem label="曲名">{row.name}</FormItem>
           <FormItem label="来源">{row.origin}</FormItem>
-          <br />
+        </InlineFormRow>
+        <InlineFormRow>
           <FormItem label="创建时间">{renderDateTime(row.created_at)}</FormItem>
           <FormItem label="最后更新时间">
             {renderDateTime(row.updated_at)}
@@ -200,7 +202,8 @@ class Songs extends React.Component {
               {renderDateTime(row.deleted_at)}
             </FormItem>
           )}
-          <br />
+        </InlineFormRow>
+        <InlineFormRow>
           <FormItem label="试听">
             <audio src={row.file.url} controls="controls" preload="none" />
           </FormItem>
@@ -253,8 +256,8 @@ class Songs extends React.Component {
               </Button>
             </Space>
           </FormItem>
-        </Form>
-      </div>
+        </InlineFormRow>
+      </InlineForm>
     );
   };
 
@@ -381,7 +384,7 @@ class Songs extends React.Component {
           forceRender
           centered
         >
-          <Form ref={this.form}>
+          <Form ref={this.form} labelCol={{ span: 3 }}>
             <FormItem name="id" hidden={true} noStyle={true}>
               <Input type="hidden" />
             </FormItem>

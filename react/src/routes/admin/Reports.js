@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import { Form, Table, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 
 const FormItem = Form.Item;
 const columns = [
@@ -39,26 +40,33 @@ class Reports extends React.Component {
     const { loading } = this.props;
     return (
       <div>
-        <Form layout="inline">
-          <FormItem label="曲目ID">{row.song_id}</FormItem>
-          <FormItem label="内容">{row.reason}</FormItem>
-          <FormItem label="时间">{row.time}</FormItem>
-          <br />
-          <FormItem label="试听">
-            <audio src={row.song.file.url} controls="controls" preload="none" />
-          </FormItem>
-          <FormItem label="操作">
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              loading={loading.effects["reports/delete"]}
-              onClick={() => this.handleDelete([row.id])}
-            >
-              删除
-            </Button>
-          </FormItem>
-        </Form>
+        <InlineForm>
+          <InlineFormRow>
+            <FormItem label="曲目ID">{row.song_id}</FormItem>
+            <FormItem label="内容">{row.reason}</FormItem>
+            <FormItem label="时间">{row.time}</FormItem>
+          </InlineFormRow>
+          <InlineFormRow>
+            <FormItem label="试听">
+              <audio
+                src={row.song.file.url}
+                controls="controls"
+                preload="none"
+              />
+            </FormItem>
+            <FormItem label="操作">
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                loading={loading.effects["reports/delete"]}
+                onClick={() => this.handleDelete([row.id])}
+              >
+                删除
+              </Button>
+            </FormItem>
+          </InlineFormRow>
+        </InlineForm>
       </div>
     );
   };
