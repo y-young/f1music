@@ -61,7 +61,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   const openModal = row => {
     // music.163.com/song/media/outer/url?id={id}.mp3
     setRow(row);
-    form.setFieldsValue({ name: row.name, origin: row.album });
+    form.setFieldsValue({ name: row.name, origin: row.artist.toString() });
     if (!row.mp3) {
       dispatch({ type: "upload/fetchMp3", payload: row }).then(success => {
         if (success) {
@@ -117,7 +117,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
           forceRender
           centered
         >
-          <Form form={form} requiredMark={false}>
+          <Form form={form} labelCol={{ span: 3 }}>
             <FormItem
               label="时段"
               name="time"
