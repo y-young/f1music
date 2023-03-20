@@ -243,21 +243,21 @@ class YPlayer extends React.Component {
       );
     } else {
       return (
-        <span style={{ width: 150 }}>
+        <div className={styles.miniPlayer}>
           {audio}
-          <div className={styles.miniTimeDetail}>
-            {this.formatTime(this.state.displayTime)} /{" "}
-            {this.formatTime(this.state.duration)}
-          </div>
-          <Space className={styles.controls}>
+          <Space.Compact className={styles.controls}>
             <Button type="primary" onClick={this.toggle}>
               {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
             </Button>
             <Button type="primary" onClick={this.stop}>
               <StepBackwardOutlined />
             </Button>
-          </Space>
-        </span>
+          </Space.Compact>
+          <div className={styles.miniTimeDetail}>
+            {this.formatTime(this.state.displayTime)} /{" "}
+            {this.formatTime(this.state.duration)}
+          </div>
+        </div>
       );
     }
   }
