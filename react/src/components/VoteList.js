@@ -3,7 +3,7 @@ import { connect } from "dva";
 import { Link } from "dva/router";
 import { Spin, Input, Rate, Button, message } from "antd";
 import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
-import { CSSTransitionGroup } from "react-transition-group";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
 import { config } from "utils";
@@ -345,13 +345,16 @@ class VoteList extends React.Component {
             </div>
             <br />
             {voteArea}
-            <CSSTransitionGroup
-              transitionName="fade"
-              transitionEnterTimeout={500}
-              transitionLeaveTimeout={200}
-            >
-              {this.state.showReport && reportArea}
-            </CSSTransitionGroup>
+            <TransitionGroup>
+              {this.state.showReport && (
+                <CSSTransition
+                  classNames="fade"
+                  timeout={{ enter: 500, exit: 200 }}
+                >
+                  {reportArea}
+                </CSSTransition>
+              )}
+            </TransitionGroup>
             <ol className={styles.list}>{list}</ol>
             {notice()}
           </span>

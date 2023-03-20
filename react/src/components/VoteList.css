@@ -21,13 +21,12 @@
   float: right;
 }
 .reportArea {
-  position: relative;
+  display: flex;
   margin-top: 10px;
-  height: 32px;
+  gap: 1rem;
 }
 .reason {
-  width: 70%;
-  float: left;
+  flex: 1;
 }
 .reportButton {
   float: right;

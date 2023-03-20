@@ -18,7 +18,7 @@
     "raven-js": "^3.27.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-transition-group": "1.x"
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "babel-plugin-dva-hmr": "^0.3.2",

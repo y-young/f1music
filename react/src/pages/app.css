@@ -32,12 +32,21 @@ hr {
   width: 100%;
   text-align: center;
 }
-:global(.fade-enter .fade-leave-active) {
-  opacity: 0;
+
+:global(.fade-enter) {
+  opacity: 0.01;
 }
-:global(.fade-enter-active .fade-leave-active) {
-  -webkit-transition: opacity 200ms ease;
-  -moz-transition: opacity 200ms ease;
-  -o-transition: opacity 200ms ease;
+
+:global(.fade-enter.fade-enter-active) {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+:global(.fade-exit) {
+  opacity: 1;
+}
+
+:global(.fade-exit.fade-exit-active) {
+  opacity: 0.01;
   transition: opacity 200ms ease;
 }
