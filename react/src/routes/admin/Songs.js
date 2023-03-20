@@ -279,7 +279,7 @@ class Songs extends React.Component {
       {
         dataIndex: "playtime",
         title: "时段",
-        width: "75px",
+        width: "80px",
         filters: timeFilters,
         onFilter: (value, record) => record.playtime === value
       },
