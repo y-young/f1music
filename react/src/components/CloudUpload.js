@@ -22,6 +22,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   const [visible, setVisible] = useState(false);
   const [row, setRow] = useState(null);
   const [form] = Form.useForm();
+  const [page, setPage] = useState(1);
 
   const columns = [
     {
@@ -63,9 +64,11 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
 
   const search = keyword => {
     if (keyword) {
-      dispatch({ type: "upload/search", payload: keyword });
+      dispatch({ type: "upload/search", payload: keyword }).then(() =>
+        setPage(1)
+      );
     } else {
-      message.error("请输入搜索词");
+      message.error("请输入搜索词或粘贴链接");
     }
   };
 
@@ -101,7 +104,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   return (
     <div>
       <Search
-        placeholder="输入关键词"
+        placeholder="输入关键词或粘贴歌曲、专辑、歌单链接"
         enterButton
         onSearch={search}
         onPressEnter={e => search(e.target.value)}
@@ -114,7 +117,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
         columns={columns}
         loading={loading.effects["upload/search"]}
         rowKey="id"
-        pagination={false}
+        pagination={{ current: page, onChange: setPage }}
         scroll={{ x: 500 }}
       />
       {row && (

@@ -23,9 +23,27 @@ class MusicController extends Controller
     {
         Validator::make($request->all(), [
             'keyword' => 'required'
-        ], ['required' => '请输入搜索词'])->validate();
+        ], ['required' => '请输入搜索词或粘贴链接'])->validate();
 
-        $result = self::$api->format(true)->search($request->input('keyword'));
+        $keyword = $request->input('keyword');
+        // Try to match the keyword as a URL
+        $re = '/^https?:\/\/(?:y\.)?music\.163\.com\/(?:[m#]\/)?(song|album|playlist)\?id=(\d+)/m';
+        preg_match_all($re, $keyword, $matches, PREG_SET_ORDER, 0);
+
+        $api = self::$api->format(true);
+        if (!empty($matches)) {
+            $type = $matches[0][1];
+            $id = $matches[0][2];
+            $result = match ($type) {
+                "song" => $api->song($id),
+                "album" => $api->album($id),
+                "playlist" => $api->playlist($id),
+                default => "[]"
+            };
+        } else {
+            $result = $api->search($keyword);
+        }
+
         $result = json_decode($result, true);
         if (empty($result)) {
             return $this->error('未能找到相关搜索结果');
