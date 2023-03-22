@@ -398,14 +398,14 @@ class Songs extends React.Component {
             >
               <Input
                 placeholder="曲名"
-                maxLength={50}
+                maxLength={100}
                 onPressEnter={this.handleSave}
               />
             </FormItem>
             <FormItem label="来源" name="origin">
               <Input
                 placeholder="来源"
-                maxLength={50}
+                maxLength={200}
                 onPressEnter={this.handleSave}
               />
             </FormItem>
@@ -416,10 +416,10 @@ class Songs extends React.Component {
                 { type: "array" },
                 {
                   validator: (rule, value) => {
-                    if (!value || value.toString().length <= 50) {
+                    if (!value || value.toString().length <= 200) {
                       return Promise.resolve();
                     }
-                    return Promise.reject("标签总长度不得超过50");
+                    return Promise.reject("标签总长度不得超过200");
                   }
                 }
               ]}

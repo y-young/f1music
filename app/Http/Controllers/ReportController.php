@@ -20,7 +20,7 @@ class ReportController extends Controller
     {
         Validator::make($request->all(), [
             'id' => 'required | exists:songs',
-            'reason' => 'required | string | max: 50'
+            'reason' => 'required | string | max: 200'
         ], self::messages)->validate();
 
         $report = Report::updateOrCreate(

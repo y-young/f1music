@@ -54,8 +54,8 @@ class UploadController extends Controller
                 'required',
                 Rule::in(['1', '2', '3', '4', '5', '6'])
             ],
-            'name' => 'required | string | max: 50',
-            'origin' => 'nullable | string | max: 50',
+            'name' => 'required | string | max: 100',
+            'origin' => 'nullable | string | max: 200',
             'id' => 'required_without:file',
             'file' => ['required_without:id', 'file', 'mimetypes:application/octet-stream,audio/mpeg', 'min: 1024', 'max: 20480']
             //某些mp3文件的mimetype会被识别为application/octet-stream,此处临时放行,后面交由getID3验证

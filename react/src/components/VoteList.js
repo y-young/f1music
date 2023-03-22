@@ -258,7 +258,7 @@ class VoteList extends React.Component {
             value={this.state.reason}
             placeholder="反馈内容"
             onChange={e => this.setState({ reason: e.target.value })}
-            maxLength={60}
+            maxLength={200}
             onPressEnter={this.handleReport}
           />
         </div>

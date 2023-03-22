@@ -90,7 +90,7 @@ const ManualUpload = ({ dispatch }) => {
         rules={[{ required: true, message: "请填写曲名" }]}
         hasFeedback
       >
-        <Input placeholder="歌曲名称" maxLength={50} />
+        <Input placeholder="歌曲名称" maxLength={100} />
       </FormItem>
       <FormItem
         {...formItemLayout}
@@ -101,7 +101,7 @@ const ManualUpload = ({ dispatch }) => {
       >
         <Input
           placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可留空"
-          maxLength={50}
+          maxLength={200}
         />
       </FormItem>
       <Divider>请先填写以上信息再上传文件</Divider>
