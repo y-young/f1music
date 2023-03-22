@@ -26,7 +26,8 @@ class MusicController extends Controller
         ], ['required' => '请输入搜索词'])->validate();
 
         $result = self::$api->format(true)->search($request->input('keyword'));
-        if ($result == '[]') {
+        $result = json_decode($result, true);
+        if (empty($result)) {
             return $this->error('未能找到相关搜索结果');
         } else {
             return $this->success('result', $result);

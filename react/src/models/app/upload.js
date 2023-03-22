@@ -45,7 +45,7 @@ export default {
       if (data.error === 0)
         yield put({
           type: "updateState",
-          payload: { searchResult: JSON.parse(data.result) }
+          payload: { searchResult: data.result }
         });
     },
     *fetchMp3({ payload: row }, { call, put }) {
