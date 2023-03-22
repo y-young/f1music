@@ -11,8 +11,7 @@ import {
 import UploadDescription from "components/UploadDescription";
 import VoteDescription from "components/VoteDescription";
 import TimePeriodDescription from "components/TimePeriodDescription";
-
-const { Countdown } = Statistic;
+import { PhaseCountdown } from "components";
 
 const Home = ({ app, loading }) => {
   const { status } = app;
@@ -54,11 +53,9 @@ const Home = ({ app, loading }) => {
                 <Statistic title={title} value={statusText} prefix={icon} />
               </Col>
               <Col span={12}>
-                <Countdown
+                <PhaseCountdown
                   title={"距离" + statusText + countdownText}
-                  value={moment(time)}
-                  format="D 天 H 时 m 分 s 秒"
-                  onFinish={() => window.location.reload()}
+                  value={time}
                 />
               </Col>
             </Row>

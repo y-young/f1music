@@ -2,21 +2,11 @@ import React from "react";
 import moment from "moment";
 import { connect } from "dva";
 import { TimeSelector, VoteList } from "components";
-import {
-  Form,
-  Spin,
-  Alert,
-  Statistic,
-  Radio,
-  Button,
-  Modal,
-  Switch,
-  Result
-} from "antd";
+import { Form, Spin, Alert, Radio, Button, Modal, Switch, Result } from "antd";
 import { ClockCircleTwoTone, SettingOutlined } from "@ant-design/icons";
+import { PhaseCountdown } from "components";
 
 const FormItem = Form.Item;
-const { Countdown } = Statistic;
 
 class Vote extends React.Component {
   state = {
@@ -59,11 +49,7 @@ class Vote extends React.Component {
             icon={<ClockCircleTwoTone />}
             title="抱歉，投票尚未开始，距离投票开始还有"
             subTitle={
-              <Countdown
-                value={moment(status.start)}
-                format="D 天 H 时 m 分 s 秒"
-                onFinish={() => window.location.reload()}
-              />
+              <PhaseCountdown value={status.start} tooltipPlacement="bottom" />
             }
             extra={
               <Button type="primary" href="#/">
@@ -87,12 +73,7 @@ class Vote extends React.Component {
               type="info"
               closable
               description={
-                <Countdown
-                  title={"距离投票结束"}
-                  value={moment(status.end)}
-                  format="D 天 H 时 m 分 s 秒"
-                  onFinish={() => window.location.reload()}
-                />
+                <PhaseCountdown title="距离投票结束" value={status.end} />
               }
               style={{ marginBottom: "10px" }}
             />

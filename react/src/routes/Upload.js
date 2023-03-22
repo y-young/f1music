@@ -3,9 +3,12 @@ import moment from "moment";
 import { connect } from "dva";
 import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
 import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
-import { CloudUpload, ManualUpload, ViewUploads } from "components";
-
-const { Countdown } = Statistic;
+import {
+  CloudUpload,
+  ManualUpload,
+  ViewUploads,
+  PhaseCountdown
+} from "components";
 
 const Upload = ({ upload, loading }) => {
   const { songs, status } = upload;
@@ -30,11 +33,7 @@ const Upload = ({ upload, loading }) => {
           icon={<ClockCircleTwoTone />}
           title="抱歉，上传尚未开始，距离上传开始还有"
           subTitle={
-            <Countdown
-              value={moment(status.start)}
-              format="D 天 H 时 m 分 s 秒"
-              onFinish={() => window.location.reload()}
-            />
+            <PhaseCountdown value={status.start} tooltipPlacement="bottom" />
           }
           extra={
             <Button type="primary" href="#/">
@@ -60,12 +59,7 @@ const Upload = ({ upload, loading }) => {
             description={
               <Row gutter={16}>
                 <Col span={12}>
-                  <Countdown
-                    title={"距离上传结束"}
-                    value={moment(status.end)}
-                    format="D 天 H 时 m 分 s 秒"
-                    onFinish={() => window.location.reload()}
-                  />
+                  <PhaseCountdown title="距离上传结束" value={status.end} />
                 </Col>
                 <Col span={12}>
                   <Statistic
