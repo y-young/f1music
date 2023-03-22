@@ -6,9 +6,7 @@ import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
-import { config } from "utils";
-
-const { voteTexts } = config;
+import { voteTexts } from "config";
 
 class VoteList extends React.Component {
   state = {

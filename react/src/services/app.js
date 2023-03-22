@@ -1,6 +1,6 @@
-import { request, config } from "utils";
+import { request } from "utils";
+import { api } from "config";
 
-const { api } = config;
 const { login, status } = api;
 
 export async function Login(data) {
