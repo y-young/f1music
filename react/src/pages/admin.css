@@ -15,10 +15,3 @@ hr {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-:global(.footer) {
-  text-align: center;
-}
-:global(.footer a) {
-  color: inherit;
-  text-decoration: underline;
-}
