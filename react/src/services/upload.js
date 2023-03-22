@@ -1,6 +1,6 @@
-import { request, config } from "utils";
+import { request } from "utils";
+import { api } from "config";
 
-const { api } = config;
 const { search, mp3, upload, uploads, status } = api;
 
 export async function Search(keyword) {

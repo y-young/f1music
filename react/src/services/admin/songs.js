@@ -1,6 +1,6 @@
-import { request, config } from "utils/admin";
+import { request } from "utils/admin";
+import { api } from "utils/admin/config";
 
-const { api } = config;
 const { songs, trashedSongs, trashSongs, restoreSongs } = api;
 
 export async function Songs() {
