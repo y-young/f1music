@@ -2,29 +2,18 @@ import React from "react";
 import { connect } from "dva";
 import styles from "./Login.css";
 import { Link } from "dva/router";
-import { Form, Icon, Button, Input } from "antd";
+import { Form, Button, Input } from "antd";
+import {
+  UserOutlined,
+  LockOutlined,
+  ArrowLeftOutlined
+} from "@ant-design/icons";
 
 const FormItem = Form.Item;
 
-const Login = ({
-  app,
-  loading,
-  dispatch,
-  form: { getFieldDecorator, validateFieldsAndScroll }
-}) => {
-  const handleSubmit = () => {
-    validateFieldsAndScroll((errors, values) => {
-      if (!errors) {
-        dispatch({ type: "app/login", payload: values });
-      }
-    });
-  };
-
-  const validatePassword = (rule, value, callback) => {
-    if (value === "123456") {
-      callback("为保证投票质量禁止使用校网初始密码登录,请更改密码");
-    }
-    callback();
+const Login = ({ app, loading, dispatch }) => {
+  const handleSubmit = values => {
+    dispatch({ type: "app/login", payload: values });
   };
 
   return (
@@ -34,53 +23,54 @@ const Login = ({
           <div className={styles.title}>
             <b>登录</b>
           </div>
-          <Form>
-            <FormItem>
-              {getFieldDecorator("stuId", {
-                validate: [
-                  {
-                    trigger: "onChange",
-                    rules: [{ required: true, message: "请输入学号" }]
-                  },
-                  {
-                    trigger: "onBlur",
-                    rules: [
-                      { min: 10, message: "学号应为10或11位" },
-                      { max: 11, message: "学号应为10或11位" }
-                    ]
-                  }
-                ]
-              })(
-                <Input
-                  placeholder="学号"
-                  prefix={
-                    <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
-                  }
-                  onPressEnter={handleSubmit}
-                />
-              )}
+          <Form onFinish={handleSubmit}>
+            <FormItem
+              name="stuId"
+              rules={[
+                { required: true, message: "请输入学号" },
+                {
+                  min: 10,
+                  message: "学号应为10或11位",
+                  validateTrigger: "onBlur"
+                },
+                {
+                  max: 11,
+                  message: "学号应为10或11位",
+                  validateTrigger: "onBlur"
+                }
+              ]}
+            >
+              <Input
+                placeholder="学号"
+                prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
+              />
             </FormItem>
-            <FormItem>
-              {getFieldDecorator("password", {
-                rules: [
-                  { required: true, message: "请输入密码" },
-                  { validator: validatePassword }
-                ]
-              })(
-                <Input.Password
-                  placeholder="校园网密码"
-                  prefix={
-                    <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+            <FormItem
+              name="password"
+              rules={[
+                { required: true, message: "请输入密码" },
+                ({ getFieldValue }) => ({
+                  validator(rule, value) {
+                    if (!value || getFieldValue("password") !== "123456") {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                    );
                   }
-                  onPressEnter={handleSubmit}
-                />
-              )}
+                })
+              ]}
+            >
+              <Input.Password
+                placeholder="校园网密码"
+                prefix={<LockOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
+              />
             </FormItem>
             <FormItem>
               <Button
                 type="primary"
-                onClick={handleSubmit}
                 loading={loading.effects["app/login"]}
+                htmlType="submit"
                 block
               >
                 登录
@@ -88,7 +78,7 @@ const Login = ({
             </FormItem>
           </Form>
           <Link to="/" style={{ fontSize: "13px", color: "#777" }}>
-            <Icon type="arrow-left" /> 返回首页
+            <ArrowLeftOutlined /> 返回首页
           </Link>
         </div>
       </div>
@@ -96,6 +86,4 @@ const Login = ({
   );
 };
 
-export default connect(({ app, loading }) => ({ app, loading }))(
-  Form.create()(Login)
-);
+export default connect(({ app, loading }) => ({ app, loading }))(Login);

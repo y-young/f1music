@@ -49,17 +49,23 @@ export default {
         });
     },
     *fetchMp3({ payload: row }, { call, put }) {
-      yield call(Mp3, row.id);
+      const data = yield call(Mp3, row.id);
+      if (data.error !== 0) {
+        return false;
+      }
       const url =
         "https://music.163.com/song/media/outer/url?id=" + row.id + ".mp3";
       yield put({ type: "updateMp3", payload: { row, url } });
+      return true;
     },
     *upload({ payload }, { call, put }) {
       const data = yield call(Upload, payload);
       if (data.error === 0) {
         message.success("上传成功");
         yield put({ type: "fetchUploads" });
+        return true;
       }
+      return false;
     }
   },
 

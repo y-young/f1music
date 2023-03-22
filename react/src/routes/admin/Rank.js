@@ -1,7 +1,9 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Button, Input, Form, Modal } from "antd";
+import { Form, Table, Button, Input, Modal } from "antd";
 import { timeFilters } from "config";
+import InlineForm from "components/admin/InlineForm";
+import { InlineFormRow } from "components/admin/InlineForm";
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -54,19 +56,23 @@ class Rank extends React.Component {
 
   renderExpanded = row => {
     return (
-      <div>
-        <Form layout="inline">
+      <InlineForm>
+        <InlineFormRow>
           <FormItem label="时段">{row.playtime}</FormItem>
           <FormItem label="曲名">{row.name}</FormItem>
           <FormItem label="来源">{row.origin}</FormItem>
+        </InlineFormRow>
+        <InlineFormRow>
           <FormItem label="得分">{row.score}</FormItem>
           <FormItem label="总分">{row.sum}</FormItem>
           <FormItem label="票数">{row.counts}</FormItem>
+        </InlineFormRow>
+        <InlineFormRow>
           <FormItem label="试听">
             <audio src={row.url} controls="controls" preload="none" />
           </FormItem>
-        </Form>
-      </div>
+        </InlineFormRow>
+      </InlineForm>
     );
   };
 
@@ -91,7 +97,7 @@ class Rank extends React.Component {
         </Button>
         {this.state.showResult && (
           <Modal
-            visible={this.state.showResult}
+            open={this.state.showResult}
             onCancel={this.handleCancel}
             title="生成投票结果"
             footer={[
@@ -103,7 +109,7 @@ class Rank extends React.Component {
           >
             <TextArea
               value={this.result()}
-              autosize={{ minRows: 6, maxRows: 10 }}
+              autoSize={{ minRows: 6, maxRows: 10 }}
             />
           </Modal>
         )}

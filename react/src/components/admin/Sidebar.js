@@ -1,74 +1,63 @@
 import React from "react";
 import classnames from "classnames";
-import { Link } from "dva/router";
-import { Menu, Icon, Layout } from "antd";
+import { withRouter } from "dva/router";
+import { Menu } from "antd";
+import {
+  HomeOutlined,
+  PlayCircleOutlined,
+  FileOutlined,
+  ExceptionOutlined,
+  ProfileOutlined,
+  BarChartOutlined,
+  ArrowLeftOutlined
+} from "@ant-design/icons";
 import styles from "../Sidebar.css";
 
-const SubMenu = Menu.SubMenu;
-const { Header } = Layout;
-
-const Sidebar = props => {
+const Sidebar = ({ collapsed, location, history }) => {
   const sidebarClass = classnames({
     [styles.sidebar]: true,
-    [styles.show]: !props.collapsed
+    [styles.show]: !collapsed
   });
+
+  const menuItems = [
+    { key: "/", icon: <HomeOutlined />, label: "首页" },
+    {
+      key: "/song",
+      icon: <PlayCircleOutlined />,
+      label: "曲目",
+      children: [
+        { key: "/songs", label: "所有曲目" },
+        { key: "/songs/trashed", label: "回收站" }
+      ]
+    },
+    { key: "/files", icon: <FileOutlined />, label: "文件" },
+    { key: "/reports", icon: <ExceptionOutlined />, label: "反馈" },
+    { key: "/rank", icon: <ProfileOutlined />, label: "投票结果" },
+    { key: "/statistics", icon: <BarChartOutlined />, label: "数据统计" },
+    { key: "back", icon: <ArrowLeftOutlined />, label: "返回前台" }
+  ];
+
+  const handleMenuClick = ({ key }) => {
+    if (key === "back") {
+      window.location.href = "/";
+    } else {
+      history.push(key);
+    }
+  };
 
   return (
     <div className={sidebarClass}>
-      <Header className={styles.logo}>FZYZ校园音乐征集 管理系统</Header>
+      <header className={styles.logo}>FZYZ校园音乐征集 管理系统</header>
       <Menu
         className={styles.nav}
         mode="inline"
-        selectedKeys={[props.location.pathname]}
+        selectedKeys={[location.pathname]}
         defaultOpenKeys={["/song"]}
-      >
-        <Menu.Item key="/">
-          <Link to="/">
-            <Icon type="home" />首页
-          </Link>
-        </Menu.Item>
-        <SubMenu
-          key="/song"
-          title={
-            <span>
-              <Icon type="play-circle-o" />
-              <span>曲目</span>
-            </span>
-          }
-        >
-          <Menu.Item key="/songs">
-            <Link to="/songs">所有曲目</Link>
-          </Menu.Item>
-          <Menu.Item key="/songs/trashed">
-            <Link to="/songs/trashed">回收站</Link>
-          </Menu.Item>
-        </SubMenu>
-        <Menu.Item key="/files">
-          <Link to="/files">
-            <Icon type="file" />文件
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="/reports">
-          <Link to="/reports">
-            <Icon type="exception" />反馈
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="/rank">
-          <Link to="/rank">
-            <Icon type="profile" />投票结果
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="/statistics">
-          <Link to="/statistics">
-            <Icon type="bar-chart" />数据统计
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="back">
-          <a href="/"><Icon type="arrow-left" />返回前台</a>
-        </Menu.Item>
-      </Menu>
+        items={menuItems}
+        onClick={handleMenuClick}
+      />
     </div>
   );
 };
 
-export default Sidebar;
+export default withRouter(Sidebar);

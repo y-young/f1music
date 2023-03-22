@@ -15,21 +15,3 @@ hr {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-:global(.footer) {
-  text-align: center;
-}
-:global(.footer a) {
-  color: inherit;
-  text-decoration: underline;
-}
-:global {
-  .fade-enter .fade-leave-active {
-    opacity: 0;
-  }
-  .fade-enter-active .fade-leave-active {
-    -webkit-transition: opacity 200ms;
-    -moz-transition: opacity 200ms;
-    -o-transition: opacity 200ms;
-    transition: opacity 200ms;
-  }
-}

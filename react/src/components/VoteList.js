@@ -1,8 +1,9 @@
 import React from "react";
 import { connect } from "dva";
 import { Link } from "dva/router";
-import { Icon, Spin, Input, Rate, Button, message } from "antd";
-import { CSSTransitionGroup } from "react-transition-group";
+import { Spin, Input, Rate, Button, message } from "antd";
+import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
 import { config } from "utils";
@@ -207,7 +208,7 @@ class VoteList extends React.Component {
     const buttonProps = {
       type: song.vote !== 0 ? "secondary" : "primary",
       shape: !isDesktop ? "circle" : undefined,
-      icon: this.state.countdown <= 0 ? "check" : undefined,
+      icon: this.state.countdown <= 0 ? <CheckOutlined /> : undefined,
       disabled: this.state.countdown > 0
     };
     const voteArea = (
@@ -252,14 +253,15 @@ class VoteList extends React.Component {
     );
     const reportArea = (
       <div className={styles.reportArea} key="report">
-        <Input
-          value={this.state.reason}
-          placeholder="反馈内容"
-          className={styles.reason}
-          onChange={e => this.setState({ reason: e.target.value })}
-          maxLength={60}
-          onPressEnter={this.handleReport}
-        />
+        <div className={styles.reason}>
+          <Input
+            value={this.state.reason}
+            placeholder="反馈内容"
+            onChange={e => this.setState({ reason: e.target.value })}
+            maxLength={60}
+            onPressEnter={this.handleReport}
+          />
+        </div>
         <Button
           type="primary"
           onClick={this.handleReport}
@@ -298,7 +300,7 @@ class VoteList extends React.Component {
         } while (rndTime === time);
         return (
           <div className="tips">
-            <Icon type="bulb" /> 您已投完本时段所有曲目，到
+            <BulbOutlined /> 您已投完本时段所有曲目，到
             <Link to={"/vote/" + rndTime}>其他时段</Link>
             看看吧
           </div>
@@ -306,7 +308,7 @@ class VoteList extends React.Component {
       } else {
         return (
           <div className="tips">
-            <Icon type="bulb" /> 本时段您已投 {voted} 首曲目，还有{" "}
+            <BulbOutlined /> 本时段您已投 {voted} 首曲目，还有{" "}
             {songs.length - voted} 首未投票曲目
           </div>
         );
@@ -343,13 +345,16 @@ class VoteList extends React.Component {
             </div>
             <br />
             {voteArea}
-            <CSSTransitionGroup
-              transitionName="fade"
-              transitionEnterTimeout={500}
-              transitionLeaveTimeout={200}
-            >
-              {this.state.showReport && reportArea}
-            </CSSTransitionGroup>
+            <TransitionGroup>
+              {this.state.showReport && (
+                <CSSTransition
+                  classNames="fade"
+                  timeout={{ enter: 500, exit: 200 }}
+                >
+                  {reportArea}
+                </CSSTransition>
+              )}
+            </TransitionGroup>
             <ol className={styles.list}>{list}</ol>
             {notice()}
           </span>

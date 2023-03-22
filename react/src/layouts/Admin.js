@@ -3,8 +3,10 @@ import { connect } from "dva";
 import classnames from "classnames";
 import { withRouter } from "dva/router";
 import { Sidebar, Footer } from "components/admin";
-import { ConfigProvider, Layout, Icon } from "antd";
+import { ConfigProvider, Layout } from "antd";
+import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import zhCN from "antd/es/locale/zh_CN";
+import "antd/dist/antd.css";
 import styles from "./App.css";
 
 const { Header, Content } = Layout;
@@ -33,11 +35,14 @@ const Admin = ({ children, dispatch, admin, location }) => {
         <div className={styles.container}>
           <div className={styles.containerInner}>
             <Header className={styles.header}>
-              <Icon
-                className={styles.trigger}
-                type={siderFolded ? "menu-unfold" : "menu-fold"}
-                onClick={toggle}
-              />
+              {siderFolded ? (
+                <MenuUnfoldOutlined
+                  className={styles.trigger}
+                  onClick={toggle}
+                />
+              ) : (
+                <MenuFoldOutlined className={styles.trigger} onClick={toggle} />
+              )}
               <span className={styles.title}>{title}</span>
             </Header>
             <Content className={styles.content}>

@@ -1,0 +1,24 @@
+.inlineForm {
+  padding: 0 2.5rem;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .inlineForm {
+    padding: 0 1rem;
+  }
+}
+
+.inlineFormRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.inlineFormRow :global(.ant-form-item-row) {
+  align-items: center;
+}
+
+.inlineFormRow:not(:last-child) {
+  margin-bottom: 0.5rem;
+}

@@ -1,8 +1,13 @@
 import React from "react";
 import styles from "./YPlayer.css";
-import { Button, Slider, Icon, message } from "antd";
-
-const ButtonGroup = Button.Group;
+import { Button, Slider, message, Space } from "antd";
+import {
+  StepForwardOutlined,
+  PauseOutlined,
+  CaretRightOutlined,
+  StepBackwardOutlined,
+  LoadingOutlined
+} from "@ant-design/icons";
 
 class YPlayer extends React.Component {
   state = {
@@ -187,7 +192,7 @@ class YPlayer extends React.Component {
               max={this.state.duration}
               onChange={this.onSeeking}
               onAfterChange={this.seek}
-              tipFormatter={null}
+              tooltip={{ formatter: null }}
             />
             <div className={styles.timeDetail}>
               {this.formatTime(this.state.displayTime)} /{" "}
@@ -202,7 +207,7 @@ class YPlayer extends React.Component {
               disabled={!this.props.canBackward}
               style={{ marginRight: "10px" }}
             >
-              <Icon type="step-backward" style={{ color: "#9f9f9f" }} />
+              <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
             </Button>
             <Button
               type="primary"
@@ -211,7 +216,7 @@ class YPlayer extends React.Component {
               onClick={this.toggle}
               disabled={this.props.src === ""}
             >
-              <Icon type={this.state.playing ? "pause" : "caret-right"} />
+              {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
             </Button>
             <Button
               type="secondary"
@@ -220,7 +225,7 @@ class YPlayer extends React.Component {
               disabled={!this.props.canForward}
               style={{ marginLeft: "10px" }}
             >
-              <Icon type="step-forward" style={{ color: "#9f9f9f" }} />
+              <StepForwardOutlined style={{ color: "#9f9f9f" }} />
             </Button>
           </div>
           <div
@@ -228,7 +233,7 @@ class YPlayer extends React.Component {
             style={!this.props.src ? { display: "none" } : {}}
           >
             {loaded !== "100.00" && (
-              <Icon type="loading" style={{ marginRight: "2px" }} />
+              <LoadingOutlined style={{ marginRight: "2px" }} />
             )}
             {loaded === "100.00"
               ? "缓冲完毕"
@@ -238,21 +243,21 @@ class YPlayer extends React.Component {
       );
     } else {
       return (
-        <span style={{ width: 150 }}>
+        <div className={styles.miniPlayer}>
           {audio}
+          <Space.Compact className={styles.controls}>
+            <Button type="primary" onClick={this.toggle}>
+              {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
+            </Button>
+            <Button type="primary" onClick={this.stop}>
+              <StepBackwardOutlined />
+            </Button>
+          </Space.Compact>
           <div className={styles.miniTimeDetail}>
             {this.formatTime(this.state.displayTime)} /{" "}
             {this.formatTime(this.state.duration)}
           </div>
-          <ButtonGroup className={styles.controls}>
-            <Button type="primary" onClick={this.toggle}>
-              <Icon type={this.state.playing ? "pause" : "caret-right"} />
-            </Button>
-            <Button type="primary" onClick={this.stop}>
-              <Icon type="step-backward" />
-            </Button>
-          </ButtonGroup>
-        </span>
+        </div>
       );
     }
   }

@@ -1,20 +1,10 @@
 import React from "react";
 import moment from "moment";
 import { connect } from "dva";
-import {
-  Alert,
-  Row,
-  Col,
-  Button,
-  Tabs,
-  Spin,
-  Statistic,
-  Result,
-  Icon
-} from "antd";
+import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
+import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
 import { CloudUpload, ManualUpload, ViewUploads } from "components";
 
-const TabPane = Tabs.TabPane;
 const { Countdown } = Statistic;
 
 const Upload = ({ upload, loading }) => {
@@ -22,7 +12,7 @@ const Upload = ({ upload, loading }) => {
   const uploaded = songs.length;
   const AllDone = (
     <Result
-      icon={<Icon type="smile" theme="twoTone" />}
+      icon={<SmileTwoTone />}
       title="上传曲目数已达到限额，感谢您对校园音乐活动的支持"
       subTitle="请耐心等待投票开放"
     />
@@ -37,7 +27,7 @@ const Upload = ({ upload, loading }) => {
     >
       {moment().isBefore(status.start) ? (
         <Result
-          icon={<Icon type="clock-circle" theme="twoTone" />}
+          icon={<ClockCircleTwoTone />}
           title="抱歉，上传尚未开始，距离上传开始还有"
           subTitle={
             <Countdown
@@ -87,17 +77,22 @@ const Upload = ({ upload, loading }) => {
               </Row>
             }
           />
-          <Tabs defaultActiveKey="netease">
-            <TabPane tab="网易云音乐" key="netease">
-              {uploaded < 12 ? <CloudUpload /> : AllDone}
-            </TabPane>
-            <TabPane tab="手动上传" key="manual">
-              {uploaded < 12 ? <ManualUpload /> : AllDone}
-            </TabPane>
-            <TabPane tab="我的推荐" key="uploads">
-              <ViewUploads />
-            </TabPane>
-          </Tabs>
+          <Tabs
+            defaultActiveKey="netease"
+            items={[
+              {
+                key: "netease",
+                label: "网易云音乐",
+                children: uploaded < 12 ? <CloudUpload /> : AllDone
+              },
+              {
+                key: "manual",
+                label: "手动上传",
+                children: uploaded < 12 ? <ManualUpload /> : AllDone
+              },
+              { key: "uploads", label: "我的推荐", children: <ViewUploads /> }
+            ]}
+          />
         </div>
       )}
     </Spin>
