@@ -43,9 +43,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
       dataIndex: "artist",
       title: "歌手",
       width: 150,
-      render: (text, row) => {
-        return { children: text.toString() };
-      }
+      render: text => text.join(", ")
     },
     { dataIndex: "album", title: "专辑", width: 200 }
   ];
@@ -61,7 +59,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   const openModal = row => {
     // music.163.com/song/media/outer/url?id={id}.mp3
     setRow(row);
-    form.setFieldsValue({ name: row.name, origin: row.artist.toString() });
+    form.setFieldsValue({ name: row.name, origin: row.artist.join(", ") });
     if (!row.mp3) {
       dispatch({ type: "upload/fetchMp3", payload: row }).then(success => {
         if (success) {
@@ -136,8 +134,8 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
             </FormItem>
             <FormItem label="来源" name="origin">
               <AutoComplete placeholder="请选择或输入来源">
-                <Option value={row.artist.toString()}>
-                  {row.artist.toString()}
+                <Option value={row.artist.join(", ")}>
+                  {row.artist.join(", ")}
                 </Option>
                 <Option value={row.album}>{row.album}</Option>
               </AutoComplete>
