@@ -184,6 +184,7 @@ class Songs extends React.Component {
   renderExpanded = row => {
     const { songs, loading } = this.props;
     const { type } = songs;
+    const { file } = row;
 
     return (
       <InlineForm>
@@ -200,6 +201,17 @@ class Songs extends React.Component {
           {type === "trashed" && (
             <FormItem label="删除时间">
               {renderDateTime(row.deleted_at)}
+            </FormItem>
+          )}
+          {file.cloud_id && (
+            <FormItem label="云上传ID">
+              <a
+                href={`https://music.163.com/#/song?id=${file.cloud_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {file.cloud_id}
+              </a>
             </FormItem>
           )}
         </InlineFormRow>

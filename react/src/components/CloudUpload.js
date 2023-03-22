@@ -38,7 +38,20 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
       fixed: "left",
       width: 60
     },
-    { dataIndex: "name", title: "曲名", width: 200 },
+    {
+      dataIndex: "name",
+      title: "曲名",
+      width: 200,
+      render: (text, row) => (
+        <a
+          href={`https://music.163.com/#/song?id=${row.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {text}
+        </a>
+      )
+    },
     {
       dataIndex: "artist",
       title: "歌手",
