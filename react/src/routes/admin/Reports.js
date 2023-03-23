@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "dva";
 import { Form, Table, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -17,97 +17,79 @@ const columns = [
   { dataIndex: "time", title: "时间" }
 ];
 
-class Reports extends React.Component {
-  state = {
-    selectedRowKeys: []
-  };
+const Reports = ({ reports, dispatch, loading }) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-  onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys });
-  };
-
-  handleDelete = id => {
-    const { dispatch } = this.props;
+  const handleDelete = id => {
     dispatch({ type: "reports/delete", payload: id });
   };
 
-  handleBatchDelete = () => {
-    this.handleDelete(this.state.selectedRowKeys);
-    this.setState({ selectedRowKeys: [] });
+  const handleBatchDelete = () => {
+    handleDelete(selectedRowKeys);
+    setSelectedRowKeys([]);
   };
 
-  renderExpanded = row => {
-    const { loading } = this.props;
-    return (
-      <div>
-        <InlineForm>
-          <InlineFormRow>
-            <FormItem label="曲目ID">{row.song_id}</FormItem>
-            <FormItem label="内容">{row.reason}</FormItem>
-            <FormItem label="时间">{row.time}</FormItem>
-          </InlineFormRow>
-          <InlineFormRow>
-            <FormItem label="试听">
-              <audio
-                src={row.song.file.url}
-                controls="controls"
-                preload="none"
-              />
-            </FormItem>
-            <FormItem label="操作">
-              <Button
-                type="primary"
-                danger
-                icon={<DeleteOutlined />}
-                loading={loading.effects["reports/delete"]}
-                onClick={() => this.handleDelete([row.id])}
-              >
-                删除
-              </Button>
-            </FormItem>
-          </InlineFormRow>
-        </InlineForm>
-      </div>
-    );
+  const renderExpanded = row => (
+    <div>
+      <InlineForm>
+        <InlineFormRow>
+          <FormItem label="曲目ID">{row.song_id}</FormItem>
+          <FormItem label="内容">{row.reason}</FormItem>
+          <FormItem label="时间">{row.time}</FormItem>
+        </InlineFormRow>
+        <InlineFormRow>
+          <FormItem label="试听">
+            <audio src={row.song.file.url} controls="controls" preload="none" />
+          </FormItem>
+          <FormItem label="操作">
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              loading={loading.effects["reports/delete"]}
+              onClick={() => handleDelete([row.id])}
+            >
+              删除
+            </Button>
+          </FormItem>
+        </InlineFormRow>
+      </InlineForm>
+    </div>
+  );
+
+  const { list } = reports;
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys
   };
 
-  render() {
-    const { reports, loading } = this.props;
-    const { list } = reports;
-    const { selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
-
-    return (
-      <div>
-        <div style={{ fontSize: "14px", color: "#777" }}>
-          反馈总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
-        </div>
-        <br />
-        <Table
-          dataSource={list}
-          columns={columns}
-          rowSelection={rowSelection}
-          expandedRowRender={this.renderExpanded}
-          rowKey="id"
-          scroll={{ x: 600 }}
-          loading={loading.effects["reports/fetch"]}
-          style={{ width: "100%" }}
-        />
-        <Button
-          type="primary"
-          danger
-          loading={loading.effects["reports/delete"]}
-          onClick={this.handleBatchDelete}
-        >
-          删除所选
-        </Button>
+  return (
+    <div>
+      <div style={{ fontSize: "14px", color: "#777" }}>
+        反馈总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
       </div>
-    );
-  }
-}
+      <br />
+      <Table
+        dataSource={list}
+        columns={columns}
+        rowSelection={rowSelection}
+        expandedRowRender={renderExpanded}
+        rowKey="id"
+        scroll={{ x: 600 }}
+        loading={loading.effects["reports/fetch"]}
+        style={{ width: "100%" }}
+      />
+      <Button
+        type="primary"
+        danger
+        loading={loading.effects["reports/delete"]}
+        onClick={handleBatchDelete}
+      >
+        删除所选
+      </Button>
+    </div>
+  );
+};
 
 export default connect(({ reports, loading }) => ({ reports, loading }))(
   Reports
