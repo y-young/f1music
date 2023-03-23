@@ -4,10 +4,10 @@ import { Link } from "dva/router";
 import { Spin, Input, Rate, Button, message } from "antd";
 import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import styles from "./VoteList.css";
-import YPlayer from "./YPlayer";
+import styles from "./index.css";
+import Player from "../Player";
 import { voteTexts } from "config";
-import useIsDesktop from "../hooks/useIsDesktop";
+import useIsDesktop from "../../hooks/useIsDesktop";
 
 const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   const isDesktop = useIsDesktop();
@@ -317,7 +317,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
       {songs.length !== 0 ? (
         <span>
           <div>
-            <YPlayer
+            <Player
               src={src}
               onProgress={timeListener}
               onEnded={onEnded}
@@ -326,7 +326,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
               onBackward={backward}
               onForward={forward}
               ref={playerRef}
-              className={styles.yplayer}
+              className={styles.player}
             />
             <br />
             <Button

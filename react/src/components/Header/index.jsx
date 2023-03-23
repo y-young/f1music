@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { Layout } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
-import styles from "./Header.css";
-import { useTitle } from "../hooks/useTitle";
+import styles from "./index.css";
+import { useTitle } from "../../hooks/useTitle";
 
 const Header = ({ sidebarCollapsed, toggleSidebar }) => {
   const title = useTitle();

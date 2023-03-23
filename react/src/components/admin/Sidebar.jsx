@@ -11,7 +11,7 @@ import {
   BarChartOutlined,
   ArrowLeftOutlined
 } from "@ant-design/icons";
-import styles from "../Sidebar.css";
+import styles from "../Sidebar/index.css";
 
 const Sidebar = ({ collapsed, location, history }) => {
   const sidebarClass = classnames({

@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout } from "antd";
-import styles from "./Footer.css";
+import styles from "./index.css";
 
 const Footer = () => {
   const Year = () => {

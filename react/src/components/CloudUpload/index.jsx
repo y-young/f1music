@@ -11,7 +11,7 @@ import {
   message
 } from "antd";
 import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
-import { YPlayer, TimeSelector } from "components";
+import { Player, TimeSelector } from "components";
 
 const Search = Input.Search;
 const FormItem = Form.Item;
@@ -158,7 +158,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
             </FormItem>
             <FormItem label="试听">
               <Spin spinning={!row.mp3}>
-                <YPlayer src={row.mp3} mini style={{ marginTop: "1px" }} />
+                <Player src={row.mp3} mini style={{ marginTop: "1px" }} />
               </Spin>
             </FormItem>
           </Form>

@@ -4,7 +4,7 @@ import axios from "axios";
 import { Tabs, Table, Button, Space } from "antd";
 import "aplayer/dist/APlayer.min.css";
 import APlayer from "aplayer";
-import YPlayer from "components/YPlayer";
+import Player from "components/Player";
 import { timeIdToText, timeFilters } from "config";
 import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import Title from "../hooks/useTitle";
@@ -32,7 +32,7 @@ const columns = [
     title: "试听",
     width: 150,
     render: (text, record) => {
-      return <YPlayer src={record.url} mini />;
+      return <Player src={record.url} mini />;
     }
   },
   {

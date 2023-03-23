@@ -1,4 +1,4 @@
-import styles from "./InlineForm.css";
+import styles from "./index.css";
 import { Form } from "antd";
 
 const InlineForm = ({ children, ...props }) => (

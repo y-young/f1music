@@ -5,7 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle
 } from "react";
-import styles from "./YPlayer.css";
+import styles from "./index.css";
 import { Button, Slider, message, Space } from "antd";
 import {
   StepForwardOutlined,
@@ -15,7 +15,7 @@ import {
   LoadingOutlined
 } from "@ant-design/icons";
 
-const YPlayer = (
+const Player = (
   {
     src,
     onPause,
@@ -271,4 +271,4 @@ const YPlayer = (
   );
 };
 
-export default forwardRef(YPlayer);
+export default forwardRef(Player);

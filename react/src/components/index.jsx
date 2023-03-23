@@ -1,6 +1,6 @@
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import YPlayer from "./YPlayer";
+import Player from "./Player";
 import VoteList from "./VoteList";
 import CloudUpload from "./CloudUpload";
 import ManualUpload from "./ManualUpload";
@@ -13,7 +13,7 @@ import Header from "./Header";
 export {
   Sidebar,
   Footer,
-  YPlayer,
+  Player,
   VoteList,
   CloudUpload,
   ManualUpload,
