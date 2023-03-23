@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "dva/router";
 import axios from "axios";
 import { Tabs, Table, Button, Space } from "antd";
@@ -47,73 +47,68 @@ const columns = [
     }
   }
 ];
-const rank = []; //Replace [] with results generated on admin/rank
+const rank = []; // Replace [] with results generated on admin/rank
 
-class Result extends React.Component {
-  state = {
-    player: null,
-    audio: []
-  };
+const Result = () => {
+  const containerRef = useRef();
 
-  componentDidMount() {
-    this.loadPlayer();
-  }
-  loadPlayer = () => {
+  useEffect(() => {
+    loadPlayer();
+  }, []);
+
+  const loadPlayer = () => {
     axios.get("/music/playlist").then(response => {
-      this.setState({ audio: response.data });
       new APlayer({
-        container: this.container,
+        container: containerRef.current,
         mini: false,
         autoplay: false,
         loop: "all",
         listFolded: false,
-        audio: this.state.audio
+        audio: response.data
       });
     });
   };
 
-  render() {
-    return (
-      <div>
-        <Tabs
-          defaultActiveKey="songs"
-          items={[
-            {
-              key: "songs",
-              label: "当选歌曲",
-              children: <div ref={el => (this.container = el)} />
-            },
-            {
-              key: "rank",
-              label: "投票结果",
-              children: (
-                <Table
-                  dataSource={rank}
-                  columns={columns}
-                  rowKey="id"
-                  scroll={{ x: 700 }}
-                />
-              )
-            }
-          ]}
-        />
-        <br />
-        <Space>
-          <a
-            href="http://music.163.com/playlist/" //Put playlist link here
-            className="redirect"
-          >
-            前往网易云歌单
-            <ArrowRightOutlined />
-          </a>
-          <Link to="/home" className="redirect">
-            进入首页
-            <ArrowRightOutlined />
-          </Link>
-        </Space>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <Tabs
+        defaultActiveKey="songs"
+        items={[
+          {
+            key: "songs",
+            label: "当选歌曲",
+            children: <div ref={containerRef} />
+          },
+          {
+            key: "rank",
+            label: "投票结果",
+            children: (
+              <Table
+                dataSource={rank}
+                columns={columns}
+                rowKey="id"
+                scroll={{ x: 700 }}
+              />
+            )
+          }
+        ]}
+      />
+      <br />
+      <Space>
+        <a
+          href="http://music.163.com/playlist/" // Put playlist link here
+          className="redirect"
+        >
+          前往网易云歌单
+          <ArrowRightOutlined />
+        </a>
+        <Link to="/home" className="redirect">
+          进入首页
+          <ArrowRightOutlined />
+        </Link>
+      </Space>
+    </div>
+  );
+};
 
 export default Result;
