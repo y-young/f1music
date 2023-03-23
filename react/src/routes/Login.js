@@ -8,16 +8,18 @@ import {
   LockOutlined,
   ArrowLeftOutlined
 } from "@ant-design/icons";
+import Title from "../hooks/useTitle";
 
 const FormItem = Form.Item;
 
-const Login = ({ app, loading, dispatch }) => {
+const Login = ({ loading, dispatch }) => {
   const handleSubmit = values => {
     dispatch({ type: "app/login", payload: values });
   };
 
   return (
-    <div>
+    <>
+      <Title>登录</Title>
       <div className={styles.login}>
         <div style={{ width: "300px", margin: "auto" }}>
           <div className={styles.title}>
@@ -82,7 +84,7 @@ const Login = ({ app, loading, dispatch }) => {
           </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

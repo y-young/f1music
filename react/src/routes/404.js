@@ -1,9 +1,11 @@
 import React from "react";
 import { Result, Button } from "antd";
+import Title from "../hooks/useTitle";
 
 const NotFound = () => {
   return (
-    <div>
+    <>
+      <Title>404</Title>
       <Result
         status="404"
         title="404"
@@ -14,7 +16,7 @@ const NotFound = () => {
           </Button>
         }
       />
-    </div>
+    </>
   );
 };
 

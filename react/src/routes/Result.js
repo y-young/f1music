@@ -7,6 +7,7 @@ import APlayer from "aplayer";
 import YPlayer from "components/YPlayer";
 import { timeIdToText, timeFilters } from "config";
 import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import Title from "../hooks/useTitle";
 
 const columns = [
   {
@@ -70,7 +71,8 @@ const Result = () => {
   };
 
   return (
-    <div>
+    <>
+      <Title>投票结果</Title>
       <Tabs
         defaultActiveKey="songs"
         items={[
@@ -107,7 +109,7 @@ const Result = () => {
           <ArrowRightOutlined />
         </Link>
       </Space>
-    </div>
+    </>
   );
 };
 

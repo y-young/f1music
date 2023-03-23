@@ -3,6 +3,7 @@ import { connect } from "dva";
 import { Form, Table, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import Title from "../../hooks/useTitle";
 
 const FormItem = Form.Item;
 const columns = [
@@ -64,7 +65,8 @@ const Reports = ({ reports, dispatch, loading }) => {
   };
 
   return (
-    <div>
+    <>
+      <Title>反馈</Title>
       <div style={{ fontSize: "14px", color: "#777" }}>
         反馈总数: {list.length} 条 已选中: {selectedRowKeys.length} 条
       </div>
@@ -87,7 +89,7 @@ const Reports = ({ reports, dispatch, loading }) => {
       >
         删除所选
       </Button>
-    </div>
+    </>
   );
 };
 

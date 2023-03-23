@@ -13,6 +13,7 @@ import { TimeSelector } from "components/admin";
 import { timeFilters } from "config";
 import { renderDateTime } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import Title from "../../hooks/useTitle";
 
 const FormItem = Form.Item;
 const colors = [
@@ -309,7 +310,8 @@ const Songs = ({ songs, loading, dispatch }) => {
   ];
 
   return (
-    <div>
+    <>
+      <Title>{type === "trashed" ? "曲目 - 回收站" : "曲目"}</Title>
       <div style={{ fontSize: "14px", color: "#777", display: "inline-block" }}>
         曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
       </div>
@@ -416,7 +418,7 @@ const Songs = ({ songs, loading, dispatch }) => {
           </FormItem>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 

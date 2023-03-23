@@ -6,6 +6,7 @@ import { StatusNotice } from "components";
 import UploadDescription from "components/UploadDescription";
 import VoteDescription from "components/VoteDescription";
 import TimePeriodDescription from "components/TimePeriodDescription";
+import Title from "../hooks/useTitle";
 
 const Home = ({ app, loading }) => {
   const { status } = app;
@@ -22,7 +23,8 @@ const Home = ({ app, loading }) => {
   }, [status, setActiveTab]);
 
   return (
-    <div>
+    <>
+      <Title>首页</Title>
       <Spin spinning={loading.effects["app/fetchStatus"]}>
         <StatusNotice status={status} />
       </Spin>
@@ -39,7 +41,7 @@ const Home = ({ app, loading }) => {
         activeKey={activeTab}
         onChange={setActiveTab}
       />
-    </div>
+    </>
   );
 };
 

@@ -1,0 +1,30 @@
+.header:global(.ant-layout-header) {
+  position: fixed;
+  overflow: visible;
+  top: 0;
+  height: 64px;
+  width: 100%;
+  padding: 0;
+  z-index: 10;
+  color: #fff;
+  background: #1890ff;
+}
+
+@media (max-width: 500px) {
+  .header {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.title {
+  font-size: 18px;
+}
+
+.trigger {
+  color: #fff;
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}

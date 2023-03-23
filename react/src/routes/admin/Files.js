@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import { Form, Table } from "antd";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import Title from "../../hooks/useTitle";
 
 const FormItem = Form.Item;
 
@@ -35,7 +36,8 @@ const Files = ({ files, loading }) => {
   };
 
   return (
-    <div>
+    <>
+      <Title>文件</Title>
       <div style={{ fontSize: "14px", color: "#777" }}>
         文件总数: {list.length}个
       </div>
@@ -48,7 +50,7 @@ const Files = ({ files, loading }) => {
         scroll={{ x: 400 }}
         rowKey="id"
       />
-    </div>
+    </>
   );
 };
 

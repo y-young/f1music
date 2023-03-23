@@ -30,7 +30,7 @@ app.use(createLoading());
 // );
 
 // 3. Model
-const models = ["admin", "songs", "files", "reports", "rank", "statistics"];
+const models = ["songs", "files", "reports", "rank", "statistics"];
 models.forEach(m => app.model(require("../models/admin/" + m).default));
 
 // 4. Router

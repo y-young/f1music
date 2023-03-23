@@ -3,6 +3,7 @@ import { connect } from "dva";
 import { Col, Row, Card } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "./Statistics.css";
+import Title from "../../hooks/useTitle";
 
 const Statistics = ({ statistics, loading }) => {
   const { data } = statistics;
@@ -42,7 +43,8 @@ const Statistics = ({ statistics, loading }) => {
   };
 
   return (
-    <div>
+    <>
+      <Title>数据统计</Title>
       <Row gutter={16}>
         <Col {...colProps}>
           <DataCard title="统计时间">{data.time}</DataCard>
@@ -72,7 +74,7 @@ const Statistics = ({ statistics, loading }) => {
           <DataCard title="投票页面访问人数">{data.viewers}</DataCard>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 

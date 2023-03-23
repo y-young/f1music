@@ -4,6 +4,7 @@ import { Form, Table, Button, Input, Modal } from "antd";
 import { timeFilters } from "config";
 import InlineForm from "components/admin/InlineForm";
 import { InlineFormRow } from "components/admin/InlineForm";
+import Title from "../../hooks/useTitle";
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -73,7 +74,8 @@ const Rank = ({ rank, loading }) => {
 
   const { voteResult } = rank;
   return (
-    <div>
+    <>
+      <Title>投票结果</Title>
       <Table
         dataSource={voteResult}
         columns={columns}
@@ -100,7 +102,7 @@ const Rank = ({ rank, loading }) => {
           <TextArea value={result()} autoSize={{ minRows: 6, maxRows: 10 }} />
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 
