@@ -24,8 +24,11 @@ class YPlayer extends React.Component {
       this.setState({ disableSliderUpdate: false, duration: 0 });
       this.seek(0);
     }
+    if (this.props.playing !== prevProps.playing) {
+      this.setState({ playing: this.props.playing });
+      this.toggle(this.props.playing);
+    }
   }
-
   onTimeUpdate = event => {
     this.updateTime(event.target.currentTime);
   };
@@ -63,11 +66,19 @@ class YPlayer extends React.Component {
     }
   };
 
-  toggle = () => {
+  toggle = (playing) => {
+    if (playing) {
+      this.play();
+    } else {
+      this.pause();
+    }
     if (this.state.playing) {
       this.pause();
     } else {
       this.play();
+    }
+    if (this.props.onChange) {
+      this.props.onChange(playing);
     }
   };
 

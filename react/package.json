@@ -20,6 +20,8 @@
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
+    "@types/react": "16",
+    "@types/react-dom": "16",
     "babel-plugin-dva-hmr": "^0.3.2",
     "babel-plugin-import": "^1.7.0",
     "cross-env": "^5.2.0",
