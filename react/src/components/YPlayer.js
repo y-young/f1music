@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle
+} from "react";
 import styles from "./YPlayer.css";
 import { Button, Slider, message, Space } from "antd";
 import {
@@ -9,41 +15,66 @@ import {
   LoadingOutlined
 } from "@ant-design/icons";
 
-class YPlayer extends React.Component {
-  state = {
-    playing: false,
-    duration: 0,
-    time: 0,
-    displayTime: 0,
-    loaded: "0.00",
-    disableSliderUpdate: false
-  };
+const YPlayer = (
+  {
+    src,
+    onPause,
+    onProgress,
+    onEnded,
+    onBackward,
+    onForward,
+    canBackward,
+    canForward,
+    mini = false
+  },
+  ref
+) => {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [time, setTime] = useState(0);
+  const [displayTime, setDisplayTime] = useState(0);
+  const [loaded, setLoaded] = useState(0);
+  const [disableSliderUpdate, setDisableSliderUpdate] = useState(false);
 
-  componentDidUpdate(prevProps) {
-    if (this.props.src !== prevProps.src) {
-      this.setState({ disableSliderUpdate: false, duration: 0 });
-      this.seek(0);
+  useImperativeHandle(ref, () => ({
+    play,
+    pause,
+    stop,
+    toggle,
+    audio: audioRef.current
+  }));
+
+  useEffect(() => {
+    setDisableSliderUpdate(false);
+    setDuration(0);
+    seek(0);
+  }, [src]);
+
+  const handleTimeUpdate = event => {
+    const newTime = event.target.currentTime;
+    if (!disableSliderUpdate) {
+      setDisplayTime(newTime);
     }
-  }
-
-  onTimeUpdate = event => {
-    this.updateTime(event.target.currentTime);
+    const offset = newTime - time;
+    if (onProgress) {
+      // offset > 0: In case that currentTime didn't update in time
+      // offset <= 1: To prevent cheating
+      if (offset > 0 && offset <= 1) {
+        onProgress(offset);
+      }
+    }
+    setTime(newTime);
   };
 
-  init = () => {
-    this.setState({ disableSliderUpdate: false }, () => {
-      this.stop();
-    });
-  };
-
-  play = disableWarning => {
-    if (!this.state.playing) {
-      const promise = this.audio.play();
+  const play = (disableWarning = false) => {
+    if (!playing) {
+      const promise = audioRef.current.play();
       if (promise) {
         promise.catch(e => {
           console.warn(e);
           if (e.name === "NotAllowedError") {
-            //this.stop();
+            // stop();
             if (!disableWarning) {
               message.warning(
                 "您的浏览器可能不兼容自动播放功能,请尝试手动播放"
@@ -52,230 +83,192 @@ class YPlayer extends React.Component {
           }
         });
       }
-      this.setState({ playing: true });
+      setPlaying(true);
     }
   };
 
-  pause = () => {
-    if (this.state.playing) {
-      this.audio.pause();
-      this.setState({ playing: false });
+  const pause = () => {
+    if (playing) {
+      audioRef.current.pause();
+      setPlaying(false);
     }
   };
 
-  toggle = () => {
-    if (this.state.playing) {
-      this.pause();
+  const toggle = () => {
+    if (playing) {
+      pause();
     } else {
-      this.play();
+      play();
     }
   };
 
-  stop = () => {
-    this.pause();
-    this.audio.currentTime = 0;
-    this.setState({ time: 0, displayTime: 0, disableSliderUpdate: false });
+  const stop = () => {
+    pause();
+    audioRef.current.currentTime = 0;
+    setTime(0);
+    setDisplayTime(0);
+    setDisableSliderUpdate(false);
   };
 
-  onLoad = () => {
-    const loaded = this.audio.buffered.length
-      ? this.audio.buffered.end(this.audio.buffered.length - 1) /
-        this.state.duration
+  const handleLoad = () => {
+    const audio = audioRef.current;
+    const loaded = audio.buffered.length
+      ? audio.buffered.end(audio.buffered.length - 1) / duration
       : 0;
-    const percent = (loaded * 100).toFixed(2);
-    this.setState({ loaded: percent.toString() });
+    const percent = loaded * 100;
+    setLoaded(percent);
   };
 
-  onPlay = () => {
-    if (!this.state.playing) {
-      this.setState({ playing: true });
+  const handlePlay = () => {
+    if (!playing) {
+      setPlaying(true);
     }
   };
 
-  onPause = () => {
-    if (this.state.playing) {
-      this.setState({ playing: false });
+  const handlePause = () => {
+    if (playing) {
+      setPlaying(false);
     }
-    if (this.props.onPause) {
-      this.props.onPause();
+    if (onPause) {
+      onPause();
     }
   };
 
-  updateDuration = event => {
-    //event.persist();
+  const updateDuration = event => {
+    // event.persist();
     const duration = event.target.duration;
     if (duration !== 1) {
-      this.setState({ duration });
+      setDuration(duration);
     }
   };
 
-  updateTime = time => {
-    if (!this.state.disableSliderUpdate) {
-      this.setState({ displayTime: time });
-    }
-    const offset = time - this.state.time;
-    if (this.props.onProgress) {
-      //offset > 0: In case that currentTime didn't update in time
-      //offset <= 1: To prevent cheating
-      if (offset > 0 && offset <= 1) {
-        this.props.onProgress(offset);
-      }
-    }
-    this.setState({ time: time });
-  };
-
-  onEnded = () => {
-    //this.pause();
-    if (this.props.onEnded) {
-      this.props.onEnded();
+  const handleEnded = () => {
+    // pause();
+    if (onEnded) {
+      onEnded();
     }
   };
 
-  onError = e => {
-    this.stop();
-    //message.error("播放出错了,请重试");
+  const handleError = e => {
+    e.persist();
+    stop();
+    console.log(e);
+    // message.error("播放出错了,请重试");
     throw e;
   };
 
-  onSeeking = time => {
-    this.setState({ disableSliderUpdate: true, displayTime: time });
+  const handleSeeking = time => {
+    setDisableSliderUpdate(true);
+    setDisplayTime(time);
   };
 
-  seek = time => {
-    this.setState({
-      disableSliderUpdate: false,
-      displayTime: time,
-      time: time
-    });
-    this.audio.currentTime = time;
+  const seek = time => {
+    setDisableSliderUpdate(false);
+    setDisplayTime(time);
+    setTime(time);
+    audioRef.current.currentTime = time;
   };
 
-  onBackward = () => {
-    if (this.props.onBackward) {
-      this.props.onBackward();
-    }
-  };
-
-  onForward = () => {
-    if (this.props.onForward) {
-      this.props.onForward();
-    }
-  };
-
-  render() {
-    const { mini } = this.props;
-    const loaded = this.state.loaded;
-    const audio = (
-      <audio
-        ref={audio => {
-          this.audio = audio;
-        }}
-        src={this.props.src}
-        //controls="controls"
-        onProgress={this.onLoad}
-        onTimeUpdate={this.onTimeUpdate}
-        onDurationChange={this.updateDuration}
-        onPlay={this.onPlay}
-        onPause={this.onPause}
-        onEnded={this.onEnded}
-        onError={this.onError}
-        preload="none"
-      />
-    );
-    if (!mini) {
-      return (
-        <div>
-          {audio}
-          <div>
-            <Slider
-              value={this.state.displayTime}
-              max={this.state.duration}
-              onChange={this.onSeeking}
-              onAfterChange={this.seek}
-              tooltip={{ formatter: null }}
-            />
-            <div className={styles.timeDetail}>
-              {this.formatTime(this.state.displayTime)} /{" "}
-              {this.formatTime(this.state.duration)}
-            </div>
-          </div>
-          <div className={styles.controls}>
-            <Button
-              type="secondary"
-              shape="circle"
-              onClick={this.onBackward}
-              disabled={!this.props.canBackward}
-              style={{ marginRight: "10px" }}
-            >
-              <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
-            </Button>
-            <Button
-              type="primary"
-              shape="circle"
-              size="large"
-              onClick={this.toggle}
-              disabled={this.props.src === ""}
-            >
-              {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
-            </Button>
-            <Button
-              type="secondary"
-              shape="circle"
-              onClick={this.onForward}
-              disabled={!this.props.canForward}
-              style={{ marginLeft: "10px" }}
-            >
-              <StepForwardOutlined style={{ color: "#9f9f9f" }} />
-            </Button>
-          </div>
-          <div
-            className={styles.bufferDetail}
-            style={!this.props.src ? { display: "none" } : {}}
-          >
-            {loaded !== "100.00" && (
-              <LoadingOutlined style={{ marginRight: "2px" }} />
-            )}
-            {loaded === "100.00"
-              ? "缓冲完毕"
-              : loaded !== "0.00" && loaded + "%"}
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className={styles.miniPlayer}>
-          {audio}
-          <Space.Compact className={styles.controls}>
-            <Button type="primary" onClick={this.toggle}>
-              {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
-            </Button>
-            <Button type="primary" onClick={this.stop}>
-              <StepBackwardOutlined />
-            </Button>
-          </Space.Compact>
-          <div className={styles.miniTimeDetail}>
-            {this.formatTime(this.state.displayTime)} /{" "}
-            {this.formatTime(this.state.duration)}
-          </div>
-        </div>
-      );
-    }
-  }
-
-  formatTime(duration) {
+  const formatTime = duration => {
     if (isNaN(duration)) {
       return "00:00";
     }
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration - hours * 3600) / 60);
     const seconds = Math.floor(duration - hours * 3600 - minutes * 60);
-    const add0 = num => {
-      return num < 10 ? "0" + num : "" + num;
-    };
     return (hours > 0 ? [hours, minutes, seconds] : [minutes, seconds])
-      .map(add0)
+      .map(value => value.toString().padStart(2, "0"))
       .join(":");
-  }
-}
+  };
 
-export default YPlayer;
+  const timeDetail = `${formatTime(displayTime)} / ${formatTime(duration)}`;
+  const audio = (
+    <audio
+      ref={audioRef}
+      src={src}
+      //controls="controls"
+      onProgress={handleLoad}
+      onTimeUpdate={handleTimeUpdate}
+      onDurationChange={updateDuration}
+      onPlay={handlePlay}
+      onPause={handlePause}
+      onEnded={handleEnded}
+      onError={handleError}
+      preload="none"
+    />
+  );
+
+  if (mini) {
+    return (
+      <div className={styles.miniPlayer}>
+        {audio}
+        <Space.Compact className={styles.controls}>
+          <Button type="primary" onClick={toggle}>
+            {playing ? <PauseOutlined /> : <CaretRightOutlined />}
+          </Button>
+          <Button type="primary" onClick={stop}>
+            <StepBackwardOutlined />
+          </Button>
+        </Space.Compact>
+        <div className={styles.miniTimeDetail}>{timeDetail}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {audio}
+      <div>
+        <Slider
+          value={displayTime}
+          max={duration}
+          onChange={handleSeeking}
+          onAfterChange={seek}
+          tooltip={{ formatter: null }}
+        />
+        <div className={styles.timeDetail}>{timeDetail}</div>
+      </div>
+      <Space className={styles.controls}>
+        <Button
+          type="secondary"
+          shape="circle"
+          onClick={onBackward}
+          disabled={!canBackward}
+        >
+          <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
+        </Button>
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          onClick={toggle}
+          disabled={!src}
+        >
+          {playing ? <PauseOutlined /> : <CaretRightOutlined />}
+        </Button>
+        <Button
+          type="secondary"
+          shape="circle"
+          onClick={onForward}
+          disabled={!canForward}
+        >
+          <StepForwardOutlined style={{ color: "#9f9f9f" }} />
+        </Button>
+      </Space>
+      {src && (
+        <div className={styles.bufferDetail}>
+          {loaded === 100 ? (
+            "缓冲完毕"
+          ) : (
+            <>
+              <LoadingOutlined style={{ marginRight: "2px" }} />
+              {loaded !== 0 && loaded.toFixed(2) + "%"}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default forwardRef(YPlayer);
