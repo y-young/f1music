@@ -6,9 +6,6 @@ export default {
   namespace: "app",
   state: {
     title: "首页",
-    siderFolded: false,
-    isDesktop: window.innerWidth >= 768,
-    width: 0,
     loggedIn: false,
     status: {
       upload: {},
@@ -18,20 +15,6 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
-      dispatch({ type: "updateState", payload: window.innerWidth });
-      let tid;
-      window.onresize = () => {
-        clearTimeout(tid);
-        tid = setTimeout(() => {
-          dispatch({
-            type: "mobileCollapse",
-            payload: {
-              width: window.innerWidth,
-              isResize: true
-            }
-          });
-        }, 300);
-      };
       history.listen(({ pathname }) => {
         if (pathname === "/logout") {
           window.location.href = "/logout";
@@ -40,14 +23,6 @@ export default {
           dispatch({ type: "fetchStatus" });
         }
         dispatch({ type: "updateTitle", payload: pathname });
-        window.scrollTo(0, 0);
-        dispatch({
-          type: "mobileCollapse",
-          payload: {
-            width: window.innerWidth,
-            isResize: false
-          }
-        });
         dispatch({ type: "updateState", payload: { loggedIn: checkLogin() } });
       });
     }
@@ -120,26 +95,6 @@ export default {
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload };
-    },
-    toggleSider(state) {
-      return {
-        ...state,
-        siderFolded: !state.siderFolded
-      };
-    },
-    mobileCollapse(state, { payload }) {
-      const { width, isResize } = payload;
-      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
-      if (!isResize || width !== state.width) {
-        const isDesktop = width >= 768;
-        return {
-          ...state,
-          width: width,
-          siderFolded: !isDesktop
-        };
-      } else {
-        return { ...state };
-      }
     }
   }
 };

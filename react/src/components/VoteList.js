@@ -7,9 +7,10 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
 import { voteTexts } from "config";
+import useIsDesktop from "../hooks/useIsDesktop";
 
 const VoteList = ({ vote, dispatch, loading, time, songs }) => {
-  const { onDesktop } = vote;
+  const isDesktop = useIsDesktop();
   const playerRef = useRef(null);
   const [rate, setRate] = useState(0);
   const [src, setSrc] = useState("");
@@ -205,7 +206,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   const song = songs[index] ? songs[index] : { vote: 0 };
   const buttonProps = {
     type: song.vote !== 0 ? "secondary" : "primary",
-    shape: !onDesktop ? "circle" : undefined,
+    shape: !isDesktop ? "circle" : undefined,
     icon: countdown <= 0 ? <CheckOutlined /> : undefined,
     disabled: countdown > 0
   };
@@ -240,7 +241,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
         onClick={() => handleVote("manual")}
         {...buttonProps}
       >
-        {countdown > 0 ? Math.ceil(countdown) : onDesktop && "投票"}
+        {countdown > 0 ? Math.ceil(countdown) : isDesktop && "投票"}
       </Button>
     </div>
   );

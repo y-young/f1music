@@ -1,37 +1,13 @@
 export default {
   namespace: "admin",
   state: {
-    title: "首页",
-    siderFolded: false,
-    isDesktop: window.innerWidth > 993
+    title: "首页"
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
-      dispatch({ type: "updateState", payload: window.innerWidth });
-      let tid;
-      window.onresize = () => {
-        clearTimeout(tid);
-        tid = setTimeout(() => {
-          dispatch({
-            type: "mobileCollapse",
-            payload: {
-              width: window.innerWidth,
-              isResize: true
-            }
-          });
-        }, 300);
-      };
       history.listen(({ pathname }) => {
         dispatch({ type: "updateTitle", payload: pathname });
-        window.scrollTo(0, 0);
-        dispatch({
-          type: "mobileCollapse",
-          payload: {
-            width: window.innerWidth,
-            isResize: false
-          }
-        });
       });
     }
   },
@@ -73,26 +49,6 @@ export default {
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload };
-    },
-    toggleSider(state) {
-      return {
-        ...state,
-        siderFolded: !state.siderFolded
-      };
-    },
-    mobileCollapse(state, { payload }) {
-      const { width, isResize } = payload;
-      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
-      if (!isResize || width !== state.width) {
-        const isDesktop = width >= 768;
-        return {
-          ...state,
-          width: width,
-          siderFolded: !isDesktop
-        };
-      } else {
-        return { ...state };
-      }
     }
   }
 };

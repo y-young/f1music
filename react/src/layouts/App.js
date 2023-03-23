@@ -8,41 +8,37 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import zhCN from "antd/es/locale/zh_CN";
 import "antd/dist/antd.css";
 import styles from "./App.css";
+import useSidebar from "../hooks/useSidebar";
 
 const { Header, Content } = Layout;
 
-const App = ({ children, dispatch, app, location }) => {
-  const { title, siderFolded, loggedIn, isDesktop } = app;
-
-  const toggle = () => {
-    dispatch({ type: "app/toggleSider" });
-  };
+const App = ({ children, app, location }) => {
+  const { title, loggedIn } = app;
+  const [sidebarCollapsed, toggleSidebar] = useSidebar(location);
 
   const appClass = classnames({
     [styles.app]: true,
-    [styles.withSidebar]: !siderFolded
+    [styles.withSidebar]: !sidebarCollapsed
   });
 
   return (
     <ConfigProvider locale={zhCN}>
       <div className={appClass}>
-        <Sidebar
-          collapsed={siderFolded}
-          location={location}
-          desktop={isDesktop}
-          loggedIn={loggedIn}
-        />
-        <div className={styles.overlay} onClick={toggle} />
+        <Sidebar collapsed={sidebarCollapsed} loggedIn={loggedIn} />
+        <div className={styles.overlay} onClick={toggleSidebar} />
         <div className={styles.container}>
           <div className={styles.containerInner}>
             <Header className={styles.header}>
-              {siderFolded ? (
+              {sidebarCollapsed ? (
                 <MenuUnfoldOutlined
                   className={styles.trigger}
-                  onClick={toggle}
+                  onClick={toggleSidebar}
                 />
               ) : (
-                <MenuFoldOutlined className={styles.trigger} onClick={toggle} />
+                <MenuFoldOutlined
+                  className={styles.trigger}
+                  onClick={toggleSidebar}
+                />
               )}
               <span className={styles.title}>{title}</span>
             </Header>

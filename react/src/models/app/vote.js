@@ -11,7 +11,6 @@ export default {
     skipVoted: true,
     onSubmitted: "continue",
     onEnded: "pause",
-    isDesktop: window.innerWidth > 993,
     status: {}
   },
 
