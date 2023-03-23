@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { connect } from "dva";
 import { Form, Table, Button, Input, Tag, Select, Modal, Space } from "antd";
 import {
@@ -29,42 +29,42 @@ const colors = [
   "purple"
 ];
 
-class Songs extends React.Component {
-  state = {
-    selectedRowKeys: [],
-    searchText: "",
-    searchColumn: "",
-    modalVisible: false
-  };
-  tagColors = new Map();
-  form = React.createRef();
+const Songs = ({ songs, loading, dispatch }) => {
+  const [form] = Form.useForm();
+  const searchInputRef = useRef();
 
-  getColumnSearchProps = dataIndex => ({
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const tagColors = new Map();
+
+  const handleReset = (clearFilters, confirm) => {
+    clearFilters();
+    confirm();
+  };
+
+  const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters
     }) => (
-      <div style={{ padding: 8 }}>
+      <div style={{ padding: 8 }} onKeyDown={e => e.stopPropagation()}>
         <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
+          ref={searchInputRef}
           placeholder="输入关键词"
           value={selectedKeys[0]}
           onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() =>
-            this.handleSearch(selectedKeys, confirm, dataIndex)
-          }
+          onPressEnter={() => confirm()}
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
             type="primary"
-            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => confirm()}
             icon={<SearchOutlined />}
             size="small"
             style={{ width: 90, marginRight: 8 }}
@@ -72,7 +72,7 @@ class Songs extends React.Component {
             搜索
           </Button>
           <Button
-            onClick={() => this.handleReset(clearFilters)}
+            onClick={() => handleReset(clearFilters, confirm)}
             size="small"
             style={{ width: 90 }}
           >
@@ -88,101 +88,77 @@ class Songs extends React.Component {
       record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
-        setTimeout(() => this.searchInput.select());
+        setTimeout(() => searchInputRef.current.select());
       }
     }
   });
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex
-    });
-  };
-
-  handleReset = clearFilters => {
-    clearFilters();
-    this.setState({ searchText: "" });
-  };
-
-  onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys: selectedRowKeys });
-  };
-
-  handleRefresh = () => {
-    const { dispatch } = this.props;
+  const handleRefresh = () => {
     dispatch({ type: "songs/fetch" });
   };
 
-  editSong = row => {
-    this.form.current.setFieldsValue({
+  const editSong = row => {
+    form.setFieldsValue({
       id: row.id,
       playtime: row.playtime,
       name: row.name,
       origin: row.origin,
       tags: row.tags
     });
-    this.setState({ modalVisible: true });
+    setModalVisible(true);
   };
 
-  handleSave = () => {
-    const { dispatch } = this.props;
-    this.form.current
+  const handleSave = () => {
+    form
       .validateFields()
       .then(values => {
         dispatch({ type: "songs/save", payload: values }).then(success => {
           if (success) {
-            this.setState({ modalVisible: false });
+            setModalVisible(false);
           }
         });
       })
       .catch(error => {});
   };
 
-  handleCancel = () => {
-    this.setState({ modalVisible: false });
+  const handleCancel = () => {
+    setModalVisible(false);
   };
 
-  handleDelete = (id, isDelete = false) => {
-    const { dispatch } = this.props;
+  const handleDelete = (id, isDelete = false) => {
     if (isDelete) {
       dispatch({ type: "songs/delete", payload: id });
     } else {
       dispatch({ type: "songs/trash", payload: id });
     }
-    this.setState({ selectedRowKeys: [] });
+    setSelectedRowKeys([]);
   };
 
-  handleBatchDelete = (isDelete = false) => {
-    this.handleDelete(this.state.selectedRowKeys, isDelete);
+  const handleBatchDelete = (isDelete = false) => {
+    handleDelete(selectedRowKeys, isDelete);
   };
 
-  handleRestore = id => {
-    const { dispatch } = this.props;
+  const handleRestore = id => {
     dispatch({ type: "songs/restore", payload: id });
-    this.setState({ selectedRowKeys: [] });
+    setSelectedRowKeys([]);
   };
 
-  handleBatchRestore = () => {
-    this.handleRestore(this.state.selectedRowKeys);
+  const handleBatchRestore = () => {
+    handleRestore(selectedRowKeys);
   };
 
-  getTagColor = tagName => {
-    let tagColors = this.tagColors,
-      color;
+  const getTagColor = tagName => {
+    let color;
     if (!tagColors.has(tagName)) {
       color = colors[Math.floor(Math.random() * 11)];
       tagColors.set(tagName, color);
-      this.tagColors = tagColors;
     } else {
       color = tagColors.get(tagName);
     }
     return color;
   };
 
-  renderExpanded = row => {
-    const { songs, loading } = this.props;
+  const renderExpanded = row => {
     const { type } = songs;
     const { file } = row;
 
@@ -224,7 +200,7 @@ class Songs extends React.Component {
               <Button
                 type="primary"
                 icon={<EditOutlined />}
-                onClick={() => this.editSong(row)}
+                onClick={() => editSong(row)}
               >
                 编辑
               </Button>
@@ -233,7 +209,7 @@ class Songs extends React.Component {
                   <Button
                     type="secondary"
                     icon={<RollbackOutlined />}
-                    onClick={() => this.handleRestore([row.id])}
+                    onClick={() => handleRestore([row.id])}
                     loading={loading.effects["songs/restore"]}
                   >
                     恢复
@@ -242,7 +218,7 @@ class Songs extends React.Component {
                     type="primary"
                     danger
                     icon={<DeleteOutlined />}
-                    onClick={() => this.handleDelete([row.id], true)}
+                    onClick={() => handleDelete([row.id], true)}
                     loading={loading.effects["songs/delete"]}
                   >
                     彻底删除
@@ -253,7 +229,7 @@ class Songs extends React.Component {
                   type="primary"
                   danger
                   icon={<DeleteOutlined />}
-                  onClick={() => this.handleDelete([row.id])}
+                  onClick={() => handleDelete([row.id])}
                   loading={loading.effects["songs/trash"]}
                 >
                   删除
@@ -273,181 +249,175 @@ class Songs extends React.Component {
     );
   };
 
-  render() {
-    const { songs, loading } = this.props;
-    const { type, list } = songs;
-    const { selectedRowKeys, modalVisible } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
-    const columns = [
-      {
-        dataIndex: "id",
-        title: "#",
-        width: "60px",
-        sorter: (a, b) => a.id - b.id
-      },
-      {
-        dataIndex: "playtime",
-        title: "时段",
-        width: "80px",
-        filters: timeFilters,
-        onFilter: (value, record) => record.playtime === value
-      },
-      {
-        dataIndex: "name",
-        title: "曲名",
-        ...this.getColumnSearchProps("name")
-      },
-      {
-        title: "标签",
-        key: "tags",
-        dataIndex: "tags",
-        render: tags => (
-          <span>
-            {tags.map(tag => {
-              if (tag !== "") {
-                let color = this.getTagColor(tag);
-                return (
-                  <Tag color={color} key={tag}>
-                    {tag}
-                  </Tag>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </span>
-        ),
-        ...this.getColumnSearchProps("tags")
-      },
-      {
-        dataIndex: "created_at",
-        title: "时间",
-        render: renderDateTime
-      },
-      {
-        dataIndex: "reports_count",
-        title: "反馈数",
-        width: "100px",
-        sorter: (a, b) => a.reports_count - b.reports_count
-      }
-    ];
+  const { type, list } = songs;
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys
+  };
+  const columns = [
+    {
+      dataIndex: "id",
+      title: "#",
+      width: "60px",
+      sorter: (a, b) => a.id - b.id
+    },
+    {
+      dataIndex: "playtime",
+      title: "时段",
+      width: "80px",
+      filters: timeFilters,
+      onFilter: (value, record) => record.playtime === value
+    },
+    {
+      dataIndex: "name",
+      title: "曲名",
+      ...getColumnSearchProps("name")
+    },
+    {
+      title: "标签",
+      key: "tags",
+      dataIndex: "tags",
+      render: tags => (
+        <span>
+          {tags.map(tag => {
+            if (tag !== "") {
+              let color = getTagColor(tag);
+              return (
+                <Tag color={color} key={tag}>
+                  {tag}
+                </Tag>
+              );
+            } else {
+              return null;
+            }
+          })}
+        </span>
+      ),
+      ...getColumnSearchProps("tags")
+    },
+    {
+      dataIndex: "created_at",
+      title: "时间",
+      render: renderDateTime
+    },
+    {
+      dataIndex: "reports_count",
+      title: "反馈数",
+      width: "100px",
+      sorter: (a, b) => a.reports_count - b.reports_count
+    }
+  ];
 
-    return (
-      <div>
-        <div
-          style={{ fontSize: "14px", color: "#777", display: "inline-block" }}
-        >
-          曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
-        </div>
-        <Button
-          type="secondary"
-          icon={<ReloadOutlined />}
-          onClick={this.handleRefresh}
-          style={{ float: "right" }}
-        />
-        <br />
-        <Table
-          dataSource={list}
-          columns={columns}
-          rowSelection={rowSelection}
-          expandedRowRender={this.renderExpanded}
-          loading={loading.effects["songs/fetch"]}
-          rowKey="id"
-          scroll={{ x: 600 }}
-        />
-        {type === "trashed" ? (
-          <Space>
-            <Button
-              type="secondary"
-              onClick={this.handleBatchRestore}
-              loading={loading.effects["songs/restore"]}
-            >
-              恢复所选
-            </Button>
-            <Button
-              type="primary"
-              danger
-              onClick={() => this.handleBatchDelete(true)}
-              loading={loading.effects["songs/delete"]}
-            >
-              彻底删除所选
-            </Button>
-          </Space>
-        ) : (
+  return (
+    <div>
+      <div style={{ fontSize: "14px", color: "#777", display: "inline-block" }}>
+        曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
+      </div>
+      <Button
+        type="secondary"
+        icon={<ReloadOutlined />}
+        onClick={handleRefresh}
+        style={{ float: "right" }}
+      />
+      <br />
+      <Table
+        dataSource={list}
+        columns={columns}
+        rowSelection={rowSelection}
+        expandedRowRender={renderExpanded}
+        loading={loading.effects["songs/fetch"]}
+        rowKey="id"
+        scroll={{ x: 600 }}
+      />
+      {type === "trashed" ? (
+        <Space>
+          <Button
+            type="secondary"
+            onClick={handleBatchRestore}
+            loading={loading.effects["songs/restore"]}
+          >
+            恢复所选
+          </Button>
           <Button
             type="primary"
             danger
-            onClick={() => this.handleBatchDelete(false)}
-            loading={loading.effects["songs/trash"]}
+            onClick={() => handleBatchDelete(true)}
+            loading={loading.effects["songs/delete"]}
           >
-            删除所选
+            彻底删除所选
           </Button>
-        )}
-        <Modal
-          open={modalVisible}
-          onCancel={this.handleCancel}
-          confirmLoading={loading.effects["songs/save"]}
-          okText="保存"
-          title="编辑曲目"
-          onOk={this.handleSave}
-          forceRender
-          centered
+        </Space>
+      ) : (
+        <Button
+          type="primary"
+          danger
+          onClick={() => handleBatchDelete(false)}
+          loading={loading.effects["songs/trash"]}
         >
-          <Form ref={this.form} labelCol={{ span: 3 }}>
-            <FormItem name="id" hidden={true} noStyle={true}>
-              <Input type="hidden" />
-            </FormItem>
-            <FormItem label="时段" name="playtime">
-              <TimeSelector style={{ width: "120px" }} />
-            </FormItem>
-            <FormItem
-              label="曲名"
-              name="name"
-              rules={[{ required: true, message: "请填写曲名" }]}
-            >
-              <Input
-                placeholder="曲名"
-                maxLength={100}
-                onPressEnter={this.handleSave}
-              />
-            </FormItem>
-            <FormItem label="来源" name="origin">
-              <Input
-                placeholder="来源"
-                maxLength={200}
-                onPressEnter={this.handleSave}
-              />
-            </FormItem>
-            <FormItem
-              label="标签"
-              name="tags"
-              rules={[
-                { type: "array" },
-                {
-                  validator: (rule, value) => {
-                    if (!value || value.toString().length <= 200) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("标签总长度不得超过200");
+          删除所选
+        </Button>
+      )}
+      <Modal
+        open={modalVisible}
+        onCancel={handleCancel}
+        confirmLoading={loading.effects["songs/save"]}
+        okText="保存"
+        title="编辑曲目"
+        onOk={handleSave}
+        forceRender
+        centered
+      >
+        <Form form={form} labelCol={{ span: 3 }}>
+          <FormItem name="id" hidden={true} noStyle={true}>
+            <Input type="hidden" />
+          </FormItem>
+          <FormItem label="时段" name="playtime">
+            <TimeSelector style={{ width: "120px" }} />
+          </FormItem>
+          <FormItem
+            label="曲名"
+            name="name"
+            rules={[{ required: true, message: "请填写曲名" }]}
+          >
+            <Input
+              placeholder="曲名"
+              maxLength={100}
+              onPressEnter={handleSave}
+            />
+          </FormItem>
+          <FormItem label="来源" name="origin">
+            <Input
+              placeholder="来源"
+              maxLength={200}
+              onPressEnter={handleSave}
+            />
+          </FormItem>
+          <FormItem
+            label="标签"
+            name="tags"
+            rules={[
+              { type: "array" },
+              {
+                validator: (rule, value) => {
+                  if (!value || value.toString().length <= 200) {
+                    return Promise.resolve();
                   }
+                  return Promise.reject("标签总长度不得超过200");
                 }
-              ]}
-            >
-              <Select
-                mode="tags"
-                placeholder="曲目标签"
-                open={false}
-                tokenSeparators={[",", "，"]}
-              ></Select>
-            </FormItem>
-          </Form>
-        </Modal>
-      </div>
-    );
-  }
-}
+              }
+            ]}
+          >
+            <Select
+              mode="tags"
+              placeholder="曲目标签"
+              open={false}
+              tokenSeparators={[",", "，"]}
+            ></Select>
+          </FormItem>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
 
 export default connect(({ songs, loading }) => ({ songs, loading }))(Songs);
