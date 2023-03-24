@@ -8,33 +8,12 @@ export default {
   state: {
     time: 1,
     songs: [],
-    skipVoted: true,
-    onSubmitted: "continue",
-    onEnded: "pause",
     status: {}
   },
 
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload };
-    },
-    toggleSkipVoted(state, { payload }) {
-      if (typeof window.localStorage !== "undefined") {
-        window.localStorage.skipVoted = !state.skipVoted;
-      }
-      return { ...state, skipVoted: !state.skipVoted };
-    },
-    saveOnSubmitted(state, { payload: value }) {
-      if (typeof window.localStorage !== "undefined") {
-        window.localStorage.onSubmitted = value;
-      }
-      return { ...state, onSubmitted: value };
-    },
-    saveOnEnded(state, { payload: value }) {
-      if (typeof window.localStorage !== "undefined") {
-        window.localStorage.onEnded = value;
-      }
-      return { ...state, onEnded: value };
     },
     updateVote(state, { payload: { id, rate } }) {
       const songs = state.songs;
@@ -113,17 +92,6 @@ export default {
           dispatch({ type: "updateState", payload: { time: time } });
           dispatch({ type: "fetchList", payload: time });
           dispatch({ type: "fetchStatus" });
-          const storage = window.localStorage;
-          if (typeof storage !== "undefined") {
-            const skipVoted = storage.skipVoted === "false" ? false : true;
-            const onSubmitted =
-              storage.onSubmitted === "forward" ? "forward" : "continue";
-            const onEnded = storage.onEnded === "forward" ? "forward" : "pause";
-            dispatch({
-              type: "updateState",
-              payload: { skipVoted, onSubmitted, onEnded }
-            });
-          }
         }
       });
     }

@@ -8,9 +8,12 @@ import styles from "./index.less";
 import Player from "../Player";
 import { voteTexts } from "config";
 import useIsDesktop from "../../hooks/useIsDesktop";
+import useVotePreferences from "../../hooks/useVotePreferences";
 
-const VoteList = ({ vote, dispatch, loading, time, songs }) => {
+const VoteList = ({ dispatch, loading, time, songs }) => {
   const isDesktop = useIsDesktop();
+  const [preferences] = useVotePreferences();
+
   const playerRef = useRef(null);
   const [rate, setRate] = useState(0);
   const [src, setSrc] = useState("");
@@ -105,7 +108,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   };
 
   const forward = () => {
-    const { skipVoted } = vote;
+    const { skipVoted } = preferences;
     let newIndex = Number(index) + 1;
     if (skipVoted) {
       while (songs[newIndex] && songs[newIndex].vote !== 0) {
@@ -120,7 +123,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   };
 
   const backward = () => {
-    const { skipVoted } = vote;
+    const { skipVoted } = preferences;
     let newIndex = Number(index) - 1;
     if (skipVoted) {
       while (songs[newIndex] && songs[newIndex].vote !== 0) {
@@ -150,7 +153,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   };
 
   const handleVote = (type = null) => {
-    const { onSubmitted } = vote;
+    const { onSubmitted } = preferences;
     const song = songs[index];
     const validity = checkValidity();
     if (validity !== "valid") {
@@ -172,7 +175,7 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   };
 
   const onEnded = () => {
-    const { onEnded } = vote;
+    const { onEnded } = preferences;
     const song = songs[index];
     const validity = checkValidity();
     if (song.vote === 0) {
@@ -360,4 +363,4 @@ const VoteList = ({ vote, dispatch, loading, time, songs }) => {
   );
 };
 
-export default connect(({ vote, loading }) => ({ vote, loading }))(VoteList);
+export default connect(({ loading }) => ({ loading }))(VoteList);

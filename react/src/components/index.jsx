@@ -9,6 +9,7 @@ import TimeSelector from "./TimeSelector";
 import PhaseCountdown from "./PhaseCountdown";
 import StatusNotice from "./StatusNotice";
 import Header from "./Header";
+import VotePreferencesModal from "./VotePreferencesModal";
 
 export {
   Sidebar,
@@ -21,5 +22,6 @@ export {
   TimeSelector,
   PhaseCountdown,
   StatusNotice,
-  Header
+  Header,
+  VotePreferencesModal
 };
