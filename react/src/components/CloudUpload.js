@@ -20,7 +20,6 @@ const Option = AutoComplete.Option;
 const CloudUpload = ({ upload, loading, dispatch }) => {
   const { searchResult } = upload;
   const [visible, setVisible] = useState(false);
-  const [playing, setPlaying] = useState(false);
   const [row, setRow] = useState(null);
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
@@ -73,11 +72,6 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
     }
   };
 
-  const onCancel = () => {
-    setPlaying(false);
-    setVisible(false);
-  }
-
   const openModal = row => {
     // music.163.com/song/media/outer/url?id={id}.mp3
     setRow(row);
@@ -129,7 +123,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
       {row && (
         <Modal
           open={visible}
-          onCancel={onCancel}
+          onCancel={() => setVisible(false)}
           confirmLoading={loading.effects["upload/upload"]}
           okText="上传"
           title="上传歌曲"
@@ -164,13 +158,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
             </FormItem>
             <FormItem label="试听">
               <Spin spinning={!row.mp3}>
-                <YPlayer
-                  src={row.mp3}
-                  playing={playing}
-                  onChange={setPlaying}
-                  mini
-                  style={{ marginTop: "1px" }}
-                />
+                <YPlayer src={row.mp3} mini style={{ marginTop: "1px" }} />
               </Spin>
             </FormItem>
           </Form>
