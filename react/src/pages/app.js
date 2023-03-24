@@ -2,7 +2,7 @@ import dva from "dva";
 import createLoading from "dva-loading";
 // import { createSentry, Raven } from "utils";
 import { message } from "antd";
-import "./app.css";
+import "./app.less";
 
 // 1. Initialize
 const app = dva({

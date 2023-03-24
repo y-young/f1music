@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "dva";
 import { Col, Row, Card } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import styles from "./Statistics.css";
+import styles from "./Statistics.less";
 import Title from "../../hooks/useTitle";
 
 const Statistics = ({ statistics, loading }) => {

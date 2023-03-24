@@ -4,7 +4,7 @@ import { Link } from "dva/router";
 import { Spin, Input, Rate, Button, message } from "antd";
 import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import styles from "./index.css";
+import styles from "./index.less";
 import Player from "../Player";
 import { voteTexts } from "config";
 import useIsDesktop from "../../hooks/useIsDesktop";

@@ -9,7 +9,7 @@ import {
   UploadOutlined,
   FormOutlined
 } from "@ant-design/icons";
-import styles from "./index.css";
+import styles from "./index.less";
 
 const Sidebar = ({ collapsed, loggedIn, location, history }) => {
   const sidebarClass = classnames({
