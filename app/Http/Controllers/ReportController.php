@@ -19,7 +19,7 @@ class ReportController extends Controller
     public function report(Request $request)
     {
         Validator::make($request->all(), [
-            'id' => 'required | exists:songs',
+            'id' => 'required | numeric | integer | exists:songs',
             'reason' => 'required | string | max: 200'
         ], self::messages)->validate();
 

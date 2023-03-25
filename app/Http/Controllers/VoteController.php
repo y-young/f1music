@@ -28,7 +28,7 @@ class VoteController extends Controller
             return $this->error('投票未开放', 2);
         }
         Validator::make($request->all(), [
-            'id' => 'required | exists:songs',
+            'id' => 'required | numeric | integer | exists:songs',
             'vote' => [
                 'required',
                 Rule::in([1, 2, 3, 4, 5])
