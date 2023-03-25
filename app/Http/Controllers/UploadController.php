@@ -56,7 +56,7 @@ class UploadController extends Controller
             ],
             'name' => 'required | string | max: 100',
             'origin' => 'nullable | string | max: 200',
-            'id' => 'required_without:file | numeric | integer | min: 0',
+            'id' => ['required_without:file', 'numeric', 'integer', 'min:0'],
             'file' => ['required_without:id', 'file', 'mimetypes:application/octet-stream,audio/mpeg', 'min: 1024', 'max: 20480']
             //某些mp3文件的mimetype会被识别为application/octet-stream,此处临时放行,后面交由getID3验证
             //mp3的MIMEType是audio/mpeg,要使用mimes得写mpga
