@@ -106,9 +106,15 @@
 }
 .contentInner {
   position: relative;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
+  transition: max-width 250ms ease;
 }
+
+.app.withSidebar .contentInner {
+  max-width: 800px;
+}
+
 @media (min-width: 2560px) {
   .contentInner {
     max-width: 2000px;
