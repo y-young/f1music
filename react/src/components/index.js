@@ -8,6 +8,7 @@ import ViewUploads from "./ViewUploads";
 import TimeSelector from "./TimeSelector";
 import PhaseCountdown from "./PhaseCountdown";
 import StatusNotice from "./StatusNotice";
+import Audio from "./Audio";
 
 export {
   Sidebar,
@@ -19,5 +20,6 @@ export {
   ViewUploads,
   TimeSelector,
   PhaseCountdown,
-  StatusNotice
+  StatusNotice,
+  Audio
 };

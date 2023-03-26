@@ -20,6 +20,7 @@ import {
   ReloadOutlined
 } from "@ant-design/icons";
 import { TimeSelector } from "components/admin";
+import { Audio } from "components";
 import { timeFilters } from "config";
 import { renderDateTime, ellipsis } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
@@ -228,7 +229,12 @@ class Songs extends React.Component {
         </InlineFormRow>
         <InlineFormRow>
           <FormItem label="试听">
-            <audio src={row.file.url} controls="controls" preload="none" />
+            <Audio
+              controls
+              preload="none"
+              cloudId={file.cloud_id}
+              src={row.file.url}
+            />
           </FormItem>
           <FormItem label="操作">
             <Space>
