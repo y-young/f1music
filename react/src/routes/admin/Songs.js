@@ -1,6 +1,16 @@
 import React from "react";
 import { connect } from "dva";
-import { Form, Table, Button, Input, Tag, Select, Modal, Space } from "antd";
+import {
+  Form,
+  Table,
+  Button,
+  Input,
+  Tag,
+  Select,
+  Modal,
+  Space,
+  Badge
+} from "antd";
 import {
   SearchOutlined,
   EditOutlined,
@@ -11,7 +21,7 @@ import {
 } from "@ant-design/icons";
 import { TimeSelector } from "components/admin";
 import { timeFilters } from "config";
-import { renderDateTime } from "utils/utils";
+import { renderDateTime, ellipsis } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 
 const FormItem = Form.Item;
@@ -72,7 +82,7 @@ class Songs extends React.Component {
             搜索
           </Button>
           <Button
-            onClick={() => this.handleReset(clearFilters)}
+            onClick={() => this.handleReset(clearFilters, confirm)}
             size="small"
             style={{ width: 90 }}
           >
@@ -101,9 +111,10 @@ class Songs extends React.Component {
     });
   };
 
-  handleReset = clearFilters => {
+  handleReset = (clearFilters, confirm) => {
     clearFilters();
     this.setState({ searchText: "" });
+    confirm();
   };
 
   onSelectChange = selectedRowKeys => {
@@ -298,7 +309,22 @@ class Songs extends React.Component {
       {
         dataIndex: "name",
         title: "曲名",
-        ...this.getColumnSearchProps("name")
+        ...this.getColumnSearchProps("name"),
+        render: (text, record) => (
+          <Badge
+            dot={record.reports_count > 0}
+            title={`${record.reports_count} 条反馈`}
+          >
+            <span style={{ lineHeight: 1.5715 }}>{text}</span>
+          </Badge>
+        )
+      },
+      {
+        dataIndex: "origin",
+        title: "来源",
+        width: "100px",
+        ...this.getColumnSearchProps("origin"),
+        render: text => ellipsis(text, 50)
       },
       {
         title: "标签",
@@ -326,12 +352,6 @@ class Songs extends React.Component {
         dataIndex: "created_at",
         title: "时间",
         render: renderDateTime
-      },
-      {
-        dataIndex: "reports_count",
-        title: "反馈数",
-        width: "100px",
-        sorter: (a, b) => a.reports_count - b.reports_count
       }
     ];
 
