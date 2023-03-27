@@ -14,7 +14,7 @@ export function renderDateTime(datetime) {
 }
 
 export const ellipsis = (text, maxLength) => {
-  if (text.length > maxLength) {
+  if (text && text.length > maxLength) {
     return <span title={text}>{text.slice(0, maxLength)}...</span>;
   }
   return text;
