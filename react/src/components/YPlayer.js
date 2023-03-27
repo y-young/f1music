@@ -8,6 +8,7 @@ import {
   StepBackwardOutlined,
   LoadingOutlined
 } from "@ant-design/icons";
+import { Audio, VolumeControl } from "components";
 
 class YPlayer extends React.Component {
   state = {
@@ -162,11 +163,15 @@ class YPlayer extends React.Component {
     }
   };
 
+  handleVolumeChange = value => {
+    this.audio.volume = value;
+  };
+
   render() {
     const { mini } = this.props;
     const loaded = this.state.loaded;
     const audio = (
-      <audio
+      <Audio
         ref={audio => {
           this.audio = audio;
         }}
@@ -182,6 +187,7 @@ class YPlayer extends React.Component {
         preload="none"
       />
     );
+
     if (!mini) {
       return (
         <div>
@@ -227,6 +233,10 @@ class YPlayer extends React.Component {
             >
               <StepForwardOutlined style={{ color: "#9f9f9f" }} />
             </Button>
+            <VolumeControl
+              onChange={this.handleVolumeChange}
+              className={styles.volumeControl}
+            />
           </div>
           <div
             className={styles.bufferDetail}
@@ -257,6 +267,10 @@ class YPlayer extends React.Component {
             {this.formatTime(this.state.displayTime)} /{" "}
             {this.formatTime(this.state.duration)}
           </div>
+          <VolumeControl
+            onChange={this.handleVolumeChange}
+            className={styles.volumeControl}
+          />
         </div>
       );
     }

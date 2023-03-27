@@ -9,6 +9,7 @@ import TimeSelector from "./TimeSelector";
 import PhaseCountdown from "./PhaseCountdown";
 import StatusNotice from "./StatusNotice";
 import Audio from "./Audio";
+import VolumeControl from "./VolumeControl";
 
 export {
   Sidebar,
@@ -21,5 +22,6 @@ export {
   TimeSelector,
   PhaseCountdown,
   StatusNotice,
-  Audio
+  Audio,
+  VolumeControl
 };

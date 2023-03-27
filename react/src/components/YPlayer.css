@@ -26,3 +26,7 @@
   float: left;
   white-space: nowrap;
 }
+
+.volumeControl {
+  margin-left: 10px;
+}
