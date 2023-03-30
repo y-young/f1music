@@ -22,7 +22,7 @@ import {
 import { TimeSelector } from "components/admin";
 import { Audio } from "components";
 import { timeFilters } from "config";
-import { renderDateTime, ellipsis } from "utils/utils";
+import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 
 const FormItem = Form.Item;
@@ -374,9 +374,12 @@ class Songs extends React.Component {
         ...this.getColumnSearchProps("tags")
       },
       {
-        dataIndex: "created_at",
-        title: "时间",
-        render: renderDateTime
+        dataIndex: type === "trashed" ? "deleted_at" : "created_at",
+        title: type === "trashed" ? "删除时间" : "时间",
+        render: renderDateTime,
+        sorter:
+          type === "trashed" &&
+          ((a, b) => dateSorter(a.deleted_at, b.deleted_at))
       }
     ];
 
