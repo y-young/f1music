@@ -39,6 +39,25 @@ const colors = [
   "geekblue",
   "purple"
 ];
+const tags = [
+  "OK",
+  "不合适",
+  "时段",
+  "曾用",
+  "人声",
+  "音效",
+  "版本",
+  "音质",
+  "过于激烈",
+  "激烈",
+  "催眠",
+  "国产",
+  "大众",
+  "纯钢琴",
+  "纯吉他",
+  "电子",
+  ...[1, 2, 3, 4, 5, 6].map(v => `或${v}`)
+];
 
 class Songs extends React.Component {
   state = {
@@ -465,9 +484,12 @@ class Songs extends React.Component {
               <Select
                 mode="tags"
                 placeholder="曲目标签"
-                open={false}
                 tokenSeparators={[",", "，"]}
-              ></Select>
+                options={tags.map(tag => ({
+                  label: tag,
+                  value: tag
+                }))}
+              />
             </FormItem>
           </Form>
         </Modal>
