@@ -1,16 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import {
-  Form,
-  Table,
-  Button,
-  Input,
-  Tag,
-  Select,
-  Modal,
-  Space,
-  Badge
-} from "antd";
+import { Form, Table, Button, Input, Tag, Modal, Space, Badge } from "antd";
 import {
   SearchOutlined,
   EditOutlined,
@@ -19,7 +9,7 @@ import {
   DownloadOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
-import { TimeSelector } from "components/admin";
+import { TimeSelector, TagsSelect } from "components/admin";
 import { Audio } from "components";
 import { timeFilters } from "config";
 import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
@@ -38,25 +28,6 @@ const colors = [
   "blue",
   "geekblue",
   "purple"
-];
-const tags = [
-  "OK",
-  "不合适",
-  "时段",
-  "曾用",
-  "人声",
-  "音效",
-  "版本",
-  "音质",
-  "过于激烈",
-  "激烈",
-  "催眠",
-  "国产",
-  "大众",
-  "纯钢琴",
-  "纯吉他",
-  "电子",
-  ...[1, 2, 3, 4, 5, 6].map(v => `或${v}`)
 ];
 
 class Songs extends React.Component {
@@ -484,15 +455,7 @@ class Songs extends React.Component {
                 }
               ]}
             >
-              <Select
-                mode="tags"
-                placeholder="曲目标签"
-                tokenSeparators={[",", "，"]}
-                options={tags.map(tag => ({
-                  label: tag,
-                  value: tag
-                }))}
-              />
+              <TagsSelect placeholder="曲目标签" />
             </FormItem>
           </Form>
         </Modal>
