@@ -33,7 +33,14 @@ const Home = ({ app, loading }) => {
           {
             label: "各时段音乐要求",
             key: "requirements",
-            children: <TimePeriodDescription />
+            children: (
+              <>
+                <p>
+                  上传时请根据歌曲特征推荐播放时段，投票时请参考歌曲所在时段的音乐要求进行评价。
+                </p>
+                <TimePeriodDescription />
+              </>
+            )
           }
         ]}
         activeKey={activeTab}
