@@ -1,50 +1,70 @@
 import { request } from "utils/admin";
+import { removeById } from "utils";
 import { api } from "utils/admin/config";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
+import produce from "immer";
 
 const { songs, trashedSongs, trashSongs, restoreSongs } = api;
 
-export async function Songs() {
-  return request({
-    url: songs,
-    method: "get"
-  });
-}
+export const useSongs = (trashed = false) => {
+  const url = trashed ? trashedSongs : songs;
+  const swr = useSWR(url, () =>
+    request({
+      url,
+      method: "get"
+    }).then((data) => data.songs)
+  );
 
-export async function TrashedSongs() {
-  return request({
-    url: trashedSongs,
-    method: "get"
-  });
-}
+  const save = useSWRMutation(url, async (_, { arg }) =>
+    request({
+      url: songs,
+      method: "put",
+      data: arg
+    }).then(() => {
+      swr.mutate(
+        (data) =>
+          produce(data, (draft) => {
+            const index = draft.findIndex((song) => song.id === arg.id);
+            if (index !== -1) {
+              draft[index] = { ...draft[index], ...arg };
+            }
+          }),
+        { revalidate: false }
+      );
+      return true;
+    })
+  );
 
-export async function Save(params) {
-  return request({
-    url: songs,
-    method: "put",
-    data: params
-  });
-}
+  const trash = useSWRMutation(songs, async (_, { arg: id }) =>
+    request({
+      url: trashSongs,
+      method: "post",
+      data: { id }
+    }).then(() => {
+      swr.mutate((data) => removeById(data, id), { revalidate: false });
+    })
+  );
 
-export async function Trash(id) {
-  return request({
-    url: trashSongs,
-    method: "post",
-    data: { id: id }
-  });
-}
+  const restore = useSWRMutation(trashedSongs, async (_, { arg: id }) =>
+    request({
+      url: restoreSongs,
+      method: "post",
+      data: { id }
+    }).then(() => {
+      swr.mutate((data) => removeById(data, id), { revalidate: false });
+    })
+  );
 
-export async function Restore(id) {
-  return request({
-    url: restoreSongs,
-    method: "post",
-    data: { id: id }
-  });
-}
+  const del = useSWRMutation(trashedSongs, async (_, { arg: id }) =>
+    request({
+      url: songs,
+      method: "delete",
+      data: { id }
+    }).then(() => {
+      swr.mutate((data) => removeById(data, id), { revalidate: false });
+    })
+  );
 
-export async function Delete(id) {
-  return request({
-    url: songs,
-    method: "delete",
-    data: { id: id }
-  });
-}
+  return { ...swr, save, trash, restore, del };
+};

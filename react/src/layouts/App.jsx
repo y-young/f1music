@@ -1,18 +1,16 @@
-import React from "react";
-import { connect } from "dva";
 import classnames from "classnames";
-import { withRouter } from "dva/router";
 import { Sidebar, Footer, Header } from "components";
 import { ConfigProvider, Layout } from "antd";
+import { useLocation } from "react-router-dom";
 import zhCN from "antd/es/locale/zh_CN";
 import "antd/dist/antd.css";
-import styles from "./App.less";
+import styles from "./App.module.less";
 import useSidebar from "../hooks/useSidebar";
 
 const { Content } = Layout;
 
-const App = ({ children, app, location }) => {
-  const { loggedIn } = app;
+const App = ({ children }) => {
+  const location = useLocation();
   const [sidebarCollapsed, toggleSidebar] = useSidebar(location);
 
   const appClass = classnames({
@@ -23,7 +21,7 @@ const App = ({ children, app, location }) => {
   return (
     <ConfigProvider locale={zhCN}>
       <div className={appClass}>
-        <Sidebar collapsed={sidebarCollapsed} loggedIn={loggedIn} />
+        <Sidebar collapsed={sidebarCollapsed} />
         <div className={styles.overlay} onClick={toggleSidebar} />
         <div className={styles.container}>
           <div className={styles.containerInner}>
@@ -42,4 +40,4 @@ const App = ({ children, app, location }) => {
   );
 };
 
-export default withRouter(connect(({ app }) => ({ app }))(App));
+export default App;

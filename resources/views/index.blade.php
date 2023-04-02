@@ -10,14 +10,12 @@
   <link rel="icon" href="{{url('/favicon.ico')}}" type="image/x-icon" />
   <link rel="shortcut icon" href="{{url('/favicon.ico')}}" type="image/x-icon" />
   <meta name="description" content="福州一中 校园音乐征集">
-  <meta name="keywords" content="福州一中,校园音乐,FZYZ,FZYZ SCAN">
-  <link rel="stylesheet" href="{{ mix_old('app.css') }}">
+  @vite('index.html')
   <title>首页 - 福州一中 校园音乐征集</title>
 </head>
 
 <body>
   <div id="root"></div>
-  <script src="{{ mix_old('app.js') }}"></script>
 </body>
 
 </html>

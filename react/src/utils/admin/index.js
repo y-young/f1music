@@ -1,5 +1,3 @@
-import config from "./config";
-import request from "./request";
-import { createSentry, Raven } from "../sentry";
+import request from "../request";
 
-export { config, request, createSentry, Raven };
+export { request };

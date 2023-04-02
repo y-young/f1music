@@ -1,6 +1,5 @@
 import React from "react";
 import classnames from "classnames";
-import { withRouter } from "dva/router";
 import { Menu } from "antd";
 import {
   HomeOutlined,
@@ -11,9 +10,13 @@ import {
   BarChartOutlined,
   ArrowLeftOutlined
 } from "@ant-design/icons";
-import styles from "../Sidebar/index.less";
+import { useLocation, useNavigate } from "react-router-dom";
+import styles from "../Sidebar/index.module.less";
 
-const Sidebar = ({ collapsed, location, history }) => {
+const Sidebar = ({ collapsed }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const sidebarClass = classnames({
     [styles.sidebar]: true,
     [styles.show]: !collapsed
@@ -41,7 +44,7 @@ const Sidebar = ({ collapsed, location, history }) => {
     if (key === "back") {
       window.location.href = "/";
     } else {
-      history.push(key);
+      navigate("/manage" + key);
     }
   };
 
@@ -51,7 +54,7 @@ const Sidebar = ({ collapsed, location, history }) => {
       <Menu
         className={styles.nav}
         mode="inline"
-        selectedKeys={[location.pathname]}
+        selectedKeys={[location.pathname.replace(/^\/manage\/?/, "/")]}
         defaultOpenKeys={["/song"]}
         items={menuItems}
         onClick={handleMenuClick}
@@ -60,4 +63,4 @@ const Sidebar = ({ collapsed, location, history }) => {
   );
 };
 
-export default withRouter(Sidebar);
+export default Sidebar;

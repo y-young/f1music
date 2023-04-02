@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import { connect } from "dva";
-import { Link } from "dva/router";
+import { Link } from "react-router-dom";
 import { Spin, Input, Rate, Button, message } from "antd";
 import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import styles from "./index.less";
+import styles from "./index.module.less";
 import Player from "../Player";
 import { voteTexts } from "config";
 import useIsDesktop from "../../hooks/useIsDesktop";
 import useVotePreferences from "../../hooks/useVotePreferences";
+import { useVoteList, useVote, useReport } from "services/vote";
 
-const VoteList = ({ dispatch, loading, time, songs }) => {
+const VoteList = ({ time }) => {
   const isDesktop = useIsDesktop();
   const [preferences] = useVotePreferences();
+
+  const voteList = useVoteList(time);
+  const songs = voteList.data ?? [];
+
+  const vote = useVote();
+  const report = useReport();
 
   const playerRef = useRef(null);
   const [rate, setRate] = useState(0);
@@ -60,14 +66,14 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
     }
   };
 
-  const timeListener = offset => {
+  const timeListener = (offset) => {
     const song = songs[index];
 
     if (countdown > 0) {
-      setCountdown(prevCountdown => prevCountdown - offset);
+      setCountdown((prevCountdown) => prevCountdown - offset);
     } else {
       if (!song.listened && song.vote === 0) {
-        dispatch({ type: "vote/markListened", payload: song.id });
+        voteList.markListened(song.id);
       }
       // triggerVote: Only when first listen
       if (triggerVote) {
@@ -77,7 +83,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
     }
   };
 
-  const handleSwitch = newIndex => {
+  const handleSwitch = (newIndex) => {
     const player = playerRef.current;
 
     if (index === newIndex) {
@@ -100,7 +106,10 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
     return newIndex;
   };
 
-  const updateButtonStatus = index => {
+  const updateButtonStatus = (index) => {
+    if (index === "") {
+      return;
+    }
     const previous = Number(index) - 1;
     const next = Number(index) + 1;
     setCanBackward(songs[previous] !== undefined);
@@ -152,7 +161,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
     return "valid";
   };
 
-  const handleVote = (type = null) => {
+  const handleVote = async (type = null) => {
     const { onSubmitted } = preferences;
     const song = songs[index];
     const validity = checkValidity();
@@ -160,16 +169,15 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
       return;
     }
     const id = song.id;
-    dispatch({ type: "vote/vote", payload: { id, rate } }).then(success => {
-      if (success) {
-        message.success("投票成功");
-        setCanSubmit(false);
-        if (
-          (type === "manual" && onSubmitted === "forward") ||
-          type === "ended"
-        ) {
-          forward();
-        }
+    await vote.trigger({ id, vote: rate }).then(() => {
+      message.success("投票成功");
+      setCanSubmit(false);
+      voteList.updateVote(id, rate);
+      if (
+        (type === "manual" && onSubmitted === "forward") ||
+        type === "ended"
+      ) {
+        forward();
       }
     });
   };
@@ -189,19 +197,19 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
     }
   };
 
-  const submitReport = () => {
+  const submitReport = async () => {
+    if (!reason) {
+      message.error("请填写反馈内容");
+      return;
+    }
     const id = songs[index].id;
-    dispatch({
-      type: "vote/report",
-      payload: { id: id, reason: reason }
-    }).then(success => {
-      if (success) {
-        setShowReport(false);
-      }
+    await report.trigger({ id, reason }).then(() => {
+      message.success("提交成功");
+      setShowReport(false);
     });
   };
 
-  const handleRatingChange = value => {
+  const handleRatingChange = (value) => {
     setRate(value);
     setCanSubmit(true);
   };
@@ -239,7 +247,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
         </div>
       )}
       <Button
-        loading={loading.effects["vote/vote"]}
+        loading={vote.isMutating}
         className={styles.voteButton}
         onClick={() => handleVote("manual")}
         {...buttonProps}
@@ -255,7 +263,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
         <Input
           value={reason}
           placeholder="反馈内容"
-          onChange={e => setReason(e.target.value)}
+          onChange={(e) => setReason(e.target.value)}
           maxLength={200}
           onPressEnter={submitReport}
         />
@@ -263,7 +271,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
       <Button
         type="primary"
         onClick={submitReport}
-        loading={loading.effects["vote/report"]}
+        loading={report.isMutating}
         className={styles.reportButton}
       >
         提交
@@ -288,7 +296,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
 
   const notice = () => {
     let voted = 0;
-    songs.forEach(song => {
+    songs.forEach((song) => {
       if (song.vote !== 0) {
         voted++;
       }
@@ -316,9 +324,9 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
   };
 
   return (
-    <Spin spinning={loading.effects["vote/fetchList"]}>
+    <Spin spinning={voteList.isLoading}>
       {songs.length !== 0 ? (
-        <span>
+        <>
           <div>
             <Player
               src={src}
@@ -334,7 +342,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
             <br />
             <Button
               size="small"
-              onClick={() => setShowReport(showReport => !showReport)}
+              onClick={() => setShowReport((showReport) => !showReport)}
               disabled={index === ""}
               className={styles.toggleReport}
             >
@@ -355,7 +363,7 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
           </TransitionGroup>
           <ol className={styles.list}>{list}</ol>
           {notice()}
-        </span>
+        </>
       ) : (
         <div className="tips">投票未开放或暂无数据</div>
       )}
@@ -363,4 +371,4 @@ const VoteList = ({ dispatch, loading, time, songs }) => {
   );
 };
 
-export default connect(({ loading }) => ({ loading }))(VoteList);
+export default VoteList;

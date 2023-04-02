@@ -1,16 +1,22 @@
 # Frontend builder
 FROM node:16-slim as frontend
 
+RUN npm config set registry https://registry.npmmirror.com/ && \
+    npm install -g pnpm@^8
+
 WORKDIR /app/react
 
-COPY react/ /app/react/
+# Files required by pnpm install
+COPY react/package.json react/pnpm-lock.yaml ./
+
+RUN pnpm config set registry https://registry.npmmirror.com/ && \
+    pnpm install --frozen-lockfile
+
+COPY react/ .
 
 RUN mkdir /app/public
 
-RUN yarn config set registry https://registry.npmmirror.com/ && \
-    yarn install
-
-RUN yarn run build
+RUN pnpm build
 
 
 # Backend dependency builder for production

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { connect } from "dva";
+import { useState } from "react";
 import {
   Form,
   Modal,
@@ -7,33 +6,37 @@ import {
   Input,
   Table,
   Button,
-  Spin,
   message
 } from "antd";
 import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
 import { Player, TimeSelector } from "components";
+import { useSearch, useUpload, useMyUploads } from "services/upload";
 
 const Search = Input.Search;
 const FormItem = Form.Item;
 const Option = AutoComplete.Option;
 
-const CloudUpload = ({ upload, loading, dispatch }) => {
-  const { searchResult } = upload;
-  const [visible, setVisible] = useState(false);
+const CloudUpload = () => {
   const [row, setRow] = useState(null);
+  const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
+
+  const [keyword, setKeyword] = useState("");
+  const { fetchMp3, ...search } = useSearch(keyword);
+  const searchResult = search.data ?? [];
+
+  const upload = useUpload();
+  const myUploads = useMyUploads();
 
   const columns = [
     {
       title: "上传",
-      render: row => (
+      render: (row) => (
         <Button
           icon={<UploadOutlined />}
-          loading={loading.effects["upload/fetchMp3"]}
-          onClick={() => {
-            openModal(row);
-          }}
+          loading={fetchMp3.isMutating}
+          onClick={() => openModal(row)}
         />
       ),
       fixed: "left",
@@ -57,65 +60,66 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
       dataIndex: "artist",
       title: "歌手",
       width: 150,
-      render: text => text.join(", ")
+      render: (text) => text.join(", ")
     },
     { dataIndex: "album", title: "专辑", width: 200 }
   ];
 
-  const search = keyword => {
-    if (keyword) {
-      dispatch({ type: "upload/search", payload: keyword }).then(() =>
-        setPage(1)
-      );
+  const handleSearch = async (newKeyword) => {
+    if (newKeyword) {
+      const oldKeyword = keyword;
+      setKeyword(newKeyword);
+      // Provide a way to manually refresh the data
+      if (oldKeyword === newKeyword) {
+        await search.mutate();
+      }
+      setPage(1);
     } else {
       message.error("请输入搜索词或粘贴链接");
     }
   };
 
-  const openModal = row => {
-    // music.163.com/song/media/outer/url?id={id}.mp3
+  const openModal = async (row) => {
     setRow(row);
-    form.setFieldsValue({ name: row.name, origin: row.artist.join(", ") });
-    if (!row.mp3) {
-      dispatch({ type: "upload/fetchMp3", payload: row }).then(success => {
-        if (success) {
-          setVisible(true);
-        }
-      });
-    } else {
+    form.setFieldsValue({
+      name: row.name,
+      origin: row.artist.join(", ")
+    });
+    const mp3Available = row.mp3 ?? (await fetchMp3.trigger(row.id));
+    if (mp3Available) {
       setVisible(true);
+    } else {
+      message.error("暂不支持上传付费歌曲,请使用手动上传");
     }
   };
 
-  const handleUpload = id => {
+  const handleUpload = async (id) =>
     form
       .validateFields()
-      .then(values => {
-        values = { id: id, ...values };
-        dispatch({ type: "upload/upload", payload: values }).then(success => {
-          if (success) {
-            setVisible(false);
-          }
+      .then((values) => {
+        values = { id, ...values };
+        upload.trigger(values).then(() => {
+          message.success("上传成功");
+          setVisible(false);
+          myUploads.mutate();
         });
       })
-      .catch(error => {});
-  };
+      .catch(() => {});
 
   return (
     <div>
       <Search
         placeholder="输入关键词或粘贴歌曲、专辑、歌单链接"
         enterButton
-        onSearch={search}
-        onPressEnter={e => search(e.target.value)}
+        onSearch={handleSearch}
         style={{ marginBottom: "10px" }}
         required
-        loading={loading.effects["upload/search"]}
+        loading={search.isValidating}
       />
       <Table
-        dataSource={searchResult}
+        dataSource={search.data}
         columns={columns}
-        loading={loading.effects["upload/search"]}
+        loading={search.isValidating}
         rowKey="id"
         pagination={{ current: page, onChange: setPage }}
         scroll={{ x: 500 }}
@@ -124,7 +128,7 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
         <Modal
           open={visible}
           onCancel={() => setVisible(false)}
-          confirmLoading={loading.effects["upload/upload"]}
+          confirmLoading={upload.isMutating}
           okText="上传"
           title="上传歌曲"
           onOk={() => handleUpload(row.id)}
@@ -157,14 +161,15 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
               </AutoComplete>
             </FormItem>
             <FormItem label="试听">
-              <Spin spinning={!row.mp3}>
-                <Player src={row.mp3} mini style={{ marginTop: "1px" }} />
-              </Spin>
+              <Player
+                src={`https://music.163.com/song/media/outer/url?id=${row.id}.mp3`}
+                mini
+              />
             </FormItem>
           </Form>
         </Modal>
       )}
-      {searchResult.length !== 0 && (
+      {searchResult.length > 0 && (
         <div className="tips">
           <BulbOutlined /> 遇到了问题？试试手动上传吧
         </div>
@@ -173,6 +178,4 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   );
 };
 
-export default connect(({ upload, loading }) => ({ upload, loading }))(
-  CloudUpload
-);
+export default CloudUpload;

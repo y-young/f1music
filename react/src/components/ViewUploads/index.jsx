@@ -1,19 +1,17 @@
 import React from "react";
-import { connect } from "dva";
 import { Table } from "antd";
 import { timeIdToText, timeFilters } from "config";
+import { useMyUploads } from "services/upload";
 
-const ViewUploads = ({ upload, loading }) => {
-  const { songs } = upload;
+const ViewUploads = () => {
+  const { data, isLoading } = useMyUploads();
 
   const columns = [
     {
       dataIndex: "playtime",
       title: "时段",
       width: 70,
-      render: text => {
-        return timeIdToText[text];
-      },
+      render: text => timeIdToText[text],
       filters: timeFilters,
       onFilter: (value, record) => record.playtime === value
     },
@@ -28,19 +26,15 @@ const ViewUploads = ({ upload, loading }) => {
   return (
     <div>
       <Table
-        dataSource={songs}
+        dataSource={data}
         columns={columns}
-        loading={loading.effects["upload/fetchUploads"]}
+        loading={isLoading}
         pagination={false}
-        rowKey={record => {
-          return record.playtime + record.name;
-        }}
+        rowKey={record => record.playtime + record.name}
         scroll={{ x: 600 }}
       />
     </div>
   );
 };
 
-export default connect(({ upload, loading }) => ({ upload, loading }))(
-  ViewUploads
-);
+export default ViewUploads;

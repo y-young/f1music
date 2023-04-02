@@ -1,16 +1,17 @@
 import React from "react";
 import classnames from "classnames";
-import { withRouter } from "dva/router";
+import { useLocation } from "react-router-dom";
 import { Sidebar, Footer, Header } from "components/admin";
 import { ConfigProvider, Layout } from "antd";
 import zhCN from "antd/es/locale/zh_CN";
 import "antd/dist/antd.css";
-import styles from "./App.less";
+import styles from "./App.module.less";
 import useSidebar from "../hooks/useSidebar";
 
 const { Content } = Layout;
 
-const Admin = ({ children, location }) => {
+const Admin = ({ children }) => {
+  const location = useLocation();
   const [sidebarCollapsed, toggleSidebar] = useSidebar(location);
 
   const appClass = classnames({
@@ -40,4 +41,4 @@ const Admin = ({ children, location }) => {
   );
 };
 
-export default withRouter(Admin);
+export default Admin;

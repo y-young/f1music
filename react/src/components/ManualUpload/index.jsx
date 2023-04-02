@@ -1,24 +1,23 @@
 import React, { useState } from "react";
-import { connect } from "dva";
 import { Form, Divider, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { TimeSelector } from "components";
+import { useMyUploads } from "services/upload";
 
 const FormItem = Form.Item;
 
-const ManualUpload = ({ dispatch }) => {
+const ManualUpload = () => {
+  const myUploads = useMyUploads();
+
   const [fileList, setFileList] = useState([]);
   const [form] = Form.useForm();
 
-  const getFormData = () => {
-    const data = form.getFieldsValue();
-    return data;
-  };
+  const getFormData = () => form.getFieldsValue();
 
-  const beforeUpload = file => {
-    return form
+  const beforeUpload = async (file) =>
+    form
       .validateFields()
-      .then(values => {
+      .then((values) => {
         setFileList([]);
         const tooBig = file.size / 1024 / 1024 > 20;
         const tooSmall = file.size / 1024 / 1024 < 1;
@@ -33,15 +32,14 @@ const ManualUpload = ({ dispatch }) => {
         }
         return Promise.resolve();
       })
-      .catch(errors => {
+      .catch((errors) => {
         if (errors) {
           message.error("请修正所有错误后再上传文件");
         }
         return Promise.reject();
       });
-  };
 
-  const onChange = info => {
+  const onChange = (info) => {
     let { file } = info;
     const { response } = file;
 
@@ -50,7 +48,7 @@ const ManualUpload = ({ dispatch }) => {
         message.success("上传成功");
         form.resetFields();
         setFileList([]);
-        dispatch({ type: "upload/fetchUploads" });
+        myUploads.mutate();
       } else {
         message.error(response.msg);
         file.status = "error";
@@ -129,6 +127,4 @@ const ManualUpload = ({ dispatch }) => {
   );
 };
 
-export default connect(({ upload, loading }) => ({ upload, loading }))(
-  ManualUpload
-);
+export default ManualUpload;

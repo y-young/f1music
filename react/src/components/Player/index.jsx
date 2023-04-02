@@ -5,7 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle
 } from "react";
-import styles from "./index.less";
+import styles from "./index.module.less";
 import { Button, Slider, message, Space } from "antd";
 import {
   StepForwardOutlined,

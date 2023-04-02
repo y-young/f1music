@@ -10,6 +10,10 @@ import {
 import { PhaseCountdown } from "components";
 
 const StatusNotice = ({ status }) => {
+  if (!status) {
+    return null;
+  }
+
   const currentTime = moment();
   let title = "正在进行",
     statusText = "...",

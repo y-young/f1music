@@ -1,6 +1,4 @@
-import React from "react";
 import classnames from "classnames";
-import { withRouter } from "dva/router";
 import { Menu } from "antd";
 import {
   HomeOutlined,
@@ -9,9 +7,15 @@ import {
   UploadOutlined,
   FormOutlined
 } from "@ant-design/icons";
-import styles from "./index.less";
+import { useLocation, useNavigate } from "react-router-dom";
+import styles from "./index.module.less";
+import { checkLogin } from "services/app";
 
-const Sidebar = ({ collapsed, loggedIn, location, history }) => {
+const Sidebar = ({ collapsed }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const loggedIn = checkLogin();
+
   const sidebarClass = classnames({
     [styles.sidebar]: true,
     [styles.show]: !collapsed
@@ -49,10 +53,10 @@ const Sidebar = ({ collapsed, loggedIn, location, history }) => {
         selectedKeys={[location.pathname]}
         defaultOpenKeys={["/vote"]}
         items={menuItems}
-        onClick={({ key }) => history.push(key)}
+        onClick={({ key }) => navigate(key)}
       />
     </div>
   );
 };
 
-export default withRouter(Sidebar);
+export default Sidebar;

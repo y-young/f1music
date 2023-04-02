@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(AuthController::class)->group(
+Route::controller(AuthController::class)->prefix('/auth')->group(
     function () {
         Route::post('/login', 'login')->middleware('throttle:20');
+        Route::post('/logout', 'logout');
         Route::get('/check', 'check');
     }
 );
@@ -41,10 +42,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/upload', 'upload')->middleware('throttle:30');
         }
     );
-    Route::controller(VoteController::class)->group(
+    Route::controller(VoteController::class)->prefix("/vote")->group(
         function () {
-            Route::post('/vote/list', 'getSongs')->middleware('throttle:30');
-            Route::post('/vote', 'vote')->middleware('throttle:30');
+            Route::post('/list', 'getSongs')->middleware('throttle:30');
+            Route::post('/', 'vote')->middleware('throttle:30');
         }
     );
     Route::controller(ReportController::class)->group(
@@ -64,17 +65,21 @@ Route::middleware('auth')->group(function () {
 Route::middleware('admin')->withoutMiddleware('throttle:api')->group(function () {
     Route::controller(ManageController::class)->group(
         function () {
-            Route::get('/songs', 'getSongs');
-            Route::get('/songs/{id}', 'viewSong')->whereNumber('id');
-            Route::put('/songs', 'editSong');
-            Route::post('/songs/trash', 'trashSongs');
-            Route::get('/songs/trashed', 'getTrashedSongs');
-            Route::post('/songs/restore', 'restoreSongs');
+            Route::prefix('/songs')->group(function () {
+                Route::get('/', 'getSongs');
+                Route::get('/{id}', 'viewSong')->whereNumber('id');
+                Route::put('/', 'editSong');
+                Route::post('/trash', 'trashSongs');
+                Route::get('/trashed', 'getTrashedSongs');
+                Route::post('/restore', 'restoreSongs');
+            });
 
             Route::get('/files', 'getFiles');
 
-            Route::get('/reports', 'getReports');
-            Route::delete('/reports', 'deleteReports');
+            Route::prefix('/reports')->group(function () {
+                Route::get('/', 'getReports');
+                Route::delete('/', 'deleteReports');
+            });
 
             Route::middleware('can:admin')->group(
                 function () {

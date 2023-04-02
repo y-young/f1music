@@ -10,6 +10,8 @@ import PhaseCountdown from "./PhaseCountdown";
 import StatusNotice from "./StatusNotice";
 import Header from "./Header";
 import VotePreferencesModal from "./VotePreferencesModal";
+import SWRConfig from "./SWRConfig";
+import SuspenseLoading from "./SuspenseLoading";
 
 export {
   Sidebar,
@@ -23,5 +25,7 @@ export {
   PhaseCountdown,
   StatusNotice,
   Header,
-  VotePreferencesModal
+  VotePreferencesModal,
+  SWRConfig,
+  SuspenseLoading
 };

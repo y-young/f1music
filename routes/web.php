@@ -15,15 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('/manage')->middleware('admin')->group(function () {
+    Route::get('/', function () {
+        return view('admin');
+    });
+    Route::get('{path}', function () {
+        return view('admin');
+    })->where('path', '.*');
+});
+
 Route::get('/', function () {
     return view('index');
 });
 
-Route::get(
-    '/manage',
-    function () {
-        return view('admin');
-    }
-)->middleware('admin');
-
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/{path}', function () {
+    return view('index');
+})->where('path', '.*');

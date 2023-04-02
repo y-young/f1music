@@ -57,6 +57,6 @@ class AuthController extends Controller
         Auth::forgetUser();
         Cookie::forget();
         $request->session()->forget('id');
-        return redirect('/#/login');
+        return $this->success();
     }
 }

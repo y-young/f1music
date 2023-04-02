@@ -1,7 +1,7 @@
 export const api = {
   status: "/status",
-  login: "/login",
-  logout: "/logout",
+  login: "/auth/login",
+  logout: "/auth/logout",
   list: "/vote/list",
   report: "/report",
   vote: "/vote",
