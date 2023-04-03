@@ -11,8 +11,7 @@ import {
   StepForwardOutlined,
   PauseOutlined,
   CaretRightOutlined,
-  StepBackwardOutlined,
-  LoadingOutlined
+  StepBackwardOutlined
 } from "@ant-design/icons";
 import { Audio } from "components";
 import VolumeControl from "./VolumeControl";
@@ -50,6 +49,7 @@ const Player = (
   useEffect(() => {
     setDisableSliderUpdate(false);
     setDuration(0);
+    setLoaded(0);
     seek(0);
   }, [src]);
 
@@ -118,7 +118,7 @@ const Player = (
       ? audio.buffered.end(audio.buffered.length - 1) / duration
       : 0;
     const percent = loaded * 100;
-    setLoaded(percent);
+    setLoaded(Math.min(percent, 100));
   };
 
   const handlePlay = () => {
@@ -235,6 +235,8 @@ const Player = (
           onChange={handleSeeking}
           onAfterChange={seek}
           tooltip={{ formatter: null }}
+          className={styles.slider}
+          style={{ "--buffer-progress": `${loaded}%` }}
         />
         <div className={styles.timeDetail}>{timeDetail}</div>
       </div>
@@ -259,18 +261,6 @@ const Player = (
           className={styles.volumeControl}
         />
       </Space>
-      {src && (
-        <div className={styles.bufferDetail}>
-          {loaded === 100 ? (
-            "缓冲完毕"
-          ) : (
-            <>
-              <LoadingOutlined style={{ marginRight: "2px" }} />
-              {loaded !== 0 && loaded.toFixed(2) + "%"}
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 };
