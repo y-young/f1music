@@ -11,7 +11,7 @@ const Title = ({ children }) => {
   const { setTitle } = useContext(Context);
   useEffect(() => {
     setTitle(children);
-  }, []);
+  }, [children]);
   return null;
 };
 

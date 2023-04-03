@@ -4,13 +4,18 @@ import { TimeSelector, VoteProgress } from "components";
 import { Alert, Button, Col, Result, Row, Spin } from "antd";
 import { ClockCircleTwoTone } from "@ant-design/icons";
 import { PhaseCountdown, VotePreferencesModal, VoteList } from "components";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { useStatus } from "services/app";
 import Title from "hooks/useTitle";
 import { useVoteList } from "services/vote";
+import { timeIdToName } from "utils/config";
 
 const Vote = () => {
   const { time } = useParams();
+  const periodName = timeIdToName[time];
+  if (!periodName) {
+    return <Navigate to="/404" />;
+  }
 
   const status = useStatus();
   const voteStatus = status.data?.vote ?? {};
@@ -24,7 +29,7 @@ const Vote = () => {
 
   return (
     <>
-      <Title>投票</Title>
+      <Title>{`投票 - ${periodName}`}</Title>
       <Spin spinning={status.isLoading}>
         {moment().isBefore(voteStatus.start) ? (
           <Result

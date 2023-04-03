@@ -29,6 +29,15 @@ export const timeIdToText = {
   6: "22:40"
 };
 
+export const timeIdToName = {
+  1: "起床铃",
+  2: "早出门",
+  3: "午出门",
+  4: "晚出门",
+  5: "晚自习结束",
+  6: "熄灯铃"
+};
+
 export const timeFilters = Object.entries(timeIdToText).map(([key, value]) => ({
   text: value,
   value: key
