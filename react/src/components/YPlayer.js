@@ -220,7 +220,7 @@ class YPlayer extends React.Component {
               shape="circle"
               size="large"
               onClick={this.toggle}
-              disabled={this.props.src === ""}
+              disabled={!this.props.src}
             >
               {this.state.playing ? <PauseOutlined /> : <CaretRightOutlined />}
             </Button>

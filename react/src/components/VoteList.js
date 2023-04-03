@@ -11,7 +11,7 @@ import { voteTexts } from "utils/config";
 class VoteList extends React.Component {
   state = {
     rate: 0,
-    src: "",
+    src: undefined,
     reason: "",
     index: "",
     canVote: false,
@@ -43,7 +43,7 @@ class VoteList extends React.Component {
   };
   onRedirect = () => {
     this.stopLast();
-    this.setState({ index: "", src: "" });
+    this.setState({ index: "", src: undefined });
     this.init();
   };
   timeListener = offset => {
