@@ -20,13 +20,6 @@ hr {
   color: #777;
 }
 
-.tips {
-  color: #777;
-  margin-top: 10px;
-  width: 100%;
-  text-align: center;
-}
-
 .fade-enter {
   opacity: 0.01;
 }

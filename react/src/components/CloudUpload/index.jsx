@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Form, Modal, AutoComplete, Input, Table, Button, message } from "antd";
-import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
-import { Player, TimeSelector } from "components";
+import { UploadOutlined } from "@ant-design/icons";
+import { Player, TimeSelector, BottomTips } from "components";
 import { useSearch, useUpload, useMyUploads } from "services/upload";
 
 const Search = Input.Search;
@@ -171,9 +171,7 @@ const CloudUpload = () => {
         </Modal>
       )}
       {searchResult.length > 0 && (
-        <div className="tips">
-          <BulbOutlined /> 遇到了问题？试试手动上传吧
-        </div>
+        <BottomTips>遇到了问题？试试手动上传吧</BottomTips>
       )}
     </div>
   );

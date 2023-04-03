@@ -13,6 +13,7 @@ import VotePreferencesModal from "./VotePreferencesModal";
 import SWRConfig from "./SWRConfig";
 import SuspenseLoading from "./SuspenseLoading";
 import Audio from "./Audio";
+import BottomTips from "./BottomTips";
 
 export {
   Sidebar,
@@ -29,5 +30,6 @@ export {
   VotePreferencesModal,
   SWRConfig,
   SuspenseLoading,
-  Audio
+  Audio,
+  BottomTips
 };

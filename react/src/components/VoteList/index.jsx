@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Spin, Input, Rate, Button, message } from "antd";
-import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
+import { Spin, Input, Rate, Button, message, Empty } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./index.module.less";
 import Player from "../Player";
 import { voteTexts } from "config";
-import useIsDesktop from "../../hooks/useIsDesktop";
-import useVotePreferences from "../../hooks/useVotePreferences";
+import useIsDesktop from "hooks/useIsDesktop";
+import useVotePreferences from "hooks/useVotePreferences";
 import { useVoteList, useVote, useReport } from "services/vote";
+import { BottomTips } from "components";
 
 const VoteList = ({ time }) => {
   const isDesktop = useIsDesktop();
@@ -307,18 +308,17 @@ const VoteList = ({ time }) => {
         rndTime = Math.floor(Math.random() * 5 + 1);
       } while (rndTime === time);
       return (
-        <div className="tips">
-          <BulbOutlined /> 您已投完本时段所有曲目，到
+        <BottomTips>
+          您已投完本时段所有曲目，到
           <Link to={"/vote/" + rndTime}>其他时段</Link>
           看看吧
-        </div>
+        </BottomTips>
       );
     } else {
       return (
-        <div className="tips">
-          <BulbOutlined /> 本时段您已投 {voted} 首曲目，还有{" "}
-          {songs.length - voted} 首未投票曲目
-        </div>
+        <BottomTips>
+          本时段您已投 {voted} 首曲目，还有 {songs.length - voted} 首未投票曲目
+        </BottomTips>
       );
     }
   };
@@ -365,7 +365,7 @@ const VoteList = ({ time }) => {
           {notice()}
         </>
       ) : (
-        <div className="tips">投票未开放或暂无数据</div>
+        <Empty />
       )}
     </Spin>
   );
