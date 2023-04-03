@@ -15,6 +15,7 @@ import SuspenseLoading from "./SuspenseLoading";
 import Audio from "./Audio";
 import BottomTips from "./BottomTips";
 import ReportForm from "./ReportForm";
+import VoteProgress from "./VoteProgress";
 
 export {
   Sidebar,
@@ -33,5 +34,6 @@ export {
   SuspenseLoading,
   Audio,
   BottomTips,
-  ReportForm
+  ReportForm,
+  VoteProgress
 };

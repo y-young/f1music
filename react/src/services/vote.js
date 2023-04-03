@@ -3,6 +3,7 @@ import { api } from "config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import produce from "immer";
+import { useMemo } from "react";
 
 const { list, report, vote } = api;
 
@@ -35,7 +36,13 @@ export const useVoteList = (time) => {
     swr.mutate(newData, { revalidate: false });
   };
 
-  return { ...swr, markListened, updateVote };
+  const songs = swr.data ?? [];
+  const progress = useMemo(
+    () => [songs.filter((song) => song.vote !== 0).length, songs.length],
+    [songs]
+  );
+
+  return { ...swr, data: songs, markListened, updateVote, progress };
 };
 
 export const useReport = () =>

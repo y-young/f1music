@@ -16,7 +16,7 @@ const VoteList = ({ time }) => {
   const [preferences] = useVotePreferences();
 
   const voteList = useVoteList(time);
-  const songs = voteList.data ?? [];
+  const songs = voteList.data;
 
   const vote = useVote();
 
@@ -259,13 +259,10 @@ const VoteList = ({ time }) => {
   });
 
   const notice = () => {
-    let voted = 0;
-    songs.forEach((song) => {
-      if (song.vote !== 0) {
-        voted++;
-      }
-    });
-    if (voted === songs.length) {
+    const {
+      progress: [voted, total]
+    } = voteList;
+    if (voted === total) {
       let rndTime;
       do {
         rndTime = Math.floor(Math.random() * 5 + 1);
@@ -280,7 +277,7 @@ const VoteList = ({ time }) => {
     } else {
       return (
         <BottomTips>
-          本时段您已投 {voted} 首曲目，还有 {songs.length - voted} 首未投票曲目
+          本时段您已投 {voted} 首曲目，还有 {total - voted} 首未投票曲目
         </BottomTips>
       );
     }
