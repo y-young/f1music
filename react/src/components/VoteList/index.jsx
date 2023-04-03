@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Spin, Rate, Button, message, Empty, Menu } from "antd";
+import { Spin, Rate, Button, message, Empty, Menu, Card } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./index.module.less";
@@ -288,7 +288,7 @@ const VoteList = ({ time }) => {
     <Spin spinning={voteList.isLoading}>
       {songs.length !== 0 ? (
         <>
-          <div>
+          <Card bordered={false} className={styles.card}>
             <Player
               src={src}
               onProgress={timeListener}
@@ -309,22 +309,22 @@ const VoteList = ({ time }) => {
             >
               反馈
             </Button>
-          </div>
-          <br />
-          {voteArea}
-          <TransitionGroup>
-            {showReport && (
-              <CSSTransition
-                classNames="fade"
-                timeout={{ enter: 500, exit: 200 }}
-              >
-                <ReportForm
-                  id={songs[index].id}
-                  onSubmitted={() => setShowReport(false)}
-                />
-              </CSSTransition>
-            )}
-          </TransitionGroup>
+            <br />
+            {voteArea}
+            <TransitionGroup>
+              {showReport && (
+                <CSSTransition
+                  classNames="fade"
+                  timeout={{ enter: 500, exit: 200 }}
+                >
+                  <ReportForm
+                    id={songs[index].id}
+                    onSubmitted={() => setShowReport(false)}
+                  />
+                </CSSTransition>
+              )}
+            </TransitionGroup>
+          </Card>
           <Menu
             className={styles.list}
             items={listItems}

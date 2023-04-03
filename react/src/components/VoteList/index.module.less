@@ -40,3 +40,14 @@
   margin-right: 12px;
   cursor: pointer;
 }
+
+.card {
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+
+  &:global(.ant-card) {
+    border-color: transparent;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 25px;
+  }
+}
