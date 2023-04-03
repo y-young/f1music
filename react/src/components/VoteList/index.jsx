@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Spin, Input, Rate, Button, message, Empty } from "antd";
+import { Spin, Rate, Button, message, Empty } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./index.module.less";
@@ -8,8 +8,8 @@ import Player from "../Player";
 import { voteTexts } from "config";
 import useIsDesktop from "hooks/useIsDesktop";
 import useVotePreferences from "hooks/useVotePreferences";
-import { useVoteList, useVote, useReport } from "services/vote";
-import { BottomTips } from "components";
+import { useVoteList, useVote } from "services/vote";
+import { BottomTips, ReportForm } from "components";
 
 const VoteList = ({ time }) => {
   const isDesktop = useIsDesktop();
@@ -19,12 +19,10 @@ const VoteList = ({ time }) => {
   const songs = voteList.data ?? [];
 
   const vote = useVote();
-  const report = useReport();
 
   const playerRef = useRef(null);
   const [rate, setRate] = useState(0);
   const [src, setSrc] = useState(undefined);
-  const [reason, setReason] = useState("");
   const [index, setIndex] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -36,7 +34,6 @@ const VoteList = ({ time }) => {
   const init = () => {
     setRate(0);
     setCountdown(30);
-    setReason("");
     setCanSubmit(false);
     setShowReport(false);
     setTriggerVote(true);
@@ -198,18 +195,6 @@ const VoteList = ({ time }) => {
     }
   };
 
-  const submitReport = async () => {
-    if (!reason) {
-      message.error("请填写反馈内容");
-      return;
-    }
-    const id = songs[index].id;
-    await report.trigger({ id, reason }).then(() => {
-      message.success("提交成功");
-      setShowReport(false);
-    });
-  };
-
   const handleRatingChange = (value) => {
     setRate(value);
     setCanSubmit(true);
@@ -254,28 +239,6 @@ const VoteList = ({ time }) => {
         {...buttonProps}
       >
         {countdown > 0 ? Math.ceil(countdown) : isDesktop && "投票"}
-      </Button>
-    </div>
-  );
-
-  const reportArea = (
-    <div className={styles.reportArea} key="report">
-      <div className={styles.reason}>
-        <Input
-          value={reason}
-          placeholder="反馈内容"
-          onChange={(e) => setReason(e.target.value)}
-          maxLength={200}
-          onPressEnter={submitReport}
-        />
-      </div>
-      <Button
-        type="primary"
-        onClick={submitReport}
-        loading={report.isMutating}
-        className={styles.reportButton}
-      >
-        提交
       </Button>
     </div>
   );
@@ -357,7 +320,10 @@ const VoteList = ({ time }) => {
                 classNames="fade"
                 timeout={{ enter: 500, exit: 200 }}
               >
-                {reportArea}
+                <ReportForm
+                  id={songs[index].id}
+                  onSubmitted={() => setShowReport(false)}
+                />
               </CSSTransition>
             )}
           </TransitionGroup>

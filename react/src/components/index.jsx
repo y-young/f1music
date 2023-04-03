@@ -14,6 +14,7 @@ import SWRConfig from "./SWRConfig";
 import SuspenseLoading from "./SuspenseLoading";
 import Audio from "./Audio";
 import BottomTips from "./BottomTips";
+import ReportForm from "./ReportForm";
 
 export {
   Sidebar,
@@ -31,5 +32,6 @@ export {
   SWRConfig,
   SuspenseLoading,
   Audio,
-  BottomTips
+  BottomTips,
+  ReportForm
 };
