@@ -351,7 +351,11 @@ const Songs = ({ isTrashed = false }) => {
       />
       {isTrashed ? (
         <Space>
-          <Button onClick={handleBatchRestore} loading={restore.isMutating}>
+          <Button
+            onClick={handleBatchRestore}
+            loading={restore.isMutating}
+            disabled={selectedRowKeys.length === 0}
+          >
             恢复所选
           </Button>
           <Button
@@ -359,6 +363,7 @@ const Songs = ({ isTrashed = false }) => {
             danger
             onClick={() => handleBatchDelete(true)}
             loading={del.isMutating}
+            disabled={selectedRowKeys.length === 0}
           >
             彻底删除所选
           </Button>
@@ -369,6 +374,7 @@ const Songs = ({ isTrashed = false }) => {
           danger
           onClick={() => handleBatchDelete(false)}
           loading={trash.isMutating}
+          disabled={selectedRowKeys.length === 0}
         >
           删除所选
         </Button>

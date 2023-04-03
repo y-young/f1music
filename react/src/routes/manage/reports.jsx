@@ -85,6 +85,7 @@ const Reports = () => {
         danger
         loading={del.isMutating}
         onClick={handleBatchDelete}
+        disabled={selectedRowKeys.length === 0}
       >
         删除所选
       </Button>
