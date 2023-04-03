@@ -22,7 +22,7 @@ const VoteList = ({ time }) => {
 
   const playerRef = useRef(null);
   const [rate, setRate] = useState(0);
-  const [src, setSrc] = useState("");
+  const [src, setSrc] = useState(undefined);
   const [reason, setReason] = useState("");
   const [index, setIndex] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
@@ -46,7 +46,7 @@ const VoteList = ({ time }) => {
   useEffect(() => {
     stopLast();
     setIndex("");
-    setSrc("");
+    setSrc(undefined);
     init();
   }, [time]);
 

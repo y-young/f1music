@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   app:
+    container_name: f1music-app
     image: yyoung01/f1music
     build:
       context: .
@@ -23,6 +24,7 @@ services:
         condition: service_healthy
 
   mysql:
+    container_name: f1music-mysql
     image: mysql:8.0
     environment:
       MYSQL_ROOT_HOST: "%"

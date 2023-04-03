@@ -6,3 +6,4 @@ vendor
 react/node_modules
 public/assets
 public/build
+backup/

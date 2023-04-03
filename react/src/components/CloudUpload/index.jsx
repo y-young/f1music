@@ -1,13 +1,5 @@
-import { useState } from "react";
-import {
-  Form,
-  Modal,
-  AutoComplete,
-  Input,
-  Table,
-  Button,
-  message
-} from "antd";
+import { useRef, useState } from "react";
+import { Form, Modal, AutoComplete, Input, Table, Button, message } from "antd";
 import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
 import { Player, TimeSelector } from "components";
 import { useSearch, useUpload, useMyUploads } from "services/upload";
@@ -21,6 +13,7 @@ const CloudUpload = () => {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
+  const playerRef = useRef(null);
 
   const [keyword, setKeyword] = useState("");
   const { fetchMp3, ...search } = useSearch(keyword);
@@ -93,7 +86,14 @@ const CloudUpload = () => {
     }
   };
 
-  const handleUpload = async (id) =>
+  const onCancel = () => {
+    setVisible(false);
+    if (playerRef.current) {
+      playerRef.current.stop();
+    }
+  };
+
+  const handleUpload = (id) =>
     form
       .validateFields()
       .then((values) => {
@@ -127,7 +127,7 @@ const CloudUpload = () => {
       {row && (
         <Modal
           open={visible}
-          onCancel={() => setVisible(false)}
+          onCancel={onCancel}
           confirmLoading={upload.isMutating}
           okText="上传"
           title="上传歌曲"
@@ -162,6 +162,7 @@ const CloudUpload = () => {
             </FormItem>
             <FormItem label="试听">
               <Player
+                ref={playerRef}
                 src={`https://music.163.com/song/media/outer/url?id=${row.id}.mp3`}
                 mini
               />

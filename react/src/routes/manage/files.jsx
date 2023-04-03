@@ -3,6 +3,7 @@ import { Form, Table } from "antd";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
 import { useFiles } from "services/admin/files";
+import { Audio } from "components";
 
 const FormItem = Form.Item;
 
@@ -25,10 +26,26 @@ const Files = () => {
         <InlineFormRow>
           <FormItem label="时间">{row.time}</FormItem>
           <FormItem label="时长">{row.duration} 秒</FormItem>
+          {row.cloud_id && (
+            <FormItem label="云上传ID">
+              <a
+                href={`https://music.163.com/#/song?id=${row.cloud_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {row.cloud_id}
+              </a>
+            </FormItem>
+          )}
         </InlineFormRow>
         <InlineFormRow>
           <FormItem label="试听">
-            <audio controls="controls" src={row.url} preload="none" />
+            <Audio
+              controls
+              preload="none"
+              cloudId={row.cloud_id}
+              src={row.url}
+            />
           </FormItem>
         </InlineFormRow>
       </InlineForm>

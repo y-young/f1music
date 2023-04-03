@@ -5,9 +5,9 @@ import {
   Button,
   Input,
   Tag,
-  Select,
   Modal,
   Space,
+  Badge,
   message
 } from "antd";
 import {
@@ -18,9 +18,10 @@ import {
   DownloadOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
-import { TimeSelector } from "components/admin";
+import { TimeSelector, TagsSelect } from "components/admin";
+import { Audio } from "components";
 import { timeFilters } from "config";
-import { renderDateTime } from "utils/utils";
+import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
 import { useSongs } from "services/admin/songs";
@@ -200,7 +201,12 @@ const Songs = ({ isTrashed = false }) => {
         </InlineFormRow>
         <InlineFormRow>
           <FormItem label="试听">
-            <audio src={row.file.url} controls="controls" preload="none" />
+            <Audio
+              controls
+              preload="none"
+              cloudId={file.cloud_id}
+              src={file.url}
+            />
           </FormItem>
           <FormItem label="操作">
             <Space>
@@ -277,7 +283,22 @@ const Songs = ({ isTrashed = false }) => {
     {
       dataIndex: "name",
       title: "曲名",
-      ...getColumnSearchProps("name")
+      ...getColumnSearchProps("name"),
+      render: (text, record) => (
+        <Badge
+          dot={record.reports_count > 0}
+          title={`${record.reports_count} 条反馈`}
+        >
+          <span style={{ lineHeight: 1.5715 }}>{text}</span>
+        </Badge>
+      )
+    },
+    {
+      dataIndex: "origin",
+      title: "来源",
+      width: "100px",
+      ...getColumnSearchProps("origin"),
+      render: (text) => ellipsis(text, 50)
     },
     {
       title: "标签",
@@ -302,15 +323,10 @@ const Songs = ({ isTrashed = false }) => {
       ...getColumnSearchProps("tags")
     },
     {
-      dataIndex: "created_at",
-      title: "时间",
-      render: renderDateTime
-    },
-    {
-      dataIndex: "reports_count",
-      title: "反馈数",
-      width: "100px",
-      sorter: (a, b) => a.reports_count - b.reports_count
+      dataIndex: isTrashed ? "deleted_at" : "created_at",
+      title: isTrashed ? "删除时间" : "时间",
+      render: renderDateTime,
+      sorter: isTrashed && ((a, b) => dateSorter(a.deleted_at, b.deleted_at))
     }
   ];
 
@@ -414,12 +430,7 @@ const Songs = ({ isTrashed = false }) => {
               }
             ]}
           >
-            <Select
-              mode="tags"
-              placeholder="曲目标签"
-              open={false}
-              tokenSeparators={[",", "，"]}
-            ></Select>
+            <TagsSelect placeholder="曲目标签" />
           </FormItem>
         </Form>
       </Modal>

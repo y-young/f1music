@@ -27,8 +27,8 @@ class AuthController extends Controller
 
         Validator::make($request->all(), [
             // 寄读生学号为10位,如GJ16010001
-            'stuId' => 'required | between:10,11',
-            'password' => 'required | not_in:123456'
+            'stuId' => 'required | string | between:10,11',
+            'password' => 'required | string | not_in:123456'
         ], self::$messages)->validate();
 
         $authData = new AuthData($request->input('stuId'), $request->input('password'));

@@ -25,8 +25,8 @@ export const timeIdToText = {
   2: "7:10",
   3: "13:45",
   4: "18:10",
-  5: "21:35",
-  6: "22:30"
+  5: "21:55",
+  6: "22:40"
 };
 
 export const timeFilters = Object.entries(timeIdToText).map(([key, value]) => ({

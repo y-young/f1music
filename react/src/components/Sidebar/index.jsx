@@ -38,8 +38,8 @@ const Sidebar = ({ collapsed }) => {
         { key: "/vote/2", label: "7:10 早出门" },
         { key: "/vote/3", label: "13:45 午出门" },
         { key: "/vote/4", label: "18:10 晚出门" },
-        { key: "/vote/5", label: "21:35 晚自习结束" },
-        { key: "/vote/6", label: "22:30 熄灯铃" }
+        { key: "/vote/5", label: "21:55 晚自习结束" },
+        { key: "/vote/6", label: "22:40 熄灯铃" }
       ]
     }
   ];

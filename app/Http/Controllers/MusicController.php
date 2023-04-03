@@ -22,7 +22,7 @@ class MusicController extends Controller
     public function search(Request $request)
     {
         Validator::make($request->all(), [
-            'keyword' => 'required'
+            'keyword' => 'required | string'
         ], ['required' => '请输入搜索词或粘贴链接'])->validate();
 
         $keyword = $request->input('keyword');
@@ -55,16 +55,16 @@ class MusicController extends Controller
     public function mp3(Request $request)
     {
         Validator::make($request->all(), [
-            'id' => 'required'
+            'id' => 'required | numeric | integer | min: 0'
         ], ['required' => '参数错误,请刷新重试'])->validate();
 
         $res = self::$api->format(false)->url($request->input('id'), 128);
         $res = json_decode($res, true);
-        $res = $res["data"][0];
-        if ($res["freeTrialInfo"] == null) {
-            $url = $res["url"];
-        } else {
-            $url = "";
+        $url = "";
+        $data = $res["data"][0] ?? [];
+        $freeTrialInfo = array_key_exists("freeTrialInfo", $data) ? $data["freeTrialInfo"] : [];
+        if ($freeTrialInfo === NULL) {
+            $url = $data["url"] ?? "";
         }
         if (empty($url)) {
             return $this->error('暂无版权或歌曲未找到');

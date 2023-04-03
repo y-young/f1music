@@ -12,6 +12,7 @@ import Header from "./Header";
 import VotePreferencesModal from "./VotePreferencesModal";
 import SWRConfig from "./SWRConfig";
 import SuspenseLoading from "./SuspenseLoading";
+import Audio from "./Audio";
 
 export {
   Sidebar,
@@ -27,5 +28,6 @@ export {
   Header,
   VotePreferencesModal,
   SWRConfig,
-  SuspenseLoading
+  SuspenseLoading,
+  Audio
 };

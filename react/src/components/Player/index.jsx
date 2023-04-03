@@ -14,6 +14,8 @@ import {
   StepBackwardOutlined,
   LoadingOutlined
 } from "@ant-design/icons";
+import { Audio } from "components";
+import VolumeControl from "./VolumeControl";
 
 const Player = (
   {
@@ -51,7 +53,7 @@ const Player = (
     seek(0);
   }, [src]);
 
-  const handleTimeUpdate = event => {
+  const handleTimeUpdate = (event) => {
     const newTime = event.target.currentTime;
     if (!disableSliderUpdate) {
       setDisplayTime(newTime);
@@ -71,7 +73,7 @@ const Player = (
     if (!playing) {
       const promise = audioRef.current.play();
       if (promise) {
-        promise.catch(e => {
+        promise.catch((e) => {
           console.warn(e);
           if (e.name === "NotAllowedError") {
             // stop();
@@ -134,7 +136,7 @@ const Player = (
     }
   };
 
-  const updateDuration = event => {
+  const updateDuration = (event) => {
     // event.persist();
     const duration = event.target.duration;
     if (duration !== 1) {
@@ -149,7 +151,7 @@ const Player = (
     }
   };
 
-  const handleError = e => {
+  const handleError = (e) => {
     e.persist();
     stop();
     console.log(e);
@@ -157,19 +159,23 @@ const Player = (
     throw e;
   };
 
-  const handleSeeking = time => {
+  const handleSeeking = (time) => {
     setDisableSliderUpdate(true);
     setDisplayTime(time);
   };
 
-  const seek = time => {
+  const seek = (time) => {
     setDisableSliderUpdate(false);
     setDisplayTime(time);
     setTime(time);
     audioRef.current.currentTime = time;
   };
 
-  const formatTime = duration => {
+  const handleVolumeChange = (value) => {
+    audioRef.current.volume = value;
+  };
+
+  const formatTime = (duration) => {
     if (isNaN(duration)) {
       return "00:00";
     }
@@ -177,13 +183,13 @@ const Player = (
     const minutes = Math.floor((duration - hours * 3600) / 60);
     const seconds = Math.floor(duration - hours * 3600 - minutes * 60);
     return (hours > 0 ? [hours, minutes, seconds] : [minutes, seconds])
-      .map(value => value.toString().padStart(2, "0"))
+      .map((value) => value.toString().padStart(2, "0"))
       .join(":");
   };
 
   const timeDetail = `${formatTime(displayTime)} / ${formatTime(duration)}`;
   const audio = (
-    <audio
+    <Audio
       ref={audioRef}
       src={src}
       //controls="controls"
@@ -211,6 +217,10 @@ const Player = (
           </Button>
         </Space.Compact>
         <div className={styles.miniTimeDetail}>{timeDetail}</div>
+        <VolumeControl
+          onChange={handleVolumeChange}
+          className={styles.volumeControl}
+        />
       </div>
     );
   }
@@ -254,6 +264,10 @@ const Player = (
         >
           <StepForwardOutlined style={{ color: "#9f9f9f" }} />
         </Button>
+        <VolumeControl
+          onChange={handleVolumeChange}
+          className={styles.volumeControl}
+        />
       </Space>
       {src && (
         <div className={styles.bufferDetail}>
