@@ -1,7 +1,8 @@
 .inlineForm {
+  display: flex;
   padding: 0 2.5rem;
   flex-direction: column;
-  row-gap: 0.5rem;
+  row-gap: 0.25rem;
 }
 
 @media (max-width: 768px) {
@@ -17,5 +18,9 @@
 
   :global(.ant-form-item-row) {
     align-items: center;
+  }
+
+  :global(.ant-form-item) {
+    margin-bottom: 0;
   }
 }

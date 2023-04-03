@@ -1,5 +1,5 @@
 import { Tooltip, Statistic } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const { Countdown } = Statistic;
 
@@ -9,11 +9,11 @@ const PhaseCountdown = ({
   ...props
 }) => (
   <Tooltip
-    title={moment(value).format("YYYY年M月D日 HH:mm:ss")}
+    title={dayjs(value).format("YYYY年M月D日 HH:mm:ss")}
     placement={tooltipPlacement}
   >
     <Countdown
-      value={moment(value)}
+      value={dayjs(value)}
       format="D 天 H 时 m 分 s 秒"
       onFinish={() => window.location.reload()}
       {...props}

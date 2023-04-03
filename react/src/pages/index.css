@@ -3,6 +3,7 @@ body,
   margin: 0;
   width: 100%;
   height: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 hr {
@@ -13,6 +14,10 @@ hr {
   border-top: 1px solid #eee;
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
+}
+
+p {
+  margin-block-start: 0;
 }
 
 .redirect {

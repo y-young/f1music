@@ -58,6 +58,7 @@ const TagsSelect = props => {
         label: tag,
         value: tag
       }))}
+      placement="topLeft"
       onSelect={value => select(value)}
       dropdownRender={menu => (
         <>

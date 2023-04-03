@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { Alert, Row, Col, Statistic } from "antd";
 import {
   UploadOutlined,
@@ -8,13 +8,15 @@ import {
   LoadingOutlined
 } from "@ant-design/icons";
 import { PhaseCountdown } from "components";
+import isBetween from "dayjs/plugin/isBetween";
+dayjs.extend(isBetween);
 
 const StatusNotice = ({ status }) => {
   if (!status) {
     return null;
   }
 
-  const currentTime = moment();
+  const currentTime = dayjs();
   let title = "正在进行",
     statusText = "...",
     countdownText = "结束",

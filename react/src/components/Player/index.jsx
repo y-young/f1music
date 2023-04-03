@@ -239,12 +239,7 @@ const Player = (
         <div className={styles.timeDetail}>{timeDetail}</div>
       </div>
       <Space className={styles.controls}>
-        <Button
-          type="secondary"
-          shape="circle"
-          onClick={onBackward}
-          disabled={!canBackward}
-        >
+        <Button shape="circle" onClick={onBackward} disabled={!canBackward}>
           <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
         </Button>
         <Button
@@ -256,12 +251,7 @@ const Player = (
         >
           {playing ? <PauseOutlined /> : <CaretRightOutlined />}
         </Button>
-        <Button
-          type="secondary"
-          shape="circle"
-          onClick={onForward}
-          disabled={!canForward}
-        >
+        <Button shape="circle" onClick={onForward} disabled={!canForward}>
           <StepForwardOutlined style={{ color: "#9f9f9f" }} />
         </Button>
         <VolumeControl

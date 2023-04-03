@@ -1,14 +1,14 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import produce from "immer";
 
 export const renderDateTime = (datetime) => {
-  const value = moment(datetime);
+  const value = dayjs(datetime);
   if (!value.isValid()) {
     return null;
   }
   return (
     <time dateTime={datetime}>
-      {moment(datetime).format("YYYY-MM-DD HH:mm:ss")}
+      {dayjs(datetime).format("YYYY-MM-DD HH:mm:ss")}
     </time>
   );
 };
@@ -21,7 +21,7 @@ export const ellipsis = (text, maxLength) => {
 };
 
 export const dateSorter = (a, b) => {
-  const diff = moment(a).diff(moment(b));
+  const diff = dayjs(a).diff(dayjs(b));
   if (diff > 0) {
     return 1;
   }

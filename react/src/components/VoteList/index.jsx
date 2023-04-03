@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Spin, Rate, Button, message, Empty } from "antd";
+import { Spin, Rate, Button, message, Empty, Menu } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import styles from "./index.module.less";
@@ -202,7 +202,7 @@ const VoteList = ({ time }) => {
 
   const song = songs[index] ? songs[index] : { vote: 0 };
   const buttonProps = {
-    type: song.vote !== 0 ? "secondary" : "primary",
+    type: song.vote !== 0 ? "default" : "primary",
     shape: !isDesktop ? "circle" : undefined,
     icon: countdown <= 0 ? <CheckOutlined /> : undefined,
     disabled: countdown > 0
@@ -243,20 +243,21 @@ const VoteList = ({ time }) => {
     </div>
   );
 
-  const list = songs.map((song, key) => {
-    const current = key === index;
-    return (
-      <li
-        style={current ? { color: "#1890ff" } : {}}
-        className={styles.listItem}
-        onClick={() => handleSwitch(key)}
-        key={key}
-      >
-        <span className={styles.itemIndex}>{key + 1}</span>
-        {"您的评价: " + voteTexts[song.vote]}
-      </li>
-    );
-  });
+  const listItems = songs
+    .map((song, key) => [
+      { type: "divider" },
+      {
+        key,
+        label: (
+          <>
+            <span className={styles.itemIndex}>{key + 1}</span>
+            您的评价: {voteTexts[song.vote]}
+          </>
+        )
+      }
+    ])
+    .flat()
+    .slice(1);
 
   const notice = () => {
     const {
@@ -324,7 +325,12 @@ const VoteList = ({ time }) => {
               </CSSTransition>
             )}
           </TransitionGroup>
-          <ol className={styles.list}>{list}</ol>
+          <Menu
+            className={styles.list}
+            items={listItems}
+            onClick={({ key }) => handleSwitch(key)}
+            style={{ borderInlineEnd: "none" }}
+          />
           {notice()}
         </>
       ) : (

@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
 import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
 import {
@@ -15,8 +15,9 @@ import { useMyUploads } from "services/upload";
 const Upload = () => {
   const status = useStatus();
   const uploadStatus = status.data?.upload ?? {};
-  const myUploads = useMyUploads();
+  const currentTime = dayjs();
 
+  const myUploads = useMyUploads();
   const uploaded = myUploads.data?.length ?? 0;
   const AllDone = (
     <Result
@@ -30,7 +31,7 @@ const Upload = () => {
     <>
       <Title>上传</Title>
       <Spin spinning={myUploads.isLoading || status.isLoading}>
-        {moment().isBefore(uploadStatus.start) ? (
+        {currentTime.isBefore(uploadStatus.start) ? (
           <Result
             icon={<ClockCircleTwoTone />}
             title="抱歉，上传尚未开始，距离上传开始还有"
@@ -46,7 +47,7 @@ const Upload = () => {
               </Button>
             }
           />
-        ) : moment().isAfter(uploadStatus.end) ? (
+        ) : currentTime.isAfter(uploadStatus.end) ? (
           <Result
             status="error"
             title="抱歉，上传已结束"

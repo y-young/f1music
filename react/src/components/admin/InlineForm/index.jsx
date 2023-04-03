@@ -2,7 +2,7 @@ import styles from "./index.module.less";
 import { Form } from "antd";
 
 const InlineForm = ({ children, ...props }) => (
-  <Form layout="inline" className={styles.inlineForm} {...props}>
+  <Form className={styles.inlineForm} {...props}>
     {children}
   </Form>
 );

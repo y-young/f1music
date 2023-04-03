@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { TimeSelector, VoteProgress } from "components";
 import { Alert, Button, Col, Result, Row, Spin } from "antd";
 import { ClockCircleTwoTone } from "@ant-design/icons";
@@ -19,6 +19,7 @@ const Vote = () => {
 
   const status = useStatus();
   const voteStatus = status.data?.vote ?? {};
+  const currentTime = dayjs();
 
   const { progress } = useVoteList(time);
 
@@ -31,7 +32,7 @@ const Vote = () => {
     <>
       <Title>{`投票 - ${periodName}`}</Title>
       <Spin spinning={status.isLoading}>
-        {moment().isBefore(voteStatus.start) ? (
+        {currentTime.isBefore(voteStatus.start) ? (
           <Result
             icon={<ClockCircleTwoTone />}
             title="抱歉，投票尚未开始，距离投票开始还有"
@@ -47,7 +48,7 @@ const Vote = () => {
               </Button>
             }
           />
-        ) : moment().isAfter(voteStatus.end) ? (
+        ) : currentTime.isAfter(voteStatus.end) ? (
           <Result
             status="error"
             title="抱歉，投票已结束"

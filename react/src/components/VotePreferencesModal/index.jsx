@@ -11,7 +11,7 @@ const VotePreferencesModal = () => {
 
   return (
     <>
-      <Button type="secondary" onClick={() => setModalVisible(true)}>
+      <Button onClick={() => setModalVisible(true)}>
         <SettingOutlined />
         偏好设置
       </Button>
@@ -22,11 +22,11 @@ const VotePreferencesModal = () => {
         onCancel={() => setModalVisible(false)}
         footer={null}
       >
-        <Form>
+        <Form labelCol={{ span: 8 }}>
           <FormItem label="自动跳过已投票曲目">
             <Switch
               checked={preferences.skipVoted}
-              onChange={value =>
+              onChange={(value) =>
                 setPreferences({ ...preferences, skipVoted: value })
               }
             />
@@ -34,7 +34,7 @@ const VotePreferencesModal = () => {
           <FormItem label="手动提交成功后">
             <Radio.Group
               defaultValue={preferences.onSubmitted}
-              onChange={e =>
+              onChange={(e) =>
                 setPreferences({ ...preferences, onSubmitted: e.target.value })
               }
               buttonStyle="solid"
@@ -46,7 +46,7 @@ const VotePreferencesModal = () => {
           <FormItem label="播放结束但未投票时:">
             <Radio.Group
               defaultValue={preferences.onEnded}
-              onChange={e =>
+              onChange={(e) =>
                 setPreferences({ ...preferences, onEnded: e.target.value })
               }
               buttonStyle="solid"

@@ -13,7 +13,7 @@ const columns = [
   {
     dataIndex: "playtime",
     title: "时段",
-    width: "70px",
+    width: "80px",
     filters: timeFilters,
     onFilter: (value, record) => record.playtime === value
   },

@@ -3,7 +3,10 @@ import { Footer, Header } from "components";
 import { ConfigProvider, Layout } from "antd";
 import { useLocation } from "react-router-dom";
 import zhCN from "antd/es/locale/zh_CN";
-import "antd/dist/antd.css";
+
+// import "antd/dist/antd.css";
+
+
 import styles from "./Layout.module.less";
 import useSidebar from "hooks/useSidebar";
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { Spin, Tabs } from "antd";
 import { StatusNotice } from "components";
 import UploadDescription from "components/UploadDescription";
@@ -13,7 +13,7 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("upload");
 
   useEffect(() => {
-    const currentTime = moment();
+    const currentTime = dayjs();
     const phase =
       currentTime.isAfter(status?.upload.end) &&
       currentTime.isBefore(status?.vote.end)

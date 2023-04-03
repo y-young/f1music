@@ -40,7 +40,6 @@ const columns = [
     render: (text, record) => {
       return (
         <Button
-          type="secondary"
           icon={<DownloadOutlined />}
           href={"/api/download/" + record.id}
         />

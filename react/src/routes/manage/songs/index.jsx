@@ -97,11 +97,11 @@ const Songs = ({ isTrashed = false }) => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: (visible) => {
+    onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInputRef.current.select());
       }
@@ -220,7 +220,6 @@ const Songs = ({ isTrashed = false }) => {
               {isTrashed ? (
                 <Space>
                   <Button
-                    type="secondary"
                     icon={<RollbackOutlined />}
                     onClick={() => handleRestore([row.id])}
                     loading={restore.isMutating}
@@ -249,7 +248,6 @@ const Songs = ({ isTrashed = false }) => {
                 </Button>
               )}
               <Button
-                type="secondary"
                 icon={<DownloadOutlined />}
                 href={"/api/download/" + row.id}
               >
@@ -337,7 +335,6 @@ const Songs = ({ isTrashed = false }) => {
         曲目总数: {list.length} 首 已选中: {selectedRowKeys.length} 首
       </div>
       <Button
-        type="secondary"
         icon={<ReloadOutlined />}
         onClick={handleRefresh}
         style={{ float: "right" }}
@@ -354,11 +351,7 @@ const Songs = ({ isTrashed = false }) => {
       />
       {isTrashed ? (
         <Space>
-          <Button
-            type="secondary"
-            onClick={handleBatchRestore}
-            loading={restore.isMutating}
-          >
+          <Button onClick={handleBatchRestore} loading={restore.isMutating}>
             恢复所选
           </Button>
           <Button
