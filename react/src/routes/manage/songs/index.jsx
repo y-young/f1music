@@ -18,8 +18,8 @@ import {
   DownloadOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
-import { TimeSelector, TagsSelect } from "components/admin";
-import { Audio } from "components";
+import { TagsSelect } from "components/admin";
+import { Audio, TimeSelector } from "components";
 import { timeFilters } from "config";
 import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
