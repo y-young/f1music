@@ -21,6 +21,8 @@ const VoteList = ({ time }) => {
   const vote = useVote();
 
   const playerRef = useRef(null);
+  const reportFormRef = useRef(null);
+
   const [rate, setRate] = useState(0);
   const [src, setSrc] = useState(undefined);
   const [index, setIndex] = useState("");
@@ -314,10 +316,12 @@ const VoteList = ({ time }) => {
             <TransitionGroup>
               {showReport && (
                 <CSSTransition
+                  nodeRef={reportFormRef}
                   classNames="fade"
                   timeout={{ enter: 500, exit: 200 }}
                 >
                   <ReportForm
+                    ref={reportFormRef}
                     id={songs[index].id}
                     onSubmitted={() => setShowReport(false)}
                   />

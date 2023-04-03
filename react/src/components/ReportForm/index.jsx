@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { Input, Button, message } from "antd";
 import { useReport } from "services/vote";
 import styles from "./index.module.less";
 
-const ReportForm = ({ id, onSubmitted }) => {
+const ReportForm = ({ id, onSubmitted }, ref) => {
   const [reason, setReason] = useState("");
   const report = useReport();
 
@@ -20,7 +20,7 @@ const ReportForm = ({ id, onSubmitted }) => {
   };
 
   return (
-    <div className={styles.reportArea} key="report">
+    <div ref={ref} className={styles.reportArea} key="report">
       <div className={styles.reason}>
         <Input
           value={reason}
@@ -42,4 +42,4 @@ const ReportForm = ({ id, onSubmitted }) => {
   );
 };
 
-export default ReportForm;
+export default forwardRef(ReportForm);
