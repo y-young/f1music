@@ -9,9 +9,9 @@ const VoteProgress = ({ progress }) => {
   const props = !isDesktop ? { type: "circle", size: 75 } : {};
 
   return (
-    <div className={classnames(["ant-statistic", styles.statistic])}>
+    <div className={classnames("ant-statistic", styles.statistic)}>
       <div className="ant-statistic-title">本时段投票进度</div>
-      <div className="ant-statistic-content">
+      <div className={classnames("ant-statistic-content", styles.progress)}>
         <Progress percent={percent} trailColor="#fff" {...props} />
       </div>
     </div>
