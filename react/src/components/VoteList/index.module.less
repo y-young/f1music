@@ -35,6 +35,22 @@
   }
 }
 
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.listStars {
+  // Ensure text is vertically aligned in the middle
+  line-height: 28px;
+
+  // Overwrite disabled style since the whole menu item is clickable
+  :global(.ant-rate-star) {
+    cursor: pointer !important;
+  }
+}
+
 .itemIndex {
   color: #666;
   margin-right: 12px;

@@ -251,10 +251,13 @@ const VoteList = ({ time }) => {
       {
         key,
         label: (
-          <>
-            <span className={styles.itemIndex}>{key + 1}</span>
-            您的评价: {voteTexts[song.vote]}
-          </>
+          <span className={styles.listItem}>
+            <span>
+              <span className={styles.itemIndex}>{key + 1}</span>
+              您的评价: {voteTexts[song.vote]}
+            </span>
+            <Rate value={song.vote} disabled className={styles.listStars} />
+          </span>
         )
       }
     ])
