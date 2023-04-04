@@ -42,7 +42,7 @@ const Upload = () => {
               />
             }
             extra={
-              <Button type="primary" href="#/">
+              <Button type="primary" href="/">
                 查看上传说明
               </Button>
             }
@@ -52,7 +52,7 @@ const Upload = () => {
             status="error"
             title="抱歉，上传已结束"
             extra={
-              <Button type="primary" href="#/vote/1">
+              <Button type="primary" href="/vote/1">
                 前往投票
               </Button>
             }

@@ -43,7 +43,7 @@ const Vote = () => {
               />
             }
             extra={
-              <Button type="primary" href="#/">
+              <Button type="primary" href="/">
                 查看投票说明
               </Button>
             }
@@ -53,7 +53,7 @@ const Vote = () => {
             status="error"
             title="抱歉，投票已结束"
             extra={
-              <Button type="primary" href="#/">
+              <Button type="primary" href="/">
                 返回首页
               </Button>
             }
