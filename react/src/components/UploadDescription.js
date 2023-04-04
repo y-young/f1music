@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "dva/router";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { Link } from "dva/router";
+import React from "react";
 
 const UploadDescription = () => (
   <>

@@ -1,6 +1,6 @@
 import config from "./config";
 import request from "./request";
-import utils from "./utils";
-import { createSentry, Raven } from "./sentry";
+import { Raven, createSentry } from "./sentry";
+import * as utils from "./utils";
 
-export { config, request, utils, createSentry, Raven };
+export { Raven, config, createSentry, request, utils };

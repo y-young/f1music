@@ -1,22 +1,23 @@
-import React from "react";
-import classnames from "classnames";
-import { withRouter } from "dva/router";
-import { Menu } from "antd";
 import {
+  ArrowLeftOutlined,
+  BarChartOutlined,
+  ExceptionOutlined,
+  FileOutlined,
   HomeOutlined,
   PlayCircleOutlined,
-  FileOutlined,
-  ExceptionOutlined,
   ProfileOutlined,
-  BarChartOutlined,
-  ArrowLeftOutlined
 } from "@ant-design/icons";
+import { Menu } from "antd";
+import classnames from "classnames";
+import { withRouter } from "dva/router";
+import React from "react";
+
 import styles from "../Sidebar.css";
 
 const Sidebar = ({ collapsed, location, history }) => {
   const sidebarClass = classnames({
     [styles.sidebar]: true,
-    [styles.show]: !collapsed
+    [styles.show]: !collapsed,
   });
 
   const menuItems = [
@@ -27,14 +28,14 @@ const Sidebar = ({ collapsed, location, history }) => {
       label: "曲目",
       children: [
         { key: "/songs", label: "所有曲目" },
-        { key: "/songs/trashed", label: "回收站" }
-      ]
+        { key: "/songs/trashed", label: "回收站" },
+      ],
     },
     { key: "/files", icon: <FileOutlined />, label: "文件" },
     { key: "/reports", icon: <ExceptionOutlined />, label: "反馈" },
     { key: "/rank", icon: <ProfileOutlined />, label: "投票结果" },
     { key: "/statistics", icon: <BarChartOutlined />, label: "数据统计" },
-    { key: "back", icon: <ArrowLeftOutlined />, label: "返回前台" }
+    { key: "back", icon: <ArrowLeftOutlined />, label: "返回前台" },
   ];
 
   const handleMenuClick = ({ key }) => {

@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "dva/router";
+import { Button, Space, Table, Tabs } from "antd";
 import axios from "axios";
-import { Tabs, Table, Button, Space } from "antd";
+import { Link } from "dva/router";
+import React from "react";
 import "aplayer/dist/APlayer.min.css";
+import { ArrowRightOutlined, DownloadOutlined } from "@ant-design/icons";
 import APlayer from "aplayer";
 import YPlayer from "components/YPlayer";
-import { timeIdToText, timeFilters } from "config";
-import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { timeFilters, timeIdToText } from "config";
 
 const columns = [
   {
@@ -17,7 +17,7 @@ const columns = [
       return timeIdToText[text];
     },
     filters: timeFilters,
-    onFilter: (value, record) => record.playtime === value
+    onFilter: (value, record) => record.playtime === value,
   },
   { dataIndex: "name", title: "曲名", width: 200 },
   { dataIndex: "origin", title: "来源", width: 200 },
@@ -25,14 +25,14 @@ const columns = [
     dataIndex: "score",
     title: "得分",
     width: 90,
-    sorter: (a, b) => a.score - b.score
+    sorter: (a, b) => a.score - b.score,
   },
   {
     title: "试听",
     width: 150,
     render: (text, record) => {
       return <YPlayer src={record.url} mini />;
-    }
+    },
   },
   {
     title: "下载",
@@ -41,33 +41,35 @@ const columns = [
         <Button
           type="secondary"
           icon={<DownloadOutlined />}
-          href={"/api/download/" + record.id}
+          href={`/api/download/${record.id}`}
         />
       );
-    }
-  }
+    },
+  },
 ];
-const rank = []; //Replace [] with results generated on admin/rank
+const rank = []; // Replace [] with results generated on admin/rank
 
 class Result extends React.Component {
   state = {
     player: null,
-    audio: []
+    audio: [],
   };
 
   componentDidMount() {
     this.loadPlayer();
   }
+
   loadPlayer = () => {
     axios.get("/music/playlist").then(response => {
       this.setState({ audio: response.data });
+      // eslint-disable-next-line no-new
       new APlayer({
         container: this.container,
         mini: false,
         autoplay: false,
         loop: "all",
         listFolded: false,
-        audio: this.state.audio
+        audio: this.state.audio,
       });
     });
   };
@@ -81,7 +83,7 @@ class Result extends React.Component {
             {
               key: "songs",
               label: "当选歌曲",
-              children: <div ref={el => (this.container = el)} />
+              children: <div ref={el => (this.container = el)} />,
             },
             {
               key: "rank",
@@ -93,14 +95,14 @@ class Result extends React.Component {
                   rowKey="id"
                   scroll={{ x: 700 }}
                 />
-              )
-            }
+              ),
+            },
           ]}
         />
         <br />
         <Space>
           <a
-            href="http://music.163.com/playlist/" //Put playlist link here
+            href="http://music.163.com/playlist/" // Put playlist link here
             className="redirect"
           >
             前往网易云歌单

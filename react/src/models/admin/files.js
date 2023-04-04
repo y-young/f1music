@@ -3,13 +3,13 @@ import { Files } from "services/admin/files";
 export default {
   namespace: "files",
   state: {
-    list: []
+    list: [],
   },
 
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload };
-    }
+    },
   },
 
   effects: {
@@ -17,9 +17,9 @@ export default {
       const data = yield call(Files);
       yield put({
         type: "updateState",
-        payload: { list: data.files }
+        payload: { list: data.files },
       });
-    }
+    },
   },
 
   subscriptions: {
@@ -29,6 +29,6 @@ export default {
           dispatch({ type: "fetch" });
         }
       });
-    }
-  }
+    },
+  },
 };

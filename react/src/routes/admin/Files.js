@@ -1,8 +1,8 @@
-import React from "react";
-import { connect } from "dva";
 import { Form, Table } from "antd";
-import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import { Audio } from "components";
+import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import { connect } from "dva";
+import React from "react";
 
 const FormItem = Form.Item;
 
@@ -13,10 +13,10 @@ const Files = ({ files, loading }) => {
       dataIndex: "id",
       title: "#",
       width: "60px",
-      sorter: (a, b) => a.id - b.id
+      sorter: (a, b) => a.id - b.id,
     },
     { dataIndex: "md5", title: "MD5" },
-    { dataIndex: "time", title: "时间" }
+    { dataIndex: "time", title: "时间" },
   ];
 
   const renderExpanded = row => {

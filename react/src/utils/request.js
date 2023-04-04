@@ -1,11 +1,12 @@
 import axios from "axios";
 import { routerRedux } from "dva/router";
+
 import store from "../pages/app";
 
 const errorMsg = {
   401: "请先登录",
   500: "Oops!出错了,我们会尽快修复这一问题~",
-  429: "操作过于频繁,请稍后再试"
+  429: "操作过于频繁,请稍后再试",
 };
 
 // 设置全局参数
@@ -20,7 +21,7 @@ axios.interceptors.request.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 添加返回拦截器
@@ -30,7 +31,7 @@ axios.interceptors.response.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default function request(opt) {
@@ -38,8 +39,9 @@ export default function request(opt) {
   return axios(opt)
     .then(response => {
       if (response.data && response.data.error !== 0) {
-        let error = new Error();
-        error.type = "notice"; //用户操作引起的错误而非程序错误
+        // eslint-disable-next-line unicorn/error-message
+        const error = new Error();
+        error.type = "notice"; // 用户操作引起的错误而非程序错误
         error.errno = response.data.error;
         error.message = response.data.msg;
         throw error;
@@ -64,8 +66,8 @@ export default function request(opt) {
         dispatch(
           routerRedux.push({
             pathname: "/login",
-            search: "?redirect=" + window.location.href
-          })
+            search: `?redirect=${window.location.href}`,
+          }),
         );
       } else if (status >= 404 && status < 422) {
         dispatch(routerRedux.push("/404"));
@@ -74,7 +76,7 @@ export default function request(opt) {
       return Promise.reject({
         type: "notice",
         code: status,
-        message: errortext
+        message: errortext,
       });
     });
 }

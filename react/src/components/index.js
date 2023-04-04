@@ -1,27 +1,23 @@
-import Sidebar from "./Sidebar";
-import Footer from "./Footer";
-import YPlayer from "./YPlayer";
-import VoteList from "./VoteList";
 import CloudUpload from "./CloudUpload";
+import Footer from "./Footer";
 import ManualUpload from "./ManualUpload";
-import ViewUploads from "./ViewUploads";
-import TimeSelector from "./TimeSelector";
 import PhaseCountdown from "./PhaseCountdown";
+import Sidebar from "./Sidebar";
 import StatusNotice from "./StatusNotice";
-import Audio from "./Audio";
-import VolumeControl from "./VolumeControl";
+import TimeSelector from "./TimeSelector";
+import ViewUploads from "./ViewUploads";
+import VoteList from "./VoteList";
+import YPlayer from "./YPlayer";
 
 export {
-  Sidebar,
-  Footer,
-  YPlayer,
-  VoteList,
   CloudUpload,
+  Footer,
   ManualUpload,
-  ViewUploads,
-  TimeSelector,
   PhaseCountdown,
+  Sidebar,
   StatusNotice,
-  Audio,
-  VolumeControl
+  TimeSelector,
+  ViewUploads,
+  VoteList,
+  YPlayer,
 };

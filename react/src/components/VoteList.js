@@ -1,12 +1,13 @@
-import React from "react";
+import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
+import { Button, Input, Rate, Spin, message } from "antd";
 import { connect } from "dva";
 import { Link } from "dva/router";
-import { Spin, Input, Rate, Button, message } from "antd";
-import { BulbOutlined, CheckOutlined } from "@ant-design/icons";
+import React from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { voteTexts } from "utils/config";
+
 import styles from "./VoteList.css";
 import YPlayer from "./YPlayer";
-import { voteTexts } from "utils/config";
 
 class VoteList extends React.Component {
   state = {
@@ -20,7 +21,7 @@ class VoteList extends React.Component {
     triggerVote: true,
     countdown: 30,
     canBackward: false,
-    canForward: false
+    canForward: false,
   };
 
   init = () => {
@@ -33,19 +34,22 @@ class VoteList extends React.Component {
       showReport: false,
       triggerVote: true,
       canBackward: false,
-      canForward: false
+      canForward: false,
     });
   };
+
   stopLast = () => {
     if (this.player) {
       this.player.stop();
     }
   };
+
   onRedirect = () => {
     this.stopLast();
     this.setState({ index: "", src: undefined });
     this.init();
   };
+
   timeListener = offset => {
     const { dispatch, vote } = this.props;
     const { songs } = vote;
@@ -58,19 +62,20 @@ class VoteList extends React.Component {
       if (!song.listened && song.vote === 0) {
         dispatch({ type: "vote/markListened", payload: song.id });
       }
-      //triggerVote: Only when first listen
+      // triggerVote: Only when first listen
       if (this.state.triggerVote) {
         this.setState({ triggerVote: false });
         this.handleVote();
       }
     }
   };
+
   handleSwitch = index => {
     const { vote } = this.props;
     const { songs } = vote;
     const player = this.player;
     if (index !== this.state.index) {
-      this.setState({ index: index }, () => {
+      this.setState({ index }, () => {
         this.updateButtonStatus();
       });
       this.stopLast();
@@ -82,7 +87,7 @@ class VoteList extends React.Component {
         this.setState({
           countdown: 0,
           rate: songs[index].vote,
-          triggerVote: false
+          triggerVote: false,
         });
       } else {
         this.setState({ countdown: 30 });
@@ -92,6 +97,7 @@ class VoteList extends React.Component {
     }
     return index;
   };
+
   updateButtonStatus = () => {
     const { vote } = this.props;
     const { songs } = vote;
@@ -99,9 +105,10 @@ class VoteList extends React.Component {
     const next = Number(this.state.index) + 1;
     this.setState({
       canBackward: songs[previous] !== undefined,
-      canForward: songs[next] !== undefined
+      canForward: songs[next] !== undefined,
     });
   };
+
   forward = () => {
     const { vote } = this.props;
     const { songs, skipVoted } = vote;
@@ -117,6 +124,7 @@ class VoteList extends React.Component {
       message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
     }
   };
+
   backward = () => {
     const { vote } = this.props;
     const { songs, skipVoted } = vote;
@@ -132,6 +140,7 @@ class VoteList extends React.Component {
       message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
     }
   };
+
   checkValidity = () => {
     if (this.state.countdown > 0) {
       message.warning("试听时长需达到30秒才能投票");
@@ -146,6 +155,7 @@ class VoteList extends React.Component {
     }
     return "valid";
   };
+
   handleVote = (type = null) => {
     const { dispatch, vote } = this.props;
     const { songs, onSubmitted } = vote;
@@ -161,14 +171,15 @@ class VoteList extends React.Component {
         message.success("投票成功");
         this.setState({ canSubmit: false });
         if (
-          (type === "manual" && onSubmitted === "forward") ||
-          type === "ended"
+          (type === "manual" && onSubmitted === "forward")
+          || type === "ended"
         ) {
           this.forward();
         }
       }
     });
   };
+
   onEnded = () => {
     const { vote } = this.props;
     const { songs, onEnded } = vote;
@@ -184,19 +195,21 @@ class VoteList extends React.Component {
       this.forward();
     }
   };
+
   handleReport = () => {
     const { dispatch, vote } = this.props;
     const { songs } = vote;
     const id = songs[this.state.index].id;
     dispatch({
       type: "vote/report",
-      payload: { id: id, reason: this.state.reason }
+      payload: { id, reason: this.state.reason },
     }).then(success => {
       if (success) {
         this.setState({ showReport: false });
       }
     });
   };
+
   render() {
     const { vote, loading } = this.props;
     const { time, isDesktop, songs } = vote;
@@ -207,36 +220,36 @@ class VoteList extends React.Component {
       type: song.vote !== 0 ? "secondary" : "primary",
       shape: !isDesktop ? "circle" : undefined,
       icon: this.state.countdown <= 0 ? <CheckOutlined /> : undefined,
-      disabled: this.state.countdown > 0
+      disabled: this.state.countdown > 0,
     };
     const voteArea = (
       <div className={styles.voteArea} key="vote">
         <hr />
-        {this.state.countdown <= 15 ? (
-          <div>
-            <Rate
-              value={this.state.rate}
-              onChange={value =>
-                this.setState({ rate: value, canSubmit: true })
-              }
-              allowClear={false}
-              className={styles.rate}
-            />
-            {this.state.rate !== 0 && (
-              <div className={styles.voteText}>
-                <span className="ant-rate-text">
-                  {voteTexts[this.state.rate]}
-                </span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={styles.voteText}>
-            <span className="ant-rate-text" style={{ color: "#777" }}>
-              试听15秒后显示评分栏
-            </span>
-          </div>
-        )}
+        {this.state.countdown <= 15
+          ? (
+            <div>
+              <Rate
+                value={this.state.rate}
+                onChange={value => this.setState({ rate: value, canSubmit: true })}
+                allowClear={false}
+                className={styles.rate}
+              />
+              {this.state.rate !== 0 && (
+                <div className={styles.voteText}>
+                  <span className="ant-rate-text">
+                    {voteTexts[this.state.rate]}
+                  </span>
+                </div>
+              )}
+            </div>
+          )
+          : (
+            <div className={styles.voteText}>
+              <span className="ant-rate-text" style={{ color: "#777" }}>
+                试听15秒后显示评分栏
+              </span>
+            </div>
+          )}
         <Button
           loading={loading.effects["vote/vote"]}
           className={styles.voteButton}
@@ -245,7 +258,7 @@ class VoteList extends React.Component {
         >
           {this.state.countdown > 0
             ? Math.ceil(this.state.countdown)
-            : isDesktop && "投票"}
+            : (isDesktop && "投票")}
         </Button>
       </div>
     );
@@ -280,7 +293,7 @@ class VoteList extends React.Component {
           key={key}
         >
           <span className={styles.itemIndex}>{key + 1}</span>
-          {"您的评价: " + voteTexts[song.vote]}
+          {`您的评价: ${voteTexts[song.vote]}`}
         </li>
       );
     });
@@ -299,15 +312,14 @@ class VoteList extends React.Component {
         return (
           <div className="tips">
             <BulbOutlined /> 您已投完本时段所有曲目，到
-            <Link to={"/vote/" + rndTime}>其他时段</Link>
+            <Link to={`/vote/${rndTime}`}>其他时段</Link>
             看看吧
           </div>
         );
       } else {
         return (
           <div className="tips">
-            <BulbOutlined /> 本时段您已投 {voted} 首曲目，还有{" "}
-            {songs.length - voted} 首未投票曲目
+            <BulbOutlined /> 本时段您已投 {voted} 首曲目，还有 {songs.length - voted} 首未投票曲目
           </div>
         );
       }
@@ -315,55 +327,53 @@ class VoteList extends React.Component {
 
     return (
       <Spin spinning={loading.effects["vote/fetchList"]}>
-        {songs.length !== 0 ? (
-          <span>
-            <div>
-              <YPlayer
-                src={this.state.src}
-                onProgress={this.timeListener}
-                onEnded={this.onEnded}
-                canBackward={this.state.canBackward}
-                canForward={this.state.canForward}
-                onBackward={this.backward}
-                onForward={this.forward}
-                ref={player => (this.player = player)}
-                className={styles.yplayer}
-              />
-              <br />
-              <Button
-                size="small"
-                onClick={() =>
-                  this.setState({ showReport: !this.state.showReport })
-                }
-                disabled={this.state.index === ""}
-                className={styles.toggleReport}
-              >
-                反馈
-              </Button>
-            </div>
-            <br />
-            {voteArea}
-            <TransitionGroup>
-              {this.state.showReport && (
-                <CSSTransition
-                  classNames="fade"
-                  timeout={{ enter: 500, exit: 200 }}
+        {songs.length !== 0
+          ? (
+            <span>
+              <div>
+                <YPlayer
+                  src={this.state.src}
+                  onProgress={this.timeListener}
+                  onEnded={this.onEnded}
+                  canBackward={this.state.canBackward}
+                  canForward={this.state.canForward}
+                  onBackward={this.backward}
+                  onForward={this.forward}
+                  ref={player => (this.player = player)}
+                  className={styles.yplayer}
+                />
+                <br />
+                <Button
+                  size="small"
+                  onClick={() => this.setState({ showReport: !this.state.showReport })}
+                  disabled={this.state.index === ""}
+                  className={styles.toggleReport}
                 >
-                  {reportArea}
-                </CSSTransition>
-              )}
-            </TransitionGroup>
-            <ol className={styles.list}>{list}</ol>
-            {notice()}
-          </span>
-        ) : (
-          <div className="tips">投票未开放或暂无数据</div>
-        )}
+                  反馈
+                </Button>
+              </div>
+              <br />
+              {voteArea}
+              <TransitionGroup>
+                {this.state.showReport && (
+                  <CSSTransition
+                    classNames="fade"
+                    timeout={{ enter: 500, exit: 200 }}
+                  >
+                    {reportArea}
+                  </CSSTransition>
+                )}
+              </TransitionGroup>
+              <ol className={styles.list}>{list}</ol>
+              {notice()}
+            </span>
+          )
+          : <div className="tips">投票未开放或暂无数据</div>}
       </Spin>
     );
   }
 }
 
 export default connect(({ vote, loading }) => ({ vote, loading }), null, null, {
-  withRef: true
+  withRef: true,
 })(VoteList);

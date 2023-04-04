@@ -1,8 +1,8 @@
-import Home from "./Home";
-import Songs from "./Songs";
 import Files from "./Files";
-import Reports from "./Reports";
+import Home from "./Home";
 import Rank from "./Rank";
+import Reports from "./Reports";
+import Songs from "./Songs";
 import Statistics from "./Statistics";
 
-export { Home, Songs, Files, Reports, Rank, Statistics };
+export { Files, Home, Rank, Reports, Songs, Statistics };

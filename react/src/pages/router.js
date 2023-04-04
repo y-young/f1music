@@ -1,13 +1,14 @@
-import React from "react";
 import dynamic from "dva/dynamic";
-import { Router, Route, Switch } from "dva/router";
-import { Home, Login, Upload, Vote, NotFound } from "routes";
+import { Route, Router, Switch } from "dva/router";
+import React from "react";
+import { Home, Login, NotFound, Upload, Vote } from "routes";
+
 import App from "../layouts/App";
 
 function RouterConfig({ history, app }) {
   const Result = dynamic({
     app,
-    component: () => import("../routes/Result")
+    component: () => import("../routes/Result"),
   });
   const Logout = () => {
     return <h1 style={{ color: "#777" }}>正在登出...</h1>;

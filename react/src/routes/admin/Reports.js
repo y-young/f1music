@@ -1,8 +1,8 @@
-import React from "react";
-import { connect } from "dva";
-import { Form, Table, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Form, Table } from "antd";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import { connect } from "dva";
+import React from "react";
 
 const FormItem = Form.Item;
 const columns = [
@@ -10,16 +10,16 @@ const columns = [
     dataIndex: "id",
     title: "#",
     width: "50px",
-    sorter: (a, b) => a.id - b.id
+    sorter: (a, b) => a.id - b.id,
   },
   { dataIndex: ["song", "name"], title: "曲目" },
   { dataIndex: "reason", title: "内容" },
-  { dataIndex: "time", title: "时间" }
+  { dataIndex: "time", title: "时间" },
 ];
 
 class Reports extends React.Component {
   state = {
-    selectedRowKeys: []
+    selectedRowKeys: [],
   };
 
   onSelectChange = selectedRowKeys => {
@@ -77,7 +77,7 @@ class Reports extends React.Component {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange
+      onChange: this.onSelectChange,
     };
 
     return (
@@ -110,5 +110,5 @@ class Reports extends React.Component {
 }
 
 export default connect(({ reports, loading }) => ({ reports, loading }))(
-  Reports
+  Reports,
 );

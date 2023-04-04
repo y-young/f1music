@@ -1,8 +1,6 @@
 {
-  "extends": "umi",
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
+  "extends": "@so1ve",
+  "rules": {
+    "prefer-promise-reject-errors": "off"
   }
 }

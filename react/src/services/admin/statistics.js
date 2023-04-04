@@ -6,6 +6,6 @@ const { statistics } = api;
 export async function Statistics() {
   return request({
     url: statistics,
-    method: "get"
+    method: "get",
   });
 }

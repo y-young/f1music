@@ -1,18 +1,11 @@
-import {
-  Songs,
-  TrashedSongs,
-  Save,
-  Trash,
-  Restore,
-  Delete
-} from "services/admin/songs";
 import { message } from "antd";
+import { Delete, Restore, Save, Songs, Trash, TrashedSongs } from "services/admin/songs";
 
 export default {
   namespace: "songs",
   state: {
     type: "",
-    list: []
+    list: [],
   },
 
   reducers: {
@@ -24,7 +17,7 @@ export default {
       const { id, playtime, name, origin, tags } = payload;
       const songs = list.filter(item => {
         if (item.id === id) {
-          let song = item;
+          const song = item;
           song.playtime = playtime;
           song.name = name;
           song.origin = origin;
@@ -36,19 +29,19 @@ export default {
       });
       return {
         ...state,
-        list: [...songs]
+        list: [...songs],
       };
     },
     reduce(state, { payload: id }) {
       const list = state.list;
       const newList = list.filter(item => {
-        return id.indexOf(item.id) === -1;
+        return !id.includes(item.id);
       });
       return {
         ...state,
-        list: newList
+        list: newList,
       };
-    }
+    },
   },
 
   effects: {
@@ -62,7 +55,7 @@ export default {
       }
       yield put({
         type: "updateState",
-        payload: { list: data.songs }
+        payload: { list: data.songs },
       });
     },
     *save({ payload }, { call, put }) {
@@ -93,7 +86,7 @@ export default {
         message.success("操作成功");
         yield put({ type: "reduce", payload: id });
       }
-    }
+    },
   },
 
   subscriptions: {
@@ -108,6 +101,6 @@ export default {
           dispatch({ type: "fetch" });
         }
       });
-    }
-  }
+    },
+  },
 };

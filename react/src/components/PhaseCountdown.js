@@ -1,4 +1,4 @@
-import { Tooltip, Statistic } from "antd";
+import { Statistic, Tooltip } from "antd";
 import moment from "moment";
 
 const { Countdown } = Statistic;

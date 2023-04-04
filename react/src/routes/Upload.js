@@ -1,14 +1,9 @@
-import React from "react";
-import moment from "moment";
+import { ClockCircleTwoTone, SmileTwoTone } from "@ant-design/icons";
+import { Alert, Button, Col, Result, Row, Spin, Statistic, Tabs } from "antd";
+import { CloudUpload, ManualUpload, PhaseCountdown, ViewUploads } from "components";
 import { connect } from "dva";
-import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
-import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
-import {
-  CloudUpload,
-  ManualUpload,
-  ViewUploads,
-  PhaseCountdown
-} from "components";
+import moment from "moment";
+import React from "react";
 
 const Upload = ({ upload, loading }) => {
   const { songs, status } = upload;
@@ -23,72 +18,72 @@ const Upload = ({ upload, loading }) => {
 
   return (
     <Spin
-      spinning={
-        loading.effects["upload/fetchUploads"] ||
-        loading.effects["upload/fetchStatus"]
-      }
+      spinning={loading.effects["upload/fetchUploads"]
+        || loading.effects["upload/fetchStatus"]}
     >
-      {moment().isBefore(status.start) ? (
-        <Result
-          icon={<ClockCircleTwoTone />}
-          title="抱歉，上传尚未开始，距离上传开始还有"
-          subTitle={
-            <PhaseCountdown value={status.start} tooltipPlacement="bottom" />
-          }
-          extra={
-            <Button type="primary" href="#/">
-              查看上传说明
-            </Button>
-          }
-        />
-      ) : moment().isAfter(status.end) ? (
-        <Result
-          status="error"
-          title="抱歉，上传已结束"
-          extra={
-            <Button type="primary" href="#/vote/1">
-              前往投票
-            </Button>
-          }
-        />
-      ) : (
-        <div>
-          <Alert
-            type="info"
-            closable
-            description={
-              <Row gutter={16}>
-                <Col span={12}>
-                  <PhaseCountdown title="距离上传结束" value={status.end} />
-                </Col>
-                <Col span={12}>
-                  <Statistic
-                    title="已上传曲目数"
-                    value={uploaded}
-                    suffix="/ 12"
-                  />
-                </Col>
-              </Row>
+      {moment().isBefore(status.start)
+        ? (
+          <Result
+            icon={<ClockCircleTwoTone />}
+            title="抱歉，上传尚未开始，距离上传开始还有"
+            subTitle={<PhaseCountdown value={status.start} tooltipPlacement="bottom" />}
+            extra={
+              <Button type="primary" href="#/">
+                查看上传说明
+              </Button>
             }
           />
-          <Tabs
-            defaultActiveKey="netease"
-            items={[
-              {
-                key: "netease",
-                label: "网易云音乐",
-                children: uploaded < 12 ? <CloudUpload /> : AllDone
-              },
-              {
-                key: "manual",
-                label: "手动上传",
-                children: uploaded < 12 ? <ManualUpload /> : AllDone
-              },
-              { key: "uploads", label: "我的推荐", children: <ViewUploads /> }
-            ]}
+        )
+        : moment().isAfter(status.end)
+        ? (
+          <Result
+            status="error"
+            title="抱歉，上传已结束"
+            extra={
+              <Button type="primary" href="#/vote/1">
+                前往投票
+              </Button>
+            }
           />
-        </div>
-      )}
+        )
+        : (
+          <div>
+            <Alert
+              type="info"
+              closable
+              description={
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <PhaseCountdown title="距离上传结束" value={status.end} />
+                  </Col>
+                  <Col span={12}>
+                    <Statistic
+                      title="已上传曲目数"
+                      value={uploaded}
+                      suffix="/ 12"
+                    />
+                  </Col>
+                </Row>
+              }
+            />
+            <Tabs
+              defaultActiveKey="netease"
+              items={[
+                {
+                  key: "netease",
+                  label: "网易云音乐",
+                  children: uploaded < 12 ? <CloudUpload /> : AllDone,
+                },
+                {
+                  key: "manual",
+                  label: "手动上传",
+                  children: uploaded < 12 ? <ManualUpload /> : AllDone,
+                },
+                { key: "uploads", label: "我的推荐", children: <ViewUploads /> },
+              ]}
+            />
+          </div>
+        )}
     </Spin>
   );
 };

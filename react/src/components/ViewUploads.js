@@ -1,7 +1,7 @@
-import React from "react";
-import { connect } from "dva";
 import { Table } from "antd";
-import { timeIdToText, timeFilters } from "config";
+import { timeFilters, timeIdToText } from "config";
+import { connect } from "dva";
+import React from "react";
 
 const ViewUploads = ({ upload, loading }) => {
   const { songs } = upload;
@@ -15,14 +15,14 @@ const ViewUploads = ({ upload, loading }) => {
         return timeIdToText[text];
       },
       filters: timeFilters,
-      onFilter: (value, record) => record.playtime === value
+      onFilter: (value, record) => record.playtime === value,
     },
     { dataIndex: "name", title: "曲名", width: 200 },
     {
       dataIndex: "origin",
       title: "来源",
-      width: 150
-    }
+      width: 150,
+    },
   ];
 
   return (
@@ -42,5 +42,5 @@ const ViewUploads = ({ upload, loading }) => {
 };
 
 export default connect(({ upload, loading }) => ({ upload, loading }))(
-  ViewUploads
+  ViewUploads,
 );

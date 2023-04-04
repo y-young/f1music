@@ -2,11 +2,12 @@ import dva from "dva";
 import createLoading from "dva-loading";
 // import { createSentry, Raven } from "utils";
 import { message } from "antd";
+
 import "./app.css";
 
 // 1. Initialize
 const app = dva({
-  onError(e, dispatch) {
+  onError(e) {
     if (e.type && e.type === "notice") {
       e.preventDefault();
       message.error(e.message);
@@ -16,9 +17,9 @@ const app = dva({
       // Raven.captureException(e, {
       //   logger: "javascript.effect"
       // });
-      console.log(e);
+      // console.log(e);
     }
-  }
+  },
 });
 
 // 2. Plugins
@@ -33,7 +34,7 @@ app.use(createLoading());
 
 // 3. Model
 const models = ["app", "upload", "vote"];
-models.forEach(m => app.model(require("../models/app/" + m).default));
+models.forEach(m => app.model(require(`../models/app/${m}`).default));
 
 // 4. Router
 app.router(require("./router").default);

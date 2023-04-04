@@ -1,7 +1,8 @@
-import React from "react";
-import { connect } from "dva";
-import { Col, Row, Card } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Card, Col, Row } from "antd";
+import { connect } from "dva";
+import React from "react";
+
 import styles from "./Statistics.css";
 
 const Statistics = ({ statistics, loading }) => {
@@ -38,7 +39,7 @@ const Statistics = ({ statistics, loading }) => {
   const colProps = {
     xs: 24,
     sm: 12,
-    style: { marginBottom: 20 }
+    style: { marginBottom: 20 },
   };
 
   return (
@@ -49,8 +50,7 @@ const Statistics = ({ statistics, loading }) => {
         </Col>
         <Col {...colProps}>
           <DataCard title="状态">
-            上传 {statusIcon(data.open_upload)} 投票{" "}
-            {statusIcon(data.open_vote)}
+            上传 {statusIcon(data.open_upload)} 投票 {statusIcon(data.open_vote)}
           </DataCard>
         </Col>
         <Col {...colProps}>
@@ -77,5 +77,5 @@ const Statistics = ({ statistics, loading }) => {
 };
 
 export default connect(({ statistics, loading }) => ({ statistics, loading }))(
-  Statistics
+  Statistics,
 );

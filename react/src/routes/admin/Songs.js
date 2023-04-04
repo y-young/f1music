@@ -1,19 +1,19 @@
-import React from "react";
-import { connect } from "dva";
-import { Form, Table, Button, Input, Tag, Modal, Space, Badge } from "antd";
 import {
-  SearchOutlined,
-  EditOutlined,
-  RollbackOutlined,
   DeleteOutlined,
   DownloadOutlined,
-  ReloadOutlined
+  EditOutlined,
+  ReloadOutlined,
+  RollbackOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-import { TimeSelector, TagsSelect } from "components/admin";
+import { Badge, Button, Form, Input, Modal, Space, Table, Tag } from "antd";
 import { Audio } from "components";
-import { timeFilters } from "config";
-import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
+import { TagsSelect, TimeSelector } from "components/admin";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
+import { timeFilters } from "config";
+import { connect } from "dva";
+import React from "react";
+import { dateSorter, ellipsis, renderDateTime } from "utils/utils";
 
 const FormItem = Form.Item;
 const colors = [
@@ -27,7 +27,7 @@ const colors = [
   "cyan",
   "blue",
   "geekblue",
-  "purple"
+  "purple",
 ];
 
 class Songs extends React.Component {
@@ -35,8 +35,9 @@ class Songs extends React.Component {
     selectedRowKeys: [],
     searchText: "",
     searchColumn: "",
-    modalVisible: false
+    modalVisible: false,
   };
+
   tagColors = new Map();
   form = React.createRef();
 
@@ -45,7 +46,7 @@ class Songs extends React.Component {
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
@@ -54,12 +55,8 @@ class Songs extends React.Component {
           }}
           placeholder="输入关键词"
           value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            this.handleSearch(selectedKeys, confirm, dataIndex)
-          }
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Space>
@@ -82,23 +79,20 @@ class Songs extends React.Component {
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />,
+    onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
       }
-    }
+    },
   });
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     this.setState({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex
+      searchedColumn: dataIndex,
     });
   };
 
@@ -109,7 +103,7 @@ class Songs extends React.Component {
   };
 
   onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys: selectedRowKeys });
+    this.setState({ selectedRowKeys });
   };
 
   handleRefresh = () => {
@@ -123,7 +117,7 @@ class Songs extends React.Component {
       playtime: row.playtime,
       name: row.name,
       origin: row.origin,
-      tags: row.tags
+      tags: row.tags,
     });
     this.setState({ modalVisible: true });
   };
@@ -138,8 +132,8 @@ class Songs extends React.Component {
             this.setState({ modalVisible: false });
           }
         });
-      })
-      .catch(error => {});
+      });
+    // .catch(error => {});
   };
 
   handleCancel = () => {
@@ -171,8 +165,8 @@ class Songs extends React.Component {
   };
 
   getTagColor = tagName => {
-    let tagColors = this.tagColors,
-      color;
+    const tagColors = this.tagColors;
+    let color;
     if (!tagColors.has(tagName)) {
       color = colors[Math.floor(Math.random() * 11)];
       tagColors.set(tagName, color);
@@ -235,41 +229,43 @@ class Songs extends React.Component {
               >
                 编辑
               </Button>
-              {type === "trashed" ? (
-                <Space>
-                  <Button
-                    type="secondary"
-                    icon={<RollbackOutlined />}
-                    onClick={() => this.handleRestore([row.id])}
-                    loading={loading.effects["songs/restore"]}
-                  >
-                    恢复
-                  </Button>
+              {type === "trashed"
+                ? (
+                  <Space>
+                    <Button
+                      type="secondary"
+                      icon={<RollbackOutlined />}
+                      onClick={() => this.handleRestore([row.id])}
+                      loading={loading.effects["songs/restore"]}
+                    >
+                      恢复
+                    </Button>
+                    <Button
+                      type="primary"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => this.handleDelete([row.id], true)}
+                      loading={loading.effects["songs/delete"]}
+                    >
+                      彻底删除
+                    </Button>
+                  </Space>
+                )
+                : (
                   <Button
                     type="primary"
                     danger
                     icon={<DeleteOutlined />}
-                    onClick={() => this.handleDelete([row.id], true)}
-                    loading={loading.effects["songs/delete"]}
+                    onClick={() => this.handleDelete([row.id])}
+                    loading={loading.effects["songs/trash"]}
                   >
-                    彻底删除
+                    删除
                   </Button>
-                </Space>
-              ) : (
-                <Button
-                  type="primary"
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={() => this.handleDelete([row.id])}
-                  loading={loading.effects["songs/trash"]}
-                >
-                  删除
-                </Button>
-              )}
+                )}
               <Button
                 type="secondary"
                 icon={<DownloadOutlined />}
-                href={"/api/download/" + row.id}
+                href={`/api/download/${row.id}`}
               >
                 下载
               </Button>
@@ -286,21 +282,21 @@ class Songs extends React.Component {
     const { selectedRowKeys, modalVisible } = this.state;
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange
+      onChange: this.onSelectChange,
     };
     const columns = [
       {
         dataIndex: "id",
         title: "#",
         width: "60px",
-        sorter: (a, b) => a.id - b.id
+        sorter: (a, b) => a.id - b.id,
       },
       {
         dataIndex: "playtime",
         title: "时段",
         width: "80px",
         filters: timeFilters,
-        onFilter: (value, record) => record.playtime === value
+        onFilter: (value, record) => record.playtime === value,
       },
       {
         dataIndex: "name",
@@ -313,14 +309,14 @@ class Songs extends React.Component {
           >
             <span style={{ lineHeight: 1.5715 }}>{text}</span>
           </Badge>
-        )
+        ),
       },
       {
         dataIndex: "origin",
         title: "来源",
         width: "100px",
         ...this.getColumnSearchProps("origin"),
-        render: text => ellipsis(text, 50)
+        render: text => ellipsis(text, 50),
       },
       {
         title: "标签",
@@ -330,7 +326,7 @@ class Songs extends React.Component {
           <span>
             {tags.map(tag => {
               if (tag !== "") {
-                let color = this.getTagColor(tag);
+                const color = this.getTagColor(tag);
                 return (
                   <Tag color={color} key={tag}>
                     {tag}
@@ -342,16 +338,15 @@ class Songs extends React.Component {
             })}
           </span>
         ),
-        ...this.getColumnSearchProps("tags")
+        ...this.getColumnSearchProps("tags"),
       },
       {
         dataIndex: type === "trashed" ? "deleted_at" : "created_at",
         title: type === "trashed" ? "删除时间" : "时间",
         render: renderDateTime,
-        sorter:
-          type === "trashed" &&
-          ((a, b) => dateSorter(a.deleted_at, b.deleted_at))
-      }
+        sorter: type === "trashed"
+          && ((a, b) => dateSorter(a.deleted_at, b.deleted_at)),
+      },
     ];
 
     return (
@@ -377,34 +372,36 @@ class Songs extends React.Component {
           rowKey="id"
           scroll={{ x: 600 }}
         />
-        {type === "trashed" ? (
-          <Space>
-            <Button
-              type="secondary"
-              onClick={this.handleBatchRestore}
-              loading={loading.effects["songs/restore"]}
-            >
-              恢复所选
-            </Button>
+        {type === "trashed"
+          ? (
+            <Space>
+              <Button
+                type="secondary"
+                onClick={this.handleBatchRestore}
+                loading={loading.effects["songs/restore"]}
+              >
+                恢复所选
+              </Button>
+              <Button
+                type="primary"
+                danger
+                onClick={() => this.handleBatchDelete(true)}
+                loading={loading.effects["songs/delete"]}
+              >
+                彻底删除所选
+              </Button>
+            </Space>
+          )
+          : (
             <Button
               type="primary"
               danger
-              onClick={() => this.handleBatchDelete(true)}
-              loading={loading.effects["songs/delete"]}
+              onClick={() => this.handleBatchDelete(false)}
+              loading={loading.effects["songs/trash"]}
             >
-              彻底删除所选
+              删除所选
             </Button>
-          </Space>
-        ) : (
-          <Button
-            type="primary"
-            danger
-            onClick={() => this.handleBatchDelete(false)}
-            loading={loading.effects["songs/trash"]}
-          >
-            删除所选
-          </Button>
-        )}
+          )}
         <Modal
           open={modalVisible}
           onCancel={this.handleCancel}
@@ -451,8 +448,8 @@ class Songs extends React.Component {
                       return Promise.resolve();
                     }
                     return Promise.reject("标签总长度不得超过200");
-                  }
-                }
+                  },
+                },
               ]}
             >
               <TagsSelect placeholder="曲目标签" />

@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "dva/router";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { Link } from "dva/router";
+import React from "react";
 
 const VoteDescription = () => (
   <>
@@ -14,8 +14,7 @@ const VoteDescription = () => (
 
     <p>
       投票时请先选择一个时段，待页面加载完毕后从下方播放列表中点击一首歌曲试听，歌曲播放总时长达15秒后显示评分栏，总时长达30秒后允许提交投票，请综合您的感受及歌曲所在时段的音乐要求进行评价，选择“1星
-      - 非常不合适”、“2星 - 不合适”、“3星 - 中立”、“4星 - 合适”或“5星 -
-      非常合适”，然后点击提交按钮进行提交。
+      - 非常不合适”、“2星 - 不合适”、“3星 - 中立”、“4星 - 合适”或“5星 - 非常合适”，然后点击提交按钮进行提交。
     </p>
     <p>
       虽然倒计时30秒结束后就允许提交投票，但仍然
@@ -24,17 +23,17 @@ const VoteDescription = () => (
     </p>
 
     <p>
-      <font style={{ color: "red" }}>NEW </font>
+      <font style={{ color: "red" }}>NEW</font>
       播放器现已支持显示缓冲进度(部分浏览器不兼容)
       ，如试听过程中出现卡顿或暂停可能为歌曲正在缓冲，请耐心等待，多次出现此问题请检查网络状况，遭遇错误请先刷新重试。
     </p>
     <p>
-      <font style={{ color: "red" }}>NEW </font>
+      <font style={{ color: "red" }}>NEW</font>
       播放器现已支持调整播放进度，总试听时长达到30秒(倒计时结束)即可，同时倒计时完毕后如果已经进行评分将自动提交投票(仅限未投票且未试听过的曲目)。
     </p>
     <p>提交投票后仍可对评价进行更改并再次提交。</p>
     <p>
-      <font style={{ color: "red" }}>NEW </font>
+      <font style={{ color: "red" }}>NEW</font>
       <strong>
         已投票或已试听过但还未投票(刷新页面无效)的曲目再次试听时无需等待倒计时。
       </strong>

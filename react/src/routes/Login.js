@@ -1,17 +1,13 @@
-import React from "react";
+import { ArrowLeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
 import { connect } from "dva";
-import styles from "./Login.css";
 import { Link } from "dva/router";
-import { Form, Button, Input } from "antd";
-import {
-  UserOutlined,
-  LockOutlined,
-  ArrowLeftOutlined
-} from "@ant-design/icons";
+
+import styles from "./Login.css";
 
 const FormItem = Form.Item;
 
-const Login = ({ app, loading, dispatch }) => {
+const Login = ({ loading, dispatch }) => {
   const handleSubmit = values => {
     dispatch({ type: "app/login", payload: values });
   };
@@ -31,13 +27,13 @@ const Login = ({ app, loading, dispatch }) => {
                 {
                   min: 10,
                   message: "学号应为10或11位",
-                  validateTrigger: "onBlur"
+                  validateTrigger: "onBlur",
                 },
                 {
                   max: 11,
                   message: "学号应为10或11位",
-                  validateTrigger: "onBlur"
-                }
+                  validateTrigger: "onBlur",
+                },
               ]}
             >
               <Input
@@ -55,10 +51,10 @@ const Login = ({ app, loading, dispatch }) => {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                      "为保证投票质量禁止使用校网初始密码登录,请更改密码",
                     );
-                  }
-                })
+                  },
+                }),
               ]}
             >
               <Input.Password

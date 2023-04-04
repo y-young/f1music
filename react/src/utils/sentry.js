@@ -14,7 +14,7 @@ function createSentry(props) {
         return true;
       }
     },
-    ...config
+    ...config,
   }).install();
 
   if (context) {
@@ -31,21 +31,21 @@ function createSentry(props) {
         Raven.captureBreadcrumb({
           category: "action.start",
           data: others,
-          message: type
+          message: type,
         });
         next(action);
         Raven.captureBreadcrumb({
           category: "action.end",
-          message: type
+          message: type,
         });
       } catch (e) {
         if (!e.type || e.type !== "notice") {
           Raven.captureException(e, {
             extra: {
               action,
-              state: store.getState()
+              state: store.getState(),
             },
-            logger: "javascript.action"
+            logger: "javascript.action",
           });
         }
       }
@@ -54,15 +54,15 @@ function createSentry(props) {
       function*(...args) {
         Raven.captureBreadcrumb({
           category: "effect.start",
-          message: action
+          message: action,
         });
         yield effect(...args);
         Raven.captureBreadcrumb({
           category: "effect.stop",
-          message: action
+          message: action,
         });
-      }
+      },
   };
 }
 
-export { createSentry, Raven };
+export { Raven, createSentry };

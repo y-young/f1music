@@ -1,10 +1,10 @@
-import { Reports, Delete } from "services/admin/reports";
 import { message } from "antd";
+import { Delete, Reports } from "services/admin/reports";
 
 export default {
   namespace: "reports",
   state: {
-    list: []
+    list: [],
   },
 
   reducers: {
@@ -14,13 +14,13 @@ export default {
     reduce(state, { payload: id }) {
       const list = state.list;
       const newList = list.filter(item => {
-        return id.indexOf(item.id) === -1;
+        return !id.includes(item.id);
       });
       return {
         ...state,
-        list: newList
+        list: newList,
       };
-    }
+    },
   },
 
   effects: {
@@ -34,7 +34,7 @@ export default {
         message.success("操作成功");
         yield put({ type: "reduce", payload: id });
       }
-    }
+    },
   },
 
   subscriptions: {
@@ -44,6 +44,6 @@ export default {
           dispatch({ type: "fetch" });
         }
       });
-    }
-  }
+    },
+  },
 };

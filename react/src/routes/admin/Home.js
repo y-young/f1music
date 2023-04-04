@@ -1,5 +1,5 @@
-import React from "react";
 import TimePeriodDescription from "components/TimePeriodDescription";
+import React from "react";
 
 const Home = () => {
   return (

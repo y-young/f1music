@@ -3,7 +3,7 @@ export default {
   state: {
     title: "首页",
     siderFolded: false,
-    isDesktop: window.innerWidth > 993
+    isDesktop: window.innerWidth > 993,
   },
 
   subscriptions: {
@@ -17,8 +17,8 @@ export default {
             type: "mobileCollapse",
             payload: {
               width: window.innerWidth,
-              isResize: true
-            }
+              isResize: true,
+            },
           });
         }, 300);
       };
@@ -29,11 +29,11 @@ export default {
           type: "mobileCollapse",
           payload: {
             width: window.innerWidth,
-            isResize: false
-          }
+            isResize: false,
+          },
         });
       });
-    }
+    },
   },
 
   effects: {
@@ -65,9 +65,9 @@ export default {
           title = "404";
           break;
       }
-      yield put({ type: "updateState", payload: { title: title } });
-      document.title = title + " - 福州一中校园音乐征集 管理系统 ";
-    }
+      yield put({ type: "updateState", payload: { title } });
+      document.title = `${title} - 福州一中校园音乐征集 管理系统 `;
+    },
   },
 
   reducers: {
@@ -77,22 +77,22 @@ export default {
     toggleSider(state) {
       return {
         ...state,
-        siderFolded: !state.siderFolded
+        siderFolded: !state.siderFolded,
       };
     },
     mobileCollapse(state, { payload }) {
       const { width, isResize } = payload;
-      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
+      // 移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
       if (!isResize || width !== state.width) {
         const isDesktop = width >= 768;
         return {
           ...state,
-          width: width,
-          siderFolded: !isDesktop
+          width,
+          siderFolded: !isDesktop,
         };
       } else {
         return { ...state };
       }
-    }
-  }
+    },
+  },
 };

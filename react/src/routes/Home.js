@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import moment from "moment";
-import { connect } from "dva";
 import { Spin, Tabs } from "antd";
 import { StatusNotice } from "components";
+import TimePeriodDescription from "components/TimePeriodDescription";
 import UploadDescription from "components/UploadDescription";
 import VoteDescription from "components/VoteDescription";
-import TimePeriodDescription from "components/TimePeriodDescription";
+import { connect } from "dva";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 
 const Home = ({ app, loading }) => {
   const { status } = app;
@@ -13,11 +13,10 @@ const Home = ({ app, loading }) => {
 
   useEffect(() => {
     const currentTime = moment();
-    const phase =
-      currentTime.isAfter(status.upload.end) &&
-      currentTime.isBefore(status.vote.end)
-        ? "vote"
-        : "upload";
+    const phase = (currentTime.isAfter(status.upload.end)
+        && currentTime.isBefore(status.vote.end))
+      ? "vote"
+      : "upload";
     setActiveTab(phase);
   }, [status, setActiveTab]);
 
@@ -40,8 +39,8 @@ const Home = ({ app, loading }) => {
                 </p>
                 <TimePeriodDescription />
               </>
-            )
-          }
+            ),
+          },
         ]}
         activeKey={activeTab}
         onChange={setActiveTab}

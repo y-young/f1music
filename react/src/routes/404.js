@@ -1,5 +1,5 @@
+import { Button, Result } from "antd";
 import React from "react";
-import { Result, Button } from "antd";
 
 const NotFound = () => {
   return (

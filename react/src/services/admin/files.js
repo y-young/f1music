@@ -6,6 +6,6 @@ const { files } = api;
 export async function Files() {
   return request({
     url: files,
-    method: "get"
+    method: "get",
   });
 }

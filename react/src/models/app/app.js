@@ -1,5 +1,5 @@
 import { routerRedux } from "dva/router";
-import { checkLogin, Login, Status } from "services/app";
+import { Login, Status, checkLogin } from "services/app";
 import { getPageQuery } from "utils/utils";
 
 export default {
@@ -12,8 +12,8 @@ export default {
     loggedIn: false,
     status: {
       upload: {},
-      vote: {}
-    }
+      vote: {},
+    },
   },
 
   subscriptions: {
@@ -27,8 +27,8 @@ export default {
             type: "mobileCollapse",
             payload: {
               width: window.innerWidth,
-              isResize: true
-            }
+              isResize: true,
+            },
           });
         }, 300);
       };
@@ -45,12 +45,12 @@ export default {
           type: "mobileCollapse",
           payload: {
             width: window.innerWidth,
-            isResize: false
-          }
+            isResize: false,
+          },
         });
         dispatch({ type: "updateState", payload: { loggedIn: checkLogin() } });
       });
-    }
+    },
   },
 
   effects: {
@@ -85,8 +85,8 @@ export default {
           title = "404";
           break;
       }
-      yield put({ type: "updateState", payload: { title: title } });
-      document.title = title + " - 福州一中 校园音乐征集";
+      yield put({ type: "updateState", payload: { title } });
+      document.title = `${title} - 福州一中 校园音乐征集`;
     },
     *fetchStatus(_, { call, put }) {
       const data = yield call(Status);
@@ -107,14 +107,14 @@ export default {
         yield put(routerRedux.push(redirect || "/"));
       }
     },
-    *logout({ payload }, { call, put }) {
+    *logout(_, { put }) {
       yield put({
         type: "updateState",
         payload: {
-          loggedIn: false
-        }
+          loggedIn: false,
+        },
       });
-    }
+    },
   },
 
   reducers: {
@@ -124,22 +124,22 @@ export default {
     toggleSider(state) {
       return {
         ...state,
-        siderFolded: !state.siderFolded
+        siderFolded: !state.siderFolded,
       };
     },
     mobileCollapse(state, { payload }) {
       const { width, isResize } = payload;
-      //移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
+      // 移动端导航栏的收起和展开会触发window.onresize,需判断窗口宽度是否改变
       if (!isResize || width !== state.width) {
         const isDesktop = width >= 768;
         return {
           ...state,
-          width: width,
-          siderFolded: !isDesktop
+          width,
+          siderFolded: !isDesktop,
         };
       } else {
         return { ...state };
       }
-    }
-  }
+    },
+  },
 };

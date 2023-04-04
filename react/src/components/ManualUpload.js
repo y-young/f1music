@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { connect } from "dva";
-import { Form, Divider, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
+import { Divider, Form, Input, Upload, message } from "antd";
 import { TimeSelector } from "components";
+import { connect } from "dva";
+import React, { useState } from "react";
 
 const FormItem = Form.Item;
 
@@ -18,7 +18,7 @@ const ManualUpload = ({ dispatch }) => {
   const beforeUpload = file => {
     return form
       .validateFields()
-      .then(values => {
+      .then(_values => {
         setFileList([]);
         const tooBig = file.size / 1024 / 1024 > 20;
         const tooSmall = file.size / 1024 / 1024 < 1;
@@ -42,7 +42,7 @@ const ManualUpload = ({ dispatch }) => {
   };
 
   const onChange = info => {
-    let { file } = info;
+    const { file } = info;
     const { response } = file;
 
     if (file.status === "done") {
@@ -64,12 +64,12 @@ const ManualUpload = ({ dispatch }) => {
   const formItemLayout = {
     labelCol: {
       xs: { span: 20 },
-      sm: { span: 6 }
+      sm: { span: 6 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16 }
-    }
+      sm: { span: 16 },
+    },
   };
 
   return (
@@ -130,5 +130,5 @@ const ManualUpload = ({ dispatch }) => {
 };
 
 export default connect(({ upload, loading }) => ({ upload, loading }))(
-  ManualUpload
+  ManualUpload,
 );

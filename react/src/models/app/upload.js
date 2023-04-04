@@ -1,12 +1,12 @@
 import { message } from "antd";
-import { Search, Mp3, Upload, View, Status } from "services/upload";
+import { Mp3, Search, Status, Upload, View } from "services/upload";
 
 export default {
   namespace: "upload",
   state: {
     searchResult: [],
     songs: [],
-    status: {}
+    status: {},
   },
 
   reducers: {
@@ -17,7 +17,7 @@ export default {
       const result = state.searchResult;
       const records = result.filter(item => {
         if (item.id === row.id) {
-          let record = item;
+          const record = item;
           record.mp3 = url;
           return record;
         } else {
@@ -26,9 +26,9 @@ export default {
       });
       return {
         ...state,
-        searchResult: [...records]
+        searchResult: [...records],
       };
-    }
+    },
   },
 
   effects: {
@@ -42,19 +42,19 @@ export default {
     },
     *search({ payload: keyword }, { call, put }) {
       const data = yield call(Search, keyword);
-      if (data.error === 0)
+      if (data.error === 0) {
         yield put({
           type: "updateState",
-          payload: { searchResult: data.result }
+          payload: { searchResult: data.result },
         });
+      }
     },
     *fetchMp3({ payload: row }, { call, put }) {
       const data = yield call(Mp3, row.id);
       if (data.error !== 0) {
         return false;
       }
-      const url =
-        "https://music.163.com/song/media/outer/url?id=" + row.id + ".mp3";
+      const url = `https://music.163.com/song/media/outer/url?id=${row.id}.mp3`;
       yield put({ type: "updateMp3", payload: { row, url } });
       return true;
     },
@@ -66,7 +66,7 @@ export default {
         return true;
       }
       return false;
-    }
+    },
   },
 
   subscriptions: {
@@ -77,6 +77,6 @@ export default {
           dispatch({ type: "fetchUploads" });
         }
       });
-    }
-  }
+    },
+  },
 };

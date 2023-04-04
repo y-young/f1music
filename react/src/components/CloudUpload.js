@@ -1,17 +1,8 @@
-import React, { useRef, useState } from "react";
+import { BulbOutlined, UploadOutlined } from "@ant-design/icons";
+import { AutoComplete, Button, Form, Input, Modal, Spin, Table, message } from "antd";
+import { TimeSelector, YPlayer } from "components";
 import { connect } from "dva";
-import {
-  Form,
-  Modal,
-  AutoComplete,
-  Input,
-  Table,
-  Button,
-  Spin,
-  message
-} from "antd";
-import { UploadOutlined, BulbOutlined } from "@ant-design/icons";
-import { YPlayer, TimeSelector } from "components";
+import React, { useRef, useState } from "react";
 
 const Search = Input.Search;
 const FormItem = Form.Item;
@@ -24,54 +15,6 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const playerRef = useRef(null);
-
-  const columns = [
-    {
-      title: "上传",
-      render: row => (
-        <Button
-          icon={<UploadOutlined />}
-          loading={loading.effects["upload/fetchMp3"]}
-          onClick={() => {
-            openModal(row);
-          }}
-        />
-      ),
-      fixed: "left",
-      width: 60
-    },
-    {
-      dataIndex: "name",
-      title: "曲名",
-      width: 200,
-      render: (text, row) => (
-        <a
-          href={`https://music.163.com/#/song?id=${row.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {text}
-        </a>
-      )
-    },
-    {
-      dataIndex: "artist",
-      title: "歌手",
-      width: 150,
-      render: text => text.join(", ")
-    },
-    { dataIndex: "album", title: "专辑", width: 200 }
-  ];
-
-  const search = keyword => {
-    if (keyword) {
-      dispatch({ type: "upload/search", payload: keyword }).then(() =>
-        setPage(1)
-      );
-    } else {
-      message.error("请输入搜索词或粘贴链接");
-    }
-  };
 
   const openModal = row => {
     // music.163.com/song/media/outer/url?id={id}.mp3
@@ -88,25 +31,71 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
     }
   };
 
+  const columns = [
+    {
+      title: "上传",
+      render: row => (
+        <Button
+          icon={<UploadOutlined />}
+          loading={loading.effects["upload/fetchMp3"]}
+          onClick={() => {
+            openModal(row);
+          }}
+        />
+      ),
+      fixed: "left",
+      width: 60,
+    },
+    {
+      dataIndex: "name",
+      title: "曲名",
+      width: 200,
+      render: (text, row) => (
+        <a
+          href={`https://music.163.com/#/song?id=${row.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {text}
+        </a>
+      ),
+    },
+    {
+      dataIndex: "artist",
+      title: "歌手",
+      width: 150,
+      render: text => text.join(", "),
+    },
+    { dataIndex: "album", title: "专辑", width: 200 },
+  ];
+
+  const search = keyword => {
+    if (keyword) {
+      dispatch({ type: "upload/search", payload: keyword }).then(() => setPage(1));
+    } else {
+      message.error("请输入搜索词或粘贴链接");
+    }
+  };
+
   const onCancel = () => {
     setVisible(false);
     if (playerRef.current) {
       playerRef.current.stop();
     }
-  }
+  };
 
   const handleUpload = id => {
     form
       .validateFields()
       .then(values => {
-        values = { id: id, ...values };
+        values = { id, ...values };
         dispatch({ type: "upload/upload", payload: values }).then(success => {
           if (success) {
             setVisible(false);
           }
         });
-      })
-      .catch(error => {});
+      });
+    // .catch(error => {});
   };
 
   return (
@@ -182,5 +171,5 @@ const CloudUpload = ({ upload, loading, dispatch }) => {
 };
 
 export default connect(({ upload, loading }) => ({ upload, loading }))(
-  CloudUpload
+  CloudUpload,
 );

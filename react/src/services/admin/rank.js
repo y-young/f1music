@@ -6,6 +6,6 @@ const { rank } = api;
 export async function Rank() {
   return request({
     url: rank,
-    method: "get"
+    method: "get",
   });
 }

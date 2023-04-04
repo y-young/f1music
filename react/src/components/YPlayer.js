@@ -1,14 +1,15 @@
-import React from "react";
-import styles from "./YPlayer.css";
-import { Button, Slider, message, Space } from "antd";
 import {
-  StepForwardOutlined,
-  PauseOutlined,
   CaretRightOutlined,
+  LoadingOutlined,
+  PauseOutlined,
   StepBackwardOutlined,
-  LoadingOutlined
+  StepForwardOutlined,
 } from "@ant-design/icons";
+import { Button, Slider, Space, message } from "antd";
 import { Audio, VolumeControl } from "components";
+import React from "react";
+
+import styles from "./YPlayer.css";
 
 class YPlayer extends React.Component {
   state = {
@@ -17,7 +18,7 @@ class YPlayer extends React.Component {
     time: 0,
     displayTime: 0,
     loaded: "0.00",
-    disableSliderUpdate: false
+    disableSliderUpdate: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -44,10 +45,10 @@ class YPlayer extends React.Component {
         promise.catch(e => {
           console.warn(e);
           if (e.name === "NotAllowedError") {
-            //this.stop();
+            // this.stop();
             if (!disableWarning) {
               message.warning(
-                "您的浏览器可能不兼容自动播放功能,请尝试手动播放"
+                "您的浏览器可能不兼容自动播放功能,请尝试手动播放",
               );
             }
           }
@@ -80,8 +81,8 @@ class YPlayer extends React.Component {
 
   onLoad = () => {
     const loaded = this.audio.buffered.length
-      ? this.audio.buffered.end(this.audio.buffered.length - 1) /
-        this.state.duration
+      ? this.audio.buffered.end(this.audio.buffered.length - 1)
+        / this.state.duration
       : 0;
     const percent = (loaded * 100).toFixed(2);
     this.setState({ loaded: percent.toString() });
@@ -103,7 +104,7 @@ class YPlayer extends React.Component {
   };
 
   updateDuration = event => {
-    //event.persist();
+    // event.persist();
     const duration = event.target.duration;
     if (duration !== 1) {
       this.setState({ duration });
@@ -116,17 +117,17 @@ class YPlayer extends React.Component {
     }
     const offset = time - this.state.time;
     if (this.props.onProgress) {
-      //offset > 0: In case that currentTime didn't update in time
-      //offset <= 1: To prevent cheating
+      // offset > 0: In case that currentTime didn't update in time
+      // offset <= 1: To prevent cheating
       if (offset > 0 && offset <= 1) {
         this.props.onProgress(offset);
       }
     }
-    this.setState({ time: time });
+    this.setState({ time });
   };
 
   onEnded = () => {
-    //this.pause();
+    // this.pause();
     if (this.props.onEnded) {
       this.props.onEnded();
     }
@@ -134,7 +135,7 @@ class YPlayer extends React.Component {
 
   onError = e => {
     this.stop();
-    //message.error("播放出错了,请重试");
+    // message.error("播放出错了,请重试");
     throw e;
   };
 
@@ -146,7 +147,7 @@ class YPlayer extends React.Component {
     this.setState({
       disableSliderUpdate: false,
       displayTime: time,
-      time: time
+      time,
     });
     this.audio.currentTime = time;
   };
@@ -176,7 +177,7 @@ class YPlayer extends React.Component {
           this.audio = audio;
         }}
         src={this.props.src}
-        //controls="controls"
+        // controls="controls"
         onProgress={this.onLoad}
         onTimeUpdate={this.onTimeUpdate}
         onDurationChange={this.updateDuration}
@@ -201,8 +202,7 @@ class YPlayer extends React.Component {
               tooltip={{ formatter: null }}
             />
             <div className={styles.timeDetail}>
-              {this.formatTime(this.state.displayTime)} /{" "}
-              {this.formatTime(this.state.duration)}
+              {this.formatTime(this.state.displayTime)} / {this.formatTime(this.state.duration)}
             </div>
           </div>
           <div className={styles.controls}>
@@ -242,12 +242,10 @@ class YPlayer extends React.Component {
             className={styles.bufferDetail}
             style={!this.props.src ? { display: "none" } : {}}
           >
-            {loaded !== "100.00" && (
-              <LoadingOutlined style={{ marginRight: "2px" }} />
-            )}
+            {loaded !== "100.00" && <LoadingOutlined style={{ marginRight: "2px" }} />}
             {loaded === "100.00"
               ? "缓冲完毕"
-              : loaded !== "0.00" && loaded + "%"}
+              : (loaded !== "0.00" && `${loaded}%`)}
           </div>
         </div>
       );
@@ -264,8 +262,7 @@ class YPlayer extends React.Component {
             </Button>
           </Space.Compact>
           <div className={styles.miniTimeDetail}>
-            {this.formatTime(this.state.displayTime)} /{" "}
-            {this.formatTime(this.state.duration)}
+            {this.formatTime(this.state.displayTime)} / {this.formatTime(this.state.duration)}
           </div>
           <VolumeControl
             onChange={this.handleVolumeChange}
@@ -284,7 +281,7 @@ class YPlayer extends React.Component {
     const minutes = Math.floor((duration - hours * 3600) / 60);
     const seconds = Math.floor(duration - hours * 3600 - minutes * 60);
     const add0 = num => {
-      return num < 10 ? "0" + num : "" + num;
+      return num < 10 ? `0${num}` : `${num}`;
     };
     return (hours > 0 ? [hours, minutes, seconds] : [minutes, seconds])
       .map(add0)

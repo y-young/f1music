@@ -1,7 +1,7 @@
-import React from "react";
-import { Router, Route, Switch } from "dva/router";
+import { Route, Router, Switch } from "dva/router";
+import { Files, Home, Rank, Reports, Songs, Statistics } from "routes/admin";
+
 import Admin from "../layouts/Admin";
-import { Home, Songs, Files, Reports, Rank, Statistics } from "routes/admin";
 
 function RouterConfig({ history }) {
   return (

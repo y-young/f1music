@@ -2,19 +2,20 @@ import dva from "dva";
 import createLoading from "dva-loading";
 // import { createSentry, Raven } from "utils/admin";
 import { message } from "antd";
+
 import "./admin.css";
 
 // 1. Initialize
 const app = dva({
-  onError(e, dispatch) {
+  onError(e) {
     message.error(e.message);
     if (!e.type || e.type !== "notice") {
       // Raven.captureException(e, {
       //   logger: "javascript.effect"
       // });
-      console.log(e);
+      // console.log(e);
     }
-  }
+  },
 });
 
 // 2. Plugins
@@ -31,7 +32,7 @@ app.use(createLoading());
 
 // 3. Model
 const models = ["admin", "songs", "files", "reports", "rank", "statistics"];
-models.forEach(m => app.model(require("../models/admin/" + m).default));
+models.forEach(m => app.model(require(`../models/admin/${m}`).default));
 
 // 4. Router
 app.router(require("./adminRouter").default);

@@ -1,5 +1,5 @@
-import { parse } from "qs";
 import moment from "moment";
+import { parse } from "qs";
 
 export function getPageQuery() {
   return parse(window.location.href.split("?")[1]);

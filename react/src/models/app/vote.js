@@ -1,7 +1,7 @@
-import pathToRegexp from "path-to-regexp";
-import { routerRedux } from "dva/router";
 import { message } from "antd";
-import { Songs, Vote, Report, Status } from "services/vote";
+import { routerRedux } from "dva/router";
+import pathToRegexp from "path-to-regexp";
+import { Report, Songs, Status, Vote } from "services/vote";
 
 export default {
   namespace: "vote",
@@ -12,14 +12,14 @@ export default {
     onSubmitted: "continue",
     onEnded: "pause",
     isDesktop: window.innerWidth > 993,
-    status: {}
+    status: {},
   },
 
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload };
     },
-    toggleSkipVoted(state, { payload }) {
+    toggleSkipVoted(state) {
       if (typeof window.localStorage !== "undefined") {
         window.localStorage.skipVoted = !state.skipVoted;
       }
@@ -41,7 +41,7 @@ export default {
       const songs = state.songs;
       const newSongs = songs.filter(item => {
         if (item.id === id) {
-          let record = item;
+          const record = item;
           record.vote = rate;
           return record;
         } else {
@@ -50,14 +50,14 @@ export default {
       });
       return {
         ...state,
-        songs: [...newSongs]
+        songs: [...newSongs],
       };
     },
     markListened(state, { payload: id }) {
       const songs = state.songs;
       const newSongs = songs.filter(item => {
         if (item.id === id) {
-          let record = item;
+          const record = item;
           record.listened = true;
           return record;
         } else {
@@ -66,9 +66,9 @@ export default {
       });
       return {
         ...state,
-        songs: [...newSongs]
+        songs: [...newSongs],
       };
-    }
+    },
   },
 
   effects: {
@@ -81,7 +81,7 @@ export default {
       yield put({ type: "updateState", payload: { status: data.status } });
     },
     *vote({ payload: { id, rate } }, { call, put }) {
-      const res = yield call(Vote, { id: id, vote: rate });
+      const res = yield call(Vote, { id, vote: rate });
       if (res.error === 0) {
         yield put({ type: "updateVote", payload: { id, rate } });
         return true;
@@ -89,20 +89,20 @@ export default {
       return false;
     },
     *redirect({ payload: time }, { put }) {
-      yield put(routerRedux.push("/vote/" + time));
+      yield put(routerRedux.push(`/vote/${time}`));
     },
-    *report({ payload: { id, reason } }, { call, put }) {
+    *report({ payload: { id, reason } }, { call }) {
       if (!reason) {
         message.error("请填写反馈内容");
         return false;
       }
-      const res = yield call(Report, { id: id, reason: reason });
+      const res = yield call(Report, { id, reason });
       if (res.error === 0) {
         message.success("提交成功");
         return true;
       }
       return false;
-    }
+    },
   },
 
   subscriptions: {
@@ -111,22 +111,21 @@ export default {
         const match = pathToRegexp("/vote/:time").exec(pathname);
         if (match) {
           const time = match[1];
-          dispatch({ type: "updateState", payload: { time: time } });
+          dispatch({ type: "updateState", payload: { time } });
           dispatch({ type: "fetchList", payload: time });
           dispatch({ type: "fetchStatus" });
           const storage = window.localStorage;
           if (typeof storage !== "undefined") {
-            const skipVoted = storage.skipVoted === "false" ? false : true;
-            const onSubmitted =
-              storage.onSubmitted === "forward" ? "forward" : "continue";
+            const skipVoted = storage.skipVoted !== "false";
+            const onSubmitted = storage.onSubmitted === "forward" ? "forward" : "continue";
             const onEnded = storage.onEnded === "forward" ? "forward" : "pause";
             dispatch({
               type: "updateState",
-              payload: { skipVoted, onSubmitted, onEnded }
+              payload: { skipVoted, onSubmitted, onEnded },
             });
           }
         }
       });
-    }
-  }
+    },
+  },
 };

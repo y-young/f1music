@@ -1,21 +1,16 @@
-import React from "react";
-import moment from "moment";
-import { Alert, Row, Col, Statistic } from "antd";
-import {
-  UploadOutlined,
-  FormOutlined,
-  ClockCircleOutlined,
-  LoadingOutlined
-} from "@ant-design/icons";
+import { ClockCircleOutlined, FormOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
+import { Alert, Col, Row, Statistic } from "antd";
 import { PhaseCountdown } from "components";
+import moment from "moment";
+import React from "react";
 
 const StatusNotice = ({ status }) => {
   const currentTime = moment();
-  let title = "正在进行",
-    statusText = "...",
-    countdownText = "结束",
-    icon = <LoadingOutlined />,
-    time = null;
+  let title = "正在进行";
+  let statusText = "...";
+  let countdownText = "结束";
+  let icon = <LoadingOutlined />;
+  let time = null;
 
   if (currentTime.isBetween(status.upload.start, status.upload.end)) {
     statusText = "上传";
@@ -54,7 +49,7 @@ const StatusNotice = ({ status }) => {
           </Col>
           <Col span={12}>
             <PhaseCountdown
-              title={"距离" + statusText + countdownText}
+              title={`距离${statusText}${countdownText}`}
               value={time}
             />
           </Col>

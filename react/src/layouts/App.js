@@ -1,12 +1,13 @@
-import React from "react";
-import { connect } from "dva";
-import classnames from "classnames";
-import { withRouter } from "dva/router";
-import { Sidebar, Footer } from "components";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { ConfigProvider, Layout } from "antd";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import zhCN from "antd/es/locale/zh_CN";
+import classnames from "classnames";
+import { Footer, Sidebar } from "components";
+import { connect } from "dva";
+import { withRouter } from "dva/router";
+import React from "react";
 import "antd/dist/antd.css";
+
 import styles from "./App.css";
 
 const { Header, Content } = Layout;
@@ -20,7 +21,7 @@ const App = ({ children, dispatch, app, location }) => {
 
   const appClass = classnames({
     [styles.app]: true,
-    [styles.withSidebar]: !siderFolded
+    [styles.withSidebar]: !siderFolded,
   });
 
   return (
@@ -36,14 +37,14 @@ const App = ({ children, dispatch, app, location }) => {
         <div className={styles.container}>
           <div className={styles.containerInner}>
             <Header className={styles.header}>
-              {siderFolded ? (
-                <MenuUnfoldOutlined
-                  className={styles.trigger}
-                  onClick={toggle}
-                />
-              ) : (
-                <MenuFoldOutlined className={styles.trigger} onClick={toggle} />
-              )}
+              {siderFolded
+                ? (
+                  <MenuUnfoldOutlined
+                    className={styles.trigger}
+                    onClick={toggle}
+                  />
+                )
+                : <MenuFoldOutlined className={styles.trigger} onClick={toggle} />}
               <span className={styles.title}>{title}</span>
             </Header>
             <Content className={styles.content}>

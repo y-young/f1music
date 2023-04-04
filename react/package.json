@@ -4,7 +4,7 @@
     "start": "roadhog server",
     "build": "roadhog build",
     "analyze": "cross-env ANALYZE=true roadhog build",
-    "lint": "eslint --ext .js src test",
+    "lint": "eslint --ext .js src",
     "precommit": "npm run lint"
   },
   "dependencies": {
@@ -21,17 +21,14 @@
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
+    "@so1ve/eslint-config": "^0.64.0",
     "babel-plugin-dva-hmr": "^0.3.2",
     "babel-plugin-import": "^1.7.0",
     "cross-env": "^5.2.0",
-    "eslint": "^4.14.0",
-    "eslint-config-umi": "^0.1.1",
-    "eslint-plugin-flowtype": "^2.34.1",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.1.0",
+    "eslint": "^8.37.0",
     "husky": "^0.12.0",
     "redbox-react": "^1.4.3",
-    "roadhog": "^2.5.0-beta.4"
+    "roadhog": "^2.5.0-beta.4",
+    "typescript": "^5.0.3"
   }
 }

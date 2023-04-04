@@ -3,7 +3,7 @@ import axios from "axios";
 const errorMsg = {
   500: "Oops!出错了",
   403: "您没有此操作权限",
-  404: "404 资源未找到"
+  404: "404 资源未找到",
 };
 
 // 设置全局参数
@@ -18,7 +18,7 @@ axios.interceptors.request.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 添加返回拦截器
@@ -28,7 +28,7 @@ axios.interceptors.response.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default function request(opt) {
@@ -36,7 +36,8 @@ export default function request(opt) {
   return axios(opt)
     .then(response => {
       if (response.data && response.data.error !== 0) {
-        let error = new Error();
+        // eslint-disable-next-line unicorn/error-message
+        const error = new Error();
         error.message = response.data.msg;
         error.type = "notice";
         throw error;
@@ -58,7 +59,7 @@ export default function request(opt) {
       return Promise.reject({
         type: "notice",
         code: status,
-        message: errortext
+        message: errortext,
       });
     });
 }
