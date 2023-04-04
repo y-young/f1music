@@ -228,18 +228,15 @@ const Player = (
   return (
     <div>
       {audio}
-      <div>
-        <Slider
-          value={displayTime}
-          max={duration}
-          onChange={handleSeeking}
-          onAfterChange={seek}
-          tooltip={{ formatter: null }}
-          className={styles.slider}
-          style={{ "--buffer-progress": `${loaded}%` }}
-        />
-        <div className={styles.timeDetail}>{timeDetail}</div>
-      </div>
+      <Slider
+        value={displayTime}
+        max={duration}
+        onChange={handleSeeking}
+        onAfterChange={seek}
+        tooltip={{ formatter: null }}
+        className={styles.slider}
+        style={{ "--buffer-progress": `${loaded}%` }}
+      />
       <Space className={styles.controls}>
         <Button shape="circle" onClick={onBackward} disabled={!canBackward}>
           <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
@@ -261,6 +258,7 @@ const Player = (
           className={styles.volumeControl}
         />
       </Space>
+      <div className={styles.timeDetail}>{timeDetail}</div>
     </div>
   );
 };

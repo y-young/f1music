@@ -10,6 +10,10 @@ import useIsDesktop from "hooks/useIsDesktop";
 import useVotePreferences from "hooks/useVotePreferences";
 import { useVoteList, useVote } from "services/vote";
 import { BottomTips, ReportForm } from "components";
+import classNames from "classnames";
+
+const RATE_DURATION = 15;
+const SUBMIT_DURATION = 30;
 
 const VoteList = ({ time }) => {
   const isDesktop = useIsDesktop();
@@ -29,13 +33,16 @@ const VoteList = ({ time }) => {
   const [canSubmit, setCanSubmit] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [triggerVote, setTriggerVote] = useState(true);
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(SUBMIT_DURATION);
   const [canBackward, setCanBackward] = useState(false);
   const [canForward, setCanForward] = useState(false);
 
   const init = () => {
+    stopLast();
+    setIndex("");
+    setSrc(undefined);
     setRate(0);
-    setCountdown(30);
+    setCountdown(SUBMIT_DURATION);
     setCanSubmit(false);
     setShowReport(false);
     setTriggerVote(true);
@@ -44,9 +51,6 @@ const VoteList = ({ time }) => {
   };
 
   useEffect(() => {
-    stopLast();
-    setIndex("");
-    setSrc(undefined);
     init();
   }, [time]);
 
@@ -67,6 +71,9 @@ const VoteList = ({ time }) => {
   };
 
   const timeListener = (offset) => {
+    if (index === "") {
+      return;
+    }
     const song = songs[index];
 
     if (countdown > 0) {
@@ -91,9 +98,8 @@ const VoteList = ({ time }) => {
       return index;
     }
 
-    setIndex(newIndex);
-    stopLast();
     init();
+    setIndex(newIndex);
     setSrc(songs[newIndex].url);
 
     if (songs[newIndex].vote !== 0 || songs[newIndex].listened) {
@@ -101,7 +107,7 @@ const VoteList = ({ time }) => {
       setRate(songs[newIndex].vote);
       setTriggerVote(false);
     } else {
-      setCountdown(30);
+      setCountdown(SUBMIT_DURATION);
     }
     return newIndex;
   };
@@ -148,7 +154,7 @@ const VoteList = ({ time }) => {
 
   const checkValidity = () => {
     if (countdown > 0) {
-      message.warning("试听时长需达到30秒才能投票");
+      message.warning(`试听时长需达到${SUBMIT_DURATION}秒才能投票`);
       const player = playerRef.current;
       player.audio.currentTime = 0;
       player.play();
@@ -212,9 +218,8 @@ const VoteList = ({ time }) => {
 
   const voteArea = (
     <div className={styles.voteArea} key="vote">
-      <hr />
-      {countdown <= 15 ? (
-        <div>
+      {countdown <= RATE_DURATION ? (
+        <div className={styles.rate}>
           <Rate
             value={rate}
             onChange={handleRatingChange}
@@ -222,21 +227,21 @@ const VoteList = ({ time }) => {
             className={styles.rate}
           />
           {rate !== 0 && (
-            <div className={styles.voteText}>
-              <span className="ant-rate-text">{voteTexts[rate]}</span>
+            <div className={classNames("ant-rate-text", styles.voteText)}>
+              {voteTexts[rate]}
             </div>
           )}
         </div>
       ) : (
-        <div className={styles.voteText}>
-          <span className="ant-rate-text" style={{ color: "#777" }}>
-            试听15秒后显示评分栏
-          </span>
-        </div>
+        <span
+          className={classNames("ant-rate-text", styles.voteText)}
+          style={{ color: "#777" }}
+        >
+          试听{RATE_DURATION}秒后显示评分栏
+        </span>
       )}
       <Button
         loading={vote.isMutating}
-        className={styles.voteButton}
         onClick={() => handleVote("manual")}
         {...buttonProps}
       >
@@ -294,27 +299,29 @@ const VoteList = ({ time }) => {
       {songs.length !== 0 ? (
         <>
           <Card bordered={false} className={styles.card}>
-            <Player
-              src={src}
-              onProgress={timeListener}
-              onEnded={onEnded}
-              canBackward={canBackward}
-              canForward={canForward}
-              onBackward={backward}
-              onForward={forward}
-              ref={playerRef}
-              className={styles.player}
-            />
+            <div className={styles.player}>
+              <Player
+                src={src}
+                onProgress={timeListener}
+                onEnded={onEnded}
+                canBackward={canBackward}
+                canForward={canForward}
+                onBackward={backward}
+                onForward={forward}
+                ref={playerRef}
+              />
+              <br />
+              <Button
+                size="small"
+                onClick={() => setShowReport((showReport) => !showReport)}
+                disabled={index === ""}
+                className={styles.toggleReport}
+              >
+                反馈
+              </Button>
+            </div>
             <br />
-            <Button
-              size="small"
-              onClick={() => setShowReport((showReport) => !showReport)}
-              disabled={index === ""}
-              className={styles.toggleReport}
-            >
-              反馈
-            </Button>
-            <br />
+            <hr />
             {voteArea}
             <TransitionGroup>
               {showReport && (
@@ -335,6 +342,7 @@ const VoteList = ({ time }) => {
           <Menu
             className={styles.list}
             items={listItems}
+            selectedKeys={[index]}
             onClick={({ key }) => handleSwitch(key)}
             style={{ borderInlineEnd: "none" }}
           />

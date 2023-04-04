@@ -1,5 +1,5 @@
 .player {
-  margin-bottom: 25px;
+  margin-bottom: 3px;
 }
 
 .toggleReport {
@@ -7,24 +7,23 @@
 }
 
 .voteArea {
-  position: relative;
-  margin-top: 10px;
-  height: 37px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .rate {
-  float: left;
+  display: flex;
+  align-items: baseline;
+
+  .voteText {
+    margin-left: 10px;
+  }
 }
 
 .voteText {
+  display: flex;
+  align-items: center;
   font-size: 14px;
-  margin-left: 10px;
-  margin-top: 6px;
-  float: left;
-}
-
-.voteButton {
-  float: right;
 }
 
 .list {
@@ -54,7 +53,6 @@
 .itemIndex {
   color: #666;
   margin-right: 12px;
-  cursor: pointer;
 }
 
 .card {
