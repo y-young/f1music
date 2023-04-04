@@ -11,7 +11,7 @@ const ViewUploads = () => {
       dataIndex: "playtime",
       title: "时段",
       width: 70,
-      render: text => timeIdToText[text],
+      render: (text) => timeIdToText[text],
       filters: timeFilters,
       onFilter: (value, record) => record.playtime === value
     },
@@ -30,7 +30,7 @@ const ViewUploads = () => {
         columns={columns}
         loading={isLoading}
         pagination={false}
-        rowKey={record => record.playtime + record.name}
+        rowKey={(record) => record.playtime + record.name}
         scroll={{ x: 600 }}
       />
     </div>

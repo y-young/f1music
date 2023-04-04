@@ -22,7 +22,7 @@ const BUILTIN_TAGS = [
   "纯钢琴",
   "纯吉他",
   "电子",
-  ...[1, 2, 3, 4, 5, 6].map(v => `或${v}`)
+  ...[1, 2, 3, 4, 5, 6].map((v) => `或${v}`)
 ];
 const recentTags = atomWithStorage("recentTags", BUILTIN_TAGS);
 
@@ -30,7 +30,7 @@ const useTags = () => {
   const [tags, setTags] = useAtom(recentTags);
 
   // Select a tag, add to recent tags if not exists, and move to the top
-  const select = tag => {
+  const select = (tag) => {
     const index = tags.indexOf(tag);
     if (index === -1) {
       setTags([tag, ...tags]);
@@ -41,26 +41,26 @@ const useTags = () => {
 
   // Clear custom tags, but maintain order of builtin tags
   const clear = () => {
-    setTags(tags.filter(tag => BUILTIN_TAGS.includes(tag)));
+    setTags(tags.filter((tag) => BUILTIN_TAGS.includes(tag)));
   };
 
   return [tags, select, clear];
 };
 
-const TagsSelect = props => {
+const TagsSelect = (props) => {
   const [tags, select, clear] = useTags();
 
   return (
     <Select
       mode="tags"
       tokenSeparators={[",", "，"]}
-      options={tags.map(tag => ({
+      options={tags.map((tag) => ({
         label: tag,
         value: tag
       }))}
       placement="topLeft"
-      onSelect={value => select(value)}
-      dropdownRender={menu => (
+      onSelect={(value) => select(value)}
+      dropdownRender={(menu) => (
         <>
           {menu}
           <Divider style={{ margin: "4px 0" }} />
