@@ -21,17 +21,18 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (Auth::check()) {
-            return $this->success();
-        }
-
         Validator::make($request->all(), [
             // 寄读生学号为10位,如GJ16010001
             'stuId' => 'required | string | between:10,11',
             'password' => 'required | string | not_in:123456'
         ], self::$messages)->validate();
 
-        $authData = new AuthData($request->input('stuId'), $request->input('password'));
+        $id = $request->input('stuId');
+        if (Auth::check() && Auth::id() === $id) {
+            return $this->success();
+        }
+
+        $authData = new AuthData($id, $request->input('password'));
         switch (CampusAuth::login($authData)) {
             case AuthResult::Success:
                 $request->session()->put('id', $authData->stuId);
