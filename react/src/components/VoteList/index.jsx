@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { Spin, Rate, Button, message, Empty, Menu, Card } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -9,8 +8,9 @@ import { voteTexts } from "config";
 import useIsDesktop from "hooks/useIsDesktop";
 import useVotePreferences from "hooks/useVotePreferences";
 import { useVoteList, useVote } from "services/vote";
-import { BottomTips, ReportForm } from "components";
+import { ReportForm } from "components";
 import classNames from "classnames";
+import Tips from "./Tips";
 
 const RATE_DURATION = 15;
 const SUBMIT_DURATION = 30;
@@ -21,33 +21,32 @@ const VoteList = ({ time }) => {
 
   const voteList = useVoteList(time);
   const songs = voteList.data;
-
   const vote = useVote();
 
   const playerRef = useRef(null);
   const reportFormRef = useRef(null);
 
+  const [index, setIndex] = useState(undefined);
+  const song = songs[index] ?? { vote: 0 };
+  const src = song.url;
+
   const [rate, setRate] = useState(0);
-  const [src, setSrc] = useState(undefined);
-  const [index, setIndex] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [triggerVote, setTriggerVote] = useState(true);
   const [countdown, setCountdown] = useState(SUBMIT_DURATION);
-  const [canBackward, setCanBackward] = useState(false);
-  const [canForward, setCanForward] = useState(false);
+
+  const canBackward = index > 0;
+  const canForward = index < songs.length - 1;
 
   const init = () => {
     stopLast();
-    setIndex("");
-    setSrc(undefined);
+    setIndex(undefined);
     setRate(0);
     setCountdown(SUBMIT_DURATION);
     setCanSubmit(false);
     setShowReport(false);
     setTriggerVote(true);
-    setCanBackward(false);
-    setCanForward(false);
   };
 
   useEffect(() => {
@@ -56,13 +55,11 @@ const VoteList = ({ time }) => {
 
   useEffect(() => {
     if (src) {
-      playerRef.current.play();
+      playerRef.current?.play();
+    } else {
+      playerRef.current?.stop();
     }
   }, [src]);
-
-  useEffect(() => {
-    updateButtonStatus(index);
-  }, [index]);
 
   const stopLast = () => {
     if (playerRef.current) {
@@ -71,10 +68,9 @@ const VoteList = ({ time }) => {
   };
 
   const timeListener = (offset) => {
-    if (index === "") {
+    if (index === undefined) {
       return;
     }
-    const song = songs[index];
 
     if (countdown > 0) {
       setCountdown((prevCountdown) => prevCountdown - offset);
@@ -91,6 +87,7 @@ const VoteList = ({ time }) => {
   };
 
   const handleSwitch = (newIndex) => {
+    newIndex = parseInt(newIndex);
     const player = playerRef.current;
 
     if (index === newIndex) {
@@ -100,11 +97,11 @@ const VoteList = ({ time }) => {
 
     init();
     setIndex(newIndex);
-    setSrc(songs[newIndex].url);
+    const newSong = songs[newIndex];
 
-    if (songs[newIndex].vote !== 0 || songs[newIndex].listened) {
+    if (newSong.vote !== 0 || newSong.listened) {
       setCountdown(0);
-      setRate(songs[newIndex].vote);
+      setRate(newSong.vote);
       setTriggerVote(false);
     } else {
       setCountdown(SUBMIT_DURATION);
@@ -112,19 +109,9 @@ const VoteList = ({ time }) => {
     return newIndex;
   };
 
-  const updateButtonStatus = (index) => {
-    if (index === "") {
-      return;
-    }
-    const previous = Number(index) - 1;
-    const next = Number(index) + 1;
-    setCanBackward(songs[previous] !== undefined);
-    setCanForward(songs[next] !== undefined);
-  };
-
   const forward = () => {
     const { skipVoted } = preferences;
-    let newIndex = Number(index) + 1;
+    let newIndex = index + 1;
     if (skipVoted) {
       while (songs[newIndex] && songs[newIndex].vote !== 0) {
         newIndex++;
@@ -139,7 +126,7 @@ const VoteList = ({ time }) => {
 
   const backward = () => {
     const { skipVoted } = preferences;
-    let newIndex = Number(index) - 1;
+    let newIndex = index - 1;
     if (skipVoted) {
       while (songs[newIndex] && songs[newIndex].vote !== 0) {
         newIndex--;
@@ -169,7 +156,6 @@ const VoteList = ({ time }) => {
 
   const handleVote = async (type = null) => {
     const { onSubmitted } = preferences;
-    const song = songs[index];
     const validity = checkValidity();
     if (validity !== "valid") {
       return;
@@ -190,7 +176,6 @@ const VoteList = ({ time }) => {
 
   const onEnded = () => {
     const { onEnded } = preferences;
-    const song = songs[index];
     const validity = checkValidity();
     if (song.vote === 0) {
       if (validity === "valid") {
@@ -208,7 +193,6 @@ const VoteList = ({ time }) => {
     setCanSubmit(true);
   };
 
-  const song = songs[index] ? songs[index] : { vote: 0 };
   const buttonProps = {
     type: song.vote !== 0 ? "default" : "primary",
     shape: !isDesktop ? "circle" : undefined,
@@ -269,31 +253,6 @@ const VoteList = ({ time }) => {
     .flat()
     .slice(1);
 
-  const notice = () => {
-    const {
-      progress: [voted, total]
-    } = voteList;
-    if (voted === total) {
-      let rndTime;
-      do {
-        rndTime = Math.floor(Math.random() * 5 + 1);
-      } while (rndTime === time);
-      return (
-        <BottomTips>
-          您已投完本时段所有曲目，到
-          <Link to={"/vote/" + rndTime}>其他时段</Link>
-          看看吧
-        </BottomTips>
-      );
-    } else {
-      return (
-        <BottomTips>
-          本时段您已投 {voted} 首曲目，还有 {total - voted} 首未投票曲目
-        </BottomTips>
-      );
-    }
-  };
-
   return (
     <Spin spinning={voteList.isLoading}>
       {songs.length !== 0 ? (
@@ -314,7 +273,7 @@ const VoteList = ({ time }) => {
               <Button
                 size="small"
                 onClick={() => setShowReport((showReport) => !showReport)}
-                disabled={index === ""}
+                disabled={index === undefined}
                 className={styles.toggleReport}
               >
                 反馈
@@ -332,7 +291,7 @@ const VoteList = ({ time }) => {
                 >
                   <ReportForm
                     ref={reportFormRef}
-                    id={songs[index].id}
+                    id={song.id}
                     onSubmitted={() => setShowReport(false)}
                   />
                 </CSSTransition>
@@ -342,11 +301,11 @@ const VoteList = ({ time }) => {
           <Menu
             className={styles.list}
             items={listItems}
-            selectedKeys={[index]}
+            selectedKeys={index === undefined ? [] : [String(index)]}
             onClick={({ key }) => handleSwitch(key)}
             style={{ borderInlineEnd: "none" }}
           />
-          {notice()}
+          <Tips time={time} progress={voteList.progress} />
         </>
       ) : (
         <Empty />

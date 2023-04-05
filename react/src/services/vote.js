@@ -15,9 +15,10 @@ export const useVoteList = (time) => {
       data: { time }
     }).then((data) => data.songs)
   );
+  const songs = swr.data ?? [];
 
   const markListened = (id) => {
-    const newData = produce(swr.data, (draft) => {
+    const newData = produce(songs, (draft) => {
       const index = draft.findIndex((song) => song.id === id);
       if (index !== -1) {
         draft[index].listened = true;
@@ -27,7 +28,7 @@ export const useVoteList = (time) => {
   };
 
   const updateVote = (id, vote) => {
-    const newData = produce(swr.data, (draft) => {
+    const newData = produce(songs, (draft) => {
       const index = draft.findIndex((song) => song.id === id);
       if (index !== -1) {
         draft[index].vote = vote;
@@ -36,7 +37,6 @@ export const useVoteList = (time) => {
     swr.mutate(newData, { revalidate: false });
   };
 
-  const songs = swr.data ?? [];
   const progress = useMemo(
     () => [songs.filter((song) => song.vote !== 0).length, songs.length],
     [songs]
