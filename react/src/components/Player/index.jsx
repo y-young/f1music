@@ -48,7 +48,9 @@ const Player = (
 
   useEffect(() => {
     setDisableSliderUpdate(false);
-    setDuration(0);
+    // Setting Slider value & max to 0 at the same time won't reset the handle
+    // https://github.com/ant-design/ant-design/issues/40827
+    setDuration(0.01);
     setLoaded(0);
     seek(0);
   }, [src]);
