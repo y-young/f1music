@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import Title from "hooks/useTitle";
 import { useLogin } from "services/app";
+import useUser from "hooks/useUser";
 
 const FormItem = Form.Item;
 
@@ -16,9 +17,11 @@ const Login = () => {
   const login = useLogin();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { mutate } = useUser();
 
   const handleSubmit = (values) =>
     login.trigger(values).then(() => {
+      mutate();
       message.success("登录成功", 3);
       const redirect = searchParams.get("redirect");
       if (!redirect || !redirect.startsWith("/")) {

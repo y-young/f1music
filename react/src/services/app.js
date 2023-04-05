@@ -29,12 +29,3 @@ export const useStatus = () =>
       method: "get"
     }).then((data) => data.status)
   );
-
-export const getCookie = (name) => {
-  var match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-  if (match) return match[2];
-  else return null;
-};
-
-export const checkLogin = () =>
-  getCookie("f1music_user") !== null || getCookie("f1music_auth") !== null;

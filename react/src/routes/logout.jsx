@@ -4,13 +4,18 @@ import { useNavigate } from "react-router-dom";
 
 import Title from "hooks/useTitle";
 import { useLogout } from "services/app";
+import useUser from "hooks/useUser";
 
 const Logout = () => {
   const logout = useLogout();
   const navigate = useNavigate();
+  const { mutate } = useUser();
 
   useEffect(() => {
-    logout.trigger().then(() => navigate("/login"));
+    logout.trigger().then(() => {
+      mutate();
+      navigate("/login");
+    });
   }, []);
 
   return (

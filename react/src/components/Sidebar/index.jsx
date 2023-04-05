@@ -5,16 +5,17 @@ import {
   LoginOutlined,
   LogoutOutlined,
   UploadOutlined,
-  FormOutlined
+  FormOutlined,
+  SettingOutlined
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
+import useUser from "hooks/useUser";
 import styles from "./index.module.less";
-import { checkLogin } from "services/app";
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const loggedIn = checkLogin();
+  const { user } = useUser();
 
   const sidebarClass = classnames({
     [styles.sidebar]: true,
@@ -24,9 +25,9 @@ const Sidebar = ({ collapsed }) => {
   const menuItems = [
     { key: "/", icon: <HomeOutlined />, label: "首页" },
     {
-      key: loggedIn ? "/logout" : "/login",
-      icon: loggedIn ? <LogoutOutlined /> : <LoginOutlined />,
-      label: loggedIn ? "登出" : "登录"
+      key: user ? "/logout" : "/login",
+      icon: user ? <LogoutOutlined /> : <LoginOutlined />,
+      label: user ? "登出" : "登录"
     },
     { key: "/upload", icon: <UploadOutlined />, label: "上传" },
     {
@@ -41,8 +42,21 @@ const Sidebar = ({ collapsed }) => {
         { key: "/vote/5", label: "21:55 晚自习结束" },
         { key: "/vote/6", label: "22:40 熄灯铃" }
       ]
+    },
+    user?.permission > 0 && {
+      key: "/manage",
+      icon: <SettingOutlined />,
+      label: "管理系统"
     }
   ];
+
+  const handleMenuClick = ({ key }) => {
+    if (key === "/manage") {
+      window.location.href = "/manage";
+    } else {
+      navigate(key);
+    }
+  };
 
   return (
     <div className={sidebarClass}>
@@ -53,7 +67,7 @@ const Sidebar = ({ collapsed }) => {
         selectedKeys={[location.pathname]}
         defaultOpenKeys={["/vote"]}
         items={menuItems}
-        onClick={({ key }) => navigate(key)}
+        onClick={handleMenuClick}
       />
     </div>
   );
