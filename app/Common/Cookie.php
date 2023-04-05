@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cookie as CookieFacade;
 class Cookie
 {
     protected static $name = 'f1music_auth';
+    protected static $publicName = 'f1music_user';
+    protected static $minutes = 7 * 24 * 60;
 
     public static function get(Request $request): AuthData|null
     {
@@ -22,15 +24,31 @@ class Cookie
         return new AuthData($data->stuId, $data->password);
     }
 
+    public static function makePublicCookie(string $id)
+    {
+        $permission = Permission::User;
+        if (in_array($id, config('music.admin'))) {
+            $permission = Permission::Admin;
+        } elseif (in_array($id, config('music.censor'))) {
+            $permission = Permission::Censor;
+        }
+        $data = json_encode([
+            'id' => $id,
+            'permission' => $permission
+        ]);
+        return cookie(self::$publicName, base64_encode($data), self::$minutes, '/', httpOnly: false);
+    }
+
     public static function make(AuthData $authData)
     {
+        CookieFacade::queue(self::makePublicCookie($authData->stuId));
         // Set path to '/' to fix Cross-Origin problems
-        // TODO: Set httpOnly to true after frontend upgrade
-        return cookie(self::$name, json_encode($authData), time() + 24 * 60 * 60, '/', httpOnly: false);
+        return cookie(self::$name, json_encode($authData), self::$minutes, '/');
     }
 
     public static function forget()
     {
         CookieFacade::expire(self::$name);
+        CookieFacade::expire(self::$publicName);
     }
 }
