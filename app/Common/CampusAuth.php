@@ -21,7 +21,7 @@ class CampusAuth
             "loginRole" => '2'
         ];
         try {
-            $response = Http::timeout(5)
+            $response = Http::timeout(3)
                 ->asForm()
                 ->withoutRedirecting()
                 ->post(config('music.loginUrl'), $postData);

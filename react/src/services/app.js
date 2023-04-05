@@ -18,12 +18,14 @@ export async function Status() {
   });
 }
 
-export function getCookie() {
-  var match = document.cookie.match(new RegExp("(^| )f1music_auth=([^;]+)"));
+export function getCookie(name) {
+  var match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   if (match) return match[2];
   else return null;
 }
 
 export function checkLogin() {
-  return getCookie() !== null;
+  return (
+    getCookie("f1music_user") !== null || getCookie("f1music_auth") !== null
+  );
 }
