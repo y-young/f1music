@@ -31,7 +31,6 @@ const VoteList = ({ time }) => {
   const src = song.url;
 
   const [rate, setRate] = useState(0);
-  const [canSubmit, setCanSubmit] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [triggerVote, setTriggerVote] = useState(true);
   const [countdown, setCountdown] = useState(SUBMIT_DURATION);
@@ -44,7 +43,6 @@ const VoteList = ({ time }) => {
     setIndex(undefined);
     setRate(0);
     setCountdown(SUBMIT_DURATION);
-    setCanSubmit(false);
     setShowReport(false);
     setTriggerVote(true);
   };
@@ -109,12 +107,12 @@ const VoteList = ({ time }) => {
     return newIndex;
   };
 
-  const forward = () => {
+  const navigate = (delta) => {
     const { skipVoted } = preferences;
-    let newIndex = index + 1;
+    let newIndex = index + delta;
     if (skipVoted) {
       while (songs[newIndex] && songs[newIndex].vote !== 0) {
-        newIndex++;
+        newIndex += delta;
       }
     }
     if (songs[newIndex]) {
@@ -123,21 +121,8 @@ const VoteList = ({ time }) => {
       message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
     }
   };
-
-  const backward = () => {
-    const { skipVoted } = preferences;
-    let newIndex = index - 1;
-    if (skipVoted) {
-      while (songs[newIndex] && songs[newIndex].vote !== 0) {
-        newIndex--;
-      }
-    }
-    if (songs[newIndex]) {
-      handleSwitch(newIndex);
-    } else if (skipVoted) {
-      message.info("您已选择跳过已投票歌曲，如无需要请修改偏好设置");
-    }
-  };
+  const forward = () => navigate(1);
+  const backward = () => navigate(-1);
 
   const checkValidity = () => {
     if (countdown > 0) {
@@ -147,14 +132,14 @@ const VoteList = ({ time }) => {
       player.play();
       return "time";
     }
-    if (!canSubmit || rate === 0) {
-      message.info("选择或更改评价后即可提交");
+    if (rate === 0) {
+      message.info("选择评价后即可提交");
       return "rate";
     }
     return "valid";
   };
 
-  const handleVote = async (type = null) => {
+  const handleVote = async (event) => {
     const { onSubmitted } = preferences;
     const validity = checkValidity();
     if (validity !== "valid") {
@@ -163,34 +148,26 @@ const VoteList = ({ time }) => {
     const id = song.id;
     await vote.trigger({ id, vote: rate }).then(() => {
       message.success("投票成功");
-      setCanSubmit(false);
       voteList.updateVote(id, rate);
-      if (
-        (type === "manual" && onSubmitted === "forward") ||
-        type === "ended"
-      ) {
+      // Is manual submit
+      if (event && onSubmitted === "forward") {
         forward();
       }
     });
   };
 
-  const onEnded = () => {
+  const onEnded = async () => {
     const { onEnded } = preferences;
+    if (song.vote !== 0) {
+      forward();
+      return;
+    }
     const validity = checkValidity();
-    if (song.vote === 0) {
-      if (validity === "valid") {
-        handleVote("ended");
-      } else if (validity === "rate" && onEnded === "forward") {
-        forward();
-      }
-    } else {
+    if (validity === "valid") {
+      await handleVote().then(() => forward());
+    } else if (validity === "rate" && onEnded === "forward") {
       forward();
     }
-  };
-
-  const handleRatingChange = (value) => {
-    setRate(value);
-    setCanSubmit(true);
   };
 
   const buttonProps = {
@@ -206,7 +183,7 @@ const VoteList = ({ time }) => {
         <div className={styles.rate}>
           <Rate
             value={rate}
-            onChange={handleRatingChange}
+            onChange={setRate}
             allowClear={false}
             className={styles.rate}
           />
@@ -224,11 +201,7 @@ const VoteList = ({ time }) => {
           试听{RATE_DURATION}秒后显示评分栏
         </span>
       )}
-      <Button
-        loading={vote.isMutating}
-        onClick={() => handleVote("manual")}
-        {...buttonProps}
-      >
+      <Button loading={vote.isMutating} onClick={handleVote} {...buttonProps}>
         {countdown > 0 ? Math.ceil(countdown) : isDesktop && "投票"}
       </Button>
     </div>
