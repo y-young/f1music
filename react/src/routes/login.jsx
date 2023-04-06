@@ -42,6 +42,7 @@ const Login = () => {
           <Form onFinish={handleSubmit}>
             <FormItem
               name="stuId"
+              validateTrigger={["onChange", "onBlur"]}
               rules={[
                 { required: true, message: "请输入学号" },
                 {
