@@ -12,10 +12,13 @@ const Logout = () => {
   const { mutate } = useUser();
 
   useEffect(() => {
-    logout.trigger().then(() => {
-      mutate();
-      navigate("/login");
-    });
+    logout
+      .trigger()
+      .then(() => {
+        mutate();
+        navigate("/login");
+      })
+      .catch(() => {});
   }, []);
 
   return (

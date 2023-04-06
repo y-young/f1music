@@ -12,11 +12,14 @@ const ReportForm = ({ id, onSubmitted }, ref) => {
       message.error("请填写反馈内容");
       return;
     }
-    await report.trigger({ id, reason }).then(() => {
-      message.success("提交成功");
-      setReason("");
-      onSubmitted?.();
-    });
+    await report
+      .trigger({ id, reason })
+      .then(() => {
+        message.success("提交成功");
+        setReason("");
+        onSubmitted?.();
+      })
+      .catch(() => {});
   };
 
   return (

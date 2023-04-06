@@ -20,16 +20,19 @@ const Login = () => {
   const { mutate } = useUser();
 
   const handleSubmit = (values) =>
-    login.trigger(values).then(() => {
-      mutate();
-      message.success("登录成功", 3);
-      const redirect = searchParams.get("redirect");
-      if (!redirect || !redirect.startsWith("/")) {
-        navigate("/");
-      } else {
-        navigate(redirect);
-      }
-    });
+    login
+      .trigger(values)
+      .then(() => {
+        mutate();
+        message.success("登录成功", 3);
+        const redirect = searchParams.get("redirect");
+        if (!redirect || !redirect.startsWith("/")) {
+          navigate("/");
+        } else {
+          navigate(redirect);
+        }
+      })
+      .catch(() => {});
 
   return (
     <>

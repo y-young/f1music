@@ -57,16 +57,19 @@ const Result = () => {
   }, []);
 
   const loadPlayer = () => {
-    axios.get("/music/playlist").then((response) => {
-      new APlayer({
-        container: containerRef.current,
-        mini: false,
-        autoplay: false,
-        loop: "all",
-        listFolded: false,
-        audio: response.data
-      });
-    });
+    axios
+      .get("/music/playlist")
+      .then((response) => {
+        new APlayer({
+          container: containerRef.current,
+          mini: false,
+          autoplay: false,
+          loop: "all",
+          listFolded: false,
+          audio: response.data
+        });
+      })
+      .catch(console.log);
   };
 
   return (

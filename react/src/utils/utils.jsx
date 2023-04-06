@@ -33,3 +33,17 @@ export const dateSorter = (a, b) => {
 
 export const removeById = (data, ids) =>
   produce(data, (draft) => draft.filter((item) => !ids.includes(item.id)));
+
+export const initSentry = () => {
+  if (import.meta.env.VITE_SENTRY_DSN) {
+    import("@sentry/react").then((Sentry) => {
+      Sentry.init({
+        dsn: import.meta.env.VITE_SENTRY_DSN,
+        environment: import.meta.env.MODE,
+        release: import.meta.env.VITE_RELEASE,
+        integrations: [new Sentry.Replay()],
+        replaysOnErrorSampleRate: 1.0
+      });
+    });
+  }
+};

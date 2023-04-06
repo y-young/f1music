@@ -25,7 +25,10 @@ const Reports = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const handleDelete = (id) =>
-    del.trigger(id).then(() => message.success("操作成功"));
+    del
+      .trigger(id)
+      .then(() => message.success("操作成功"))
+      .catch(() => {});
 
   const handleBatchDelete = () =>
     handleDelete(selectedRowKeys).then(() => setSelectedRowKeys([]));

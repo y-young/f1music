@@ -16,6 +16,12 @@ COPY react/ .
 
 RUN mkdir /app/public
 
+ARG COMMIT_HASH=unknown
+ARG VITE_SENTRY_DSN
+
+ENV COMMIT_HASH=$COMMIT_HASH
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
+
 RUN pnpm build
 
 

@@ -146,14 +146,17 @@ const VoteList = ({ time }) => {
       return;
     }
     const id = song.id;
-    await vote.trigger({ id, vote: rate }).then(() => {
-      message.success("投票成功");
-      voteList.updateVote(id, rate);
-      // Is manual submit
-      if (event && onSubmitted === "forward") {
-        forward();
-      }
-    });
+    await vote
+      .trigger({ id, vote: rate })
+      .then(() => {
+        message.success("投票成功");
+        voteList.updateVote(id, rate);
+        // Is manual submit
+        if (event && onSubmitted === "forward") {
+          forward();
+        }
+      })
+      .catch(() => {});
   };
 
   const onEnded = async () => {

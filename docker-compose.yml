@@ -8,6 +8,9 @@ services:
       context: .
       dockerfile: ./Dockerfile
       target: production
+      args:
+        - VITE_SENTRY_DSN
+        - COMMIT_HASH
     volumes:
       - ./config:/var/www/html/config
       - storage:/var/www/html/storage

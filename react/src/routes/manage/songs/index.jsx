@@ -126,12 +126,12 @@ const Songs = ({ isTrashed = false }) => {
   const handleSave = () =>
     form
       .validateFields()
-      .then((values) => {
+      .then((values) =>
         save.trigger(values).then(() => {
           message.success("操作成功");
           setModalVisible(false);
-        });
-      })
+        })
+      )
       .catch(() => {});
 
   const handleCancel = () => {
@@ -149,9 +149,12 @@ const Songs = ({ isTrashed = false }) => {
     handleDelete(selectedRowKeys, isDelete).then(() => setSelectedRowKeys([]));
 
   const handleRestore = (id) =>
-    restore.trigger(id).then(() => {
-      message.success("操作成功");
-    });
+    restore
+      .trigger(id)
+      .then(() => {
+        message.success("操作成功");
+      })
+      .catch(() => {});
 
   const handleBatchRestore = () =>
     handleRestore(selectedRowKeys).then(() => setSelectedRowKeys([]));
