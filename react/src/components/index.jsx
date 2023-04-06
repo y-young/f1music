@@ -16,6 +16,7 @@ import Audio from "./Audio";
 import BottomTips from "./BottomTips";
 import ReportForm from "./ReportForm";
 import VoteProgress from "./VoteProgress";
+import ErrorBoundary from "./ErrorBoundary";
 
 export {
   Sidebar,
@@ -35,5 +36,6 @@ export {
   Audio,
   BottomTips,
   ReportForm,
-  VoteProgress
+  VoteProgress,
+  ErrorBoundary
 };

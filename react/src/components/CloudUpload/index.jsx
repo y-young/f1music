@@ -82,7 +82,7 @@ const CloudUpload = () => {
     if (mp3Available) {
       setVisible(true);
     } else {
-      message.error("暂不支持上传付费歌曲,请使用手动上传");
+      message.error("暂不支持上传付费歌曲，请使用手动上传");
     }
   };
 

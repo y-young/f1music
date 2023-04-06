@@ -1,18 +1,17 @@
 import classnames from "classnames";
 import { Footer, Header } from "components";
 import { ConfigProvider, Layout } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import zhCN from "antd/es/locale/zh_CN";
-
-// import "antd/dist/antd.css";
-
 import styles from "./Layout.module.less";
 import useSidebar from "hooks/useSidebar";
+import { ErrorBoundary } from "components";
 
 const { Content } = Layout;
 
 const CommonLayout = ({ children, renderSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarCollapsed, toggleSidebar] = useSidebar(location);
 
   const appClass = classnames({
@@ -32,7 +31,11 @@ const CommonLayout = ({ children, renderSidebar }) => {
               toggleSidebar={toggleSidebar}
             />
             <Content className={styles.content}>
-              <div className={styles.contentInner}>{children}</div>
+              <div className={styles.contentInner}>
+                <ErrorBoundary onReset={() => navigate(0)}>
+                  {children}
+                </ErrorBoundary>
+              </div>
             </Content>
             <Footer />
           </div>
