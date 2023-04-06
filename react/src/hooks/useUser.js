@@ -1,5 +1,9 @@
 import { useAtom, atom } from "jotai";
 import { useEffect } from "react";
+import { useSWRConfig } from "swr";
+import { api } from "utils/config";
+
+const { status } = api;
 
 const getCookie = (name) => {
   var match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
@@ -35,10 +39,18 @@ const userAtom = atom(null);
 
 const useUser = () => {
   const [user, setUser] = useAtom(userAtom);
+  const swr = useSWRConfig();
+
+  // Clear cache when user changes, e.g. vote list
+  const clearCache = () =>
+    swr.mutate((key) => key !== status, undefined, { revalidate: false });
 
   useEffect(() => mutate(), []);
 
-  const mutate = () => setUser(getUser());
+  const mutate = () => {
+    setUser(getUser());
+    clearCache();
+  };
 
   return { user, mutate };
 };
