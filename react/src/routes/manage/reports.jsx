@@ -78,6 +78,7 @@ const Reports = () => {
         columns={columns}
         rowSelection={rowSelection}
         expandedRowRender={renderExpanded}
+        expandable={{ expandRowByClick: true }}
         rowKey="id"
         scroll={{ x: 600 }}
         loading={reports.isValidating}

@@ -80,6 +80,7 @@ const Rank = () => {
         columns={columns}
         loading={rank.isLoading}
         expandedRowRender={renderExpanded}
+        expandable={{ expandRowByClick: true }}
         scroll={{ x: 600 }}
         rowKey="id"
       />

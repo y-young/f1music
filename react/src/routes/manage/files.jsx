@@ -62,6 +62,7 @@ const Files = () => {
       <Table
         dataSource={data}
         expandedRowRender={renderExpanded}
+        expandable={{ expandRowByClick: true }}
         columns={columns}
         loading={isLoading}
         scroll={{ x: 400 }}

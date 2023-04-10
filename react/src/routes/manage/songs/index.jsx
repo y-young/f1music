@@ -348,6 +348,7 @@ const Songs = ({ isTrashed = false }) => {
         columns={columns}
         rowSelection={rowSelection}
         expandedRowRender={renderExpanded}
+        expandable={{ expandRowByClick: true }}
         loading={songs.isValidating}
         rowKey="id"
         scroll={{ x: 600 }}
