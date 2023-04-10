@@ -11,7 +11,14 @@ const SWRConfig = ({ children, value = {} }) => {
     if (error.type === "notice") {
       message.error(error.message);
       if (error.status === 401) {
-        navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+        const loginUrl = `/login?redirect=${encodeURIComponent(
+          location.pathname
+        )}`;
+        if (location.pathname.startsWith("/manage")) {
+          window.location.href = loginUrl;
+        } else {
+          navigate(loginUrl);
+        }
         return;
       }
     } else {
