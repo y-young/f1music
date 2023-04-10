@@ -15,7 +15,7 @@ class Authenticate extends AuthenticateSession
     public function handle($request, Closure $next, ...$guards)
     {
         if ($this->auth->guard()->guest()) {
-            return response('Unauthenticated.', 401);
+            abort(401);
         }
 
         return $next($request);

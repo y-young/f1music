@@ -6,6 +6,7 @@ use App\Common\AuthData;
 use App\Common\AuthResult;
 use App\Common\CampusAuth;
 use App\Common\Cookie;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -35,8 +36,13 @@ class AuthController extends Controller
         $authData = new AuthData($id, $request->input('password'));
         switch (CampusAuth::login($authData)) {
             case AuthResult::Success:
-                $request->session()->put('id', $authData->stuId);
-                return $this->success()->withCookie(Cookie::make($authData));
+                $user = User::firstOrNew(['id' => $id]);
+                // Auth::loginUsingId will attempt to retrieve the user from the database,
+                // since we don't store user data in advance, this won't work.
+                Auth::login($user, true);
+                $request->session()->regenerate();
+                // Set public cookie for frontend
+                return $this->success()->withCookie(Cookie::make($id));
             case AuthResult::Failed:
                 return $this->error('用户名或密码错误');
             case AuthResult::ConnectionError:
@@ -55,9 +61,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::forgetUser();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         Cookie::forget();
-        $request->session()->forget('id');
         return $this->success();
     }
 }

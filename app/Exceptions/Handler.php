@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
     ];
 
     protected $messages = [
-        401 => 'Sorry, you are not authorized to access this page.',
+        401 => 'Sorry, please log in to access this page.',
         403 => 'Sorry, you are forbidden from accessing this page.',
         404 => 'Sorry, the page you are looking for could not be found.',
         429 => 'Sorry, you are making too many requests. Please try back later.',
