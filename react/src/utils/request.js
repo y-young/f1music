@@ -23,7 +23,7 @@ const request = (opt) =>
         error.message = response.data.msg;
         error.retry = false;
         error.response = response;
-        throw error;
+        return Promise.reject(error);
       }
 
       return { ...response.data };

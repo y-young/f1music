@@ -96,13 +96,11 @@ const CloudUpload = () => {
   const handleUpload = (id) =>
     form
       .validateFields()
-      .then((values) => {
-        values = { id, ...values };
-        upload.trigger(values).then(() => {
-          message.success("上传成功");
-          setVisible(false);
-          myUploads.mutate();
-        });
+      .then((values) => upload.trigger({ id, ...values }))
+      .then(() => {
+        message.success("上传成功");
+        setVisible(false);
+        myUploads.mutate();
       })
       .catch(() => {});
 

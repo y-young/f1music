@@ -126,12 +126,11 @@ const Songs = ({ isTrashed = false }) => {
   const handleSave = () =>
     form
       .validateFields()
-      .then((values) =>
-        save.trigger(values).then(() => {
-          message.success("操作成功");
-          setModalVisible(false);
-        })
-      )
+      .then((values) => save.trigger(values))
+      .then(() => {
+        message.success("操作成功");
+        setModalVisible(false);
+      })
       .catch(() => {});
 
   const handleCancel = () => {
