@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import { TitleContext } from "hooks/useTitle";
 import { initSentry } from "utils";
-import "../index.css";
+import "../index.less";
 
 initSentry();
 

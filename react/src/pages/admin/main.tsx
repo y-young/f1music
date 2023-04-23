@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Admin from "./Admin";
 import { TitleContext } from "hooks/useTitle";
 import { initSentry } from "utils";
-import "../index.css";
+import "../index.less";
 
 initSentry();
 
