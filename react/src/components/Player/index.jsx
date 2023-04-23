@@ -6,15 +6,15 @@ import React, {
   useImperativeHandle
 } from "react";
 import styles from "./index.module.less";
-import { Button, Slider, message, Space } from "antd";
-import {
-  StepForwardOutlined,
-  PauseOutlined,
-  CaretRightOutlined,
-  StepBackwardOutlined
-} from "@ant-design/icons";
+import { Slider, message, Space } from "antd";
 import { Audio } from "components";
 import VolumeControl from "./VolumeControl";
+import {
+  PlayButton,
+  StopButton,
+  BackwardButton,
+  ForwardButton
+} from "./ControlButtons";
 
 const Player = (
   {
@@ -211,12 +211,8 @@ const Player = (
       <div className={styles.miniPlayer}>
         {audio}
         <Space.Compact className={styles.controls}>
-          <Button type="primary" onClick={toggle}>
-            {playing ? <PauseOutlined /> : <CaretRightOutlined />}
-          </Button>
-          <Button type="primary" onClick={stop}>
-            <StepBackwardOutlined />
-          </Button>
+          <PlayButton onClick={toggle} playing={playing} />
+          <StopButton onClick={stop} />
         </Space.Compact>
         <div className={styles.miniTimeDetail}>{timeDetail}</div>
         <VolumeControl
@@ -240,21 +236,15 @@ const Player = (
         style={{ "--buffer-progress": `${loaded}%` }}
       />
       <Space className={styles.controls}>
-        <Button shape="circle" onClick={onBackward} disabled={!canBackward}>
-          <StepBackwardOutlined style={{ color: "#9f9f9f" }} />
-        </Button>
-        <Button
-          type="primary"
+        <BackwardButton onClick={onBackward} disabled={!canBackward} />
+        <PlayButton
           shape="circle"
           size="large"
+          playing={playing}
           onClick={toggle}
           disabled={!src}
-        >
-          {playing ? <PauseOutlined /> : <CaretRightOutlined />}
-        </Button>
-        <Button shape="circle" onClick={onForward} disabled={!canForward}>
-          <StepForwardOutlined style={{ color: "#9f9f9f" }} />
-        </Button>
+        />
+        <ForwardButton onClick={onForward} disabled={!canForward} />
         <VolumeControl
           onChange={handleVolumeChange}
           className={styles.volumeControl}

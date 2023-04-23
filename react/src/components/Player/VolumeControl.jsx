@@ -26,6 +26,7 @@ const VolumeControl = ({ onChange, ...props }) => {
         icon={<SoundOutlined style={iconStyle} />}
         shape="circle"
         type="text"
+        title="音量"
         {...props}
       />
     </Popover>
