@@ -15,7 +15,12 @@
         {
             "matchDepTypes": ["devDependencies"],
             "matchPackagePatterns": ["lint", "prettier"],
-            "automerge": true
+            "automerge": true,
+            "semanticCommitType": "style"
+        },
+        {
+            "matchManagers": ["github-actions"],
+            "semanticCommitType": "ci"
         }
     ]
 }
