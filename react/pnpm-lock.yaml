@@ -55,8 +55,8 @@ devDependencies:
     specifier: ^18.15.7
     version: 18.15.7
   '@types/react':
-    specifier: ^18.0.28
-    version: 18.0.28
+    specifier: ^18.0.38
+    version: 18.0.38
   '@types/react-dom':
     specifier: ^18.0.11
     version: 18.0.11
@@ -409,20 +409,6 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@rc-component/portal@1.1.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-tbXM9SB1r5FOuZjRCljERFByFiEUcMmCWMXLog/NmgCzlAzreXyf23Vei3ZpSMxSMavzPnhCovfZjZdmxS3d1w==}
-    engines: {node: '>=8.x'}
-    peerDependencies:
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-    dependencies:
-      '@babel/runtime': 7.21.0
-      classnames: 2.3.2
-      rc-util: 5.29.2(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
   /@rc-component/portal@1.1.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-m8w3dFXX0H6UkJ4wtfrSwhe2/6M08uz24HHrF8pWfAXPwA9hwCuTE5per/C86KwNLouRpwFGcr7LfpHaa1F38g==}
     engines: {node: '>=8.x'}
@@ -445,7 +431,7 @@ packages:
       react-dom: '>=16.9.0'
     dependencies:
       '@babel/runtime': 7.21.0
-      '@rc-component/portal': 1.1.0(react-dom@18.2.0)(react@18.2.0)
+      '@rc-component/portal': 1.1.1(react-dom@18.2.0)(react@18.2.0)
       '@rc-component/trigger': 1.6.2(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.3.2
       rc-util: 5.29.2(react-dom@18.2.0)(react@18.2.0)
@@ -461,7 +447,7 @@ packages:
       react-dom: '>=16.9.0'
     dependencies:
       '@babel/runtime': 7.21.0
-      '@rc-component/portal': 1.1.0(react-dom@18.2.0)(react@18.2.0)
+      '@rc-component/portal': 1.1.1(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.3.2
       rc-align: 4.0.15(react-dom@18.2.0)(react@18.2.0)
       rc-motion: 2.6.3(react-dom@18.2.0)(react@18.2.0)
@@ -575,7 +561,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -585,7 +570,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -595,7 +579,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -605,7 +588,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -675,11 +657,11 @@ packages:
   /@types/react-dom@18.0.11:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
-      '@types/react': 18.0.28
+      '@types/react': 18.0.38
     dev: true
 
-  /@types/react@18.0.28:
-    resolution: {integrity: sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==}
+  /@types/react@18.0.38:
+    resolution: {integrity: sha512-ExsidLLSzYj4cvaQjGnQCk4HFfVT9+EZ9XZsQ8Hsrcn8QNgXtpZ3m9vSIC2MWtx7jHictK6wYhQgGh6ic58oOw==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3
@@ -1592,7 +1574,7 @@ packages:
       react-dom: '>=16.9.0'
     dependencies:
       '@babel/runtime': 7.21.0
-      '@rc-component/portal': 1.1.0(react-dom@18.2.0)(react@18.2.0)
+      '@rc-component/portal': 1.1.1(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.3.2
       rc-motion: 2.6.3(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.29.2(react-dom@18.2.0)(react@18.2.0)
