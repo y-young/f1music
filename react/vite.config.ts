@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import React from "@vitejs/plugin-react-swc";
 import Pages from "vite-plugin-pages";
 import { resolve } from "node:path";
 import { execSync } from "node:child_process";
@@ -17,7 +17,7 @@ export default defineConfig(() => {
     envDir: resolve(__dirname, ".."),
     appType: "mpa",
     plugins: [
-      react(),
+      React(),
       Pages({
         dirs: "src/routes"
       }),
