@@ -3,12 +3,12 @@
     "extends": ["config:base"],
     "timezone": "Asia/Shanghai",
     "rangeStrategy": "bump",
-    "schedule": ["on the 1st day of the month"],
+    "schedule": ["every weekend"],
     "labels": ["dependencies"],
     "postUpdateOptions": ["pnpmDedupe"],
     "lockFileMaintenance": {
         "enabled": true,
-        "schedule": ["on the 2nd day of the month"],
+        "schedule": ["on the first day of the month"],
         "automerge": true
     },
     "packageRules": [
