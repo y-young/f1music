@@ -1,6 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["config:base"],
+    "extends": ["config:base", "group:recommended"],
     "timezone": "Asia/Shanghai",
     "rangeStrategy": "bump",
     "schedule": ["every weekend"],
@@ -9,7 +9,9 @@
     "lockFileMaintenance": {
         "enabled": true,
         "schedule": ["on the first day of the month"],
-        "automerge": true
+        "automerge": true,
+        "automergeType": "pr",
+        "platformAutomerge": true
     },
     "packageRules": [
         {
@@ -27,6 +29,11 @@
             "matchPackagePatterns": ["lint", "prettier"],
             "automerge": true,
             "semanticCommitType": "style"
+        },
+        {
+            "matchUpdateTypes": ["patch"],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": true
         },
         {
             "matchManagers": ["github-actions"],
