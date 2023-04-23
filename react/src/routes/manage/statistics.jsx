@@ -1,4 +1,3 @@
-import React from "react";
 import { Col, Row, Card } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "./statistics.module.less";

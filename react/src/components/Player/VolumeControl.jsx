@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Slider, Popover } from "antd";
 import { SoundOutlined } from "@ant-design/icons";
 import useAudioVolume from "hooks/useAudioVolume";

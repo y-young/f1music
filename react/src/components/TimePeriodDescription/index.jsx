@@ -1,5 +1,3 @@
-import React from "react";
-
 const TimePeriodDescription = () => (
   <ul>
     <li>6:40 起床铃：能使人逐渐清醒，最重要的是最好不要有催眠效果。</li>

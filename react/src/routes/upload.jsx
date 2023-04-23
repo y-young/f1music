@@ -1,4 +1,3 @@
-import React from "react";
 import dayjs from "dayjs";
 import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
 import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";

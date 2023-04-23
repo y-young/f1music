@@ -1,5 +1,5 @@
 import Title from "hooks/useTitle";
-import React from "react";
+
 import TimePeriodDescription from "components/TimePeriodDescription";
 import { Typography } from "antd";
 

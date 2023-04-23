@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Divider, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { TimeSelector } from "components";
