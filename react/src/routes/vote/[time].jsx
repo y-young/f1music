@@ -1,4 +1,3 @@
-import React from "react";
 import dayjs from "dayjs";
 import { TimeSelector, VoteProgress } from "components";
 import { Alert, Button, Col, Result, Row, Spin } from "antd";

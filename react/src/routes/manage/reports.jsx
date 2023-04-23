@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Table, Button, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";

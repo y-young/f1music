@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   Form,
   Table,
@@ -268,7 +268,7 @@ const Songs = ({ isTrashed = false }) => {
     selections: [
       Table.SELECTION_ALL,
       Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
+      Table.SELECTION_NONE
     ]
   };
   const columns = [

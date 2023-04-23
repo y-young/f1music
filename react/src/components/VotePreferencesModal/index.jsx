@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Radio, Button, Modal, Switch } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import useVotePreferences from "../../hooks/useVotePreferences";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Table } from "antd";
 import { timeIdToText, timeFilters } from "config";
 import { useMyUploads } from "services/upload";

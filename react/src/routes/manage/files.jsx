@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Table } from "antd";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";

@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./login.module.less";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Form, Button, Input, message } from "antd";
