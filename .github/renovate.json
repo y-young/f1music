@@ -1,6 +1,13 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:base"
-    ]
+    "extends": ["config:base"],
+    "timezone": "Asia/Shanghai",
+    "rangeStrategy": "bump",
+    "schedule": ["on the 1st day of the month"],
+    "labels": ["dependencies"],
+    "postUpdateOptions": ["pnpmDedupe"],
+    "lockFileMaintenance": {
+        "enabled": true,
+        "schedule": ["on the 2nd day of the month"]
+    }
 }
