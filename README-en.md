@@ -37,6 +37,10 @@ Instructions to deploy production and development environment: See [DEPLOY.md](D
         [React](https://reactjs.org/) (JS Framework),
         [dva](https://dvajs.com/) (Dataflow frontend framework),
         [Ant Design](https://ant.design/) (UI)
+    -   2.6.x:
+        [React](https://reactjs.org/) (JS Framework),
+        [Vite](https://vitejs.dev/) (Scaffold),
+        [Ant Design](https://ant.design/) (UI)
 
 ## Changelog
 

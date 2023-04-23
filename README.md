@@ -37,6 +37,10 @@
         [React](https://reactjs.org/) (JS 框架),
         [dva](https://dvajs.com/) (数据流前端框架),
         [Ant Design](https://ant.design/) (UI 库)
+    -   2.6.x:
+        [React](https://reactjs.org/) (JS 框架),
+        [Vite](https://vitejs.dev/) (脚手架),
+        [Ant Design](https://ant.design/) (UI 库)
 
 ## 更新日志
 
