@@ -13,6 +13,16 @@
     },
     "packageRules": [
         {
+            "matchManagers": [
+                "npm",
+                "composer",
+                "docker-compose",
+                "dockerfile",
+                "github-actions"
+            ],
+            "semanticCommitType": "chore"
+        },
+        {
             "matchDepTypes": ["devDependencies"],
             "matchPackagePatterns": ["lint", "prettier"],
             "automerge": true,
