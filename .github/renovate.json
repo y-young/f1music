@@ -8,6 +8,14 @@
     "postUpdateOptions": ["pnpmDedupe"],
     "lockFileMaintenance": {
         "enabled": true,
-        "schedule": ["on the 2nd day of the month"]
-    }
+        "schedule": ["on the 2nd day of the month"],
+        "automerge": true
+    },
+    "packageRules": [
+        {
+            "matchDepTypes": ["devDependencies"],
+            "matchPackagePatterns": ["lint", "prettier"],
+            "automerge": true
+        }
+    ]
 }
