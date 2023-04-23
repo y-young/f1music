@@ -20,7 +20,7 @@ dependencies:
     specifier: ^2.3.2
     version: 2.3.2
   dayjs:
-    specifier: ^1.11.1
+    specifier: ^1.11.7
     version: 1.11.7
   immer:
     specifier: ^9.0.21
