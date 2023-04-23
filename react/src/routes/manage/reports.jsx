@@ -63,7 +63,12 @@ const Reports = () => {
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: setSelectedRowKeys
+    onChange: setSelectedRowKeys,
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE
+    ]
   };
 
   return (
