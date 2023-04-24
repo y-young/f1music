@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { Spin, Rate, Button, message, Empty, Menu, Card } from "antd";
+import { Button, Card, Empty, Menu, Rate, Spin, message } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import styles from "./index.module.less";
-import Player from "../Player";
 import { voteTexts } from "config";
 import useIsDesktop from "hooks/useIsDesktop";
 import useVotePreferences from "hooks/useVotePreferences";
-import { useVoteList, useVote } from "services/vote";
-import { ReportForm } from "components";
+import { useVote, useVoteList } from "services/vote";
 import classNames from "classnames";
+
+import Player from "../Player";
+
+import styles from "./index.module.less";
 import Tips from "./Tips";
+
+import { ReportForm } from "components";
 
 const RATE_DURATION = 15;
 const SUBMIT_DURATION = 30;
@@ -49,6 +52,7 @@ const VoteList = ({ time }) => {
 
   useEffect(() => {
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   useEffect(() => {
@@ -59,11 +63,12 @@ const VoteList = ({ time }) => {
     }
   }, [src]);
 
-  const stopLast = () => {
+  // Use function declaration to prevent no-use-before-define
+  function stopLast() {
     if (playerRef.current) {
       playerRef.current.stop();
     }
-  };
+  }
 
   const timeListener = (offset) => {
     if (index === undefined) {
@@ -139,7 +144,8 @@ const VoteList = ({ time }) => {
     return "valid";
   };
 
-  const handleVote = async (event) => {
+  // TODO
+  async function handleVote(event) {
     const { onSubmitted } = preferences;
     const validity = checkValidity();
     if (validity !== "valid") {
@@ -157,7 +163,7 @@ const VoteList = ({ time }) => {
         }
       })
       .catch(() => {});
-  };
+  }
 
   const onEnded = async () => {
     const { onEnded } = preferences;
@@ -174,21 +180,21 @@ const VoteList = ({ time }) => {
   };
 
   const buttonProps = {
-    type: song.vote !== 0 ? "default" : "primary",
-    shape: !isDesktop ? "circle" : undefined,
+    type: song.vote === 0 ? "primary" : "default",
+    shape: isDesktop ? undefined : "circle",
     icon: countdown <= 0 ? <CheckOutlined /> : undefined,
-    disabled: countdown > 0
+    disabled: countdown > 0,
   };
 
   const voteArea = (
-    <div className={styles.voteArea} key="vote">
+    <div key="vote" className={styles.voteArea}>
       {countdown <= RATE_DURATION ? (
         <div className={styles.rate}>
           <Rate
             value={rate}
-            onChange={setRate}
             allowClear={false}
             className={styles.rate}
+            onChange={setRate}
           />
           {rate !== 0 && (
             <div className={classNames("ant-rate-text", styles.voteText)}>
@@ -211,7 +217,7 @@ const VoteList = ({ time }) => {
   );
 
   const listItems = songs
-    .map((song, key) => [
+    .flatMap((song, key) => [
       { type: "divider" },
       {
         key,
@@ -221,36 +227,35 @@ const VoteList = ({ time }) => {
               <span className={styles.itemIndex}>{key + 1}</span>
               您的评价: {voteTexts[song.vote]}
             </span>
-            <Rate value={song.vote} disabled className={styles.listStars} />
+            <Rate disabled value={song.vote} className={styles.listStars} />
           </span>
-        )
-      }
+        ),
+      },
     ])
-    .flat()
     .slice(1);
 
   return (
     <Spin spinning={voteList.isLoading}>
-      {songs.length !== 0 ? (
+      {songs.length > 0 ? (
         <>
           <Card bordered={false} className={styles.card}>
             <div className={styles.player}>
               <Player
+                ref={playerRef}
                 src={src}
-                onProgress={timeListener}
-                onEnded={onEnded}
                 canBackward={canBackward}
                 canForward={canForward}
+                onProgress={timeListener}
+                onEnded={onEnded}
                 onBackward={backward}
                 onForward={forward}
-                ref={playerRef}
               />
               <br />
               <Button
                 size="small"
-                onClick={() => setShowReport((showReport) => !showReport)}
                 disabled={index === undefined}
                 className={styles.toggleReport}
+                onClick={() => setShowReport((showReport) => !showReport)}
               >
                 反馈
               </Button>
@@ -278,8 +283,8 @@ const VoteList = ({ time }) => {
             className={styles.list}
             items={listItems}
             selectedKeys={index === undefined ? [] : [String(index)]}
-            onClick={({ key }) => handleSwitch(key)}
             style={{ borderInlineEnd: "none" }}
+            onClick={({ key }) => handleSwitch(key)}
           />
           <Tips time={time} progress={voteList.progress} />
         </>

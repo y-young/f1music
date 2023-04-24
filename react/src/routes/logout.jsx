@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Skeleton, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-
 import Title from "hooks/useTitle";
 import { useLogout } from "services/app";
 import useUser from "hooks/useUser";
@@ -19,6 +18,8 @@ const Logout = () => {
         navigate("/login");
       })
       .catch(() => {});
+    // TODO
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

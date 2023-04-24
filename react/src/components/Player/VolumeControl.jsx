@@ -1,4 +1,4 @@
-import { Button, Slider, Popover } from "antd";
+import { Button, Popover, Slider } from "antd";
 import { SoundOutlined } from "@ant-design/icons";
 import useAudioVolume from "hooks/useAudioVolume";
 
@@ -16,8 +16,8 @@ const VolumeControl = ({ onChange, ...props }) => {
           step={0.01}
           min={0}
           tooltip={{ formatter: (value) => (value * 100).toFixed(0) }}
-          onChange={onChange}
           style={{ width: 100, margin: 0 }}
+          onChange={onChange}
         />
       }
     >

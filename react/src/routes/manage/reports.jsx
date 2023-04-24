@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Table, Button, message } from "antd";
+import { Button, Form, Table, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
@@ -11,11 +11,11 @@ const columns = [
     dataIndex: "id",
     title: "#",
     width: "50px",
-    sorter: (a, b) => a.id - b.id
+    sorter: (a, b) => a.id - b.id,
   },
   { dataIndex: ["song", "name"], title: "曲目" },
   { dataIndex: "reason", title: "内容" },
-  { dataIndex: "time", title: "时间" }
+  { dataIndex: "time", title: "时间" },
 ];
 
 const Reports = () => {
@@ -47,8 +47,8 @@ const Reports = () => {
           </FormItem>
           <FormItem label="操作">
             <Button
-              type="primary"
               danger
+              type="primary"
               icon={<DeleteOutlined />}
               loading={del.isMutating}
               onClick={() => handleDelete([row.id])}
@@ -67,8 +67,8 @@ const Reports = () => {
     selections: [
       Table.SELECTION_ALL,
       Table.SELECTION_INVERT,
-      Table.SELECTION_NONE
-    ]
+      Table.SELECTION_NONE,
+    ],
   };
 
   return (
@@ -90,11 +90,11 @@ const Reports = () => {
         style={{ width: "100%" }}
       />
       <Button
-        type="primary"
         danger
+        type="primary"
         loading={del.isMutating}
-        onClick={handleBatchDelete}
         disabled={selectedRowKeys.length === 0}
+        onClick={handleBatchDelete}
       >
         删除所选
       </Button>

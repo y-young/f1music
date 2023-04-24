@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Form, Divider, Input, Upload, message } from "antd";
+import { Divider, Form, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import { TimeSelector } from "components";
 import { useMyUploads } from "services/upload";
+
+import { TimeSelector } from "components";
 
 const FormItem = Form.Item;
 
@@ -17,17 +18,21 @@ const ManualUpload = () => {
   const beforeUpload = async (file) =>
     form
       .validateFields()
-      .then((values) => {
+      .then(() => {
         setFileList([]);
         const tooBig = file.size / 1024 / 1024 > 20;
         const tooSmall = file.size / 1024 / 1024 < 1;
 
         if (tooBig) {
           message.error("上传文件大小不得超过20MB");
+          // TODO
+          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject();
         }
         if (tooSmall) {
           message.error("为保证音乐质量,请上传一个至少1MB的文件");
+          // TODO
+          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject();
         }
         return Promise.resolve();
@@ -36,11 +41,13 @@ const ManualUpload = () => {
         if (errors) {
           message.error("请修正所有错误后再上传文件");
         }
+        // TODO
+        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject();
       });
 
   const onChange = (info) => {
-    let { file } = info;
+    const { file } = info;
     const { response } = file;
 
     if (file.status === "done") {
@@ -62,40 +69,40 @@ const ManualUpload = () => {
   const formItemLayout = {
     labelCol: {
       xs: { span: 20 },
-      sm: { span: 6 }
+      sm: { span: 6 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16 }
-    }
+      sm: { span: 16 },
+    },
   };
 
   return (
     <Form form={form}>
       <FormItem
         {...formItemLayout}
+        hasFeedback
         label="时段"
         name="time"
         rules={[{ required: true, message: "请选择时段" }]}
-        hasFeedback
       >
         <TimeSelector style={{ width: "120px" }} />
       </FormItem>
       <FormItem
         {...formItemLayout}
+        hasFeedback
         label="曲名"
         name="name"
         rules={[{ required: true, message: "请填写曲名" }]}
-        hasFeedback
       >
         <Input placeholder="歌曲名称" maxLength={100} />
       </FormItem>
       <FormItem
         {...formItemLayout}
+        hasFeedback
         label="来源"
         name="origin"
         initialValue=""
-        hasFeedback
       >
         <Input
           placeholder="该曲目来自的专辑,音乐家或节目,游戏等,不是表示上传者,可留空"
@@ -105,14 +112,14 @@ const ManualUpload = () => {
       <Divider>请先填写以上信息再上传文件</Divider>
       <FormItem {...formItemLayout} label="上传文件">
         <Upload.Dragger
+          with-credentials
           fileList={fileList}
           action="/api/upload"
           data={getFormData}
           accept="audio/mpeg"
           beforeUpload={beforeUpload}
-          onChange={onChange}
-          with-credentials={true}
           showUploadList={{ showRemoveIcon: false, showDownloadIcon: false }}
+          onChange={onChange}
         >
           <p className="ant-upload-drag-icon">
             <InboxOutlined />

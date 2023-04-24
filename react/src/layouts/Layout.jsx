@@ -1,11 +1,12 @@
 import classnames from "classnames";
-import { Footer, Header } from "components";
 import { ConfigProvider, Layout } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import zhCN from "antd/es/locale/zh_CN";
-import styles from "./Layout.module.less";
 import useSidebar from "hooks/useSidebar";
-import { ErrorBoundary } from "components";
+
+import styles from "./Layout.module.less";
+
+import { ErrorBoundary, Footer, Header } from "components";
 
 const { Content } = Layout;
 
@@ -16,7 +17,7 @@ const CommonLayout = ({ children, renderSidebar }) => {
 
   const appClass = classnames({
     [styles.app]: true,
-    [styles.withSidebar]: !sidebarCollapsed
+    [styles.withSidebar]: !sidebarCollapsed,
   });
 
   return (

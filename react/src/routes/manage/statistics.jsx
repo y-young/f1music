@@ -1,18 +1,19 @@
-import { Col, Row, Card } from "antd";
+import { Card, Col, Row } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import styles from "./statistics.module.less";
 import Title from "hooks/useTitle";
 import { useStatistics } from "services/admin/statistics";
+
+import styles from "./statistics.module.less";
 
 const Statistics = () => {
   const { data, isLoading } = useStatistics();
 
   const statusIcon = (open) => {
-    if (open) {
-      return <CheckOutlined style={{ color: "green" }} />;
-    } else {
-      return <CloseOutlined style={{ color: "red" }} />;
-    }
+    return open ? (
+      <CheckOutlined style={{ color: "green" }} />
+    ) : (
+      <CloseOutlined style={{ color: "red" }} />
+    );
   };
 
   const DataCard = ({ title, children }) => {
@@ -35,7 +36,7 @@ const Statistics = () => {
   const colProps = {
     xs: 24,
     sm: 12,
-    style: { marginBottom: 20 }
+    style: { marginBottom: 20 },
   };
 
   return (

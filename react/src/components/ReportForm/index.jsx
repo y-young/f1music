@@ -1,6 +1,7 @@
 import { forwardRef, useState } from "react";
-import { Input, Button, message } from "antd";
+import { Button, Input, message } from "antd";
 import { useReport } from "services/vote";
+
 import styles from "./index.module.less";
 
 const ReportForm = ({ id, onSubmitted }, ref) => {
@@ -23,21 +24,21 @@ const ReportForm = ({ id, onSubmitted }, ref) => {
   };
 
   return (
-    <div ref={ref} className={styles.reportArea} key="report">
+    <div ref={ref} key="report" className={styles.reportArea}>
       <div className={styles.reason}>
         <Input
           value={reason}
           placeholder="反馈内容"
-          onChange={(e) => setReason(e.target.value)}
           maxLength={200}
+          onChange={(e) => setReason(e.target.value)}
           onPressEnter={submitReport}
         />
       </div>
       <Button
         type="primary"
-        onClick={submitReport}
         loading={report.isMutating}
         className={styles.reportButton}
+        onClick={submitReport}
       >
         提交
       </Button>

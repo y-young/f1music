@@ -2,6 +2,7 @@ import { Form, Table } from "antd";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
 import { useFiles } from "services/admin/files";
+
 import { Audio } from "components";
 
 const FormItem = Form.Item;
@@ -13,10 +14,10 @@ const Files = () => {
       dataIndex: "id",
       title: "#",
       width: "60px",
-      sorter: (a, b) => a.id - b.id
+      sorter: (a, b) => a.id - b.id,
     },
     { dataIndex: "md5", title: "MD5" },
-    { dataIndex: "time", title: "时间" }
+    { dataIndex: "time", title: "时间" },
   ];
 
   const renderExpanded = (row) => {

@@ -3,7 +3,7 @@ import { timeIdToText } from "utils/config";
 
 const options = Object.entries(timeIdToText).map(([key, value]) => ({
   value: key,
-  label: value
+  label: value,
 }));
 
 const TimeSelector = (props) => (

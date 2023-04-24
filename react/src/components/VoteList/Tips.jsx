@@ -1,6 +1,7 @@
-import { BottomTips } from "components";
 import { memo } from "react";
 import { Link } from "react-router-dom";
+
+import { BottomTips } from "components";
 
 const Tips = ({ progress, time }) => {
   const [voted, total] = progress;
@@ -21,7 +22,7 @@ const Tips = ({ progress, time }) => {
   return (
     <BottomTips>
       您已投完本时段所有曲目，到
-      <Link to={"/vote/" + rndTime}>其他时段</Link>
+      <Link to={`/vote/${rndTime}`}>其他时段</Link>
       看看吧
     </BottomTips>
   );

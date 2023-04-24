@@ -1,5 +1,5 @@
 import { Table } from "antd";
-import { timeIdToText, timeFilters } from "config";
+import { timeFilters, timeIdToText } from "config";
 import { useMyUploads } from "services/upload";
 
 const ViewUploads = () => {
@@ -12,14 +12,14 @@ const ViewUploads = () => {
       width: 70,
       render: (text) => timeIdToText[text],
       filters: timeFilters,
-      onFilter: (value, record) => record.playtime === value
+      onFilter: (value, record) => record.playtime === value,
     },
     { dataIndex: "name", title: "曲名", width: 200 },
     {
       dataIndex: "origin",
       title: "来源",
-      width: 150
-    }
+      width: 150,
+    },
   ];
 
   return (

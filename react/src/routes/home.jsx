@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Spin, Tabs } from "antd";
-import { StatusNotice } from "components";
 import UploadDescription from "components/UploadDescription";
 import VoteDescription from "components/VoteDescription";
 import TimePeriodDescription from "components/TimePeriodDescription";
-import Title from "../hooks/useTitle";
 import { useStatus } from "services/app";
+
+import Title from "../hooks/useTitle";
+
+import { StatusNotice } from "components";
 
 const Home = () => {
   const { data: status, isLoading } = useStatus();
@@ -29,6 +31,7 @@ const Home = () => {
         <StatusNotice status={status} />
       </Spin>
       <Tabs
+        activeKey={activeTab}
         items={[
           { label: "上传说明", key: "upload", children: <UploadDescription /> },
           { label: "投票说明", key: "vote", children: <VoteDescription /> },
@@ -42,10 +45,9 @@ const Home = () => {
                 </p>
                 <TimePeriodDescription />
               </>
-            )
-          }
+            ),
+          },
         ]}
-        activeKey={activeTab}
         onChange={setActiveTab}
       />
     </>

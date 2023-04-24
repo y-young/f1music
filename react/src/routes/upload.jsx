@@ -1,15 +1,17 @@
 import dayjs from "dayjs";
-import { Alert, Row, Col, Button, Tabs, Spin, Statistic, Result } from "antd";
-import { SmileTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
+import { Alert, Button, Col, Result, Row, Spin, Statistic, Tabs } from "antd";
+import { ClockCircleTwoTone, SmileTwoTone } from "@ant-design/icons";
+import { useStatus } from "services/app";
+import { useMyUploads } from "services/upload";
+
+import Title from "../hooks/useTitle";
+
 import {
   CloudUpload,
   ManualUpload,
+  PhaseCountdown,
   ViewUploads,
-  PhaseCountdown
 } from "components";
-import { useStatus } from "services/app";
-import Title from "../hooks/useTitle";
-import { useMyUploads } from "services/upload";
 
 const Upload = () => {
   const status = useStatus();
@@ -59,8 +61,8 @@ const Upload = () => {
         ) : (
           <div>
             <Alert
-              type="info"
               closable
+              type="info"
               description={
                 <Row gutter={16}>
                   <Col span={12}>
@@ -85,14 +87,18 @@ const Upload = () => {
                 {
                   key: "netease",
                   label: "网易云音乐",
-                  children: uploaded < 12 ? <CloudUpload /> : AllDone
+                  children: uploaded < 12 ? <CloudUpload /> : AllDone,
                 },
                 {
                   key: "manual",
                   label: "手动上传",
-                  children: uploaded < 12 ? <ManualUpload /> : AllDone
+                  children: uploaded < 12 ? <ManualUpload /> : AllDone,
                 },
-                { key: "uploads", label: "我的推荐", children: <ViewUploads /> }
+                {
+                  key: "uploads",
+                  label: "我的推荐",
+                  children: <ViewUploads />,
+                },
               ]}
             />
           </div>

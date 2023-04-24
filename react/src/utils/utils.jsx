@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import produce from "immer";
+import { produce } from "immer";
 
 export const renderDateTime = (datetime) => {
   const value = dayjs(datetime);
@@ -42,7 +42,7 @@ export const initSentry = () => {
         environment: import.meta.env.MODE,
         release: import.meta.env.VITE_RELEASE,
         integrations: [new Sentry.Replay()],
-        replaysOnErrorSampleRate: 1.0
+        replaysOnErrorSampleRate: 1.0,
       });
     });
   }

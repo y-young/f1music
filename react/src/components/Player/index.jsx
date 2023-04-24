@@ -1,20 +1,22 @@
 import {
-  useEffect,
-  useState,
-  useRef,
   forwardRef,
-  useImperativeHandle
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
 } from "react";
+import { Slider, Space, message } from "antd";
+
 import styles from "./index.module.less";
-import { Slider, message, Space } from "antd";
-import { Audio } from "components";
 import VolumeControl from "./VolumeControl";
 import {
+  BackwardButton,
+  ForwardButton,
   PlayButton,
   StopButton,
-  BackwardButton,
-  ForwardButton
 } from "./ControlButtons";
+
+import { Audio } from "components";
 
 const Player = (
   {
@@ -26,7 +28,7 @@ const Player = (
     onForward,
     canBackward,
     canForward,
-    mini = false
+    mini = false,
   },
   ref
 ) => {
@@ -38,35 +40,19 @@ const Player = (
   const [loaded, setLoaded] = useState(0);
   const [disableSliderUpdate, setDisableSliderUpdate] = useState(false);
 
-  useImperativeHandle(ref, () => ({
-    play,
-    pause,
-    stop,
-    toggle,
-    audio: audioRef.current
-  }));
-
-  useEffect(() => {
-    setDisableSliderUpdate(false);
-    // Setting Slider value & max to 0 at the same time won't reset the handle
-    // https://github.com/ant-design/ant-design/issues/40827
-    setDuration(0.01);
-    setLoaded(0);
-    seek(0);
-  }, [src]);
-
   const handleTimeUpdate = (event) => {
     const newTime = event.target.currentTime;
     if (!disableSliderUpdate) {
       setDisplayTime(newTime);
     }
     const offset = newTime - time;
-    if (onProgress) {
-      // offset > 0: In case that currentTime didn't update in time
+    if (
+      onProgress && // offset > 0: In case that currentTime didn't update in time
       // offset <= 1: To prevent cheating
-      if (offset > 0 && offset <= 1) {
-        onProgress(offset);
-      }
+      offset > 0 &&
+      offset <= 1
+    ) {
+      onProgress(offset);
     }
     setTime(newTime);
   };
@@ -77,13 +63,11 @@ const Player = (
       if (promise) {
         promise.catch((e) => {
           console.warn(e);
-          if (e.name === "NotAllowedError") {
-            // stop();
-            if (!disableWarning) {
-              message.warning(
-                "您的浏览器可能不兼容自动播放功能,请尝试手动播放"
-              );
-            }
+          if (
+            e.name === "NotAllowedError" && // stop();
+            !disableWarning
+          ) {
+            message.warning("您的浏览器可能不兼容自动播放功能,请尝试手动播放");
           }
         });
       }
@@ -116,9 +100,10 @@ const Player = (
 
   const handleLoad = () => {
     const audio = audioRef.current;
-    const loaded = audio.buffered.length
-      ? audio.buffered.end(audio.buffered.length - 1) / duration
-      : 0;
+    const loaded =
+      audio.buffered.length > 0
+        ? audio.buffered.end(audio.buffered.length - 1) / duration
+        : 0;
     const percent = loaded * 100;
     setLoaded(Math.min(percent, 100));
   };
@@ -189,20 +174,37 @@ const Player = (
       .join(":");
   };
 
+  useImperativeHandle(ref, () => ({
+    play,
+    pause,
+    stop,
+    toggle,
+    audio: audioRef.current,
+  }));
+
+  useEffect(() => {
+    setDisableSliderUpdate(false);
+    // Setting Slider value & max to 0 at the same time won't reset the handle
+    // https://github.com/ant-design/ant-design/issues/40827
+    setDuration(0.01);
+    setLoaded(0);
+    seek(0);
+  }, [src]);
+
   const timeDetail = `${formatTime(displayTime)} / ${formatTime(duration)}`;
   const audio = (
     <Audio
       ref={audioRef}
+      preload="none"
       src={src}
-      //controls="controls"
-      onProgress={handleLoad}
+      // controls="controls"
       onTimeUpdate={handleTimeUpdate}
       onDurationChange={updateDuration}
       onPlay={handlePlay}
       onPause={handlePause}
       onEnded={handleEnded}
       onError={handleError}
-      preload="none"
+      onProgress={handleLoad}
     />
   );
 
@@ -211,13 +213,13 @@ const Player = (
       <div className={styles.miniPlayer}>
         {audio}
         <Space.Compact className={styles.controls}>
-          <PlayButton onClick={toggle} playing={playing} />
+          <PlayButton playing={playing} onClick={toggle} />
           <StopButton onClick={stop} />
         </Space.Compact>
         <div className={styles.miniTimeDetail}>{timeDetail}</div>
         <VolumeControl
-          onChange={handleVolumeChange}
           className={styles.volumeControl}
+          onChange={handleVolumeChange}
         />
       </div>
     );
@@ -229,25 +231,25 @@ const Player = (
       <Slider
         value={displayTime}
         max={duration}
-        onChange={handleSeeking}
-        onAfterChange={seek}
         tooltip={{ formatter: null }}
         className={styles.slider}
         style={{ "--buffer-progress": `${loaded}%` }}
+        onChange={handleSeeking}
+        onAfterChange={seek}
       />
       <Space className={styles.controls}>
-        <BackwardButton onClick={onBackward} disabled={!canBackward} />
+        <BackwardButton disabled={!canBackward} onClick={onBackward} />
         <PlayButton
           shape="circle"
           size="large"
           playing={playing}
-          onClick={toggle}
           disabled={!src}
+          onClick={toggle}
         />
-        <ForwardButton onClick={onForward} disabled={!canForward} />
+        <ForwardButton disabled={!canForward} onClick={onForward} />
         <VolumeControl
-          onChange={handleVolumeChange}
           className={styles.volumeControl}
+          onChange={handleVolumeChange}
         />
       </Space>
       <div className={styles.timeDetail}>{timeDetail}</div>
