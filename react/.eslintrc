@@ -2,7 +2,6 @@
   "extends": "@so1ve/react",
   "rules": {
     "no-console": "off",
-    "react/prop-types": "off",
-    "no-mixed-operators": "off"
+    "react/prop-types": "off"
   }
 }

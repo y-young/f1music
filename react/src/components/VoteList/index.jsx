@@ -210,7 +210,7 @@ const VoteList = ({ time }) => {
         </span>
       )}
       <Button loading={vote.isMutating} onClick={handleVote} {...buttonProps}>
-        {countdown > 0 ? Math.ceil(countdown) : isDesktop && "投票"}
+        {countdown > 0 ? Math.ceil(countdown) : isDesktop ? "投票" : ""}
       </Button>
     </div>
   );

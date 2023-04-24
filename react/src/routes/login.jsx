@@ -26,8 +26,8 @@ const Login = () => {
         mutate();
         message.success("登录成功", 3);
         const redirect = searchParams.get("redirect");
-        const redirectUrl =
-          !redirect || !redirect.startsWith("/") ? "/" : redirect;
+        const redirectUrlValid = redirect && redirect.startsWith("/");
+        const redirectUrl = redirectUrlValid ? redirect : "/";
         if (redirectUrl.startsWith("/manage")) {
           window.location.href = redirectUrl;
         } else {
