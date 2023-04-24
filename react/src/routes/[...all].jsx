@@ -1,4 +1,5 @@
-import { Result, Button } from "antd";
+import { Button, Result } from "antd";
+
 import Title from "../hooks/useTitle";
 
 const NotFound = () => {

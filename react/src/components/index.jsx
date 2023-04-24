@@ -37,5 +37,5 @@ export {
   BottomTips,
   ReportForm,
   VoteProgress,
-  ErrorBoundary
+  ErrorBoundary,
 };

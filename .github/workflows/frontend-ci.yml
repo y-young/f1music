@@ -1,0 +1,71 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        run: |
+          cd react
+          corepack enable
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+          cache-dependency-path: react/pnpm-lock.yaml
+
+      - name: Setup
+        run: npm i -g @antfu/ni
+
+      - name: Install
+        run: |
+          cd react
+          nci
+
+      - name: Lint
+        run: |
+          cd react
+          nr lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        run: |
+          cd react
+          corepack enable
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+          cache-dependency-path: react/pnpm-lock.yaml
+
+      - name: Setup
+        run: npm i -g @antfu/ni
+
+      - name: Install
+        run: |
+          cd react
+          nci
+
+      - name: Typecheck
+        run: |
+          cd react
+          nr typecheck

@@ -1,9 +1,10 @@
-import { request } from "utils";
 import { api } from "config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import produce from "immer";
+import { produce } from "immer";
 import { useMemo } from "react";
+
+import { request } from "utils";
 
 const { list, report, vote } = api;
 
@@ -12,10 +13,10 @@ export const useVoteList = (time) => {
     request({
       url: list,
       method: "post",
-      data: { time }
+      data: { time },
     }).then((data) => data.songs)
   );
-  const songs = swr.data ?? [];
+  const songs = useMemo(() => swr.data ?? [], [swr.data]);
 
   const markListened = (id) => {
     const newData = produce(songs, (draft) => {
@@ -50,7 +51,7 @@ export const useReport = () =>
     request({
       url: report,
       method: "post",
-      data: arg
+      data: arg,
     })
   );
 
@@ -59,6 +60,6 @@ export const useVote = () =>
     request({
       url: vote,
       method: "post",
-      data: arg
+      data: arg,
     })
   );

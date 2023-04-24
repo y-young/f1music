@@ -22,7 +22,7 @@ const BUILTIN_TAGS = [
   "纯钢琴",
   "纯吉他",
   "电子",
-  ...[1, 2, 3, 4, 5, 6].map((v) => `或${v}`)
+  ...[1, 2, 3, 4, 5, 6].map((v) => `或${v}`),
 ];
 const recentTags = atomWithStorage("recentTags", BUILTIN_TAGS);
 
@@ -54,12 +54,11 @@ const TagsSelect = (props) => {
     <Select
       mode="tags"
       tokenSeparators={[",", "，"]}
+      placement="topLeft"
       options={tags.map((tag) => ({
         label: tag,
-        value: tag
+        value: tag,
       }))}
-      placement="topLeft"
-      onSelect={(value) => select(value)}
       dropdownRender={(menu) => (
         <>
           {menu}
@@ -69,6 +68,7 @@ const TagsSelect = (props) => {
           </Button>
         </>
       )}
+      onSelect={(value) => select(value)}
       {...props}
     />
   );

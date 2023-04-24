@@ -19,7 +19,6 @@ const SWRConfig = ({ children, value = {} }) => {
         } else {
           navigate(loginUrl);
         }
-        return;
       }
     } else {
       message.error("出错了，请刷新页面重试");
@@ -39,7 +38,7 @@ const SWRConfig = ({ children, value = {} }) => {
       value={{
         onError,
         onErrorRetry: handleErrorRetry,
-        ...value
+        ...value,
       }}
     >
       {children}

@@ -1,15 +1,16 @@
 import classnames from "classnames";
 import { Menu } from "antd";
 import {
+  FormOutlined,
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
+  SettingOutlined,
   UploadOutlined,
-  FormOutlined,
-  SettingOutlined
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import useUser from "hooks/useUser";
+
 import styles from "./index.module.less";
 
 const Sidebar = ({ collapsed }) => {
@@ -19,7 +20,7 @@ const Sidebar = ({ collapsed }) => {
 
   const sidebarClass = classnames({
     [styles.sidebar]: true,
-    [styles.show]: !collapsed
+    [styles.show]: !collapsed,
   });
 
   const menuItems = [
@@ -27,7 +28,7 @@ const Sidebar = ({ collapsed }) => {
     {
       key: user ? "/logout" : "/login",
       icon: user ? <LogoutOutlined /> : <LoginOutlined />,
-      label: user ? "登出" : "登录"
+      label: user ? "登出" : "登录",
     },
     { key: "/upload", icon: <UploadOutlined />, label: "上传" },
     {
@@ -40,14 +41,14 @@ const Sidebar = ({ collapsed }) => {
         { key: "/vote/3", label: "13:45 午出门" },
         { key: "/vote/4", label: "18:10 晚出门" },
         { key: "/vote/5", label: "21:55 晚自习结束" },
-        { key: "/vote/6", label: "22:40 熄灯铃" }
-      ]
+        { key: "/vote/6", label: "22:40 熄灯铃" },
+      ],
     },
     user?.permission > 0 && {
       key: "/manage",
       icon: <SettingOutlined />,
-      label: "管理系统"
-    }
+      label: "管理系统",
+    },
   ];
 
   const handleMenuClick = ({ key }) => {

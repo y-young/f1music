@@ -1,14 +1,15 @@
-import styles from "./login.module.less";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Form, Button, Input, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import {
-  UserOutlined,
+  ArrowLeftOutlined,
   LockOutlined,
-  ArrowLeftOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import Title from "hooks/useTitle";
 import { useLogin } from "services/app";
 import useUser from "hooks/useUser";
+
+import styles from "./login.module.less";
 
 const FormItem = Form.Item;
 
@@ -25,8 +26,8 @@ const Login = () => {
         mutate();
         message.success("登录成功", 3);
         const redirect = searchParams.get("redirect");
-        const redirectUrl =
-          !redirect || !redirect.startsWith("/") ? "/" : redirect;
+        const redirectUrlValid = redirect && redirect.startsWith("/");
+        const redirectUrl = redirectUrlValid ? redirect : "/";
         if (redirectUrl.startsWith("/manage")) {
           window.location.href = redirectUrl;
         } else {
@@ -52,13 +53,13 @@ const Login = () => {
                 {
                   min: 10,
                   message: "学号应为10或11位",
-                  validateTrigger: "onBlur"
+                  validateTrigger: "onBlur",
                 },
                 {
                   max: 11,
                   message: "学号应为10或11位",
-                  validateTrigger: "onBlur"
-                }
+                  validateTrigger: "onBlur",
+                },
               ]}
             >
               <Input
@@ -76,10 +77,12 @@ const Login = () => {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                      new Error(
+                        "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                      )
                     );
-                  }
-                })
+                  },
+                }),
               ]}
             >
               <Input.Password
@@ -89,10 +92,10 @@ const Login = () => {
             </FormItem>
             <FormItem>
               <Button
+                block
                 type="primary"
                 loading={login.isMutating}
                 htmlType="submit"
-                block
               >
                 登录
               </Button>

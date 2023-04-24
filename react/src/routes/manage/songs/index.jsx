@@ -1,30 +1,31 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import {
-  Form,
-  Table,
+  Badge,
   Button,
+  Form,
   Input,
-  Tag,
   Modal,
   Space,
-  Badge,
-  message
+  Table,
+  Tag,
+  message,
 } from "antd";
 import {
-  SearchOutlined,
-  EditOutlined,
-  RollbackOutlined,
   DeleteOutlined,
   DownloadOutlined,
-  ReloadOutlined
+  EditOutlined,
+  ReloadOutlined,
+  RollbackOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { TagsSelect } from "components/admin";
-import { Audio, TimeSelector } from "components";
 import { timeFilters } from "config";
-import { renderDateTime, ellipsis, dateSorter } from "utils/utils";
+import { dateSorter, ellipsis, renderDateTime } from "utils/utils";
 import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
 import { useSongs } from "services/admin/songs";
+
+import { Audio, TimeSelector } from "components";
 
 const FormItem = Form.Item;
 const colors = [
@@ -38,7 +39,7 @@ const colors = [
   "cyan",
   "blue",
   "geekblue",
-  "purple"
+  "purple",
 ];
 
 const Songs = ({ isTrashed = false }) => {
@@ -63,33 +64,33 @@ const Songs = ({ isTrashed = false }) => {
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInputRef}
           placeholder="输入关键词"
           value={selectedKeys[0]}
+          style={{ width: 188, marginBottom: 8, display: "block" }}
+          onPressEnter={() => confirm()}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => confirm()}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
             type="primary"
-            onClick={() => confirm()}
             icon={<SearchOutlined />}
             size="small"
             style={{ width: 90, marginRight: 8 }}
+            onClick={() => confirm()}
           >
             搜索
           </Button>
           <Button
-            onClick={() => handleReset(clearFilters, confirm)}
             size="small"
             style={{ width: 90 }}
+            onClick={() => handleReset(clearFilters, confirm)}
           >
             重置
           </Button>
@@ -105,7 +106,7 @@ const Songs = ({ isTrashed = false }) => {
       if (visible) {
         setTimeout(() => searchInputRef.current.select());
       }
-    }
+    },
   });
 
   const handleRefresh = () => {
@@ -118,7 +119,7 @@ const Songs = ({ isTrashed = false }) => {
       playtime: row.playtime,
       name: row.name,
       origin: row.origin,
-      tags: row.tags
+      tags: row.tags,
     });
     setModalVisible(true);
   };
@@ -160,11 +161,11 @@ const Songs = ({ isTrashed = false }) => {
 
   const getTagColor = (tagName) => {
     let color;
-    if (!tagColors.has(tagName)) {
+    if (tagColors.has(tagName)) {
+      color = tagColors.get(tagName);
+    } else {
       color = colors[Math.floor(Math.random() * 11)];
       tagColors.set(tagName, color);
-    } else {
-      color = tagColors.get(tagName);
     }
     return color;
   };
@@ -223,35 +224,35 @@ const Songs = ({ isTrashed = false }) => {
                 <Space>
                   <Button
                     icon={<RollbackOutlined />}
-                    onClick={() => handleRestore([row.id])}
                     loading={restore.isMutating}
+                    onClick={() => handleRestore([row.id])}
                   >
                     恢复
                   </Button>
                   <Button
-                    type="primary"
                     danger
+                    type="primary"
                     icon={<DeleteOutlined />}
-                    onClick={() => handleDelete([row.id], true)}
                     loading={del.isMutating}
+                    onClick={() => handleDelete([row.id], true)}
                   >
                     彻底删除
                   </Button>
                 </Space>
               ) : (
                 <Button
-                  type="primary"
                   danger
+                  type="primary"
                   icon={<DeleteOutlined />}
-                  onClick={() => handleDelete([row.id])}
                   loading={trash.isMutating}
+                  onClick={() => handleDelete([row.id])}
                 >
                   删除
                 </Button>
               )}
               <Button
                 icon={<DownloadOutlined />}
-                href={"/api/download/" + row.id}
+                href={`/api/download/${row.id}`}
               >
                 下载
               </Button>
@@ -268,22 +269,22 @@ const Songs = ({ isTrashed = false }) => {
     selections: [
       Table.SELECTION_ALL,
       Table.SELECTION_INVERT,
-      Table.SELECTION_NONE
-    ]
+      Table.SELECTION_NONE,
+    ],
   };
   const columns = [
     {
       dataIndex: "id",
       title: "#",
       width: "60px",
-      sorter: (a, b) => a.id - b.id
+      sorter: (a, b) => a.id - b.id,
     },
     {
       dataIndex: "playtime",
       title: "时段",
       width: "80px",
       filters: timeFilters,
-      onFilter: (value, record) => record.playtime === value
+      onFilter: (value, record) => record.playtime === value,
     },
     {
       dataIndex: "name",
@@ -296,14 +297,14 @@ const Songs = ({ isTrashed = false }) => {
         >
           <span style={{ lineHeight: 1.5715 }}>{text}</span>
         </Badge>
-      )
+      ),
     },
     {
       dataIndex: "origin",
       title: "来源",
       width: "100px",
       ...getColumnSearchProps("origin"),
-      render: (text) => ellipsis(text, 50)
+      render: (text) => ellipsis(text, 50),
     },
     {
       title: "标签",
@@ -312,27 +313,27 @@ const Songs = ({ isTrashed = false }) => {
       render: (tags) => (
         <span>
           {tags.map((tag) => {
-            if (tag !== "") {
-              let color = getTagColor(tag);
+            if (tag === "") {
+              return null;
+            } else {
+              const color = getTagColor(tag);
               return (
-                <Tag color={color} key={tag}>
+                <Tag key={tag} color={color}>
                   {tag}
                 </Tag>
               );
-            } else {
-              return null;
             }
           })}
         </span>
       ),
-      ...getColumnSearchProps("tags")
+      ...getColumnSearchProps("tags"),
     },
     {
       dataIndex: isTrashed ? "deleted_at" : "created_at",
       title: isTrashed ? "删除时间" : "时间",
       render: renderDateTime,
-      sorter: isTrashed && ((a, b) => dateSorter(a.deleted_at, b.deleted_at))
-    }
+      sorter: isTrashed && ((a, b) => dateSorter(a.deleted_at, b.deleted_at)),
+    },
   ];
 
   return (
@@ -343,8 +344,8 @@ const Songs = ({ isTrashed = false }) => {
       </div>
       <Button
         icon={<ReloadOutlined />}
-        onClick={handleRefresh}
         style={{ float: "right" }}
+        onClick={handleRefresh}
       />
       <br />
       <Table
@@ -360,45 +361,45 @@ const Songs = ({ isTrashed = false }) => {
       {isTrashed ? (
         <Space>
           <Button
-            onClick={handleBatchRestore}
             loading={restore.isMutating}
             disabled={selectedRowKeys.length === 0}
+            onClick={handleBatchRestore}
           >
             恢复所选
           </Button>
           <Button
-            type="primary"
             danger
-            onClick={() => handleBatchDelete(true)}
+            type="primary"
             loading={del.isMutating}
             disabled={selectedRowKeys.length === 0}
+            onClick={() => handleBatchDelete(true)}
           >
             彻底删除所选
           </Button>
         </Space>
       ) : (
         <Button
-          type="primary"
           danger
-          onClick={() => handleBatchDelete(false)}
+          type="primary"
           loading={trash.isMutating}
           disabled={selectedRowKeys.length === 0}
+          onClick={() => handleBatchDelete(false)}
         >
           删除所选
         </Button>
       )}
       <Modal
+        forceRender
+        centered
         open={modalVisible}
-        onCancel={handleCancel}
         confirmLoading={save.isMutating}
         okText="保存"
         title="编辑曲目"
+        onCancel={handleCancel}
         onOk={handleSave}
-        forceRender
-        centered
       >
         <Form form={form} labelCol={{ span: 3 }}>
-          <FormItem name="id" hidden={true} noStyle={true}>
+          <FormItem hidden noStyle name="id">
             <Input type="hidden" />
           </FormItem>
           <FormItem label="时段" name="playtime">
@@ -432,9 +433,9 @@ const Songs = ({ isTrashed = false }) => {
                   if (!value || value.toString().length <= 200) {
                     return Promise.resolve();
                   }
-                  return Promise.reject("标签总长度不得超过200");
-                }
-              }
+                  return Promise.reject(new Error("标签总长度不得超过200"));
+                },
+              },
             ]}
           >
             <TagsSelect placeholder="曲目标签" />

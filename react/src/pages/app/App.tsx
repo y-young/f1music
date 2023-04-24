@@ -1,7 +1,10 @@
 import { useRoutes } from "react-router-dom";
-import routes from "~react-pages";
-import { default as AppLayout } from "../../layouts/App";
+
+import AppLayout from "../../layouts/App";
+
 import "./App.css";
+
+import routes from "~react-pages";
 import { SWRConfig, SuspenseLoading } from "components";
 
 const App = () => {

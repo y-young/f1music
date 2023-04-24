@@ -1,4 +1,4 @@
-import { useAtom, atom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 const normalizeVolume = (volume) => Math.min(1, Math.max(0.0, volume));

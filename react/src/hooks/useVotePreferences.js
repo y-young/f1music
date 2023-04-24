@@ -4,7 +4,7 @@ import { useAtom } from "jotai/react";
 const initialState = {
   skipVoted: true,
   onSubmitted: "continue",
-  onEnded: "pause"
+  onEnded: "pause",
 };
 const preferencesAtom = atomWithStorage("votePreferences", initialState);
 

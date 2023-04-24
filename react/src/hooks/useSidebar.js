@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import useIsDesktop from "./useIsDesktop";
 
 const useSidebar = (location) => {
@@ -17,7 +18,7 @@ const useSidebar = (location) => {
     if (!isDesktop) {
       setCollapsed(true);
     }
-  }, [location]);
+  }, [location, isDesktop]);
 
   const toggle = () => {
     setCollapsed(!collapsed);

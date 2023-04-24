@@ -1,13 +1,19 @@
 import dayjs from "dayjs";
-import { TimeSelector, VoteProgress } from "components";
 import { Alert, Button, Col, Result, Row, Spin } from "antd";
 import { ClockCircleTwoTone } from "@ant-design/icons";
-import { PhaseCountdown, VotePreferencesModal, VoteList } from "components";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useStatus } from "services/app";
 import Title from "hooks/useTitle";
 import { useVoteList } from "services/vote";
 import { timeIdToName } from "utils/config";
+
+import {
+  PhaseCountdown,
+  TimeSelector,
+  VoteList,
+  VotePreferencesModal,
+  VoteProgress,
+} from "components";
 
 const Vote = () => {
   const { time } = useParams();
@@ -16,12 +22,18 @@ const Vote = () => {
     return <Navigate to="/404" />;
   }
 
+  // TODO
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const status = useStatus();
   const voteStatus = status.data?.vote ?? {};
   const currentTime = dayjs();
 
+  // TODO
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { progress } = useVoteList(time);
 
+  // TODO
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const navigate = useNavigate();
   const handleRedirect = (time) => {
     navigate(`/vote/${time}`);
@@ -60,8 +72,9 @@ const Vote = () => {
         ) : (
           <div>
             <Alert
-              type="info"
               closable
+              type="info"
+              style={{ marginBottom: "10px" }}
               description={
                 <Row gutter={16}>
                   <Col span={12}>
@@ -75,12 +88,11 @@ const Vote = () => {
                   </Col>
                 </Row>
               }
-              style={{ marginBottom: "10px" }}
             />
             <TimeSelector
-              onChange={handleRedirect}
               style={{ width: "90px", marginBottom: "10px" }}
               value={time}
+              onChange={handleRedirect}
             />
             <div style={{ float: "right" }}>
               <VotePreferencesModal />

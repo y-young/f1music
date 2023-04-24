@@ -1,9 +1,10 @@
 import { request } from "utils/admin";
-import { removeById } from "utils";
 import { api } from "utils/admin/config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import produce from "immer";
+import { produce } from "immer";
+
+import { removeById } from "utils";
 
 const { songs, trashedSongs, trashSongs, restoreSongs } = api;
 
@@ -12,7 +13,7 @@ export const useSongs = (trashed = false) => {
   const swr = useSWR(url, () =>
     request({
       url,
-      method: "get"
+      method: "get",
     }).then((data) => data.songs)
   );
 
@@ -20,7 +21,7 @@ export const useSongs = (trashed = false) => {
     request({
       url: songs,
       method: "put",
-      data: arg
+      data: arg,
     }).then(() => {
       swr.mutate(
         (data) =>
@@ -40,7 +41,7 @@ export const useSongs = (trashed = false) => {
     request({
       url: trashSongs,
       method: "post",
-      data: { id }
+      data: { id },
     }).then(() => {
       swr.mutate((data) => removeById(data, id), { revalidate: false });
     })
@@ -50,7 +51,7 @@ export const useSongs = (trashed = false) => {
     request({
       url: restoreSongs,
       method: "post",
-      data: { id }
+      data: { id },
     }).then(() => {
       swr.mutate((data) => removeById(data, id), { revalidate: false });
     })
@@ -60,7 +61,7 @@ export const useSongs = (trashed = false) => {
     request({
       url: songs,
       method: "delete",
-      data: { id }
+      data: { id },
     }).then(() => {
       swr.mutate((data) => removeById(data, id), { revalidate: false });
     })

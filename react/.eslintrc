@@ -1,0 +1,7 @@
+{
+  "extends": "@so1ve/react",
+  "rules": {
+    "no-console": "off",
+    "react/prop-types": "off"
+  }
+}

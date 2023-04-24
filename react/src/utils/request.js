@@ -5,7 +5,7 @@ const errorMsg = {
   403: "您没有此操作权限",
   404: "404 资源未找到",
   429: "操作过于频繁，请稍后再试",
-  500: "Oops！出错了，我们会尽快修复这一问题~"
+  500: "Oops！出错了，我们会尽快修复这一问题~",
 };
 
 // 设置全局参数
@@ -17,7 +17,7 @@ const request = (opt) =>
   axios(opt)
     .then((response) => {
       if (response.data && response.data.error !== 0) {
-        let error = new Error();
+        const error = new Error(response.data.msg);
         error.type = "notice"; // 用户操作引起的错误而非程序错误
         error.code = response.data.error;
         error.message = response.data.msg;
@@ -40,26 +40,34 @@ const request = (opt) =>
 
         switch (error.code) {
           case AxiosError.ECONNABORTED:
-          case AxiosError.ETIMEDOUT:
+          case AxiosError.ETIMEDOUT: {
+            // TODO
+            // eslint-disable-next-line prefer-promise-reject-errors
             return Promise.reject({
               ...error,
-              message: "请求超时，请重试"
+              message: "请求超时，请重试",
             });
-          case AxiosError.ERR_NETWORK:
+          }
+          case AxiosError.ERR_NETWORK: {
+            // TODO
+            // eslint-disable-next-line prefer-promise-reject-errors
             return Promise.reject({
               ...error,
-              message: "加载失败，请检查网络"
+              message: "加载失败，请检查网络",
             });
+          }
         }
         return Promise.reject(error);
       }
 
       const status = error.response.status;
       const errortext = errorMsg[status] || "加载失败了╭(╯ε╰)╮";
+      // TODO
+      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({
         ...error,
         status,
-        message: errortext
+        message: errortext,
       });
     });
 

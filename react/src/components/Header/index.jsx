@@ -1,8 +1,10 @@
 import { memo } from "react";
 import { Layout } from "antd";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
-import styles from "./index.module.less";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+
 import { useTitle } from "../../hooks/useTitle";
+
+import styles from "./index.module.less";
 
 const Header = ({ sidebarCollapsed, toggleSidebar }) => {
   const title = useTitle();

@@ -1,4 +1,4 @@
-import { Tooltip, Statistic } from "antd";
+import { Statistic, Tooltip } from "antd";
 import dayjs from "dayjs";
 
 const { Countdown } = Statistic;

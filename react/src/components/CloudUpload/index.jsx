@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
-import { Form, Modal, AutoComplete, Input, Table, Button, message } from "antd";
+import { AutoComplete, Button, Form, Input, Modal, Table, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { Player, TimeSelector, BottomTips } from "components";
-import { useSearch, useUpload, useMyUploads } from "services/upload";
+import { useMyUploads, useSearch, useUpload } from "services/upload";
+
+import { BottomTips, Player, TimeSelector } from "components";
 
 const Search = Input.Search;
 const FormItem = Form.Item;
@@ -22,42 +23,6 @@ const CloudUpload = () => {
   const upload = useUpload();
   const myUploads = useMyUploads();
 
-  const columns = [
-    {
-      title: "上传",
-      render: (row) => (
-        <Button
-          icon={<UploadOutlined />}
-          loading={fetchMp3.isMutating}
-          onClick={() => openModal(row)}
-        />
-      ),
-      fixed: "left",
-      width: 60
-    },
-    {
-      dataIndex: "name",
-      title: "曲名",
-      width: 200,
-      render: (text, row) => (
-        <a
-          href={`https://music.163.com/#/song?id=${row.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {text}
-        </a>
-      )
-    },
-    {
-      dataIndex: "artist",
-      title: "歌手",
-      width: 150,
-      render: (text) => text.join(", ")
-    },
-    { dataIndex: "album", title: "专辑", width: 200 }
-  ];
-
   const handleSearch = async (newKeyword) => {
     if (newKeyword) {
       const oldKeyword = keyword;
@@ -76,7 +41,7 @@ const CloudUpload = () => {
     setRow(row);
     form.setFieldsValue({
       name: row.name,
-      origin: row.artist.join(", ")
+      origin: row.artist.join(", "),
     });
     const mp3Available = row.mp3 ?? (await fetchMp3.trigger(row.id));
     if (mp3Available) {
@@ -104,15 +69,51 @@ const CloudUpload = () => {
       })
       .catch(() => {});
 
+  const columns = [
+    {
+      title: "上传",
+      render: (row) => (
+        <Button
+          icon={<UploadOutlined />}
+          loading={fetchMp3.isMutating}
+          onClick={() => openModal(row)}
+        />
+      ),
+      fixed: "left",
+      width: 60,
+    },
+    {
+      dataIndex: "name",
+      title: "曲名",
+      width: 200,
+      render: (text, row) => (
+        <a
+          href={`https://music.163.com/#/song?id=${row.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {text}
+        </a>
+      ),
+    },
+    {
+      dataIndex: "artist",
+      title: "歌手",
+      width: 150,
+      render: (text) => text.join(", "),
+    },
+    { dataIndex: "album", title: "专辑", width: 200 },
+  ];
+
   return (
     <div>
       <Search
-        placeholder="输入关键词或粘贴歌曲、专辑、歌单链接"
         enterButton
-        onSearch={handleSearch}
-        style={{ marginBottom: "10px" }}
         required
+        placeholder="输入关键词或粘贴歌曲、专辑、歌单链接"
+        style={{ marginBottom: "10px" }}
         loading={search.isValidating}
+        onSearch={handleSearch}
       />
       <Table
         dataSource={search.data}
@@ -124,14 +125,14 @@ const CloudUpload = () => {
       />
       {row && (
         <Modal
+          forceRender
+          centered
           open={visible}
-          onCancel={onCancel}
           confirmLoading={upload.isMutating}
           okText="上传"
           title="上传歌曲"
+          onCancel={onCancel}
           onOk={() => handleUpload(row.id)}
-          forceRender
-          centered
         >
           <Form form={form} labelCol={{ span: 3 }}>
             <FormItem
@@ -161,8 +162,8 @@ const CloudUpload = () => {
             <FormItem label="试听">
               <Player
                 ref={playerRef}
-                src={`https://music.163.com/song/media/outer/url?id=${row.id}.mp3`}
                 mini
+                src={`https://music.163.com/song/media/outer/url?id=${row.id}.mp3`}
               />
             </FormItem>
           </Form>

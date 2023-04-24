@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Form, Table, Button, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, Table } from "antd";
 import { timeFilters } from "config";
-import InlineForm from "components/admin/InlineForm";
-import { InlineFormRow } from "components/admin/InlineForm";
+import InlineForm, { InlineFormRow } from "components/admin/InlineForm";
 import Title from "hooks/useTitle";
 import { useRank } from "services/admin/rank";
 
@@ -15,24 +14,24 @@ const columns = [
     title: "时段",
     width: "80px",
     filters: timeFilters,
-    onFilter: (value, record) => record.playtime === value
+    onFilter: (value, record) => record.playtime === value,
   },
   { dataIndex: "name", title: "曲名" },
   {
     dataIndex: "score",
     title: "得分",
-    sorter: (a, b) => a.score - b.score
+    sorter: (a, b) => a.score - b.score,
   },
   {
     dataIndex: "sum",
     title: "总分",
-    sorter: (a, b) => a.sum - b.sum
+    sorter: (a, b) => a.sum - b.sum,
   },
   {
     dataIndex: "counts",
     title: "投票人数",
-    sorter: (a, b) => a.counts - b.counts
-  }
+    sorter: (a, b) => a.counts - b.counts,
+  },
 ];
 
 const Rank = () => {
@@ -44,11 +43,11 @@ const Rank = () => {
   };
 
   const result = () => {
-    let result = JSON.parse(JSON.stringify(rank.data)); //!important:  Copy Array
-    result.forEach((v) => {
+    const result = JSON.parse(JSON.stringify(rank.data)); // !important:  Copy Array
+    for (const v of result) {
       delete v.sum;
       delete v.counts;
-    });
+    }
     return JSON.stringify(result);
   };
 
@@ -90,14 +89,14 @@ const Rank = () => {
       {showResult && (
         <Modal
           open={showResult}
-          onCancel={handleCancel}
           title="生成投票结果"
+          style={{ top: "70px" }}
           footer={[
             <Button key="cancel" onClick={handleCancel}>
               关闭
-            </Button>
+            </Button>,
           ]}
-          style={{ top: "70px" }}
+          onCancel={handleCancel}
         >
           <TextArea value={result()} autoSize={{ minRows: 6, maxRows: 10 }} />
         </Modal>

@@ -1,9 +1,9 @@
 import { Button } from "antd";
 import {
-  PauseOutlined,
   CaretRightOutlined,
+  PauseOutlined,
   StepBackwardOutlined,
-  StepForwardOutlined
+  StepForwardOutlined,
 } from "@ant-design/icons";
 
 export const PlayButton = ({ playing, ...props }) => (
@@ -20,7 +20,7 @@ export const StopButton = (props) => (
 
 const NavigationButton = ({ disabled, Icon, ...props }) => (
   <Button shape="circle" {...props} disabled={disabled}>
-    <Icon style={{ color: !disabled ? "#9f9f9f" : "inherit" }} />
+    <Icon style={{ color: disabled ? "inherit" : "#9f9f9f" }} />
   </Button>
 );
 

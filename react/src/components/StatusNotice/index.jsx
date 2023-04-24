@@ -1,13 +1,15 @@
 import dayjs from "dayjs";
-import { Alert, Row, Col, Statistic } from "antd";
+import { Alert, Col, Row, Statistic } from "antd";
 import {
-  UploadOutlined,
-  FormOutlined,
   ClockCircleOutlined,
-  LoadingOutlined
+  FormOutlined,
+  LoadingOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import { PhaseCountdown } from "components";
 import isBetween from "dayjs/plugin/isBetween";
+
+import { PhaseCountdown } from "components";
+
 dayjs.extend(isBetween);
 
 const StatusNotice = ({ status }) => {
@@ -16,11 +18,11 @@ const StatusNotice = ({ status }) => {
   }
 
   const currentTime = dayjs();
-  let title = "正在进行",
-    statusText = "...",
-    countdownText = "结束",
-    icon = <LoadingOutlined />,
-    time = null;
+  let title = "正在进行";
+  let statusText = "...";
+  let countdownText = "结束";
+  let icon = <LoadingOutlined />;
+  let time = null;
 
   if (currentTime.isBetween(status.upload.start, status.upload.end)) {
     statusText = "上传";
@@ -50,8 +52,8 @@ const StatusNotice = ({ status }) => {
 
   return (
     <Alert
-      type="info"
       closable
+      type="info"
       description={
         <Row gutter={16}>
           <Col span={12}>
@@ -59,7 +61,7 @@ const StatusNotice = ({ status }) => {
           </Col>
           <Col span={12}>
             <PhaseCountdown
-              title={"距离" + statusText + countdownText}
+              title={`距离${statusText}${countdownText}`}
               value={time}
             />
           </Col>

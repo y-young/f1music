@@ -1,4 +1,5 @@
 import { Sidebar } from "components/admin";
+
 import Layout from "./Layout";
 
 const Admin = ({ children }) => (

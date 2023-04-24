@@ -1,7 +1,8 @@
-import { request } from "utils";
 import { api } from "config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+
+import { request } from "utils";
 
 const { login, logout, status } = api;
 
@@ -10,7 +11,7 @@ export const useLogin = () =>
     request({
       url: login,
       method: "post",
-      data: arg
+      data: arg,
     })
   );
 
@@ -18,14 +19,14 @@ export const useLogout = () =>
   useSWRMutation(logout, () =>
     request({
       url: logout,
-      method: "post"
+      method: "post",
     })
   );
 
 export const useStatus = () =>
   useSWR(status, () =>
     request({
-      url: status + "/home",
-      method: "get"
+      url: `${status}/home`,
+      method: "get",
     }).then((data) => data.status)
   );

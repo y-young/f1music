@@ -1,4 +1,4 @@
-import { useAtom, atom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { useEffect } from "react";
 import { useSWRConfig } from "swr";
 import { api } from "utils/config";
@@ -6,7 +6,7 @@ import { api } from "utils/config";
 const { status } = api;
 
 const getCookie = (name) => {
-  var match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   if (match) {
     return match[2];
   }
@@ -45,12 +45,13 @@ const useUser = () => {
   const clearCache = () =>
     swr.mutate((key) => key !== status, undefined, { revalidate: false });
 
-  useEffect(() => mutate(), []);
-
   const mutate = () => {
     setUser(getUser());
     clearCache();
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => mutate(), []);
 
   return { user, mutate };
 };

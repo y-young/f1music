@@ -1,15 +1,16 @@
-import { defineConfig } from "vite";
-import React from "@vitejs/plugin-react-swc";
-import Pages from "vite-plugin-pages";
 import { resolve } from "node:path";
 import { execSync } from "node:child_process";
 
+import { defineConfig } from "vite";
+import React from "@vitejs/plugin-react-swc";
+import Pages from "vite-plugin-pages";
+
 // https://vitejs.dev/config/
 export default defineConfig(() => {
-  const packageName = process.env.npm_package_name;
-  const version = process.env.npm_package_version;
+  const packageName = process.env.npm_package_name!;
+  const version = process.env.npm_package_version!;
   const commitHash =
-    process.env.COMMIT_HASH ||
+    process.env.COMMIT_HASH ??
     execSync("git rev-parse --short HEAD").toString().trim();
   process.env.VITE_RELEASE = `${packageName}@${version}+${commitHash}`;
 
@@ -19,7 +20,7 @@ export default defineConfig(() => {
     plugins: [
       React(),
       Pages({
-        dirs: "src/routes"
+        dirs: "src/routes",
       }),
       // https://github.com/vitejs/vite/issues/2958#issuecomment-1065810046
       {
@@ -32,8 +33,8 @@ export default defineConfig(() => {
             }
             next();
           });
-        }
-      }
+        },
+      },
     ],
     base: process.env.NODE_ENV === "production" ? "/build/" : "/",
     build: {
@@ -43,9 +44,9 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: resolve(__dirname, "index.html"),
-          admin: resolve(__dirname, "manage/index.html")
-        }
-      }
+          admin: resolve(__dirname, "manage/index.html"),
+        },
+      },
     },
     resolve: {
       alias: {
@@ -53,22 +54,22 @@ export default defineConfig(() => {
         hooks: resolve(__dirname, "src/hooks"),
         config: resolve(__dirname, "src/utils/config"),
         services: resolve(__dirname, "src/services"),
-        utils: resolve(__dirname, "src/utils")
-      }
+        utils: resolve(__dirname, "src/utils"),
+      },
     },
     server: {
       proxy: {
         "/api": {
           target: "http://localhost/api/",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "")
+          rewrite: (path) => path.replace(/^\/api/, ""),
         },
         "/uploads": {
           target: "http://localhost/uploads/",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/uploads/, "")
-        }
-      }
-    }
+          rewrite: (path) => path.replace(/^\/uploads/, ""),
+        },
+      },
+    },
   };
 });

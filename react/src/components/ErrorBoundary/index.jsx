@@ -6,12 +6,10 @@ const Fallback = ({ error, resetErrorBoundary }) => {
   const props = {
     status: "error",
     title: "出错了",
-    subTitle: "请刷新页面重试，如果错误依旧存在，请联系我们"
+    subTitle: "请刷新页面重试，如果错误依旧存在，请联系我们",
   };
 
-  if (
-    error.message.indexOf("Failed to fetch dynamically imported module") !== -1
-  ) {
+  if (error.message.includes("Failed to fetch dynamically imported module")) {
     props.icon = <ApiOutlined />;
     props.title = "加载失败，请检查网络";
     props.subTitle = "请检查网络连接是否正常，然后刷新页面重试";
@@ -22,9 +20,10 @@ const Fallback = ({ error, resetErrorBoundary }) => {
       <Result
         {...props}
         extra={[
+          // eslint-disable-next-line react/jsx-key
           <Button type="primary" onClick={resetErrorBoundary}>
             刷新页面
-          </Button>
+          </Button>,
         ]}
       >
         {import.meta.env.DEV && error.message}
@@ -33,7 +32,7 @@ const Fallback = ({ error, resetErrorBoundary }) => {
   );
 };
 
-class _ErrorBoundary extends BaseErrorBoundary {
+class ErrorBoundaryBase extends BaseErrorBoundary {
   constructor() {
     super();
   }
@@ -63,16 +62,16 @@ class _ErrorBoundary extends BaseErrorBoundary {
 }
 
 const ErrorBoundary = ({ children, onReset }) => (
-  <_ErrorBoundary
+  <ErrorBoundaryBase
     FallbackComponent={Fallback}
+    onReset={onReset}
     onError={(error, { componentStack }) => {
       console.log(error);
       console.log(componentStack);
     }}
-    onReset={onReset}
   >
     {children}
-  </_ErrorBoundary>
+  </ErrorBoundaryBase>
 );
 
 export default ErrorBoundary;

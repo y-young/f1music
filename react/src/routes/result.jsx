@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Tabs, Table, Button, Space } from "antd";
+import { Button, Space, Table, Tabs } from "antd";
 import "aplayer/dist/APlayer.min.css";
 import APlayer from "aplayer";
 import Player from "components/Player";
-import { timeIdToText, timeFilters } from "config";
-import { DownloadOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { timeFilters, timeIdToText } from "config";
+import { ArrowRightOutlined, DownloadOutlined } from "@ant-design/icons";
 import Title from "hooks/useTitle";
 
 const columns = [
@@ -18,7 +18,7 @@ const columns = [
       return timeIdToText[text];
     },
     filters: timeFilters,
-    onFilter: (value, record) => record.playtime === value
+    onFilter: (value, record) => record.playtime === value,
   },
   { dataIndex: "name", title: "曲名", width: 200 },
   { dataIndex: "origin", title: "来源", width: 200 },
@@ -26,14 +26,14 @@ const columns = [
     dataIndex: "score",
     title: "得分",
     width: 90,
-    sorter: (a, b) => a.score - b.score
+    sorter: (a, b) => a.score - b.score,
   },
   {
     title: "试听",
     width: 150,
     render: (text, record) => {
-      return <Player src={record.url} mini />;
-    }
+      return <Player mini src={record.url} />;
+    },
   },
   {
     title: "下载",
@@ -41,36 +41,37 @@ const columns = [
       return (
         <Button
           icon={<DownloadOutlined />}
-          href={"/api/download/" + record.id}
+          href={`/api/download/${record.id}`}
         />
       );
-    }
-  }
+    },
+  },
 ];
 const rank = []; // Replace [] with results generated on admin/rank
 
 const Result = () => {
   const containerRef = useRef();
 
-  useEffect(() => {
-    loadPlayer();
-  }, []);
-
   const loadPlayer = () => {
     axios
       .get("/music/playlist")
       .then((response) => {
+        // eslint-disable-next-line no-new
         new APlayer({
           container: containerRef.current,
           mini: false,
           autoplay: false,
           loop: "all",
           listFolded: false,
-          audio: response.data
+          audio: response.data,
         });
       })
       .catch(console.log);
   };
+
+  useEffect(() => {
+    loadPlayer();
+  }, []);
 
   return (
     <>
@@ -81,7 +82,7 @@ const Result = () => {
           {
             key: "songs",
             label: "当选歌曲",
-            children: <div ref={containerRef} />
+            children: <div ref={containerRef} />,
           },
           {
             key: "rank",
@@ -93,8 +94,8 @@ const Result = () => {
                 rowKey="id"
                 scroll={{ x: 700 }}
               />
-            )
-          }
+            ),
+          },
         ]}
       />
       <br />
