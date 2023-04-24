@@ -433,9 +433,7 @@ const Songs = ({ isTrashed = false }) => {
                   if (!value || value.toString().length <= 200) {
                     return Promise.resolve();
                   }
-                  // TODO
-                  // eslint-disable-next-line prefer-promise-reject-errors
-                  return Promise.reject("标签总长度不得超过200");
+                  return Promise.reject(new Error("标签总长度不得超过200"));
                 },
               },
             ]}

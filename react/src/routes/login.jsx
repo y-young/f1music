@@ -76,10 +76,10 @@ const Login = () => {
                     if (!value || getFieldValue("password") !== "123456") {
                       return Promise.resolve();
                     }
-                    // TODO
-                    // eslint-disable-next-line prefer-promise-reject-errors
                     return Promise.reject(
-                      "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                      new Error(
+                        "为保证投票质量禁止使用校网初始密码登录,请更改密码"
+                      )
                     );
                   },
                 }),
