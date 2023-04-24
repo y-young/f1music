@@ -16,8 +16,7 @@ export const useVoteList = (time) => {
       data: { time },
     }).then((data) => data.songs)
   );
-  // TODO
-  const songs = swr.data ?? [];
+  const songs = useMemo(() => swr.data ?? [], [swr.data]);
 
   const markListened = (id) => {
     const newData = produce(songs, (draft) => {

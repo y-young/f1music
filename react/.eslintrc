@@ -1,7 +1,6 @@
 {
-  "extends": "@so1ve/react",
-  "rules": {
-    "no-console": "off",
-    "react-hooks/exhaustive-deps": "off"
-  }
+    "extends": "@so1ve/react",
+    "rules": {
+        "no-console": "off"
+    }
 }

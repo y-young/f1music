@@ -50,6 +50,7 @@ const useUser = () => {
     clearCache();
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => mutate(), []);
 
   return { user, mutate };
