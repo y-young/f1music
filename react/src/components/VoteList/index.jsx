@@ -41,6 +41,12 @@ const VoteList = ({ time }) => {
   const canBackward = index > 0;
   const canForward = index < songs.length - 1;
 
+  const stopLast = () => {
+    if (playerRef.current) {
+      playerRef.current.stop();
+    }
+  };
+
   const init = () => {
     stopLast();
     setIndex(undefined);
@@ -62,13 +68,6 @@ const VoteList = ({ time }) => {
       playerRef.current?.stop();
     }
   }, [src]);
-
-  // Use function declaration to prevent no-use-before-define
-  function stopLast() {
-    if (playerRef.current) {
-      playerRef.current.stop();
-    }
-  }
 
   const timeListener = (offset) => {
     if (index === undefined) {
