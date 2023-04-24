@@ -8,6 +8,6 @@ export const useStatistics = () =>
   useSWR(statistics, () =>
     request({
       url: statistics,
-      method: "get"
+      method: "get",
     }).then((data) => data.data)
   );

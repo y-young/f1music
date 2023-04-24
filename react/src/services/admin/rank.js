@@ -8,6 +8,6 @@ export const useRank = () =>
   useSWR(rank, () =>
     request({
       url: rank,
-      method: "get"
+      method: "get",
     }).then((data) => data.rank)
   );

@@ -8,6 +8,6 @@ export const useFiles = () =>
   useSWR(files, () =>
     request({
       url: files,
-      method: "get"
+      method: "get",
     }).then((data) => data.files)
   );

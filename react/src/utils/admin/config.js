@@ -6,5 +6,5 @@ export const api = {
   files: "/files",
   reports: "/reports",
   rank: "/votes/rank",
-  statistics: "/statistics"
+  statistics: "/statistics",
 };

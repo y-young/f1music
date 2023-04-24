@@ -1,8 +1,9 @@
 import { request } from "utils/admin";
-import { removeById } from "utils";
 import { api } from "utils/admin/config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+
+import { removeById } from "utils";
 
 const { reports } = api;
 
@@ -10,7 +11,7 @@ export const useReports = () => {
   const swr = useSWR(reports, () =>
     request({
       url: reports,
-      method: "get"
+      method: "get",
     }).then((data) => data.reports)
   );
 
@@ -18,7 +19,7 @@ export const useReports = () => {
     request({
       url: reports,
       method: "delete",
-      data: { id }
+      data: { id },
     }).then(() => {
       swr.mutate((data) => removeById(data, id), { revalidate: false });
     })

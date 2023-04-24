@@ -1,7 +1,9 @@
 import { useRoutes } from "react-router-dom";
-import routes from "~react-pages";
-import { default as AdminLayout } from "../../layouts/Admin";
+
+import AdminLayout from "../../layouts/Admin";
+
 import { SWRConfig, SuspenseLoading } from "components";
+import routes from "~react-pages";
 
 const Admin = () => {
   return (

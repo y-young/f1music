@@ -1,8 +1,9 @@
-import { request } from "utils";
 import { api } from "config";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import produce from "immer";
+import { produce } from "immer";
+
+import { request } from "utils";
 
 const { search, mp3, upload, uploads } = api;
 
@@ -12,7 +13,7 @@ export const useSearch = (keyword) => {
     request({
       url: search,
       method: "post",
-      data: { keyword }
+      data: { keyword },
     }).then((data) => data.result)
   );
 
@@ -20,7 +21,7 @@ export const useSearch = (keyword) => {
     const result = await request({
       url: mp3,
       method: "post",
-      data: { id }
+      data: { id },
     })
       .then(() => true)
       .catch(() => false);
@@ -45,7 +46,7 @@ export const useUpload = () =>
     request({
       url: upload,
       method: "post",
-      data: arg
+      data: arg,
     })
   );
 
@@ -53,6 +54,6 @@ export const useMyUploads = () =>
   useSWR("/api/uploads", () =>
     request({
       url: uploads,
-      method: "get"
+      method: "get",
     }).then((data) => data.songs)
   );

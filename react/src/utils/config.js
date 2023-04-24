@@ -8,7 +8,7 @@ export const api = {
   search: "/music/search",
   mp3: "/music/mp3",
   upload: "/upload",
-  uploads: "/uploads"
+  uploads: "/uploads",
 };
 
 export const voteTexts = [
@@ -17,7 +17,7 @@ export const voteTexts = [
   "不合适",
   "中立",
   "合适",
-  "非常合适"
+  "非常合适",
 ];
 
 export const timeIdToText = {
@@ -26,7 +26,7 @@ export const timeIdToText = {
   3: "13:45",
   4: "18:10",
   5: "21:55",
-  6: "22:40"
+  6: "22:40",
 };
 
 export const timeIdToName = {
@@ -35,10 +35,10 @@ export const timeIdToName = {
   3: "午出门",
   4: "晚出门",
   5: "晚自习结束",
-  6: "熄灯铃"
+  6: "熄灯铃",
 };
 
 export const timeFilters = Object.entries(timeIdToText).map(([key, value]) => ({
   text: value,
-  value: key
+  value: key,
 }));
