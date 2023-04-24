@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { Menu } from "antd";
+import { Menu, Space } from "antd";
 import {
   FormOutlined,
   HomeOutlined,
@@ -70,6 +70,7 @@ const Sidebar = ({ collapsed }) => {
         items={menuItems}
         onClick={handleMenuClick}
       />
+      <Space> </Space>
     </div>
   );
 };
