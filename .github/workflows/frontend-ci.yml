@@ -66,6 +66,6 @@ jobs:
           nci
 
       - name: Typecheck
-        run:
+        run: |
           cd react
           nr typecheck
