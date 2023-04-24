@@ -36,7 +36,7 @@ const request = (opt) =>
 
       if (!error.response) {
         error.retry = true;
-        // console.log(error);
+        console.log(error);
 
         switch (error.code) {
           case AxiosError.ECONNABORTED:

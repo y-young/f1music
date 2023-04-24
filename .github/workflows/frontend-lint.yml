@@ -1,13 +1,13 @@
-name: CI
+name: Frontend Lint
 
 on:
   push:
     branches:
-      - main
+      - master
 
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   lint:

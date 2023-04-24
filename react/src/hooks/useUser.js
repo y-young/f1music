@@ -21,7 +21,7 @@ const decodeCookie = (value) => {
     const json = atob(value.replace(/%3D$/, ""));
     return JSON.parse(json);
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return {};
   }
 };
@@ -50,7 +50,6 @@ const useUser = () => {
     clearCache();
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => mutate(), []);
 
   return { user, mutate };
