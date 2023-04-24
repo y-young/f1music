@@ -16,11 +16,10 @@ const Home = () => {
 
   useEffect(() => {
     const currentTime = dayjs();
-    const phase =
+    const beforeOrDuringVote =
       currentTime.isAfter(status?.upload.end) &&
-      currentTime.isBefore(status?.vote.end)
-        ? "vote"
-        : "upload";
+      currentTime.isBefore(status?.vote.end);
+    const phase = beforeOrDuringVote ? "vote" : "upload";
     setActiveTab(phase);
   }, [status, setActiveTab]);
 
