@@ -13,7 +13,7 @@
         "guzzlehttp/guzzle": "^7.5.1",
         "james-heinrich/getid3": "^1.9.22",
         "laravel/framework": "^10.0",
-        "laravel/sanctum": "^3.2",
+        "laravel/sanctum": "^3.2.4",
         "laravel/tinker": "^2.8",
         "metowolf/meting": "^1.5.11"
     },
