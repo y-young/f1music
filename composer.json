@@ -14,7 +14,7 @@
         "james-heinrich/getid3": "^1.9.22",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2.4",
-        "laravel/tinker": "^2.8",
+        "laravel/tinker": "^2.8.1",
         "metowolf/meting": "^1.5.11"
     },
     "require-dev": {
