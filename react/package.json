@@ -28,7 +28,7 @@
     "react-router": "^6.9.0",
     "react-router-dom": "^6.9.0",
     "react-transition-group": "^4.4.5",
-    "swr": "^2.1.1"
+    "swr": "^2.1.5"
   },
   "devDependencies": {
     "@so1ve/eslint-config-react": "^0.71.9",
