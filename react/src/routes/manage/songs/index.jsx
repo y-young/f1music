@@ -140,9 +140,11 @@ const Songs = ({ isTrashed = false }) => {
 
   const handleDelete = (id, isDelete = false) => {
     const request = isDelete ? del.trigger(id) : trash.trigger(id);
-    return request.then(() => {
-      message.success("操作成功");
-    });
+    return request
+      .then(() => {
+        message.success("操作成功");
+      })
+      .catch(() => {});
   };
 
   const handleBatchDelete = (isDelete = false) =>
