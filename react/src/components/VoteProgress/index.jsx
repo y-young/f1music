@@ -6,7 +6,9 @@ import styles from "./index.module.less";
 
 const VoteProgress = ({ progress }) => {
   const isDesktop = useIsDesktop();
-  const percent = progress[1] ? (progress[0] / progress[1]) * 100 : 0;
+  const percent = progress[1]
+    ? Math.round((progress[0] / progress[1]) * 100)
+    : 0;
   const props = isDesktop ? {} : { type: "circle", size: 75 };
 
   return (
