@@ -33,8 +33,8 @@
   "devDependencies": {
     "@so1ve/eslint-config-react": "^0.72.0",
     "@types/node": "^18.15.7",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.1",
+    "@types/react": "^18.2.5",
+    "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react-swc": "^3.3.0",
     "eslint": "^8.39.0",
     "less": "^4.1.3",
