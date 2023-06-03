@@ -25,11 +25,6 @@ const Sidebar = ({ collapsed }) => {
 
   const menuItems = [
     { key: "/", icon: <HomeOutlined />, label: "首页" },
-    {
-      key: user ? "/logout" : "/login",
-      icon: user ? <LogoutOutlined /> : <LoginOutlined />,
-      label: user ? "登出" : "登录",
-    },
     { key: "/upload", icon: <UploadOutlined />, label: "上传" },
     {
       key: "/vote",
@@ -51,6 +46,14 @@ const Sidebar = ({ collapsed }) => {
     },
   ];
 
+  const userItems = [
+    {
+      key: user ? "/logout" : "/login",
+      icon: user ? <LogoutOutlined /> : <LoginOutlined />,
+      label: user ? "登出" : "登录",
+    },
+  ];
+
   const handleMenuClick = ({ key }) => {
     if (key === "/manage") {
       window.location.href = "/manage";
@@ -62,14 +65,23 @@ const Sidebar = ({ collapsed }) => {
   return (
     <div className={sidebarClass}>
       <header className={styles.logo}>福州一中 校园音乐征集</header>
-      <Menu
-        className={styles.nav}
-        mode="inline"
-        selectedKeys={[location.pathname]}
-        defaultOpenKeys={["/vote"]}
-        items={menuItems}
-        onClick={handleMenuClick}
-      />
+      <div className={styles.navWrapper}>
+        <Menu
+          className={styles.nav}
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          defaultOpenKeys={["/vote"]}
+          items={menuItems}
+          onClick={handleMenuClick}
+        />
+        <Menu
+          className={styles.nav}
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          items={userItems}
+          onClick={({ key }) => navigate(key)}
+        />
+      </div>
     </div>
   );
 };
