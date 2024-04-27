@@ -23,8 +23,8 @@ dependencies:
     specifier: ^1.11.7
     version: 1.11.7
   immer:
-    specifier: ^9.0.21
-    version: 9.0.21
+    specifier: ^10.1.1
+    version: 10.1.1
   jotai:
     specifier: ^2.0.4
     version: 2.0.4(react@18.2.0)
@@ -692,6 +692,7 @@ packages:
 
   /@so1ve/eslint-config-basic@0.72.0(@typescript-eslint/eslint-plugin@5.59.1)(@typescript-eslint/parser@5.59.1)(eslint-import-resolver-typescript@3.5.5)(eslint@8.39.0)(prettier@2.8.8)(svelte@3.58.0)(typescript@4.9.5):
     resolution: {integrity: sha512-/EeiQ3GkELw9wfxiVIt/PXyeN1Mi5+Na2lTmrVjxlMRxY2kBg7cuAj5lWpHIgRIxHe3LnAM+aiyHVJcj1qrAfA==}
+    deprecated: Use @so1ve/eslint-config-js instead
     peerDependencies:
       eslint: '>=7.4.0'
       prettier: '>=2.0.0'
@@ -2770,8 +2771,8 @@ packages:
     dev: true
     optional: true
 
-  /immer@9.0.21:
-    resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
+  /immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
     dev: false
 
   /import-fresh@3.3.0:
