@@ -26,7 +26,7 @@ RUN pnpm build
 
 
 # Backend dependency builder for production
-FROM php:8.2-apache as build
+FROM php:8.3-apache as build
 
 RUN sed -i s/deb.debian.org/mirrors.aliyun.com/g /etc/apt/sources.list && \
     sed -i s/security.debian.org/mirrors.aliyun.com/g /etc/apt/sources.list && \
@@ -44,7 +44,7 @@ RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interacti
 
 
 # Backend dependency builder for development
-FROM php:8.2-apache as build-dev
+FROM php:8.3-apache as build-dev
 
 RUN sed -i s/deb.debian.org/mirrors.aliyun.com/g /etc/apt/sources.list && \
     sed -i s/security.debian.org/mirrors.aliyun.com/g /etc/apt/sources.list && \
@@ -62,7 +62,7 @@ RUN composer install --prefer-dist --no-interaction
 
 
 # Application builder for development
-FROM php:8.2-apache as dev
+FROM php:8.3-apache as dev
 
 RUN docker-php-ext-install bcmath pdo_mysql
 
@@ -79,7 +79,7 @@ RUN a2enmod rewrite && \
 
 
 # Application builder for production
-FROM php:8.2-apache as production
+FROM php:8.3-apache as production
 
 RUN docker-php-ext-install bcmath pdo_mysql
 
