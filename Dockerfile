@@ -1,5 +1,5 @@
 # Frontend builder
-FROM node:16-slim as frontend
+FROM node:20.18.0-slim as frontend
 
 RUN npm config set registry https://registry.npmmirror.com/ && \
     npm install -g pnpm@^8
